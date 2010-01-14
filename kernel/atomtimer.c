@@ -1,0 +1,463 @@
+/*
+ * Copyright (c) 2010, Kelvin Lawson. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ *
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ * 3. No personal names or organizations' names associated with the
+ *    Atomthreads project may be used to endorse or promote products
+ *    derived from this software without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE ATOMTHREADS PROJECT AND CONTRIBUTORS
+ * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
+ * TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE PROJECT OR CONTRIBUTORS BE
+ * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ * POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#include <stdio.h>
+#include "atom.h"
+#include "atomuser.h"
+
+
+/* Data types */
+
+/* Delay callbacks data structure */
+typedef struct delay_timer
+{
+    ATOM_TCB *tcb_ptr;  /* Thread which is suspended with timeout */
+
+} DELAY_TIMER;
+
+
+/* Global data */
+
+/* Local data */
+
+/** Pointer to the head of the outstanding timers queue */
+static ATOM_TIMER *timer_queue = NULL;
+
+/** Current system tick count */
+static uint32_t system_ticks = 0;
+
+
+/* Forward declarations */
+static void atomTimerCallbacks (void);
+static void atomTimerDelayCallback (POINTER cb_data);
+
+
+/**
+ * \b atomTimerRegister
+ *
+ * Register a timer callback.
+ *
+ * Callers should fill out and pass in a timer descriptor, containing
+ * the number of system ticks until they would like a callback, together
+ * with a callback function and optional parameter. The number of ticks
+ * must be greater than zero.
+ *
+ * On the relevant system tick count, the callback function will be
+ * called.
+ *
+ * These timers are used by some of the OS library routines, but they
+ * can also be used by application code requiring timer facilities at
+ * system tick resolution.
+ *
+ * This function can be called from interrupt context, but loops internally
+ * through the time list, so the potential execution cycles cannot be
+ * determined in advance.
+ *
+ * @param[in] timer_ptr Pointer to timer descriptor
+ *
+ * @retval ATOM_OK Success
+ * @retval ATOM_ERR_PARAM Bad parameters
+ */
+uint8_t atomTimerRegister (ATOM_TIMER *timer_ptr)
+{
+    uint8_t status;
+    CRITICAL_STORE;
+
+    /* Parameter check */
+    if ((timer_ptr == NULL) || (timer_ptr->cb_func == NULL)
+        || (timer_ptr->cb_ticks == 0))
+    {
+        /* Return error */
+        status = ATOM_ERR_PARAM;
+    }
+    else
+    {
+        /* Protect the list */
+        CRITICAL_START ();
+
+        /*
+         * Enqueue in the list of timers.
+         *
+         * The list is not ordered, all timers are inserted at the start
+         * of the list. On each system tick increment the list is walked
+         * and the remaining ticks count for that timer is decremented.
+         * Once the remaining ticks reaches zero, the timer callback is
+         * made.
+         */
+        if (timer_queue == NULL)
+        {
+            /* List is empty, insert new head */
+            timer_ptr->next_timer = NULL;
+            timer_queue = timer_ptr;
+        }
+        else
+        {
+            /* List has at least one entry, enqueue new timer before */
+            timer_ptr->next_timer = timer_queue;
+            timer_queue = timer_ptr;
+        }
+
+        /* End of list protection */
+        CRITICAL_END ();
+
+        /* Successful */
+        status = ATOM_OK;
+    }
+
+    return (status);
+}
+
+
+/**
+ * \b atomTimerCancel
+ *
+ * Cancel a timer callback previously registered using atomTimerRegister().
+ *
+ * This function can be called from interrupt context, but loops internally
+ * through the time list, so the potential execution cycles cannot be
+ * determined in advance.
+ *
+ * @param[in] timer_ptr Pointer to timer to cancel
+ *
+ * @retval ATOM_OK Success
+ * @retval ATOM_ERR_PARAM Bad parameters
+ * @retval ATOM_ERR_NOT_FOUND Timer registration was not found
+ */
+uint8_t atomTimerCancel (ATOM_TIMER *timer_ptr)
+{
+    uint8_t status = ATOM_ERR_NOT_FOUND;
+    ATOM_TIMER *prev_ptr, *next_ptr;
+    CRITICAL_STORE;
+
+    /* Parameter check */
+    if (timer_ptr == NULL)
+    {
+        /* Return error */
+        status = ATOM_ERR_PARAM;
+    }
+    else
+    {
+        /* Protect the list */
+        CRITICAL_START ();
+
+        /* Walk the list to find the relevant timer */
+        prev_ptr = next_ptr = timer_queue;
+        while (next_ptr)
+        {
+            /* Is this entry the one we're looking for? */
+            if (next_ptr == timer_ptr)
+            {
+                if (next_ptr == timer_queue)
+                {
+                    /* We're removing the list head */
+                    timer_queue = next_ptr->next_timer;
+                }
+                else
+                {
+                    /* We're removing a mid or tail TCB */
+                    prev_ptr->next_timer = next_ptr->next_timer;
+                }
+
+                /* Successful */
+                status = ATOM_OK;
+                break;
+            }
+
+            /* Move on to the next in the list */
+            prev_ptr = next_ptr;
+            next_ptr = next_ptr->next_timer;
+
+        }
+
+        /* End of list protection */
+        CRITICAL_END ();
+     }
+
+    return (status);
+}
+
+
+/**
+ * \b atomTimeGet
+ *
+ * Returns the current system tick time.
+ *
+ * This function can be called from interrupt context.
+ *
+ * @retval Current system tick count
+
+ */
+uint32_t atomTimeGet(void)
+{
+    return (system_ticks);
+}
+
+
+/**
+ * \b atomTimeSet
+ *
+ * This is an internal function not for use by application code.
+ *
+ * Sets the current system tick time.
+ *
+ * Currently only required for automated test suite to test
+ * clock behaviour.
+ *
+ * This function can be called from interrupt context.
+ *
+ * @param[in] new_time New system tick time value
+ *
+ * @return None
+ */
+void atomTimeSet(uint32_t new_time)
+{
+    system_ticks = new_time;
+}
+
+
+/**
+ * \b atomTimerTick
+ *
+ * System tick handler.
+ *
+ * User ports are responsible for calling this routine once per system tick.
+ *
+ * On each system tick this routine is called to do the following:
+ *  1. Increase the system tick count
+ *  2. Call back to any registered timer callbacks
+ *
+ * @return None
+ */
+void atomTimerTick (void)
+{
+    /* Only do anything if the OS is started */
+    if (atomOSStarted)
+    {
+        /* Increment the system tick count */
+        system_ticks++;
+
+        /* Check for any callbacks that are due */
+        atomTimerCallbacks ();
+    }
+}
+
+
+/**
+ * \b atomTimerDelay
+ *
+ * Suspend a thread for the given number of system ticks.
+ *
+ * Note that the wakeup time is the number of ticks from the current system
+ * tick, therefore, for a one tick delay, the thread may be woken up at any
+ * time between the atomTimerDelay() call and the next system tick. For
+ * a minimum number of ticks, you should specify minimum number of ticks + 1.
+ *
+ * This function can only be called from thread context.
+ *
+ * @param[in] ticks Number of system ticks to delay (must be > 0)
+ *
+ * @retval ATOM_OK Successful delay
+ * @retval ATOM_ERR_PARAM Bad parameter (ticks must be non-zero)
+ * @retval ATOM_ERR_CONTEXT Not called from thread context
+ */
+uint8_t atomTimerDelay (uint32_t ticks)
+{
+    ATOM_TCB *curr_tcb_ptr;
+    ATOM_TIMER timer_cb;
+    DELAY_TIMER timer_data;
+    CRITICAL_STORE;
+    uint8_t status;
+
+    /* Get the current TCB  */
+    curr_tcb_ptr = atomCurrentContext();
+
+    /* Parameter check */
+    if (ticks == 0)
+    {
+        /* Return error */
+        status = ATOM_ERR_PARAM;
+    }
+
+    /* Check we are actually in thread context */
+    else if (curr_tcb_ptr == NULL)
+    {
+        /* Not currently in thread context, can't suspend */
+        status = ATOM_ERR_CONTEXT;
+    }
+
+    /* Otherwise safe to proceed */
+    else
+    {
+        /* Protect the system queues */
+        CRITICAL_START ();
+
+        /* Set suspended status for the current thread */
+        curr_tcb_ptr->suspended = TRUE;
+
+        /* Register the timer callback */
+
+        /* Fill out the data needed by the callback to wake us up */
+        timer_data.tcb_ptr = curr_tcb_ptr;
+
+        /* Fill out the timer callback request structure */
+        timer_cb.cb_func = atomTimerDelayCallback;
+        timer_cb.cb_data = (POINTER)&timer_data;
+        timer_cb.cb_ticks = ticks;
+
+        /* Store the timeout callback details, though we don't use it */
+        curr_tcb_ptr->suspend_timo_cb = &timer_cb;
+
+        /* Register the callback */
+        if (atomTimerRegister (&timer_cb) != ATOM_OK)
+        {
+            /* Exit critical region */
+            CRITICAL_END ();
+
+            /* Timer registration didn't work, won't get a callback */
+            status = ATOM_ERR_TIMER;
+        }
+        else
+        {
+            /* Exit critical region */
+            CRITICAL_END ();
+
+            /* Successful timer registration */
+            status = ATOM_OK;
+
+            /* Current thread should now block, schedule in another */
+            atomSched (FALSE);
+        }
+    }
+
+    return (status);
+}
+
+
+/**
+ * \b atomTimerCallbacks
+ *
+ * This is an internal function not for use by application code.
+ *
+ * Find any callbacks that are due and call them up.
+ *
+ * @return None
+ */
+static void atomTimerCallbacks (void)
+{
+    ATOM_TIMER *prev_ptr, *next_ptr;
+
+    /*
+     * Walk the list decrementing each timer's remaining ticks count and
+     * looking for due callbacks.
+     */
+    prev_ptr = next_ptr = timer_queue;
+    while (next_ptr)
+    {
+        /* Is this entry due? */
+        if (--(next_ptr->cb_ticks) == 0)
+        {
+            /* Remove the entry from the timer list */
+            if (next_ptr == timer_queue)
+            {
+                /* We're removing the list head */
+                timer_queue = next_ptr->next_timer;
+            }
+            else
+            {
+                /* We're removing a mid or tail timer */
+                prev_ptr->next_timer = next_ptr->next_timer;
+            }
+
+            /* Call the registered callback */
+            if (next_ptr->cb_func)
+            {
+                next_ptr->cb_func (next_ptr->cb_data);
+            }
+
+            /* Do not update prev_ptr, we have just removed this one */
+
+        }
+
+        /* Entry is not due, leave it in there with its count decremented */
+        else
+        {
+            /*
+             * Update prev_ptr to this entry. We will need it if we want
+             * to remove a mid or tail timer.
+             */
+            prev_ptr = next_ptr;
+        }
+
+        /* Move on to the next in the list */
+        next_ptr = next_ptr->next_timer;
+
+    }
+
+}
+
+
+/**
+ * \b atomTimerDelayCallback
+ *
+ * This is an internal function not for use by application code.
+ *
+ * Callback for atomTimerDelay() calls. Wakes up the sleeping threads.
+ *
+ * @param[in] cb_data Callback parameter (DELAY_TIMER ptr for sleeping thread)
+ *
+ * @return None
+ */
+static void atomTimerDelayCallback (POINTER cb_data)
+{
+    DELAY_TIMER *timer_data_ptr;
+    CRITICAL_STORE;
+
+    /* Get the DELAY_TIMER structure pointer */
+    timer_data_ptr = (DELAY_TIMER *)cb_data;
+
+    /* Check parameter is valid */
+    if (timer_data_ptr)
+    {
+        /* Enter critical region */
+        CRITICAL_START ();
+
+        /* Put the thread on the ready queue */
+        (void)tcbEnqueuePriority (&tcbReadyQ, timer_data_ptr->tcb_ptr);
+
+        /* Exit critical region */
+        CRITICAL_END ();
+
+        /**
+         * Don't call the scheduler yet. The ISR exit routine will do this
+         * in case there are other callbacks to be made, which may also make
+         * threads ready.
+         */
+    }
+}
+

@@ -1,0 +1,6 @@
+delete
+file atomapp.elf
+target remote localhost:1212
+load
+break main_thread_func
+cont
