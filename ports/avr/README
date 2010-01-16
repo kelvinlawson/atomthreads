@@ -3,7 +3,7 @@
 AVR/ATMEGA PORT
 
 This folder contains a port of the Atomthreads real time kernel for the
-AVR/ATmega processor.
+AVR/ATmega processor architecture.
 
 All of the cross-platform kernel code is contained in the top-level 
 'kernel' folder, while ports to specific CPU architectures are contained in
@@ -44,9 +44,9 @@ has been kept to an absolute minimum.
 PREREQUISITES
 
 The port works out-of-the-box with the GCC tools (for building) and UISP
-(for programming). It can be built on any OS for which GCC is available,
-but by way of example you can install all of the required tools on Ubuntu
-Linux as follows:
+(for programming). It can be built on any OS for which gcc-avr is
+available, but by way of example you can install all of the required tools
+on Ubuntu/Linux as follows:
 
  * sudo apt-get install gcc-avr binutils-avr avr-libc uisp
 
@@ -65,7 +65,7 @@ The full build is carried out using simply:
 
 All objects are built into the 'build' folder under ports/avr. The build
 process builds separate target applications for each automated test, and
-appropriate ELF or HEX files can be found in the build folder, ready for
+appropriate ELF or HEX files can be found in the build folder ready for
 downloading to and running on the target. Because of the limited resources
 on the ATmega, and the large amount of automated tests, each test is built
 and run as a separate application.
@@ -106,7 +106,7 @@ STK500 SPECIFICS
 If the STK500 is used, you should connect your serial programming cable to
 the "RS232 CTRL" connector.
 
-The test applications make use of the UART to print out Pass/Fail
+The test applications also make use of the UART to print out Pass/Fail
 indications and other information. For this you should connect a serial
 debug cable to the STK500 "RS232 SPARE" connector. You should also connect
 PD0/1 to "RS232 SPARE RXD/TXD" respectively using a two-wire link.
@@ -171,11 +171,11 @@ its nature will likely have a higher text and data footprint than an RTOS
 targeted at the AVR architecture only.
 
 It is very lightweight compared to many of the alternatives, but if you
-have very limited RAM resources then you may need to use a more 
-AVR-specific RTOS, such as those with shared stacks or built entirely from
+have very limited RAM resources then you may prefer to use a more 
+AVR-specific RTOS such as those with shared stacks or built entirely from
 assembler. The emphasis here is on C-based portable, readable and 
-maintainable code which can run on any CPU architecture, from the 
-8-bitters up.
+maintainable code which can run on any CPU architecture, from the 8-bitters
+up.
 
 A good rule of thumb when using Atomthreads on the AVR architecture is that
 a minimum of 1KB RAM is required in order to support an application with 4
@@ -185,7 +185,7 @@ implementation of an RTOS herein.
 
 The major consumer of RAM when using Atomthreads is your thread stacks.
 Functionality that is shared between several kernel modules is farmed out
-to separate functions, resulting in readable and maintainable code, but
+to separate functions, resulting in readable and maintainable code but
 with some associated stack cost of calling out to subroutines. Further,
 each thread stack is used for saving its own registers on a context
 switch, and there is no separate interrupt stack which means that each
@@ -203,14 +203,14 @@ several subroutines.
 
 With careful consideration and few threads it would be possible to use
 a platform with 512 bytes RAM, but not all of the automated test suite
-would run on such a platform (some of the test modules use a main thread
-together with 4 sub-threads and the idle thread).
+would run on such a platform (some of the test modules use 6 threads: a
+main thread together with 4 sub-threads and the idle thread).
 
 The RAM layout used for the automated test applications is as follows:
 
 RAM Top:
 * Startup Stack (64 bytes)
-* Main Thread Stack (Variable)
+* Main Thread Stack (Variable size)
 * Data & BSS area (thread stacks, other application data)
 RAM End.
 
@@ -225,23 +225,24 @@ reused in your own application code.
 
 The application's data starts at the bottom of RAM, and this includes most
 of the thread stacks which are statically allocated arrays. The idle thread
-and automated test threads are allocated here, and are 128 bytes each.
+and automated test thread stacks are allocated here and are 128 bytes each.
 
 The remaining area between the startup stack (RAMEND-64) and the end of the
 data/BSS areas is allocated to the main thread stack. As this thread
 typically requires the largest stack, this uses all of the remaining RAM
-between the data/BSS areas and the startup stack. In general for the
-automated tests this thread does most of the processing and requires more
-than 128 bytes (it has been seen to exceed 148 bytes). You can check that
-sufficient RAM is available for the main thread by running the avr-size
-command on the application ELF. This shows how much RAM is used by the data
-and BSS areas. If you have 1024 bytes RAM, subtract the data and BSS size
-values from 1024, and subtract the amount used for the startup stack (64
-bytes), to figure out the remaining space available for the main thread
-stack. Again, for your own applications you will probably be reusing the
-startup stack area, so can exclude that from your calculations. As
-mentioned previously, this RAM layout is only the one utilised by the test
-applications. You may choose whatever layout you like.
+between the top and bottom. In general for the automated tests this thread
+does most of the processing and requires more than 128 bytes (it has been
+seen to exceed 148 bytes). You can check that sufficient RAM is available
+for the main thread by running the avr-size command on the application ELF.
+This shows how much RAM is used by the data and BSS areas. If you have 1024
+bytes RAM, subtract the data and BSS size values from 1024, and subtract
+the amount used for the startup stack (64 bytes) to figure out the
+remaining space available for the main thread stack. Again, for your own
+applications you will probably be reusing the startup stack area, so can
+exclude that from your calculations.
+
+As mentioned previously, this RAM layout is only the one utilised by the
+test applications. You may choose whatever layout you like.
 
 
 ---------------------------------------------------------------------------
