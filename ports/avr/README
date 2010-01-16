@@ -1,0 +1,248 @@
+---------------------------------------------------------------------------
+
+AVR/ATMEGA PORT
+
+This folder contains a port of the Atomthreads real time kernel for the
+AVR/ATmega processor.
+
+All of the cross-platform kernel code is contained in the top-level 
+'kernel' folder, while ports to specific CPU architectures are contained in
+the 'ports' folder tree. A port to a CPU architecture can comprise just one
+or two modules which provide the architecture-specific functionality, such
+as the context-switch routine which saves and restores processor registers
+on a thread switch. In this case, the kernel port is split into two files:
+
+ * atomport.c: Those functions which can be written in C
+ * atomport-asm.s: The main register save/restore assembler routines
+
+Each Atomthreads port requires also a header file which describes various
+architecture-specific details such as appropriate types for 8-bit, 16-bit
+etc variables, the port's system tick frequency, and macros for performing
+interrupt lockouts / critical sections:
+
+ * atomuser.h: Port-specific header required by the kernel for each port
+
+A couple of additional source files are also included here:
+
+ * uart.c: Simple driver for the ATmega UART
+ * tests-main.c: Main application file (used for launching automated tests)
+
+Atomthreads includes a suite of automated tests which prove the key OS
+functionality, and can be used with any architecture ports. This port
+provides an easy mechanism for building, downloading and running the test
+suite to prove the OS on your target.
+
+The port was carried out and tested on an ATmega16 running within an
+STK500 board, utilising the gcc-avr tools. It is possible to use it with 
+other processors in the ATmega range, as well as other hardware platforms
+and compilers, with minimal changes. Platform and compiler specific code
+has been kept to an absolute minimum.
+
+
+---------------------------------------------------------------------------
+
+PREREQUISITES
+
+The port works out-of-the-box with the GCC tools (for building) and UISP
+(for programming). It can be built on any OS for which GCC is available,
+but by way of example you can install all of the required tools on Ubuntu
+Linux as follows:
+
+ * sudo apt-get install gcc-avr binutils-avr avr-libc uisp
+
+Use with alternative compiler tools may require some modification, but you
+can easily replace UISP by your own favourite programmer if required.
+
+
+---------------------------------------------------------------------------
+
+BUILDING THE SOURCE
+
+A Makefile is provided for building the kernel, port and automated tests.
+The full build is carried out using simply:
+
+ * make
+
+All objects are built into the 'build' folder under ports/avr. The build
+process builds separate target applications for each automated test, and
+appropriate ELF or HEX files can be found in the build folder, ready for
+downloading to and running on the target. Because of the limited resources
+on the ATmega, and the large amount of automated tests, each test is built
+and run as a separate application.
+
+
+All built objects etc can be cleaned using:
+
+ * make clean
+
+
+The Atomthreads sources are documented using Doxygen markup. You can build
+both the kernel and AVR port documentation from this folder using:
+
+ * make doxygen
+
+
+---------------------------------------------------------------------------
+
+PROGRAMMING TO THE TARGET DEVICE
+
+Application HEX files which are built into the build folder can be
+downloaded to the target using:
+
+ * make program app=<appname>
+
+For example to download the 'sem1.hex' test application to the target use:
+
+ * make program app=sem1
+
+This uses UISP which will write the application into flash and reset the
+CPU to start running the program automatically.
+
+
+---------------------------------------------------------------------------
+
+STK500 SPECIFICS
+
+If the STK500 is used, you should connect your serial programming cable to
+the "RS232 CTRL" connector.
+
+The test applications make use of the UART to print out Pass/Fail
+indications and other information. For this you should connect a serial
+debug cable to the STK500 "RS232 SPARE" connector. You should also connect
+PD0/1 to "RS232 SPARE RXD/TXD" respectively using a two-wire link.
+
+
+---------------------------------------------------------------------------
+
+RUNNING THE AUTOMATED TESTS
+
+Atomthreads contains a set of generic kernel tests which can be run on any
+port to prove that all core functionality is working on your target.
+
+The full set of tests can be found in the top-level 'tests' folder. Each of
+these tests is built as an independent application in the 'build' folder.
+Run them individually using:
+
+ * make program app=testname
+
+For example to run the 'kern1.c' test use:
+
+ * make program app=kern1
+
+To view the test results, connect a serial debug cable to your target
+platform. On starting, the test applications print out "Go" on the UART.
+Once the test is complete they will print out "Pass" or "Fail", along 
+with other information if the test failed. Most of the tests complete
+within a few seconds, but some (particularly the stress tests) can take
+minutes, so be patient. 
+
+The test application also toggles a bit on PORTB once per second if the
+test was successful. On the STK500 this can be connected to the LEDs for
+a visual indication of a passed test without the UART.
+
+The full suite of tests endeavours to exercise as much of the kernel code
+as possible, and can be used for quick confirmation of core OS
+functionality if you ever need to make a change to the kernel or port.
+
+The test application main() is contained in tests-main.c. This initialises
+the OS, creates a main thread, and calls out to the test modules. It also
+initialises the UART driver and redirects stdout via the UART.
+
+
+---------------------------------------------------------------------------
+
+WRITING APPLICATIONS
+
+The easiest way to start a new application which utilises the Atomthreads
+scheduler is to base your main application startup on tests-main.c. This
+initialises the OS, sets up a UART and calls out to the test module entry
+functions. You can generally simply replace the call to the test modules by
+a call to your own application startup code.
+
+
+---------------------------------------------------------------------------
+
+RAM FOOTPRINT & STACK USAGE
+
+The Atomthreads kernel is written in well-structured pure C which is highly
+portable and not targeted at any particular compiler or CPU architecture.
+For this reason it is not highly optimised for the AVR architecture, and by
+its nature will likely have a higher text and data footprint than an RTOS
+targeted at the AVR architecture only.
+
+It is very lightweight compared to many of the alternatives, but if you
+have very limited RAM resources then you may need to use a more 
+AVR-specific RTOS, such as those with shared stacks or built entirely from
+assembler. The emphasis here is on C-based portable, readable and 
+maintainable code which can run on any CPU architecture, from the 
+8-bitters up.
+
+A good rule of thumb when using Atomthreads on the AVR architecture is that
+a minimum of 1KB RAM is required in order to support an application with 4
+or 5 threads and the idle thread. If approximately 128 bytes per thread
+stack is acceptable then you will benefit from the easy-to-read, portable
+implementation of an RTOS herein.
+
+The major consumer of RAM when using Atomthreads is your thread stacks.
+Functionality that is shared between several kernel modules is farmed out
+to separate functions, resulting in readable and maintainable code, but
+with some associated stack cost of calling out to subroutines. Further,
+each thread stack is used for saving its own registers on a context
+switch, and there is no separate interrupt stack which means that each
+thread stack has to be able to cope with the maximum stack usage of the
+kernel (and application) interrupt handlers.
+
+Clearly the stack requirement for each thread depends on what your
+application code does, but generally you should find that 128 bytes is
+enough to allow for the thread to be switched out (and thus save its
+registers) while deep within a kernel call stack, and similarly enough
+to provide stack for interrupt handlers interrupting while the thread is
+deep within a kernel call stack. We have seen a little more than 128 bytes
+being used, however, when the application code itself is made up of
+several subroutines.
+
+With careful consideration and few threads it would be possible to use
+a platform with 512 bytes RAM, but not all of the automated test suite
+would run on such a platform (some of the test modules use a main thread
+together with 4 sub-threads and the idle thread).
+
+The RAM layout used for the automated test applications is as follows:
+
+RAM Top:
+* Startup Stack (64 bytes)
+* Main Thread Stack (Variable)
+* Data & BSS area (thread stacks, other application data)
+RAM End.
+
+This is not prescribed, you may use whichever layout you wish for your
+applications.
+
+The startup stack area starts at the top of RAM and is only used for first
+initialisation of the OS and main thread. This uses 64 bytes and could be
+reused once the OS is started, but for the purposes of the automated test
+applications it is not reused. Generally you would ensure that this is
+reused in your own application code.
+
+The application's data starts at the bottom of RAM, and this includes most
+of the thread stacks which are statically allocated arrays. The idle thread
+and automated test threads are allocated here, and are 128 bytes each.
+
+The remaining area between the startup stack (RAMEND-64) and the end of the
+data/BSS areas is allocated to the main thread stack. As this thread
+typically requires the largest stack, this uses all of the remaining RAM
+between the data/BSS areas and the startup stack. In general for the
+automated tests this thread does most of the processing and requires more
+than 128 bytes (it has been seen to exceed 148 bytes). You can check that
+sufficient RAM is available for the main thread by running the avr-size
+command on the application ELF. This shows how much RAM is used by the data
+and BSS areas. If you have 1024 bytes RAM, subtract the data and BSS size
+values from 1024, and subtract the amount used for the startup stack (64
+bytes), to figure out the remaining space available for the main thread
+stack. Again, for your own applications you will probably be reusing the
+startup stack area, so can exclude that from your calculations. As
+mentioned previously, this RAM layout is only the one utilised by the test
+applications. You may choose whatever layout you like.
+
+
+---------------------------------------------------------------------------
+
