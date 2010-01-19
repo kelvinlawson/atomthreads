@@ -27,6 +27,65 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+
+/** 
+ * \file
+ * Semaphore library.
+ *
+ *
+ * This module implements a counting semaphore library with the following
+ * features:
+ *
+ * \par Flexible blocking APIs
+ * Threads which wish to decrement a semaphore can choose whether to block,
+ * block with timeout, or not block if the semaphore has reached zero.
+ *
+ * \par Interrupt-safe calls
+ * All APIs can be called from interrupt context. Any calls which could
+ * potentially block have optional parameters to prevent blocking if you
+ * wish to call them from interrupt context.
+ *
+ * \par Priority-based queueing
+ * Where multiple threads are blocking on a semaphore, they are woken in
+ * order of the threads' priorities. Where multiple threads of the same
+ * priority are blocking, they are woken in FIFO order.
+ *
+ * \par Count up to 255
+ * Semaphore counts can be initialised and incremented up to a maximum of 255.
+ *
+ * \par Smart semaphore deletion
+ * Where a semaphore is deleted while threads are blocking on it, all blocking
+ * threads are woken and returned an error code to indicate the reason for
+ * being woken.
+ *
+ *
+ * \n <b> Usage instructions: </b> \n
+ *
+ * All semaphore objects must be initialised before use by calling
+ * atomSemCreate(). Once initialised atomSemGet() and atomSemPut() are used to
+ * decrement and increment the semaphore count respectively.
+ *
+ * If a semaphore count reaches zero, further calls to atomSemGet() will block
+ * the calling thread (unless the calling parameters request no blocking). If
+ * a call is made to atomSemPut() while threads are blocking on a zero-count
+ * semaphore, the highest priority thread is woken. Where multiple threads of
+ * the same priority are blocking, they are woken in the order in which the
+ * threads started blocking. 
+ *
+ * Semaphores which are no longer required can be deleted using
+ * atomSemDelete(). This function automatically wakes up any threads which are
+ * waiting on a semaphore which is being deleted.
+ *
+ *
+ * \n <b> Notes: </b> \n
+ *
+ * Note that those considering using a semaphore initialised to 1 for mutual
+ * exclusion purposes may wish to investigate the mutex library available in
+ * Atomthreads.
+ *
+ */
+
+
 #include <stdio.h>
 #include "atom.h"
 #include "atomsem.h"
