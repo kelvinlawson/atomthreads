@@ -27,6 +27,78 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+
+/** 
+ * \file
+ * Mutex library.
+ *
+ *
+ * This module implements a mutual exclusion library with the following
+ * features:
+ *
+ * \par Flexible blocking APIs
+ * Threads which wish to take a mutex lock can choose whether to block,
+ * block with timeout, or not block if the mutex is already locked by a
+ * different thread.
+ *
+ * \par Interrupt-safe calls
+ * Some APIs can be called from interrupt context, but because a mutex
+ * must be owned by a particular thread the lock/unlock calls must be
+ * performed by threads only (i.e. it does not make sense to allow
+ * calls from interrupt context). All APIs are documented with their
+ * capability of being called from interrupt context.
+ *
+ * \par Priority-based queueing
+ * Where multiple threads are blocking on a mutex, they are woken in
+ * order of the threads' priorities. Where multiple threads of the same
+ * priority are blocking, they are woken in FIFO order.
+ *
+ * \par Recursive locks
+ * A mutex can be locked recursively by the same thread up to a
+ * maximum recursion level of 255. An internal count of locks is
+ * maintained and the mutex is only released when the count reaches
+ * zero (when the thread has been unlocked the same number of times
+ * as it was locked). This makes a mutex more suitable for use as
+ * mutual exclusions than a semaphore with initial count of 1.
+ *
+ * \par Thread ownership
+ * Once a thread has locked a mutex, only that thread may release the
+ * lock. This is another feature which makes the mutex more suitable
+ * for mutual exclusion than a semaphore with initial count 1. It
+ * prevents programming errors whereby the wrong thread is used to
+ * perform the unlock. This cannot be done for semaphores which do not
+ * have a concept of ownership (because it must be possible to use them
+ * to signal between threads). 
+ *
+ * \par Smart mutex deletion
+ * Where a mutex is deleted while threads are blocking on it, all blocking
+ * threads are woken and returned an error code to indicate the reason for
+ * being woken.
+ *
+ *
+ * \n <b> Usage instructions: </b> \n
+ *
+ * All mutex objects must be initialised before use by calling
+ * atomMutexCreate(). Once initialised atomMutexGet() and atomMutexPut()
+ * are used to lock and unlock the mutex respectively. A mutex may be
+ * locked recursively by the same thread, allowing for simplified code
+ * structure.
+ *
+ * While a thread owns the lock on a mutex, no other thread can take the lock.
+ * These other threads will block until the mutex is released by the current
+ * owner (unless the calling parameters request no blocking, in which case the
+ * lock request will return with an error). If a mutex is released while
+ * threads are blocking on it, the highest priority thread is woken. Where
+ * multiple threads of the same priority are blocking, they are woken in the
+ * order in which the threads started blocking. 
+ *
+ * A mutex which is no longer required can be deleted using atomMutexDelete().
+ * This function automatically wakes up any threads which are waiting on the
+ * deleted mutex.
+ *
+ */
+
+
 #include <stdio.h>
 #include "atom.h"
 #include "atommutex.h"

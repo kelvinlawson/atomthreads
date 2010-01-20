@@ -72,9 +72,9 @@
  * the same priority are blocking, they are woken in the order in which the
  * threads started blocking. 
  *
- * Semaphores which are no longer required can be deleted using
+ * A semaphore which is no longer required can be deleted using
  * atomSemDelete(). This function automatically wakes up any threads which are
- * waiting on a semaphore which is being deleted.
+ * waiting on the deleted semaphore.
  *
  *
  * \n <b> Notes: </b> \n
