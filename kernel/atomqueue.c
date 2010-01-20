@@ -27,6 +27,70 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+
+/** 
+ * \file
+ * Queue library.
+ *
+ *
+ * This module implements a queue / message-passing library with the following
+ * features:
+ *
+ * \par Flexible blocking APIs
+ * Threads which wish to make a call which may block can choose whether to
+ * block, block with timeout, or not block and return a relevent status
+ * code.
+ *
+ * \par Interrupt-safe calls
+ * All APIs can be called from interrupt context. Any calls which could
+ * potentially block have optional parameters to prevent blocking if you
+ * wish to call them from interrupt context. Any attempt to make a call
+ * which would block from interrupt context will be automatically and
+ * safely prevented.
+ *
+ * \par Priority-based queueing
+ * Where multiple threads are blocking on a queue, they are woken in order of
+ * the threads' priorities. Where multiple threads of the same priority are
+ * blocking, they are woken in FIFO order.
+ *
+ * \par Configurable queue sizes
+ * Queues can be created with any sized message, and any number of stored
+ * messages.
+ *
+ * \par Smart queue deletion
+ * Where a queue is deleted while threads are blocking on it, all blocking
+ * threads are woken and returned a status code to indicate the reason for
+ * being woken.
+ *
+ *
+ * \n <b> Usage instructions: </b> \n
+ *
+ * All queue objects must be initialised before use by calling
+ * atomQueueCreate(). Once initialised atomQueueGet() and atomQueuePut() are
+ * used to send and receive messages via the queue respectively.
+ *
+ * Messages can be added to a queue by calling atomQueuePut(). If the queue is
+ * full the caller will block until space becomes available (by a message
+ * being removed from the queue). Optionally a non-blocking call can be made
+ * in which case the call will return with a status code indicating that the
+ * queue is full. This allows messages to be posted from interrupt handlers
+ * or threads which you do not wish to block, providing it is not fatal that
+ * the call could fail if the queue was full.
+ *
+ * Messages can be received from the queue by calling atomQueueGet(). This
+ * will return the first message available in the queue in FIFO order. If
+ * the queue is empty then the call will block. Optionally, a non-blocking
+ * call can be made in which case the call will return with a status code
+ * indicating that the queue is full. This allows messages to be received
+ * by interrupt handlers or threads which you do not wish to block.
+ * 
+ * A queue which is no longer required can be deleted using atomQueueDelete().
+ * This function automatically wakes up any threads which are waiting on the
+ * deleted queue.
+ *
+ */
+ 
+
 #include <stdio.h>
 #include <string.h>
 
@@ -239,12 +303,17 @@ uint8_t atomQueueDelete (ATOM_QUEUE *qptr)
  *
  * Attempt to retrieve a message from a queue.
  *
+ * Retrieves one message at a time. Messages are copied into the passed
+ * \c msgptr storage area which should be large enough to contain one
+ * message of \c unit_size bytes. Where multiple messages are in the queue,
+ * messages are retrieved in FIFO order.
+ *
  * If the queue is currently empty, the call will do one of the following
  * depending on the \c timeout value specified:
  *
- * \c timeout == 0 : Call will block until a message is available
- * \c timeout > 0 : Call will block until a message or the specified timeout
- * \c timeout == -1 : Return immediately if no message is on the queue
+ * \c timeout == 0 : Call will block until a message is available \n
+ * \c timeout > 0 : Call will block until a message or the specified timeout \n
+ * \c timeout == -1 : Return immediately if no message is on the queue \n
  *
  * If a maximum timeout value is specified (\c timeout > 0), and no message
  * is present on the queue for the specified number of system ticks, the
@@ -440,12 +509,16 @@ uint8_t atomQueueGet (ATOM_QUEUE *qptr, int32_t timeout, uint8_t *msgptr)
  *
  * Attempt to put a message onto a queue.
  *
+ * Sends one message at a time. Messages are copied from the passed
+ * \c msgptr storage area which should contain a message of \c unit_size
+ * bytes.
+ *
  * If the queue is currently full, the call will do one of the following
  * depending on the \c timeout value specified:
  *
- * \c timeout == 0 : Call will block until space is available
- * \c timeout > 0 : Call will block until space or the specified timeout
- * \c timeout == -1 : Return immediately if the queue is full
+ * \c timeout == 0 : Call will block until space is available \n
+ * \c timeout > 0 : Call will block until space or the specified timeout \n
+ * \c timeout == -1 : Return immediately if the queue is full \n
  *
  * If a maximum timeout value is specified (\c timeout > 0), and no space
  * is available on the queue for the specified number of system ticks, the

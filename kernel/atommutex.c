@@ -46,7 +46,9 @@
  * must be owned by a particular thread the lock/unlock calls must be
  * performed by threads only (i.e. it does not make sense to allow
  * calls from interrupt context). All APIs are documented with their
- * capability of being called from interrupt context.
+ * capability of being called from interrupt context. Any attempt to
+ * make a call which cannot be made from interrupt context will be
+ * automatically and safely prevented.
  *
  * \par Priority-based queueing
  * Where multiple threads are blocking on a mutex, they are woken in
@@ -72,7 +74,7 @@
  *
  * \par Smart mutex deletion
  * Where a mutex is deleted while threads are blocking on it, all blocking
- * threads are woken and returned an error code to indicate the reason for
+ * threads are woken and returned a status code to indicate the reason for
  * being woken.
  *
  *
@@ -304,9 +306,9 @@ uint8_t atomMutexDelete (ATOM_MUTEX *mutex)
  * Depending on the \c timeout value specified the call will do one of
  * the following if the mutex is already locked by another thread:
  *
- * \c timeout == 0 : Call will block until the mutex is available
- * \c timeout > 0 : Call will block until available up to the specified timeout
- * \c timeout == -1 : Return immediately if mutex is locked by another thread
+ * \c timeout == 0 : Call will block until the mutex is available \n
+ * \c timeout > 0 : Call will block until available up to the specified timeout \n
+ * \c timeout == -1 : Return immediately if mutex is locked by another thread \n
 *
  * If the call needs to block and \c timeout is zero, it will block
  * indefinitely until the owning thread calls atomMutexPut() or

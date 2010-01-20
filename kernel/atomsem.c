@@ -43,7 +43,9 @@
  * \par Interrupt-safe calls
  * All APIs can be called from interrupt context. Any calls which could
  * potentially block have optional parameters to prevent blocking if you
- * wish to call them from interrupt context.
+ * wish to call them from interrupt context. Any attempt to make a call
+ * which would block from interrupt context will be automatically and
+ * safely prevented.
  *
  * \par Priority-based queueing
  * Where multiple threads are blocking on a semaphore, they are woken in
@@ -55,7 +57,7 @@
  *
  * \par Smart semaphore deletion
  * Where a semaphore is deleted while threads are blocking on it, all blocking
- * threads are woken and returned an error code to indicate the reason for
+ * threads are woken and returned a status code to indicate the reason for
  * being woken.
  *
  *
@@ -280,10 +282,10 @@ uint8_t atomSemDelete (ATOM_SEM *sem)
  * Depending on the \c timeout value specified the call will do one of
  * the following if the count value is zero:
  *
- * \c timeout == 0 : Call will block until the count is non-zero
- * \c timeout > 0 : Call will block until non-zero up to the specified timeout
- * \c timeout == -1 : Return immediately if the count is zero
-*
+ * \c timeout == 0 : Call will block until the count is non-zero \n
+ * \c timeout > 0 : Call will block until non-zero up to the specified timeout \n
+ * \c timeout == -1 : Return immediately if the count is zero \n
+ *
  * If the call needs to block and \c timeout is zero, it will block
  * indefinitely until atomSemPut() or atomSemDelete() is called on the
  * semaphore.
