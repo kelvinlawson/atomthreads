@@ -27,6 +27,122 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+
+/** 
+ * \file
+ * Kernel library.
+ *
+ *
+ * This module implements the core kernel functionality of managing threads,
+ * context-switching and interrupt handlers. It also contains functions for
+ * managing queues of TCBs (task control blocks) which are used not only for
+ * the queue of ready threads, but also by other OS primitives (such as
+ * semaphores) for generically managing lists of TCBs.
+ *
+ * Core kernel functionality such as managing the queue of ready threads and
+ * how context-switch decisions are made is described within the code. However
+ * a quick summary is as follows:
+ *
+ * There is a ready queue of threads. There must always be at least one thread
+ * ready-to-run. If no application threads are ready, the internal kernel idle
+ * thread will be run. This ensures that there is a thread to run at all
+ * times.
+ *
+ * Application code creates threads using atomThreadCreate(). These threads
+ * are added to the ready queue and eventually run when it is their turn
+ * (based on priority). When threads are currently-running they are taken off
+ * the ready queue. Threads continue to run until:
+ * \li They schedule themselves out by calling an OS primitive which blocks,
+ *     such as a timer delay or blocking on a semaphore. At this point they
+ *     are placed on the queue of the OS primitive in which they are blocking
+ *     (for example a timer delay or semaphore).
+ * \li They are preempted by a higher priority thread. This could happen at
+ *     any time if a kernel call from the currently-running thread or from an
+ *     interrupt handler makes a higher priority thread ready-to-run.
+ *     Generally this will occur immediately, and while the previously-running
+ *     thread is still considered ready-to-run, it is no longer the
+ *     currently-running thread so goes back on to the ready queue.
+ * \li They are scheduled out after a timeslice when another thread of the
+ *     same priority is also ready. This happens on a timer tick, and ensures
+ *     that threads of the same priority share timeslices. In this case the
+ *     previously-running thread is still considered ready-to-run so is placed
+ *     back on to the ready queue.
+ *
+ * Thread scheduling decisions are made by atomSched(). This is called at
+ * several times, but should never be called by application code directly:
+ * \li After interrupt handlers: The scheduler is called after every
+ *     interrupt handler has completed. This allows for any threads which
+ *     have been made ready-to-run by the interrupt handler to be scheduled
+ *     in. For example if an interrupt handler posts a semaphore which wakes
+ *     up a thread of higher priority than the currently-running thread, then
+ *     the end of interrupt handler reschedule will schedule that thread in.
+ * \li On timer ticks: The timer tick is implemented as an interrupt handler
+ *     so the end of interrupt call to the scheduler is made as normal, except
+ *     that in this case round-robin rescheduling is allowed (where threads
+ *     of the same priority are given a timeslice each in round-robin
+ *     fashion). This must only occur on timer ticks when the system tick
+ *     count is incremented.
+ * \li After any OS call changes ready states: Any OS primitives which change
+ *     the running state of a thread will call the scheduler to ensure that
+ *     the change of thread state is noted. For example if a new thread is
+ *     created using atomThreadCreate(), it will internally call the scheduler
+ *     in case the newly-created thread is higher priority than the
+ *     currently-running thread. Similarly OS primitives such as semaphores
+ *     often make changes to a thread's running state. If a thread is going to
+ *     sleep blocking on a semaphore then the scheduler will be run to ensure
+ *     that some other thread is scheduled in in its place. If a thread is
+ *     woken by a semaphore post, the scheduler will also be called in case
+ *     that thread should now be scheduled in (note that when semaphores are
+ *     posted from an interrupt handler this is deferred to the end of
+ *     interrupt scheduler call).
+ *
+ * When a thread reschedule needs to take place, the scheduler calls out to
+ * the architecture-specific port to perform the context-switch, using
+ * archContextSwitch() which must be provided by each architecture port. This
+ * function carries out the low-level saving and restoring of registers
+ * appropriate for the architecture. The thread being switched out must have
+ * a set of CPU registers saved, and the thread being scheduled in has a set
+ * of CPU registers restored (which were previously saved). In this fashion
+ * threads are rescheduled with the CPU registers in exactly the same state as
+ * when the thread was scheduled out.
+
+ * New threads which have never been scheduled in have a pre-formatted stack
+ * area containing a set of CPU register values ready for restoring that
+ * appears exactly as if the thread had been previously scheduled out. In
+ * other words, the scheduler need not know when it restores registers to
+ * switch a thread in whether it has previously run or if it has never been
+ * run since the thread was created. The context-save area is formatted in
+ * exactly the same manner.
+ * 
+ * \b Functions contained in this module:\n
+ *
+ * \b Application-callable initialisation functions: \n
+ *
+ * \li atomOSInit(): Initialises the operating system.
+ * \li atomOSStart(): Starts the OS running (with the highest priority thread).
+ *
+ * \b Application-callable general functions: \n
+ *
+ * \li atomThreadCreate(): Thread creation API.
+ * \li atomCurrentContext(): Used by kernel and application code to check
+ *     whether the thread is currently running at thread or interrupt context.
+ *     This is very useful for implementing safety checks and preventing
+ *     interrupt handlers from making kernel calls that would block.
+ * \li atomIntEnter() / atomIntExit(): Must be called by any interrupt handlers.
+ *
+ * \b Internal kernel functions: \n
+ *
+ * \li atomSched(): Core scheduler.
+ * \li atomThreadSwitch(): Context-switch routine.
+ * \li atomIdleThread(): Simple thread to be run when no other threads ready.
+ * \li tcbEnqueuePriority(): Enqueues TCBs (task control blocks) on lists.
+ * \li tcbDequeueHead(): Dequeues the head of a TCB list.
+ * \li tcbDequeueEntry(): Dequeues a particular entry from a TCB list.
+ * \li tcbDequeuePriority(): Dequeues an entry from a TCB list using priority.
+ *
+ */
+
+
 #include <stddef.h>
 #include "atom.h"
 #include "atomuser.h"
@@ -36,9 +152,9 @@
 
 /**
  * This is the head of the queue of threads that are ready to run. It is
- * ordered by priority, with the higher priority threads coming first.
- * Where there are multiple threads of the same priority, the TCB pointers
- * are FIFO-ordered.
+ * ordered by priority, with the higher priority threads coming first. Where
+ * there are multiple threads of the same priority, the TCB (task control
+ * block) pointers are FIFO-ordered.
  *
  * Dequeuing the head is a fast operation because the list is ordered.
  * Enqueuing may have to walk up to the end of the list. This means that
@@ -47,11 +163,11 @@
  * priority tables etc. This scheme can be easily swapped out for other
  * scheduler schemes by replacing the TCB enqueue and dequeue functions.
  *
- * Once a thread is scheduled in, it is not present on the ready queue while
- * it is running. When scheduled out it will be either placed back on the
- * ready queue, or will be suspended on some OS primitive (e.g. on the
- * suspended TCB queue for a semaphore, or in the timer list if suspended on
- * a timer delay).
+ * Once a thread is scheduled in, it is not present on the ready queue or any
+ * other kernel queue while it is running. When scheduled out it will be
+ * either placed back on the ready queue (if still ready), or will be suspended
+ * on some OS primitive if no longer ready (e.g. on the suspended TCB queue
+ * for a semaphore, or in the timer list if suspended on a timer delay).
  */
 ATOM_TCB *tcbReadyQ = NULL;
 
@@ -406,11 +522,11 @@ ATOM_TCB *atomCurrentContext (void)
  *
  * Applications should use the following initialisation sequence:
  *
- * -> Call atomOSInit() before calling any atomthreads APIs
- * -> Arrange for a timer to call atomTimerTick() periodically
- * -> Create one or more application threads using atomThreadCreate()
- * -> Start the OS using atomOSStart(). At this point the highest
- *    priority application thread created will be started.
+ * \li Call atomOSInit() before calling any atomthreads APIs
+ * \li Arrange for a timer to call atomTimerTick() periodically
+ * \li Create one or more application threads using atomThreadCreate()
+ * \li Start the OS using atomOSStart(). At this point the highest
+ *     priority application thread created will be started.
  *
  * Interrupts should be disabled until the first thread restore is complete,
  * to avoid any complications due to interrupts occurring while crucial
