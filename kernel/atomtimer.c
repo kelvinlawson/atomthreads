@@ -27,6 +27,46 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+
+/** 
+ * \file
+ * Timer and system tick library.
+ *
+ *
+ * This module implements kernel system tick / clock functionality and timer
+ * functionality for kernel and application code.
+ *
+ * \par Timer callbacks
+ * Application and kernel code uses this module to request callbacks at a
+ * specific number of system ticks in the future. atomTimerRegister() can be
+ * called with a structure filled out requesting callbacks in a specific
+ * number of ticks. When the timer expires the requested callback function is
+ * called.
+ *
+ * \par Thread delays
+ * Application threads can use atomTimerDelay() to request that the thread
+ * delay for the specified number of system ticks. The thread will be put in
+ * the timer list and taken off the ready queue. When the timer expires the
+ * thread will be made ready-to-run again. This internally uses the same
+ * atomTimerRegister() function that is used for registering all timers.
+ *
+ * \par System tick / Clock
+ * This module also implements the system tick. At a predefined interval
+ * (SYSTEM_TICKS_PER_SEC) architecture ports arrange for atomTimerTick() to be
+ * called. The tick increments the system tick count, which can be queried by
+ * application code using atomTimeGet(). On this tick, the registered timer
+ * list is checked for any timers which have expired. Those which have expired
+ * have their callback functions called. It is also on this system tick that
+ * round-robin rescheduling time-slices occur. On exit from the tick interrupt
+ * handler the kernel checks whether there are two or more threads 
+ * ready-to-run at the same priority, and if so uses round-robin to schedule
+ * in the next thread. This is in contrast to other (non-timer-tick)
+ * interrupts which do not allow for round-robin rescheduling to occur, as
+ * they should only occur on a new timer tick.
+ *
+ */
+
+
 #include <stdio.h>
 #include "atom.h"
 #include "atomuser.h"
