@@ -1,5 +1,12 @@
 ---------------------------------------------------------------------------
 
+Library:      Atomthreads
+Author:       Kelvin Lawson <kelvinl@users.sf.net>
+Website:      http://atomthreads.com
+License:      BSD Revised
+
+---------------------------------------------------------------------------
+
 AVR/ATMEGA PORT
 
 This folder contains a port of the Atomthreads real time kernel for the

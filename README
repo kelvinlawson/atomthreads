@@ -20,3 +20,28 @@ architecture-specific file.
 
 ---------------------------------------------------------------------------
 
+DOCUMENTATION:
+
+All documentation is contained within the source files, commented using
+Doxygen markup. Pre-generated documentation can be accessed at
+http://atomthreads.com.
+
+See also the README file contained within each folder of the source tree.
+
+---------------------------------------------------------------------------
+
+GETTING STARTED:
+
+Building of the sources is carried out from the ports tree. For example to 
+make a software build for the AVR architecture see ports/avr/README.
+
+---------------------------------------------------------------------------
+
+SOURCE TREE:
+
+ * kernel        Core kernel sources
+ * tests         Automated test suite
+ * ports         CPU architecture ports
+
+---------------------------------------------------------------------------
+

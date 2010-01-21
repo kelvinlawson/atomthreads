@@ -1,0 +1,32 @@
+---------------------------------------------------------------------------
+
+Library:      Atomthreads
+Author:       Kelvin Lawson <kelvinl@users.sf.net>
+Website:      http://atomthreads.com
+License:      BSD Revised
+
+---------------------------------------------------------------------------
+
+KERNEL SOURCES
+
+This folder contains the core Atomthreads operating system modules.
+
+ * atomkernel.c:   Core scheduler facilities
+ * atommutex.c:    Mutual exclusion
+ * atomqueue.c:    Queue / message-passing
+ * atomsem.c:      Semaphore
+ * atomtimer.c:    Timer facilities and system clock management
+
+Each module source file contains detailed documentation including an
+introduction to usage of the module and full descriptions of each API.
+Refer to the sources for further documentation.
+
+---------------------------------------------------------------------------
+
+BUILDING THE KERNEL
+
+The kernel is built from the architecture port folder. Build instructions
+are included in the README file for each port.
+
+---------------------------------------------------------------------------
+

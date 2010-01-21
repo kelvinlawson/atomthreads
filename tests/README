@@ -1,0 +1,54 @@
+---------------------------------------------------------------------------
+
+Library:      Atomthreads
+Author:       Kelvin Lawson <kelvinl@users.sf.net>
+Website:      http://atomthreads.com
+License:      BSD Revised
+
+---------------------------------------------------------------------------
+
+AUTOMATED TEST SUITE
+
+This folder contains a set of automated tests which can be used to prove
+reliable operation of all kernel facilities.
+
+Each kernel module has an associated set of test modules which are
+designed to thoroughly exercise and prove all APIs and usage scenarios.
+Tests are run on the embedded target device and can therefore be used to
+gain confidence in ports to your target hardware or CPU architecture.
+Developers of new CPU architecture ports can take advantage of the thorough
+coverage provided by these tests to considerably speed up development and
+validation time.
+
+---------------------------------------------------------------------------
+
+HOW TO RUN THE TESTS
+
+The automated test suite is built automatically from the architecture port
+folder. Instructions are included in the README file for each port, which
+describes the process for building test applications as well as downloading
+to and running the tests on the target device.
+
+---------------------------------------------------------------------------
+
+WRITING ADDITIONAL TESTS
+
+If you wish to write additional tests you can base them on the file
+test-template.c. This contains an empty test function with the correct
+API for use by port test launchers.
+
+The test functions return the number of failures which can be used by the
+port's test launcher application to report the test result. Tests can,
+however, also call ATOMLOG() to print details out on a UART or similar
+if such a facility is available on the port in question. These log
+messages can be omitted from an architecture port if desired.
+
+When writing generic tests to run on all CPU architectures, bear in mind
+that Atomthreads can run on tiny 8-bit devices with limited RAM and other
+resources. For this reason it aids portaibility if tests are broken up into
+modules which do not consume large amounts of processor resource. For
+example the number of test threads should ideally be kept low in order to
+allow smaller systems to accommodate the thread stack requirements.
+
+---------------------------------------------------------------------------
+
