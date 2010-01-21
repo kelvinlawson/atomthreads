@@ -113,6 +113,7 @@
  * switch a thread in whether it has previously run or if it has never been
  * run since the thread was created. The context-save area is formatted in
  * exactly the same manner.
+ *
  * 
  * \b Functions contained in this module:\n
  *
