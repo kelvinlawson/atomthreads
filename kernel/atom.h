@@ -31,7 +31,7 @@
 #define __ATOM_H
 
 #include "atomtimer.h"
-#include "atomuser.h"
+#include "atomport.h"
 
 /* Data types */
 

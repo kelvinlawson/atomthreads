@@ -32,7 +32,7 @@
 #include <avr/pgmspace.h>
 
 #include "atom.h"
-#include "atomport.h"
+#include "atomport-private.h"
 #include "atomtests.h"
 #include "atomtimer.h"
 

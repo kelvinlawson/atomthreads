@@ -18,7 +18,7 @@
 
 #include "atom.h"
 #include "atommutex.h"
-#include "atomport.h"
+#include "atomport-private.h"
 #include "uart.h"
 
 /*

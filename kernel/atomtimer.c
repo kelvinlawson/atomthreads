@@ -69,7 +69,6 @@
 
 #include <stdio.h>
 #include "atom.h"
-#include "atomuser.h"
 
 
 /* Data types */

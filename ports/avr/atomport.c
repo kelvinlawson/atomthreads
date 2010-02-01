@@ -31,7 +31,7 @@
 #include <avr/interrupt.h>
 
 #include "atom.h"
-#include "atomport.h"
+#include "atomport-private.h"
 
 
 /** Forward declarations */

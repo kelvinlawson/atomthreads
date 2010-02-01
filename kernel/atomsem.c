@@ -92,7 +92,6 @@
 #include "atom.h"
 #include "atomsem.h"
 #include "atomtimer.h"
-#include "atomuser.h"
 
 
 /* Local data types */

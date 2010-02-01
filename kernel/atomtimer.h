@@ -30,7 +30,8 @@
 #ifndef __ATOM_TIMER_H
 #define __ATOM_TIMER_H
 
-#include "atomuser.h"
+#include "atomport.h"
+
 
 /* Callback function prototype */
 typedef void ( * TIMER_CB_FUNC ) ( POINTER cb_data ) ;

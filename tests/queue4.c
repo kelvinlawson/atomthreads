@@ -31,7 +31,6 @@
 #include "atom.h"
 #include "atomqueue.h"
 #include "atomtests.h"
-#include "atomuser.h"
 
 
 /*   Number of queue entries */

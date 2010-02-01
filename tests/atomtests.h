@@ -33,22 +33,9 @@
 /* Include Atomthreads kernel API */
 #include "atom.h"
 
-/* Prerequisite include for ATOMLOG() macro (via printf) */
-#include <stdio.h>
+/* Include port-specific test configuration */
+#include "atomport-tests.h"
 
-/* Logger macro for viewing test results */
-#define ATOMLOG     printf_P
-
-/*
- * String location macro: for platforms which need to place strings in
- * alternative locations, e.g. on avr-gcc strings can be placed in
- * program space, saving SRAM. On most platforms this can expand to
- * empty.
- */
-#define _STR(x)     PSTR(x)
-
-/* Default thread stack size (in bytes) */
-#define TEST_THREAD_STACK_SIZE      128
 
 /* Default thread priority */
 #define TEST_THREAD_PRIO            16

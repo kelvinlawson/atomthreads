@@ -31,7 +31,6 @@
 #include "atom.h"
 #include "atomsem.h"
 #include "atomtests.h"
-#include "atomuser.h"
 
 
 /* Test OS objects */

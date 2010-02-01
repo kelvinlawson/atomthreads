@@ -105,7 +105,6 @@
 #include "atom.h"
 #include "atommutex.h"
 #include "atomtimer.h"
-#include "atomuser.h"
 
 
 /* Local data types */

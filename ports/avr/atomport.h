@@ -30,10 +30,30 @@
 #ifndef __ATOM_PORT_H
 #define __ATOM_PORT_H
 
-/* CPU Frequency */
-#define AVR_CPU_HZ          1000000
+#include <avr/io.h>
+#include <avr/interrupt.h>
+#include <avr/pgmspace.h>
 
-/* Function prototypes */
-void avrInitSystemTickTimer ( void );
+/* Portable uint8_t and friends available from stdint.h on this platform */
+#include <stdint.h>
+
+
+/* Required number of system ticks per second (normally 100 for 10ms tick) */
+#define SYSTEM_TICKS_PER_SEC            100
+
+
+/**
+ * Architecture-specific types.
+ * Most of these are available from stdint.h on this platform, which is
+ * included above.
+ */
+#define POINTER void *
+
+
+/* Critical region protection */
+#define CRITICAL_STORE      uint8_t sreg
+#define CRITICAL_START()    sreg = SREG; cli();
+#define CRITICAL_END()      SREG = sreg
+
 
 #endif /* __ATOM_PORT_H */

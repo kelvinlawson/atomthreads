@@ -146,7 +146,6 @@
 
 #include <stddef.h>
 #include "atom.h"
-#include "atomuser.h"
 
 
 /* Global data */
