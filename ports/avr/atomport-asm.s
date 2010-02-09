@@ -118,7 +118,7 @@ archContextSwitch:
      * the old TCB is still untouched in R25-R24. We have saved R16/R17
      * and R28/R29 so we can use them for our own purposes now. We must be
      * careful not to use R23-R22, however, as these still contain the
-     * other parameter, old_tcb_ptr.
+     * other parameter, new_tcb_ptr.
      */
     in  r16,_SFR_IO_ADDR(SPL)  /* Get the current SP into general regs */
     in  r17,_SFR_IO_ADDR(SPH)  /* R16/R17 which are now free to use. */
@@ -126,7 +126,7 @@ archContextSwitch:
     mov r28,r24         /* Move old_tcb_ptr param into the Y-regs so we */
     mov r29,r25         /* can access the TCB via a pointer. */
 
-    st  Y,r16           /* Store SPH/SPL to new_tcb_ptr->tcb_save_ptr which */
+    st  Y,r16           /* Store SPH/SPL to old_tcb_ptr->tcb_save_ptr which */
     std Y+1,r17         /* is conveniently the first member of the TCB. */
 
 
