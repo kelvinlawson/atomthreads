@@ -620,12 +620,15 @@ void atomOSStart (void)
  * no other threads are ready to run. It must not call any library routines
  * which would cause it to block.
  *
- * @param[in] data Unused (optional thread entry parameter)
+ * @param[in] param Unused (optional thread entry parameter)
  *
  * @return None
  */
-static void atomIdleThread (uint32_t data)
+static void atomIdleThread (uint32_t param)
 {
+    /* Compiler warning  */
+    param = param;
+
     /* Loop forever */
     while (1)
     {
