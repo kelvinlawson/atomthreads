@@ -1,0 +1,63 @@
+# Segment configuration
+#<BEGIN SEGMENT_CONF>
+# Segment Code,Constants:
++seg .const -b 0x8080 -m 0x7f80 -n .const -it
++seg .text -a .const -n .text
+# Segment Eeprom:
++seg .eeprom -b 0x4000 -m 0x400 -n .eeprom
+# Segment Zero Page (this deliberately avoids 0x0 to avoid
+# NULL pointers to real data):
++seg .bsct -b 0x2 -m 0xfe -n .bsct
++seg .ubsct -a .bsct -n .ubsct
++seg .bit -a .ubsct -n .bit -id
++seg .share -a .bit -n .share -is
+# Segment Ram:
++seg .data -b 0x100 -m 0x500 -n .data
++seg .bss -a .data -n .bss
+#<END SEGMENT_CONF>
+
+
+# Startup file
+#<BEGIN STARTUP_FILE>
+crtsi0.sm8
+#<END STARTUP_FILE>
+
+
+# Object files list - section reserved for STVD
+#<BEGIN OBJECT_FILES>
+build\atomkernel.o
+build\atommutex.o
+build\atomqueue.o
+build\atomsem.o
+build\atomtimer.o
+build\stm8s_gpio.o
+build\stm8s_tim1.o
+build\tests-main.o
+build\atomport.o
+build\atomport-asm.o
+# Caller passes in test application object name as param1
+@1
+#<END OBJECT_FILES>
+
+
+# Library list
+#<BEGIN LIBRARY_FILES>
+libis0.sm8
+libm0.sm8
+#<END LIBRARY_FILES>
+
+
+# Interrupt vectors file
+#<BEGIN VECTOR_FILE>
++seg .const -b 0x8000 -k
+build/stm8_interrupt_vector.o
+#<END VECTOR_FILE>
+
+# Defines
+#<BEGIN DEFINED_VARIABLES>
++def __endzp=@.ubsct			# end of uninitialized zpage
++def __memory=@.bss				# end of bss segment
++def __startmem=@.bss
++def __endmem=0x5ff
++def __stack=0x7ff
+#<END DEFINED_VARIABLES>
