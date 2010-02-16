@@ -65,7 +65,7 @@
  *
  * In this case we use the default startup stack location used by
  * avr-gcc of the top of RAM (defined as RAMEND). After the OS
- * is started this allocation is no longer required,therefore
+ * is started this allocation is no longer required, therefore
  * you could alternatively use some location which you know that
  * your application will not use until the OS is started. Note
  * that you cannot use the idle thread or main thread stack here
@@ -120,6 +120,7 @@ static uint8_t idle_thread_stack[IDLE_STACK_SIZE_BYTES];
 
 /* STDIO stream */
 static FILE uart_stdout = FDEV_SETUP_STREAM(uart_putchar, NULL, _FDEV_SETUP_WRITE);
+
 
 /* Forward declarations */
 static void main_thread_func (uint32_t data);
