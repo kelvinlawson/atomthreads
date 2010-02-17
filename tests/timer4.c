@@ -39,6 +39,7 @@ static ATOM_TIMER timer_cb[4];
 
 /* Global test data */
 static uint32_t cb_ticks[4];
+static uint32_t start_time;
 
 
 /* Forward declarations */
@@ -66,6 +67,21 @@ uint32_t test_start (void)
 
     /* Default to zero failures */
     failures = 0;
+
+    /*
+     * Sleep for one tick first to ensure we start near a
+     * tick boundary. This should ensure that the timer
+     * tick does not advance while we are setting up the
+     * timers but before registering them.
+     */
+    atomTimerDelay(1);
+
+    /*
+     * Keep a note of the time we started the timers. This
+     * can be added to the tick timers to calculate the final
+     * time at which we expect the timers to expire.
+     */
+    start_time = atomTimeGet();
 
     /*
      * Fill out four timer request structures. Callbacks are
@@ -163,8 +179,12 @@ static void testCallback (POINTER cb_data)
 {
     uint32_t expected_end_time;
 
-    /* Pull out the expected end time */
-    expected_end_time = *(uint32_t *)cb_data;
+    /*
+     * Pull out the number of ticks the timer was registered for
+     * and add this to the start time, to get the final time at
+     * which we expect the timers to expire.
+     */
+    expected_end_time = start_time + *(uint32_t *)cb_data;
 
     /*
      * Check the callback time (now) matches the time

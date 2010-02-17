@@ -1,0 +1,352 @@
+---------------------------------------------------------------------------
+
+Library:      Atomthreads
+Author:       Kelvin Lawson <kelvinl@users.sf.net>
+Website:      http://atomthreads.com
+License:      BSD Revised
+
+---------------------------------------------------------------------------
+
+STM8 PORT
+
+This folder contains a port of the Atomthreads real time kernel for the
+STM8 processor architecture.
+
+All of the cross-platform kernel code is contained in the top-level 
+'kernel' folder, while ports to specific CPU architectures are contained in
+the 'ports' folder tree. A port to a CPU architecture can comprise just one
+or two modules which provide the architecture-specific functionality, such
+as the context-switch routine which saves and restores processor registers
+on a thread switch. In this case, the kernel port is split into two files:
+
+ * atomport.c: Those functions which can be written in C
+ * atomport-asm.s: The main register save/restore assembler routines
+
+Each Atomthreads port requires also a header file which describes various
+architecture-specific details such as appropriate types for 8-bit, 16-bit
+etc variables, the port's system tick frequency, and macros for performing
+interrupt lockouts / critical sections:
+
+ * atomuser.h: Port-specific header required by the kernel for each port
+
+A few additional source files are also included here:
+
+ * stm8_interrupt_vector.c: List of interrupt handlers for vector table
+ * tests-main.c: Main application file (used for launching automated tests)
+ * stm8s-periphs/*.*: Peripheral drivers as delivered by ST (no changes
+     to distributed code).
+
+Atomthreads includes a suite of automated tests which prove the key OS
+functionality, and can be used with any architecture ports. This port
+provides an easy mechanism for building, downloading and running the test
+suite to prove the OS on your target.
+
+The port was carried out and tested on an STM8S105C6 running within an
+STM8S-Discovery board, utilising the Cosmic compiler tools. It is possible
+to use it with other processors in the STM8 range, as well as other 
+hardware platforms and compilers, with minimal changes. Platform and 
+compiler specific code has been kept to an absolute minimum.
+
+
+---------------------------------------------------------------------------
+
+PREREQUISITES
+
+The port works out-of-the-box with the Cosmic compiler tools for building.
+Applications are generated in .s19 form and can be programmed with any
+supporting programming software, including the free STVP (visual
+programmer tool). At this time ST do not provide a command-line programmer
+application suitable for use with STM8.
+
+The Cosmic compiler and STVP are currently Windows-only applications. For
+users of other operating systems the Cosmic compiler may work in 
+environments like Wine, but the USB programming tools are less likely to
+be supported. Both the compiler and the USB programming tool for
+STM8S-Discovery (STVP) can, however, be run successfully within a VM such
+as VirtualBox.
+
+The core software prerequisites are therefore:
+ * Cosmic STM8 compiler
+ * Programming software (e.g. ST's STVP tool)
+
+Optionally, application build, program and debug can be carried out
+using ST's visual debug tool, STVD.
+
+Use with alternative compiler tools may require some modification, but you
+can easily replace STVP by your own favourite programmer if required.
+
+
+---------------------------------------------------------------------------
+
+MEMORY MODEL
+
+The sample build configurations use the Cosmic modsl0 memory model. This
+places all data outside of the short 0x0-0x255 page0 area, which allows
+large data blocks such as thread stacks to fit. You could instead use the
+more efficient mods0 memory model which places data in the short page0
+area, and force large data areas like thread stacks outside of page0 by
+adding @near modifiers or specifying data areas by the linker file etc.
+
+The default configuration is modsl0 (place outside of page0) to allow for
+the most portable application compilation, with the option of optimising
+this by placing data in page0 if desired. There is no requirement that you
+compile your applications using the modsl0 memory model.
+
+
+---------------------------------------------------------------------------
+
+BUILDING THE SOURCE
+
+You may build Atomthreads using whichever build environment you desire. For
+your convenience we provide both a ready-rolled Makefile-based build system
+and an STVD visual debugger project. The STVD project permits easy
+building, programming and debugging, but does not easily support building
+a wide range of application builds within the same project, which is
+useful for building the numerous automated tests. For the automated tests
+you may find it easier to use the Makefile which automatically builds all
+automated tests.
+
+
+---------------------------------------------------------------------------
+
+BUILD VIA STVD PROJECT
+
+For building applications using STVD you can use the sample project file
+atomthreads-sample.stp. This builds a sample full application which runs
+the "sem1" automated test. Applications can be downloaded directly to the
+target hardware (e.g. STM8S-Discovery) and run via the integrated
+debugger. Press the exclamation button to run, and confirm that the LED
+flashes once per second (if running on an STM8S-Discovery) to ensure that
+the test has passed. 
+
+This is also a good starting point for building your own applications:
+simply modify the file tests-main.c which starts the test application.
+You can run any of the other automated tests by replacing the file sem1.c
+within the project by another of the tests within the atomthreads tests
+folder. This is rather painful using a GUI interface, and you may prefer
+to use the Makefile-based system instead which builds all automated 
+tests in one command.
+
+
+---------------------------------------------------------------------------
+
+BUILD VIA MAKEFILE
+
+A Makefile is also provided for building the kernel, port and automated
+tests. This is particularly useful for building the automated tests
+because many different independent applications need to be built which is
+not easily achieved within the STVD environment.
+
+For a Windows system you can obtain a Make application suitable for use
+with the Cosmic compiler from:
+
+ * http://www.cosmic-software.com/comp_utils/GNU_Make.zip
+
+Assuming you install the above into C:\Program Files\GNU_MAKE, you
+should set up your environment variables as follows:
+
+ * set PATH=%PATH%;C:\Program Files\GNU_MAKE;C:\Program Files\COSMIC\STMS_16K
+ * set MAKE_MODE=DOS
+
+
+The full build is carried out using simply:
+
+ * make
+
+All objects are built into the 'build' folder under ports/stm8. The build
+process builds separate target applications for each automated test, and
+appropriate .stm8 or .s19 files can be found in the build folder ready for
+downloading to and running on the target. Because of the limited resources
+on the STM8, and the large amount of automated tests, each test is built
+and run as a separate application.
+
+
+All built objects etc can be cleaned using:
+
+ * make clean
+
+
+The Atomthreads sources are documented using Doxygen markup. You can build
+both the kernel and STM8 port documentation from this folder using:
+
+ * make doxygen
+
+
+---------------------------------------------------------------------------
+
+PROGRAMMING MAKEFILE-BUILT APPLICATIONS TO THE TARGET DEVICE
+
+When developing within STVD, programs can be downloaded directly to the
+target. If, however, you are building applications separately using a
+Makefile or similar, then you are not able to program the application
+using STVD. The tools delivered by ST do not appear to offer any easy way
+of downloading and running applications built externally. For the time
+being the following (slow) development workflow is possible (note that
+these settings apply to the STM8S-Discovery):
+
+ * Build app using Makefile.
+ * Open STVP and configure to use Swim ST-Link for CPU STM8105C6.
+ * Program using STVP.
+
+Unfortunately STVP does not reset and start the CPU running. The
+following can be used to do this:
+
+ * cd \Program Files\STMicroelectronics\st_toolset\stvd\swim
+ * ..\gdb7.exe --command=gdbswim_stlink.ini
+ * emulator-reset-port-mcu usb://usb stm8s105c6
+ * run
+
+Your application should now be programmed and running.
+
+If you wish to run another application, you must stop GDB using Ctrl-C
+and request STVP to communicate with the USB debugger again (either by
+selecting "Configure ST Visual Programmer" or just closing and reopening
+the STVP application). You can then download a new application and repeat
+the GDB steps. You must force a USB reconnect within STVP because it loses
+communication with the debugger while GDB is in use.
+
+This is clearly not a very efficient workflow but it appears that at
+this time there are no applications for simple programming and running
+of applications to the STM8S-Discovery hardware. Other development
+platforms and debugger hardware may have better tools available, this
+only applies to the Discovery.
+
+
+---------------------------------------------------------------------------
+
+STM8S-DISCOVERY SPECIFICS
+
+There are very minimal board-specific aspects to the STM8 port so it is
+trivial to run Atomthreads on other STM8 platforms.
+
+The test application makes use of an LED on one of the GPIO ports of the 
+Discovery board to indicate whether the automated tests passed or failed.
+This is not a core port feature and would not be required in user
+applications.
+
+If you are using a CPU other than the STM8S105C6 you should modify
+stm8s_conf.h to specify your CPU. You may also wish to enable in that file
+any CPU peripherals which you wish to use.
+
+
+---------------------------------------------------------------------------
+
+RUNNING THE AUTOMATED TESTS
+
+Atomthreads contains a set of generic kernel tests which can be run on any
+port to prove that all core functionality is working on your target.
+
+The full set of tests can be found in the top-level 'tests' folder. Each of
+these tests is built as an independent application in the 'build' folder.
+Run them individually using the STVP process described above. For example
+to run the 'kern1.c' test usr STVP to program it, and GDB to start the
+application running.
+
+To view the test results, watch the LED on the STM8S-Discovery. This will
+flash once per second if the test passed, and once every 1/8 second if the
+test failed.
+
+Most of the tests complete within a few seconds, but some (particularly
+the stress tests) can take several seconds, so be patient. 
+
+The full suite of tests endeavours to exercise as much of the kernel code
+as possible, and can be used for quick confirmation of core OS
+functionality if you ever need to make a change to the kernel or port.
+
+The test application main() is contained in tests-main.c. This initialises
+the OS, creates a main thread, and calls out to the test modules.
+
+
+---------------------------------------------------------------------------
+
+WRITING APPLICATIONS
+
+The easiest way to start a new application which utilises the Atomthreads
+scheduler is to base your main application startup on tests-main.c. This
+initialises the OS and calls out to the test module entry functions. You
+can generally simply replace the call to the test modules by a call to your
+own application startup code.
+
+
+---------------------------------------------------------------------------
+
+RAM FOOTPRINT & STACK USAGE
+
+The Atomthreads kernel is written in well-structured pure C which is highly
+portable and not targeted at any particular compiler or CPU architecture.
+For this reason it is not highly optimised for the STM8 architecture, and
+by its nature will likely have a higher text and data footprint than an
+RTOS targeted at the STM8 architecture only. The emphasis here is on
+C-based portable, readable and maintainable code which can run on any CPU
+architecture, from the 8-bitters up.
+
+A good rule of thumb when using Atomthreads on the STM8 architecture is
+that a minimum of 1KB RAM is required in order to support an application
+with 4 or 5 threads and the idle thread. If approximately 128 bytes per
+thread stack is acceptable then you will benefit from the easy-to-read,
+portable implementation of an RTOS herein.
+
+The major consumer of RAM when using Atomthreads is your thread stacks.
+Functionality that is shared between several kernel modules is farmed out
+to separate functions, resulting in readable and maintainable code but
+with some associated stack cost of calling out to subroutines. Further,
+each thread stack is used for saving its own registers on a context
+switch, and there is no separate interrupt stack which means that each
+thread stack has to be able to cope with the maximum stack usage of the
+kernel (and application) interrupt handlers.
+
+Clearly the stack requirement for each thread depends on what your
+application code does, and what memory model is used etc, but generally
+you should find that 128 bytes is enough to allow for the thread to be
+switched out (and thus save its registers) while deep within a kernel
+call stack, and similarly enough to provide stack for interrupt handlers
+interrupting while the thread is deep within a kernel call stack. We
+have seen a little more than 128 bytes being used, however, when the
+application code itself is made up of several subroutines.
+
+With careful consideration and few threads it would be possible to use
+a platform with 512 bytes RAM, but not all of the automated test suite
+would run on such a platform (some of the test modules use 6 threads: a
+main thread together with 4 sub-threads and the idle thread).
+
+The RAM layout used for the automated test applications is as follows:
+
+RAM Top:
+* Startup Stack (64 bytes)
+* Main Thread Stack (Variable size)
+* Data & BSS area (thread stacks, other application data)
+RAM Bottom.
+
+This is not prescribed, you may use whichever layout you wish for your
+applications.
+
+The startup stack area starts at the top of RAM and is only used for first
+initialisation of the OS and main thread. This uses 64 bytes and could be
+reused once the OS is started, but for the purposes of the automated test
+applications it is not reused. Generally you would ensure that this is
+reused in your own application code.
+
+The application's data starts at the bottom of RAM, and this includes most
+of the thread stacks which are statically allocated arrays. The idle thread
+and automated test thread stacks are allocated here and are 128 bytes each.
+
+The remaining area between the startup stack (RAMTOP-64) and the end of the
+data/BSS areas is allocated to the main thread stack. As this thread
+typically requires the largest stack, this uses all of the remaining RAM
+between the top and bottom. In general for the automated tests this thread
+does most of the processing and requires more than 128 bytes (it has been
+seen to exceed 148 bytes). You can check that sufficient RAM is available
+for the main thread by viewing the MAP file for the application. This shows
+how much RAM is used by the data and BSS areas. If you have 1024 bytes RAM,
+subtract the data and BSS size values from 1024, and subtract the amount
+used for the startup stack (64 bytes) to figure out the remaining space
+available for the main thread stack. Again, for your own applications you
+will probably be reusing the startup stack area, so can exclude that from
+your calculations.
+
+As mentioned previously, this RAM layout is only the one utilised by the
+test applications. You may choose whatever layout you like.
+
+
+---------------------------------------------------------------------------
+
