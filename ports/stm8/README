@@ -347,6 +347,17 @@ your calculations.
 As mentioned previously, this RAM layout is only the one utilised by the
 test applications. You may choose whatever layout you like.
 
+Note that on this platform data can be placed at address 0x0, but the
+Atomthreads kernel performs validity checks on pointers to ensure they
+are not NULL pointers (point to address 0x0). For this reason the
+example projects (STVD and Makefile) force the linker to not use address
+0x0 and instead start the page0 space at 0x2. This ensures that the
+linker does not place any data at address 0x0, and hence all NULL-ptr
+checks are still suitable checks for valid pointers. This does, however,
+waste 2 bytes. For your own projects you can force this within STVD by
+editing the project linker settings (Input -> Zero Page start at 0x2)
+or by editing the linker .LKF file as can be seen in atomthreads.lkf.
+
 
 ---------------------------------------------------------------------------
 
