@@ -299,10 +299,11 @@ Clearly the stack requirement for each thread depends on what your
 application code does, and what memory model is used etc, but generally
 you should find that 128 bytes is enough to allow for the thread to be
 switched out (and thus save its registers) while deep within a kernel
-call stack, and similarly enough to provide stack for interrupt handlers
-interrupting while the thread is deep within a kernel call stack. We
-have seen a little more than 128 bytes being used, however, when the
-application code itself is made up of several subroutines.
+or application call stack, and similarly enough to provide stack for
+interrupt handlers interrupting while the thread is deep within a 
+kernel or application call stack. We have seen a little more than 128
+bytes being used, however, when the application code itself is made up
+of several subroutines.
 
 With careful consideration and few threads it would be possible to use
 a platform with 512 bytes RAM, but not all of the automated test suite
@@ -335,14 +336,18 @@ data/BSS areas is allocated to the main thread stack. As this thread
 typically requires the largest stack, this uses all of the remaining RAM
 between the top and bottom. In general for the automated tests this thread
 does most of the processing and requires more than 128 bytes (it has been
-seen to exceed 148 bytes). You can check that sufficient RAM is available
+seen to exceed 146 bytes). You can check that sufficient RAM is available
 for the main thread by viewing the MAP file for the application. This shows
-how much RAM is used by the data and BSS areas. If you have 1024 bytes RAM,
-subtract the data and BSS size values from 1024, and subtract the amount
+how much RAM is used by the data and BSS areas. If you have 2048 bytes RAM,
+subtract the data and BSS size values from 2048, and subtract the amount
 used for the startup stack (64 bytes) to figure out the remaining space
 available for the main thread stack. Again, for your own applications you
 will probably be reusing the startup stack area, so can exclude that from
-your calculations.
+your calculations. The default layout provided with Atomthreads matches
+the STM8S-Discovery with 2KB RAM. The linker file reserves the first
+0x500 bytes for data areas. The region from here up to the end of RAM
+(0x800) is used for the main stack, and the 64 byte startup stack. The
+default main stack size is therefore (0x300 - 64) 704 bytes.
 
 As mentioned previously, this RAM layout is only the one utilised by the
 test applications. You may choose whatever layout you like.

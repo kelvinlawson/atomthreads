@@ -48,7 +48,7 @@
  * In this case, the idle stack is allocated on the BSS via the
  * idle_thread_stack[] byte array.
  */
-#define IDLE_STACK_SIZE_BYTES       196
+#define IDLE_STACK_SIZE_BYTES       128
 
 
 /*

@@ -200,13 +200,14 @@ thread stack has to be able to cope with the maximum stack usage of the
 kernel (and application) interrupt handlers.
 
 Clearly the stack requirement for each thread depends on what your
-application code does, but generally you should find that 128 bytes is
-enough to allow for the thread to be switched out (and thus save its
-registers) while deep within a kernel call stack, and similarly enough
-to provide stack for interrupt handlers interrupting while the thread is
-deep within a kernel call stack. We have seen a little more than 128 bytes
-being used, however, when the application code itself is made up of
-several subroutines.
+application code does, and what memory model is used etc, but generally
+you should find that 128 bytes is enough to allow for the thread to be
+switched out (and thus save its registers) while deep within a kernel
+or application call stack, and similarly enough to provide stack for
+interrupt handlers interrupting while the thread is deep within a 
+kernel or application call stack. We have seen a little more than 128
+bytes being used, however, when the application code itself is made up
+of several subroutines.
 
 With careful consideration and few threads it would be possible to use
 a platform with 512 bytes RAM, but not all of the automated test suite

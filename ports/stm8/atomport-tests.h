@@ -43,7 +43,7 @@
 #define _STR
 
 /* Default thread stack size (in bytes) */
-#define TEST_THREAD_STACK_SIZE      196
+#define TEST_THREAD_STACK_SIZE      128
 
 
 #endif /* __ATOM_PORT_TESTS_H */
