@@ -112,7 +112,7 @@ automated tests.
 BUILD VIA STVD PROJECT
 
 For building applications using STVD you can use the sample project file
-atomthreads-sample.stp. This builds a sample full application which runs
+atomthreads-sample.stw. This builds a sample full application which runs
 the "sem1" automated test. Applications can be downloaded directly to the
 target hardware (e.g. STM8S-Discovery) and run via the integrated
 debugger. Press the exclamation button to run, and confirm that the LED

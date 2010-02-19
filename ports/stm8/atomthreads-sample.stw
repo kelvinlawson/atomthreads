@@ -1,0 +1,12 @@
+;	STMicroelectronics Workspace file
+
+[Version]
+Keyword=ST7Workspace-V0.7
+
+[Project0]
+Filename=atomthreads-sample.stp
+Dependencies=
+[Options]
+ActiveProject=atomthreads
+ActiveConfig=Debug
+AddSortedElements=0
