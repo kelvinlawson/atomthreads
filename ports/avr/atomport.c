@@ -187,6 +187,19 @@ void archThreadContextInit (ATOM_TCB *tcb_ptr, void *stack_top, void (*entry_poi
     *stack_ptr-- = (uint8_t)(((uint16_t)thread_shell >> 8) & 0xFF);
 
     /**
+     * Devices with 3 byte program counters (e.g. Atmega25x, Xmega)
+     * must have 3 bytes stacked for the entry point. In GCC
+     * function pointers are still 16-bits, however, so we cannot
+     * actually pass entry points at > 64KB in memory space. This
+     * means that the thread_shell() function must be located
+     * in the bottom 64KB. You may need to modify linker scripts to
+     * force this.
+     */
+#ifdef __AVR_3_BYTE_PC__
+    *stack_ptr-- = 0;
+#endif
+
+    /**
      * For the AVR port the parameter registers (R25-R24) are not
      * saved and restored by the context switch routines. This means
      * that they cannot be used to pass a parameter to the entry
@@ -262,7 +275,11 @@ void avrInitSystemTickTimer ( void )
     OCR1A = (AVR_CPU_HZ / 256 / SYSTEM_TICKS_PER_SEC);
 
     /* Enable compare match 1A interrupt */
+#ifdef TIMSK
     TIMSK = _BV(OCIE1A);
+#else
+    TIMSK1 = _BV(OCIE1A);
+#endif
 
     /* Set prescaler 256 */
     TCCR1B = _BV(CS12) | _BV(WGM12);
