@@ -145,7 +145,9 @@ minutes, so be patient.
 
 The test application also toggles a bit on PORTB once per second if the
 test was successful. On the STK500 this can be connected to the LEDs for
-a visual indication of a passed test without the UART.
+a visual indication of a passed test without the UART. If you do not wish to
+use the UART you may use this to indicate passed tests, a UART is not
+a requirement for running the tests.
 
 The full suite of tests endeavours to exercise as much of the kernel code
 as possible, and can be used for quick confirmation of core OS
@@ -165,6 +167,24 @@ scheduler is to base your main application startup on tests-main.c. This
 initialises the OS, sets up a UART and calls out to the test module entry
 functions. You can generally simply replace the call to the test modules by
 a call to your own application startup code.
+
+
+---------------------------------------------------------------------------
+
+PORTING TO OTHER HARDWARE PLATFORMS
+
+If you are using a CPU other than the ATmega16, change the PART definition
+in the Makefile to your own CPU.
+
+On CPUs with multiple UARTs, the port uses UART0 to output debug 
+information. If you wish to use an alternative UART you may change the
+registers in uart.c. Note that a UART is not vital for Atomthreads
+operation anyway, it is only used by the test applications for indicating
+test pass/fail status. If you do not wish to use a UART you may instead
+flash a LED or use some other indication mechanism.
+
+The Atomthreads port uses Timer 1 to drive the system tick. If you wish
+to use some other timer then you may do so by modifying atomport.c.
 
 
 ---------------------------------------------------------------------------
@@ -251,6 +271,19 @@ exclude that from your calculations.
 
 As mentioned previously, this RAM layout is only the one utilised by the
 test applications. You may choose whatever layout you like.
+
+
+---------------------------------------------------------------------------
+
+HANDLING CPUS WITH LARGE PROGRAM SPACES
+
+Some devices such as the ATmega2560/2561 support program memory larger than
+128KB. GCC defines __AVR_3_BYTE_PC__ for such devices, which is detected in
+the architecture port wherever special handling is required. GCC does not
+at this time support function pointers greater than 16-bits, however, which
+means that the thread_shell() routine which is the entry point for all
+threads must be located in the bottom 128KB of program space. You may need
+to force this using a linker directive.
 
 
 ---------------------------------------------------------------------------
