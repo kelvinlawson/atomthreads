@@ -114,6 +114,28 @@ archContextSwitch:
     push r29
 
     /**
+     * On devices with large program space we also save RAMPZ, EIND.
+     * Note that GCC 4.3 and later to actually save RAMPZ when called
+     * via an interrupt handler, which means that we end up stacking
+     * RAMPZ twice. However we do need to save RAMPZ for cooperative
+     * context switches where we are called via a function call rather
+     * than an ISR (at this time GCC does not save RAMPZ before function
+     * calls). This has the added benefit that we continue to support
+     * GCC < 4.3, but with the added overhead of the double-stacking for
+     * newer versions of GCC.
+     *
+     * An alternative method that would work for GCC >= 4.3 only would be
+     * to detect whether we were called from an interrupt handler and not
+     * save RAMPZ under those circumstances.
+     */
+#ifdef __AVR_3_BYTE_PC__
+    in r0,_SFR_IO_ADDR(RAMPZ)
+    push r0
+    in r0,_SFR_IO_ADDR(EIND)
+    push r0
+#endif
+
+    /**
      * Save the final stack pointer to the TCB. The parameter pointing to
      * the old TCB is still untouched in R25-R24. We have saved R16/R17
      * and R28/R29 so we can use them for our own purposes now. We must be
@@ -145,12 +167,15 @@ archContextSwitch:
      *    <R17>
      *    <R28>
      *    <R29>
+     *    <RAMPZ>     (Only certain devices)
+     *    <EIND>      (Only certain devices)
      *
      * The stack frame if this was a preemptive switch looks as follows:
      *
      *   <R1>    // saved by ISR
      *   <R0>    //
      *   <SREG>  //
+     *   <RAMPZ> //   (Only certain devices)
      *   <R18>   //
      *   <R19>   //
      *    ||     //
@@ -167,6 +192,8 @@ archContextSwitch:
      *   <R17>
      *   <R28>
      *   <R29>
+     *   <RAMPZ>     (Only certain devices)
+     *   <EIND>      (Only certain devices)
      *
      *
      * In addition, the thread's stack pointer (after context-save) is
@@ -202,6 +229,17 @@ archContextSwitch:
 
     out _SFR_IO_ADDR(SPL),r16  /* Set our stack pointer to the new thread's */
     out _SFR_IO_ADDR(SPH),r17  /* stack pointer, from its TCB. */
+
+    /**
+     * On devices with large program space we also restore RAMPZ, EIND.
+     */
+#ifdef __AVR_3_BYTE_PC__
+    pop r0
+    in r0,_SFR_IO_ADDR(EIND)
+    pop r0
+    in r0,_SFR_IO_ADDR(RAMPZ)
+    push r0
+#endif
 
     /**
      * Restore registers R2-R17, R28-R29.
@@ -320,6 +358,17 @@ archFirstThreadRestore:
 
     out _SFR_IO_ADDR(SPL),r16  /* Set our stack pointer to the new thread's */
     out _SFR_IO_ADDR(SPH),r17  /* stack pointer, from its TCB. */
+
+    /**
+     * On devices with large program space we also restore RAMPZ, EIND.
+     */
+#ifdef __AVR_3_BYTE_PC__
+    pop r0
+    in r0,_SFR_IO_ADDR(EIND)
+    pop r0
+    in r0,_SFR_IO_ADDR(RAMPZ)
+    push r0
+#endif
 
     /**
      * Restore registers R2-R17, R28-R29.

@@ -251,6 +251,14 @@ void archThreadContextInit (ATOM_TCB *tcb_ptr, void *stack_top, void (*entry_poi
     *stack_ptr-- = 0x00;    /* R29 */
 
     /**
+     * On devices with large program space we also context switch RAMPZ, EIND.
+     */
+#ifdef __AVR_3_BYTE_PC__
+    *stack_ptr-- = 0x00;    /* RAMPZ */
+    *stack_ptr-- = 0x00;    /* EIND */
+#endif
+
+    /**
      * All thread context has now been initialised. Save the current
      * stack pointer to the thread's TCB so it knows where to start
      * looking when the thread is started.
