@@ -285,6 +285,10 @@ means that the thread_shell() routine which is the entry point for all
 threads must be located in the bottom 128KB of program space. You may need
 to force this using a linker directive.
 
+Note that on the AVR architecture program memory is referenced in multiples
+of 2 bytes, which is how 16-bits can reference 128KB of program memory
+rather than the 64KB which you might expect.
+
 
 ---------------------------------------------------------------------------
 
