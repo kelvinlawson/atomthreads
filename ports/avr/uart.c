@@ -22,6 +22,30 @@
 #include "uart.h"
 
 /*
+ * Set register-access macros for the first UART across various Atmega devices.
+ */
+#ifdef UCSRA
+/* Device with single UART */
+#define REG_UCSRA	UCSRA
+#define REG_UCSRB	UCSRB
+#define REG_UBRRL	UBRRL
+#define REG_UDR		UDR
+#define BIT_TXEN    TXEN
+#define BIT_RXEN    RXEN
+#define BIT_UDRE    UDRE
+#else
+/* Device with multiple UARTs */
+#define REG_UCSRA	UCSR0A
+#define REG_UCSRB	UCSR0B
+#define REG_UBRRL	UBRR0L
+#define REG_UDR		UDR0
+#define BIT_TXEN    TXEN0
+#define BIT_RXEN    RXEN0
+#define BIT_UDRE    UDRE0
+#endif
+
+
+/*
  * Semaphore for single-threaded access to UART device
  */
 static ATOM_MUTEX uart_mutex;
@@ -37,12 +61,12 @@ uart_init(uint32_t baudrate)
 
   /* Set up the UART device with the selected baudrate */
 #if AVR_CPU_HZ < 2000000UL && defined(U2X)
-  UCSRA = _BV(U2X);             /* improve baud rate error by using 2x clk */
-  UBRRL = (AVR_CPU_HZ / (8UL * baudrate)) - 1;
+  REG_UCSRA = _BV(U2X);             /* improve baud rate error by using 2x clk */
+  REG_UBRRL = (AVR_CPU_HZ / (8UL * baudrate)) - 1;
 #else
-  UBRRL = (AVR_CPU_HZ / (16UL * baudrate)) - 1;
+  REG_UBRRL = (AVR_CPU_HZ / (16UL * baudrate)) - 1;
 #endif
-  UCSRB = _BV(TXEN) | _BV(RXEN); /* tx/rx enable */
+  REG_UCSRB = _BV(BIT_TXEN) | _BV(BIT_RXEN); /* tx/rx enable */
 
   /* Create a mutex for single-threaded putchar() access */
   if (atomMutexCreate (&uart_mutex) != ATOM_OK)
@@ -74,8 +98,8 @@ uart_putchar(char c, FILE *stream)
       uart_putchar('\r', stream);
 
     /* Wait until the UART is ready then send the character out */
-    loop_until_bit_is_set(UCSRA, UDRE);
-    UDR = c;
+    loop_until_bit_is_set(REG_UCSRA, BIT_UDRE);
+    REG_UDR = c;
 
     /* Return mutex access */
     atomMutexPut(&uart_mutex);
