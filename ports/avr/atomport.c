@@ -190,9 +190,10 @@ void archThreadContextInit (ATOM_TCB *tcb_ptr, void *stack_top, void (*entry_poi
      * Devices with 3 byte program counters (e.g. Atmega25x, Xmega)
      * must have 3 bytes stacked for the entry point. In GCC
      * function pointers are still 16-bits, however, so we cannot
-     * actually pass entry points at > 64KB in memory space. This
-     * means that the thread_shell() function must be located
-     * in the bottom 64KB. You may need to modify linker scripts to
+     * actually pass entry points at > 64K in instruction space
+     * (128KB in real terms) and just set the top byte to zero here.
+     * This means that the thread_shell() function must be located
+     * in the bottom 128KB. You may need to modify linker scripts to
      * force this.
      */
 #ifdef __AVR_3_BYTE_PC__
