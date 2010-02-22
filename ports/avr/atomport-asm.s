@@ -238,7 +238,6 @@ archContextSwitch:
     in r0,_SFR_IO_ADDR(EIND)
     pop r0
     in r0,_SFR_IO_ADDR(RAMPZ)
-    push r0
 #endif
 
     /**
@@ -367,7 +366,6 @@ archFirstThreadRestore:
     in r0,_SFR_IO_ADDR(EIND)
     pop r0
     in r0,_SFR_IO_ADDR(RAMPZ)
-    push r0
 #endif
 
     /**
