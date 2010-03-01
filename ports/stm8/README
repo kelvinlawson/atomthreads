@@ -282,9 +282,9 @@ architecture, from the 8-bitters up.
 
 A good rule of thumb when using Atomthreads on the STM8 architecture is
 that a minimum of 1KB RAM is required in order to support an application
-with 4 or 5 threads and the idle thread. If approximately 128 bytes per
-thread stack is acceptable then you will benefit from the easy-to-read,
-portable implementation of an RTOS herein.
+with 4 or 5 threads and the idle thread. If a minimum of approximately
+128 bytes per thread stack is acceptable then you will benefit from the
+easy-to-read, portable implementation of an RTOS herein.
 
 The major consumer of RAM when using Atomthreads is your thread stacks.
 Functionality that is shared between several kernel modules is farmed out
@@ -300,21 +300,34 @@ application code does, and what memory model is used etc, but generally
 you should find that 128 bytes is enough to allow for the thread to be
 switched out (and thus save its registers) while deep within a kernel
 or application call stack, and similarly enough to provide stack for
-interrupt handlers interrupting while the thread is deep within a 
-kernel or application call stack. We have seen a little more than 128
-bytes being used, however, when the application code itself is made up
-of several subroutines.
+interrupt handlers interrupting while the thread is deep within a kernel
+or application call stack. You will need to increase this depending on
+what level of stack the application code in question requires.
+
+While 128 bytes has so far been found to be sufficient for the stack
+needs of all of the automated test module threads, the main test thread
+does typically require more due to the additional variables and
+subroutines called.
+
+You may monitor the stack usage of your application threads during runtime
+by defining the macro ATOM_STACK_CHECKING and calling
+atomThreadStackCheck(). This macro is defined by default in the Makefile
+so that the automated test modules can check for stack overflows, but you
+may wish to undefine this in your application Makefiles when you are happy
+that the stack usage is acceptable. Enabling ATOM_STACK_CHECKING will
+increase the size of your threads' TCBs slightly, and will incur a minor
+CPU cycles overhead whenever threads are created due to prefilling the
+thread stack with a known value.
 
 With careful consideration and few threads it would be possible to use
 a platform with 512 bytes RAM, but not all of the automated test suite
 would run on such a platform (some of the test modules use 6 threads: a
-main thread together with 4 sub-threads and the idle thread).
+main thread together with 4 test threads and the idle thread).
 
 The RAM layout used for the automated test applications is as follows:
 
 RAM Top:
 * Startup Stack (64 bytes)
-* Main Thread Stack (Variable size)
 * Data & BSS area (thread stacks, other application data)
 RAM Bottom.
 
@@ -327,27 +340,35 @@ reused once the OS is started, but for the purposes of the automated test
 applications it is not reused. Generally you would ensure that this is
 reused in your own application code.
 
-The application's data starts at the bottom of RAM, and this includes most
-of the thread stacks which are statically allocated arrays. The idle thread
-and automated test thread stacks are allocated here and are 128 bytes each.
+The application's data starts at the bottom of RAM, and this includes all
+of the thread stacks which are statically allocated arrays. The idle
+thread, main thread, and automated test thread stacks are allocated here.
 
-The remaining area between the startup stack (RAMTOP-64) and the end of the
-data/BSS areas is allocated to the main thread stack. As this thread
-typically requires the largest stack, this uses all of the remaining RAM
-between the top and bottom. In general for the automated tests this thread
-does most of the processing and requires more than 128 bytes (it has been
-seen to exceed 146 bytes). You can check that sufficient RAM is available
-for the main thread by viewing the MAP file for the application. This shows
-how much RAM is used by the data and BSS areas. If you have 2048 bytes RAM,
-subtract the data and BSS size values from 2048, and subtract the amount
-used for the startup stack (64 bytes) to figure out the remaining space
-available for the main thread stack. Again, for your own applications you
-will probably be reusing the startup stack area, so can exclude that from
-your calculations. The default layout provided with Atomthreads matches
-the STM8S-Discovery with 2KB RAM. The linker file reserves the first
-0x500 bytes for data areas. The region from here up to the end of RAM
-(0x800) is used for the main stack, and the 64 byte startup stack. The
-default main stack size is therefore (0x300 - 64) 704 bytes.
+If your application includes a large amount of data which is nearing the
+top of RAM, then you must be careful that conflicts do not occur with the
+startup stack. The startup stack uses the 64 bytes from RAMTOP down. This
+is not reserved with the linker, so you will receive no warning if your
+own data encroaches on this area. It may not matter because the startup
+stack is only used before the OS is started, but if the data here cannot
+be corrupted before the OS is started then you should make other
+arrangements, such as moving the startup stack elsewhere or placing data
+which can be overwritten in this area. To check whether your application
+data overlaps with the startup stack you can view the MAP file for the
+application. This shows how much RAM is used by the data and BSS areas.
+If you have 2048 bytes RAM, then you will need to ensure that the
+application data uses less than (2048-64) bytes, or be sure that it is
+safe to utilise that area for the startup stack before the OS is started.
+
+The default layout provided with Atomthreads matches the STM8S-Discovery
+with 2KB RAM. The linker file reserves the first 0x500 bytes for data
+areas. The region from here up to the end of RAM (0x800) is used for the
+the 64 byte startup stack and any other data you require. You may wish
+to place some of your thread's stacks in the area above 0x500, or you may
+prefer to increase the size of the data area beyond 0x500. A simple
+layout would be to allow everything up to (RAMTOP-64) to be used for
+application data, leaving the top 64 bytes for use by the startup stack.
+This way the linker would warn you if your application data overlapped
+with the startup stack.
 
 As mentioned previously, this RAM layout is only the one utilised by the
 test applications. You may choose whatever layout you like.
