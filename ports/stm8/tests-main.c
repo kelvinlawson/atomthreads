@@ -52,55 +52,35 @@
 
 
 /*
- * Startup code stack size
- *
- * This defines the size of stack allowed for the main() startup
- * code before the OS is actually started. This needs to be large
- * enough to manage the atomOSInit(), atomOSStart() and
- * atomThreadCreate() calls which occur before the OS is started.
- *
- * In this case we use the default startup stack location used by
- * the STM8 compiler of the top of RAM above all data sections
- * etc. After the OS is started this allocation is no longer required,
- * therefore you could alternatively use some location which you
- * know that your application will not use until the OS is started. 
- * Note that you cannot use the idle thread or main thread stack 
- * here because the stack contexts of these threads are initialised
- * during OS creation.
- *
- * Instead of reusing some application area, here we set aside
- * 64 bytes of RAM for this purpose, because we call out to
- * several different test applications, and do not know of any
- * particular application locations which will be free to use.
- */
-#define STARTUP_STACK_SIZE_BYTES    64
-
-
-/*
  * Main thread stack size
  *
- * Here we utilise the space starting at 64 bytes below the startup
- * stack for the Main application thread. Note that this is not a
- * required OS kernel thread - you will replace this with your own
- * application thread.
+ * Note that this is not a required OS kernel thread - you will replace
+ * this with your own application thread.
  *
  * In this case the Main thread is responsible for calling out to the
  * test routines. Once a test routine has finished, the thread remains
- * running and loops flashing a LED slowly (if the test passed) or
- * quickly (if the test failed).
+ * running in a loop flashing a LED.
  *
  * The Main thread stack generally needs to be larger than the idle
  * thread stack, as not only does it need to store interrupt handler
  * stack saves and context switch saves, but the application main thread
  * will generally be carrying out more nested function calls and require
  * stack for application code local variables etc.
+ */
+#define MAIN_STACK_SIZE_BYTES       256
+
+
+/*
+ * Startup code stack
  *
- * Care must be taken to ensure that the data section, BSS section,
- * and 64 byte startup section leave enough free space for the main 
- * thread. You can view the linker-generated map file to view the size
- * of the various data sections in your applications. For example if you
- * require a 196 byte main thread stack, then the data allocations and
- * startup stack combined must not exceed RAMSIZE-196 bytes.
+ * Some stack space is required at initial startup for running the main()
+ * routine. This stack space is only temporarily required at first bootup
+ * and is no longer required as soon as the OS is started. By default
+ * Cosmic sets this to the top of RAM and it grows down from there.
+ *
+ * Because we only need this temporarily you may reuse the area once the
+ * OS is started, and are free to use some area other than the top of RAM.
+ * For convenience we just use the default region here.
  */
 
 
@@ -112,6 +92,9 @@ extern int _stack;
 
 /* Application threads' TCBs */
 static ATOM_TCB main_tcb;
+
+/* Main thread's stack area (large so place outside of the small page0 area on STM8) */
+@near static uint8_t main_thread_stack[MAIN_STACK_SIZE_BYTES];
 
 /* Idle thread's stack area (large so place outside of the small page0 area on STM8) */
 @near static uint8_t idle_thread_stack[IDLE_STACK_SIZE_BYTES];
@@ -151,7 +134,8 @@ void main ( void )
         /* Create an application thread */
         status = atomThreadCreate(&main_tcb,
                      TEST_THREAD_PRIO, main_thread_func, 0,
-                     (POINTER)(&_stack-STARTUP_STACK_SIZE_BYTES));
+                     &main_thread_stack[MAIN_STACK_SIZE_BYTES - 1],
+                     MAIN_STACK_SIZE_BYTES);
         if (status == ATOM_OK)
         {
             /**

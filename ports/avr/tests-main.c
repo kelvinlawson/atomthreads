@@ -125,7 +125,7 @@
 /* Application threads' TCBs */
 static ATOM_TCB main_tcb;
 
-/* Idle thread's stack area */
+/* Main thread's stack area */
 static uint8_t main_thread_stack[MAIN_STACK_SIZE_BYTES];
 
 /* Idle thread's stack area */

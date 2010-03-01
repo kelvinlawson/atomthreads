@@ -55,8 +55,8 @@ DBG_ASMFLAGS=-xx -u
 
 # Enable stack-checking (disable if not required)
 ifeq ($(STACK_CHECK),true)
-CFLAGS += -DATOM_STACK_CHECKING
-DBG_CFLAGS += -DATOM_STACK_CHECKING
+CFLAGS += -dATOM_STACK_CHECKING
+DBG_CFLAGS += -dATOM_STACK_CHECKING
 endif
 
 
