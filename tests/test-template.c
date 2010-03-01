@@ -46,15 +46,9 @@ uint32_t test_start (void)
     /* Default to zero failures */
     failures = 0;
 
-    /* Log final status */
-    if (failures == 0)
-    {
-        ATOMLOG (_STR("Pass\n"));
-    }
-    else
-    {
-        ATOMLOG (_STR("Fail(%d)\n"), failures);
-    }
+    /* Run test and update "failures" count */
+
+    /* If threads are created, check for thread stack overflow */
 
     /* Quit */
     return failures;

@@ -187,6 +187,12 @@ static ATOM_TCB idle_tcb;
 static int atomIntCnt = 0;
 
 
+/* Constants */
+
+/** Bytecode to fill thread stacks with for stack-checking purposes */
+#define STACK_CHECK_BYTE    0x5A
+
+
 /* Forward declarations */
 static void atomThreadSwitch(ATOM_TCB *old_tcb, ATOM_TCB *new_tcb);
 static void atomIdleThread (uint32_t data);
@@ -363,22 +369,27 @@ static void atomThreadSwitch(ATOM_TCB *old_tcb, ATOM_TCB *new_tcb)
  * scheduler. If the priority is higher than the current priority, then the
  * new thread may be scheduled in before the function returns.
  *
+ * Optionally prefills the thread stack with a known value to enable stack
+ * usage checking (if the ATOM_STACK_CHECKING macro is defined).
+ *
  * @param[in] tcb_ptr Pointer to the thread's TCB storage
  * @param[in] priority Priority of the thread (0 to 255)
  * @param[in] entry_point Thread entry point
  * @param[in] entry_param Parameter passed to thread entry point
  * @param[in] stack_top Top of the stack area
+ * @param[in] stack_size Size of the stack area in bytes
  *
  * @retval ATOM_OK Success
  * @retval ATOM_ERR_PARAM Bad parameters
  * @retval ATOM_ERR_QUEUE Error putting the thread on the ready queue
  */
-uint8_t atomThreadCreate (ATOM_TCB *tcb_ptr, uint8_t priority, void (*entry_point)(uint32_t), uint32_t entry_param, void *stack_top)
+uint8_t atomThreadCreate (ATOM_TCB *tcb_ptr, uint8_t priority, void (*entry_point)(uint32_t), uint32_t entry_param, void *stack_top, uint32_t stack_size)
 {
     CRITICAL_STORE;
     uint8_t status;
 
-    if ((tcb_ptr == NULL) || (entry_point == NULL) || (stack_top == NULL))
+    if ((tcb_ptr == NULL) || (entry_point == NULL) || (stack_top == NULL)
+        || (stack_size == 0))
     {
         /* Bad parameters */
         status = ATOM_ERR_PARAM;
@@ -400,6 +411,34 @@ uint8_t atomThreadCreate (ATOM_TCB *tcb_ptr, uint8_t priority, void (*entry_poin
          */
         tcb_ptr->entry_point = entry_point;
         tcb_ptr->entry_param = entry_param;
+
+        /**
+         * Additional processing only required if stack-checking is
+         * enabled. Incurs a slight overhead on each thread creation
+         * and uses some additional storage in the TCB, but can be
+         * compiled out if not desired.
+         */
+#ifdef ATOM_STACK_CHECKING
+
+        /* Store the stack details for use by the stack-check function */
+        tcb_ptr->stack_top = stack_top;
+        tcb_ptr->stack_size = stack_size;
+
+        /**
+         * Prefill the stack with a known value. This is used later in
+         * calls to atomThreadStackCheck() to get an indication of how
+         * much stack has been used during runtime.
+         */
+        while (stack_size > 0)
+        {
+            /* Initialise all stack bytes from bottom up to 0x5A */
+            *((uint8_t *)stack_top - (stack_size - 1)) = STACK_CHECK_BYTE;
+            stack_size--;
+        }
+#else
+        /* Avoid compiler warnings due to unused stack_size variable */
+        stack_size = stack_size;
+#endif
 
         /**
          * Call the arch-specific routine to set up the stack. This routine
@@ -443,6 +482,82 @@ uint8_t atomThreadCreate (ATOM_TCB *tcb_ptr, uint8_t priority, void (*entry_poin
 
     return (status);
 }
+
+
+#ifdef ATOM_STACK_CHECKING
+/**
+ * \b atomThreadStackCheck
+ *
+ * Check the stack usage of a thread.
+ *
+ * If the ATOM_STACK_CHECKING macro is defined, thread stacks are filled
+ * with a known value before the thread is started. This function can be
+ * called at runtime to examine the stack and find the high water mark
+ * (the furthest modified byte from the start of the stack).
+ *
+ * This gives an indication of how much stack the thread has used. It is
+ * useful but not absolutely precise because the thread may legitimately
+ * have the known value on its stack. The thread's stack pointer may also
+ * have strayed outside of the allowable stack area while leaving some of
+ * the known-value bytes unmodified. This simple method cannot trap stack
+ * usage outside of the thread's allocated stack, for which you could use
+ * additional guard areas (still limited in scope) or compiler/CPU/MMU 
+ * features.
+ *
+ * The function takes a thread's TCB and returns both the number of stack
+ * bytes used, and the free stack bytes.
+ *
+ * @param[in] tcb_ptr Pointer to the TCB of the thread to stack-check
+ * @param[in,out] used_bytes Pointer into which the used byte count is copied
+ * @param[in,out] free_bytes Pointer into which the free byte count is copied
+ *
+ * @retval ATOM_OK Success
+ * @retval ATOM_ERR_PARAM Bad parameters
+ * @retval ATOM_ERR_QUEUE Error putting the thread on the ready queue
+ */
+uint8_t atomThreadStackCheck (ATOM_TCB *tcb_ptr, uint32_t *used_bytes, uint32_t *free_bytes)
+{
+    uint8_t status;
+    uint8_t *stack_ptr;
+    int i;
+
+    if ((tcb_ptr == NULL) || (used_bytes == NULL) || (free_bytes == NULL))
+    {
+        /* Bad parameters */
+        status = ATOM_ERR_PARAM;
+    }
+    else
+    {
+        /**
+         * Starting at the far end, count the unmodified areas until a
+         * modified byte is found.
+         */
+        stack_ptr = (uint8_t *)tcb_ptr->stack_top - (tcb_ptr->stack_size - 1);
+        for (i = 0; i < tcb_ptr->stack_size; i++)
+        {
+            /* Loop until a modified byte is found */
+            if (*stack_ptr++ != STACK_CHECK_BYTE)
+            {
+                /* Found a modified byte */
+                break;
+            }
+        }
+
+        /* We quit the loop above on the count of the free bytes */
+        *free_bytes = (uint32_t)i;
+
+        /* Calculate used bytes using our knowledge of the stack size */
+        *used_bytes = tcb_ptr->stack_size - *free_bytes;
+
+        /* No error */
+        status = ATOM_OK;
+
+    }
+
+    return (status);
+
+}
+#endif /* ATOM_STACK_CHECKING */
 
 
 /**
@@ -534,11 +649,12 @@ ATOM_TCB *atomCurrentContext (void)
  * enabled by the archFirstThreadRestore() routine in the architecture port.
  *
  * @param[in] idle_thread_stack_top Ptr to top of stack area for idle thread
+ * @param[in] idle_thread_stack_size Size of idle thread stack in bytes
  *
  * @retval ATOM_OK Success
  * @retval ATOM_ERROR Initialisation error
  */
-uint8_t atomOSInit (void *idle_thread_stack_top)
+uint8_t atomOSInit (void *idle_thread_stack_top, uint32_t idle_thread_stack_size)
 {
     uint8_t status;
 
@@ -552,7 +668,8 @@ uint8_t atomOSInit (void *idle_thread_stack_top)
                  IDLE_THREAD_PRIORITY,
                  atomIdleThread,
                  0,
-                 idle_thread_stack_top);
+                 idle_thread_stack_top,
+                 idle_thread_stack_size);
 
     /* Return status */
     return (status);

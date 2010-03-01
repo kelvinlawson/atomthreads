@@ -56,4 +56,8 @@
 #define CRITICAL_END()      SREG = sreg
 
 
+/* Uncomment to enable stack-checking */
+/* #define ATOM_STACK_CHECKING */
+
+
 #endif /* __ATOM_PORT_H */

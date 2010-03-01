@@ -13,9 +13,20 @@ KERNEL_DIR=../../kernel
 TESTS_DIR=../../tests
 CC=/usr/bin/avr-gcc
 OBJCOPY=/usr/bin/avr-objcopy
+SIZE=/usr/bin/avr-size
 UISP=/usr/bin/uisp
+
+# Modify this to the device name of the UART used for UISP
 UISP_DEV=/dev/ttyUSB0
+
+# Modify this to the CPU you are using
 PART=atmega16
+
+# Enable stack-checking. WARNING: the full automated test suite currently
+# requires a little over 1KB RAM with stack-checking enabled. If you are 
+# using a device with 1KB internal SRAM and no external SRAM then you
+# must disable stack-checking to run all of the automated tests.
+#STACK_CHECK=true
 
 # Directory for built objects
 BUILD_DIR=build
@@ -45,6 +56,11 @@ vpath %.hex ./$(BUILD_DIR)
 
 # GCC flags
 CFLAGS=-g -mmcu=$(PART) -Wall -Werror
+
+# Enable stack-checking (disable if not required)
+ifeq ($(STACK_CHECK),true)
+CFLAGS += -DATOM_STACK_CHECKING
+endif
 
 
 #################
@@ -96,6 +112,7 @@ clean:
 
 # Send to STK500
 program : $(BUILD_DIR)/$(app).hex
+	$(SIZE) -C $(BUILD_DIR)/$(app).elf
 	$(UISP) -dprog=stk500 -dserial=$(UISP_DEV) -dpart=$(PART) --erase --upload --verify if=$(BUILD_DIR)/$(app).hex
 
 doxygen:

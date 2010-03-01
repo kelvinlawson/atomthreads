@@ -37,11 +37,15 @@
 #define QUEUE_ENTRIES       8
 
 
+/* Number of test threads */
+#define NUM_TEST_THREADS      1
+
+
 /* Test OS objects */
 static ATOM_QUEUE queue1;
 static uint32_t queue1_storage[QUEUE_ENTRIES];
-static ATOM_TCB tcb1;
-static uint8_t test1_thread_stack[TEST_THREAD_STACK_SIZE];
+static ATOM_TCB tcb[NUM_TEST_THREADS];
+static uint8_t test_thread_stack[NUM_TEST_THREADS][TEST_THREAD_STACK_SIZE];
 
 
 /* Test message values (more values than can fit in an entire 8 message queue) */
@@ -102,8 +106,9 @@ uint32_t test_start (void)
     }
 
     /* Create a test thread that will block because the queue is empty */
-    else if (atomThreadCreate(&tcb1, TEST_THREAD_PRIO + 1, test1_thread_func, 0,
-              &test1_thread_stack[TEST_THREAD_STACK_SIZE - 1]) != ATOM_OK)
+    else if (atomThreadCreate(&tcb[0], TEST_THREAD_PRIO + 1, test1_thread_func, 0,
+              &test_thread_stack[0][TEST_THREAD_STACK_SIZE - 1],
+              TEST_THREAD_STACK_SIZE) != ATOM_OK)
     {
         /* Fail */
         ATOMLOG (_STR("Error creating test thread 1\n"));
@@ -167,15 +172,38 @@ uint32_t test_start (void)
         }
     }
 
-    /* Log final status */
-    if (failures == 0)
+    /* Check thread stack usage (if enabled) */
+#ifdef ATOM_STACK_CHECKING
     {
-        ATOMLOG (_STR("Pass\n"));
+        uint32_t used_bytes, free_bytes;
+        int thread;
+
+        /* Check all threads */
+        for (thread = 0; thread < NUM_TEST_THREADS; thread++)
+        {
+            /* Check thread stack usage */
+            if (atomThreadStackCheck (&tcb[thread], &used_bytes, &free_bytes) != ATOM_OK)
+            {
+                ATOMLOG (_STR("StackCheck\n"));
+                failures++;
+            }
+            else
+            {
+                /* Check the thread did not use up to the end of stack */
+                if (free_bytes == 0)
+                {
+                    ATOMLOG (_STR("StackOverflow %d\n"), thread);
+                    failures++;
+                }
+
+                /* Log the stack usage */
+#ifdef TESTS_LOG_STACK_USAGE
+                ATOMLOG (_STR("StackUse:%d\n"), used_bytes);
+#endif
+            }
+        }
     }
-    else
-    {
-        ATOMLOG (_STR("Fail(%d)\n"), failures);
-    }
+#endif
 
     /* Quit */
     return failures;

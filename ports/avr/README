@@ -39,11 +39,11 @@ functionality, and can be used with any architecture ports. This port
 provides an easy mechanism for building, downloading and running the test
 suite to prove the OS on your target.
 
-The port was carried out and tested on an ATmega16 running within an
-STK500 board, utilising the gcc-avr tools. It is possible to use it with 
-other processors in the ATmega range, as well as other hardware platforms
-and compilers, with minimal changes. Platform and compiler specific code
-has been kept to an absolute minimum.
+The port was carried out and tested on both an ATmega16 and ATmega32
+running within an STK500 board, utilising the gcc-avr tools. It is possible
+to use it with other processors in the ATmega range, as well as other
+hardware platforms and compilers, with minimal changes. Platform and
+compiler specific code has been kept to an absolute minimum.
 
 
 ---------------------------------------------------------------------------
@@ -124,7 +124,11 @@ PD0/1 to "RS232 SPARE RXD/TXD" respectively using a two-wire link.
 RUNNING THE AUTOMATED TESTS
 
 Atomthreads contains a set of generic kernel tests which can be run on any
-port to prove that all core functionality is working on your target.
+port to prove that all core functionality is working on your target. In
+order to accommodate a full testing regime, a large number of test threads
+are spawned which on ATmega platforms requires at least 1KB and possibly
+more RAM. Bear this in mind if you wish to run all of the automated tests
+on your target platform.
 
 The full set of tests can be found in the top-level 'tests' folder. Each of
 these tests is built as an independent application in the 'build' folder.
@@ -136,6 +140,10 @@ For example to run the 'kern1.c' test use:
 
  * make program app=kern1
 
+Before running the program and data size for the application is printed
+out on the terminal. You can use this to verify that your platform has
+enough program and data space to run the application.
+
 To view the test results, connect a serial debug cable to your target
 platform. On starting, the test applications print out "Go" on the UART.
 Once the test is complete they will print out "Pass" or "Fail", along 
@@ -143,11 +151,23 @@ with other information if the test failed. Most of the tests complete
 within a few seconds, but some (particularly the stress tests) can take
 minutes, so be patient. 
 
-The test application also toggles a bit on PORTB once per second if the
-test was successful. On the STK500 this can be connected to the LEDs for
-a visual indication of a passed test without the UART. If you do not wish to
-use the UART you may use this to indicate passed tests, a UART is not
-a requirement for running the tests.
+Note that some tests utilise four test threads, which together with the
+idle thread and main test thread can consume significant RAM resource.
+Those tests which utilise four threads will generally only run on
+platforms with greater than 1KB RAM. They do currently run on a system
+with 1KB RAM but only with stack-checking disabled and this may change
+in future as the RAM usage changes. For platforms with only 1KB internal
+SRAM you should disable stack-checking by disabling STACK_CHECK in the
+Makefile, or ensuring that the ATOM_STACK_CHECKING macro is not defined.
+Platforms with only 512 bytes RAM will be unable to run many of the
+automated tests.
+
+The test application also toggles a bit on PORTB to indicate test success
+or failure (once per second if the test was successful and once every
+1/8 second if the test failed). On the STK500 this can be connected to an
+LED for a visual indication of a passed test without the UART. If you do
+not wish to use the UART you may use the LED to indicate passed tests; a
+UART is not a requirement for running the tests.
 
 The full suite of tests endeavours to exercise as much of the kernel code
 as possible, and can be used for quick confirmation of core OS
@@ -206,9 +226,9 @@ up.
 
 A good rule of thumb when using Atomthreads on the AVR architecture is that
 a minimum of 1KB RAM is required in order to support an application with 4
-or 5 threads and the idle thread. If approximately 128 bytes per thread
-stack is acceptable then you will benefit from the easy-to-read, portable
-implementation of an RTOS herein.
+or 5 threads and the idle thread. If a minimum of approximately 128 bytes
+per thread stack is acceptable then you will benefit from the easy-to-read,
+portable implementation of an RTOS herein.
 
 The major consumer of RAM when using Atomthreads is your thread stacks.
 Functionality that is shared between several kernel modules is farmed out
@@ -224,53 +244,56 @@ application code does, and what memory model is used etc, but generally
 you should find that 128 bytes is enough to allow for the thread to be
 switched out (and thus save its registers) while deep within a kernel
 or application call stack, and similarly enough to provide stack for
-interrupt handlers interrupting while the thread is deep within a 
-kernel or application call stack. We have seen a little more than 128
-bytes being used, however, when the application code itself is made up
-of several subroutines.
+interrupt handlers interrupting while the thread is deep within a kernel
+or application call stack. You will need to increase this depending on
+what level of stack the application code in question requires.
+
+At this time the maximum stack consumed by the test threads within the
+automated test modules is 124 bytes of stack, and the main test thread has
+been seen to consume 198 bytes of stack. At this time the queue9 test is
+the largest consumer of test thread stack (124 bytes) and the mutex2 and
+mutex5 tests consume the largest main thread stack (198 bytes). If your
+applications have large amounts of local data or call several subroutines
+then you may find that you need larger than 128 bytes.
+
+You may monitor the stack usage of your application threads during runtime
+by defining the macro ATOM_STACK_CHECKING and calling
+atomThreadStackCheck(). This macro is defined by default in the Makefile
+so that the automated test modules can check for stack overflows, but you
+may wish to undefine this in your application Makefiles when you are happy
+that the stack usage is acceptable. Enabling ATOM_STACK_CHECKING will
+increase the size of your threads' TCBs slightly, and will incur a minor
+CPU cycles overhead whenever threads are created due to prefilling the
+thread stack with a known value.
 
 With careful consideration and few threads it would be possible to use
 a platform with 512 bytes RAM, but not all of the automated test suite
 would run on such a platform (some of the test modules use 6 threads: a
-main thread together with 4 sub-threads and the idle thread).
+main thread together with 4 test threads and the idle thread).
 
-The RAM layout used for the automated test applications is as follows:
+The default stack area used by GCC is at the top of RAM (RAMEND), so when
+your application's main() function is called the stack pointer is
+initialised to RAMEND. This initial stack is only required during startup
+for the main() function, and as soon as the OS is started the stack
+pointer switches to the stack areas for the application threads. Once the
+OS is started the initial startup stack is no longer used at all. You may
+continue to use the top of RAM for your startup stack, but in the test
+applications for this port we used another area of RAM. This is an
+optimisation to allow all of the automated tests to run on platforms with
+1KB RAM. The area reused is the idle thread's stack, which is not
+required until the OS is started. Ideally you should provide your own
+area for your applications, but this was an optimisation that allowed all
+of the automated tests to run on ATmega devices with 1KB RAM and did not
+require any AVR-specific changes to the automated test modules. This
+startup stack does not require a large amount of RAM, probably less than
+64 bytes.
 
-RAM Top:
-* Startup Stack (64 bytes)
-* Main Thread Stack (Variable size)
-* Data & BSS area (thread stacks, other application data)
-RAM End.
+The application's data starts at the bottom of RAM, and this includes all 
+of the thread stacks which are statically allocated arrays. The idle
+thread, main thread, and automated test thread stacks are allocated here.
 
-This is not prescribed, you may use whichever layout you wish for your
-applications.
-
-The startup stack area starts at the top of RAM and is only used for first
-initialisation of the OS and main thread. This uses 64 bytes and could be
-reused once the OS is started, but for the purposes of the automated test
-applications it is not reused. Generally you would ensure that this is
-reused in your own application code.
-
-The application's data starts at the bottom of RAM, and this includes most
-of the thread stacks which are statically allocated arrays. The idle thread
-and automated test thread stacks are allocated here and are 128 bytes each.
-
-The remaining area between the startup stack (RAMEND-64) and the end of the
-data/BSS areas is allocated to the main thread stack. As this thread
-typically requires the largest stack, this uses all of the remaining RAM
-between the top and bottom. In general for the automated tests this thread
-does most of the processing and requires more than 128 bytes (it has been
-seen to exceed 148 bytes). You can check that sufficient RAM is available
-for the main thread by running the avr-size command on the application ELF.
-This shows how much RAM is used by the data and BSS areas. If you have 1024
-bytes RAM, subtract the data and BSS size values from 1024, and subtract
-the amount used for the startup stack (64 bytes) to figure out the
-remaining space available for the main thread stack. Again, for your own
-applications you will probably be reusing the startup stack area, so can
-exclude that from your calculations.
-
-As mentioned previously, this RAM layout is only the one utilised by the
-test applications. You may choose whatever layout you like.
+This RAM layout is only the one utilised by the test applications. You
+may choose whatever layout you like.
 
 
 ---------------------------------------------------------------------------

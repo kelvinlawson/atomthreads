@@ -202,16 +202,6 @@ uint32_t test_start (void)
         failures++;
     }
 
-    /* Log final status */
-    if (failures == 0)
-    {
-        ATOMLOG (_STR("Pass\n"));
-    }
-    else
-    {
-        ATOMLOG (_STR("Fail(%d)\n"), failures);
-    }
-
     /* Quit */
     return failures;
 

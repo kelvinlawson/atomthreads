@@ -60,6 +60,12 @@ typedef struct atom_tcb
     uint8_t suspend_wake_status;  /* Status returned to woken suspend calls */
     ATOM_TIMER *suspend_timo_cb;  /* Callback registered for suspension timeouts */
 
+    /* Details used if thread stack-checking is required */
+#ifdef ATOM_STACK_CHECKING
+    POINTER stack_top;            /* Pointer to top of stack allocation */
+    uint32_t stack_size;          /* Size of stack allocation in bytes */
+#endif
+
 } ATOM_TCB;
 
 
@@ -92,7 +98,7 @@ extern uint8_t atomOSStarted;
 
 
 /* Function prototypes */
-extern uint8_t atomOSInit (void *idle_thread_stack_top);
+extern uint8_t atomOSInit (void *idle_thread_stack_top, uint32_t stack_size);
 extern void atomOSStart (void);
 
 extern void atomSched (uint8_t timer_tick);
@@ -107,7 +113,8 @@ extern ATOM_TCB *tcbDequeuePriority (ATOM_TCB **tcb_queue_ptr, uint8_t priority)
 
 extern ATOM_TCB *atomCurrentContext (void);
 
-extern uint8_t atomThreadCreate (ATOM_TCB *tcb_ptr, uint8_t priority, void (*entry_point)(uint32_t), uint32_t entry_param, void *stack_top);
+extern uint8_t atomThreadCreate (ATOM_TCB *tcb_ptr, uint8_t priority, void (*entry_point)(uint32_t), uint32_t entry_param, void *stack_top, uint32_t stack_size);
+extern uint8_t atomThreadStackCheck (ATOM_TCB *tcb_ptr, uint32_t *used_bytes, uint32_t *free_bytes);
 
 extern void archContextSwitch (ATOM_TCB *old_tcb_ptr, ATOM_TCB *new_tcb_ptr);
 extern void archThreadContextInit (ATOM_TCB *tcb_ptr, void *stack_top, void (*entry_point)(uint32_t), uint32_t entry_param);

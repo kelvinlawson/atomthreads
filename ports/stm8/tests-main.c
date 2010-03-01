@@ -142,7 +142,7 @@ void main ( void )
      */
 
     /* Initialise the OS before creating our threads */
-    status = atomOSInit(&idle_thread_stack[IDLE_STACK_SIZE_BYTES - 1]);
+    status = atomOSInit(&idle_thread_stack[IDLE_STACK_SIZE_BYTES - 1], IDLE_STACK_SIZE_BYTES);
     if (status == ATOM_OK)
     {
         /* Enable the system tick timer */
@@ -194,6 +194,24 @@ static void main_thread_func (uint32_t data)
 
     /* Start test. All tests use the same start API. */
     test_status = test_start();
+
+    /* Check main thread stack usage (if enabled) */
+#ifdef ATOM_STACK_CHECKING
+    if (test_status == 0)
+    {
+        uint32_t used_bytes, free_bytes;
+
+        /* Check idle thread stack usage */
+        if (atomThreadStackCheck (&main_tcb, &used_bytes, &free_bytes) == ATOM_OK)
+        {
+            /* Check the thread did not use up to the end of stack */
+            if (free_bytes == 0)
+            {
+                test_status++;
+            }
+        }
+    }
+#endif
 
     /* Flash LED once per second if passed, very quickly if failed */
     sleep_ticks = (test_status == 0) ? SYSTEM_TICKS_PER_SEC : (SYSTEM_TICKS_PER_SEC/8);

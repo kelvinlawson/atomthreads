@@ -33,13 +33,14 @@
 #include "atommutex.h"
 
 
+/* Number of test threads */
+#define NUM_TEST_THREADS      4
+
+
 /* Test OS objects */
 static ATOM_MUTEX mutex1;
-static ATOM_TCB tcb1, tcb2, tcb3, tcb4;
-static uint8_t test1_thread_stack[TEST_THREAD_STACK_SIZE];
-static uint8_t test2_thread_stack[TEST_THREAD_STACK_SIZE];
-static uint8_t test3_thread_stack[TEST_THREAD_STACK_SIZE];
-static uint8_t test4_thread_stack[TEST_THREAD_STACK_SIZE];
+static ATOM_TCB tcb[NUM_TEST_THREADS];
+static uint8_t test_thread_stack[NUM_TEST_THREADS][TEST_THREAD_STACK_SIZE];
 
 /* Data updated by threads */
 static volatile uint8_t wake_cnt;
@@ -106,8 +107,9 @@ uint32_t test_start (void)
     else
     {
         /* Create Thread 1 (lower priority thread A) */
-        if (atomThreadCreate(&tcb1, TEST_THREAD_PRIO+1, test_thread_func, 1,
-              &test1_thread_stack[TEST_THREAD_STACK_SIZE - 1]) != ATOM_OK)
+        if (atomThreadCreate(&tcb[0], TEST_THREAD_PRIO+1, test_thread_func, 1,
+              &test_thread_stack[0][TEST_THREAD_STACK_SIZE - 1],
+              TEST_THREAD_STACK_SIZE) != ATOM_OK)
         {
             /* Fail */
             ATOMLOG (_STR("Error creating test thread\n"));
@@ -118,8 +120,9 @@ uint32_t test_start (void)
         atomTimerDelay (SYSTEM_TICKS_PER_SEC/4);
 
         /* Create Thread 2 (lower priority thread B) */
-        if (atomThreadCreate(&tcb2, TEST_THREAD_PRIO+1, test_thread_func, 2,
-              &test2_thread_stack[TEST_THREAD_STACK_SIZE - 1]) != ATOM_OK)
+        if (atomThreadCreate(&tcb[1], TEST_THREAD_PRIO+1, test_thread_func, 2,
+              &test_thread_stack[1][TEST_THREAD_STACK_SIZE - 1],
+              TEST_THREAD_STACK_SIZE) != ATOM_OK)
         {
             /* Fail */
             ATOMLOG (_STR("Error creating test thread\n"));
@@ -130,8 +133,9 @@ uint32_t test_start (void)
         atomTimerDelay (SYSTEM_TICKS_PER_SEC/4);
 
         /* Create Thread 3 (higher priority thread A) */
-        if (atomThreadCreate(&tcb3, TEST_THREAD_PRIO, test_thread_func, 3,
-              &test3_thread_stack[TEST_THREAD_STACK_SIZE - 1]) != ATOM_OK)
+        if (atomThreadCreate(&tcb[2], TEST_THREAD_PRIO, test_thread_func, 3,
+              &test_thread_stack[2][TEST_THREAD_STACK_SIZE - 1],
+              TEST_THREAD_STACK_SIZE) != ATOM_OK)
         {
             /* Fail */
             ATOMLOG (_STR("Error creating test thread\n"));
@@ -142,8 +146,9 @@ uint32_t test_start (void)
         atomTimerDelay (SYSTEM_TICKS_PER_SEC/4);
 
         /* Create Thread 4 (higher priority thread B) */
-        if (atomThreadCreate(&tcb4, TEST_THREAD_PRIO, test_thread_func, 4,
-              &test4_thread_stack[TEST_THREAD_STACK_SIZE - 1]) != ATOM_OK)
+        if (atomThreadCreate(&tcb[3], TEST_THREAD_PRIO, test_thread_func, 4,
+              &test_thread_stack[3][TEST_THREAD_STACK_SIZE - 1],
+              TEST_THREAD_STACK_SIZE) != ATOM_OK)
         {
             /* Fail */
             ATOMLOG (_STR("Error creating test thread\n"));
@@ -195,15 +200,38 @@ uint32_t test_start (void)
         }
     }
 
-    /* Log final status */
-    if (failures == 0)
+    /* Check thread stack usage (if enabled) */
+#ifdef ATOM_STACK_CHECKING
     {
-        ATOMLOG (_STR("Pass\n"));
+        uint32_t used_bytes, free_bytes;
+        int thread;
+
+        /* Check all threads */
+        for (thread = 0; thread < NUM_TEST_THREADS; thread++)
+        {
+            /* Check thread stack usage */
+            if (atomThreadStackCheck (&tcb[thread], &used_bytes, &free_bytes) != ATOM_OK)
+            {
+                ATOMLOG (_STR("StackCheck\n"));
+                failures++;
+            }
+            else
+            {
+                /* Check the thread did not use up to the end of stack */
+                if (free_bytes == 0)
+                {
+                    ATOMLOG (_STR("StackOverflow %d\n"), thread);
+                    failures++;
+                }
+
+                /* Log the stack usage */
+#ifdef TESTS_LOG_STACK_USAGE
+                ATOMLOG (_STR("StackUse:%d\n"), used_bytes);
+#endif
+            }
+        }
     }
-    else
-    {
-        ATOMLOG (_STR("Fail(%d)\n"), failures);
-    }
+#endif
 
     /* Quit */
     return failures;

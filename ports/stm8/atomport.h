@@ -56,4 +56,8 @@
 #define CRITICAL_END()      _asm ("ld A,(X)\npush A\npop CC", &ccr)
 
 
+/* Uncomment to enable stack-checking */
+/* #define ATOM_STACK_CHECKING */
+
+
 #endif /* __ATOM_PORT_H */

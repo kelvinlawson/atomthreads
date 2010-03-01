@@ -15,6 +15,9 @@ ASM=castm8
 LINK=clnk
 CHEX=chex
 
+# Enable stack-checking
+STACK_CHECK=true
+
 # Directory for built objects
 BUILD_DIR=build
 
@@ -49,6 +52,12 @@ CFLAGS=+modsl0 -pp
 DBG_CFLAGS=+modsl0 +debug -pxp -no -pp -l 
 ASMFLAGS=
 DBG_ASMFLAGS=-xx -u
+
+# Enable stack-checking (disable if not required)
+ifeq ($(STACK_CHECK),true)
+CFLAGS += -DATOM_STACK_CHECKING
+DBG_CFLAGS += -DATOM_STACK_CHECKING
+endif
 
 
 #################
