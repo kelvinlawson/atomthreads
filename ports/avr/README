@@ -206,6 +206,13 @@ flash a LED or use some other indication mechanism.
 The Atomthreads port uses Timer 1 to drive the system tick. If you wish
 to use some other timer then you may do so by modifying atomport.c.
 
+Note that the build scripts make no assumptions about the RAM and program
+space available on your platform, partly because you may have external RAM
+over and above the ATmega device's internal SRAM. You must, therefore,
+ensure that you have sufficient RAM and program space available for the
+applications that you build. This information can be obtained by passing
+the application ELF filename to the avr-size utility. 
+
 
 ---------------------------------------------------------------------------
 
