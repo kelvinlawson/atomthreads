@@ -387,3 +387,26 @@ or by editing the linker .LKF file as can be seen in atomthreads.lkf.
 
 ---------------------------------------------------------------------------
 
+INTERRUPT HANDLING
+
+Interrupt handlers use the stack of the thread which was running when the
+interrupt occurred. If no thread rescheduling occurs during the ISR then
+on exit from the ISR any data stacked by the ISR on the thread's stack is
+popped off the stack and execution of the thread resumes. If a reschedule
+during the ISR causes a context switch to a new thread, then the ISR's
+data will remain on the thread's stack until the thread is scheduled back
+in.
+
+Note that the STM8 programming manual currently describes the following
+feature:
+
+ "Fast interrupt handling through alternate register files (up to 4
+  contexts) with standard stack compatible mode (for real time OS
+  kernels)"
+
+This feature was implemented by ST in the core but has to date never been
+included in any STM8 products. If it is included in future products then
+you will need to put the device in the stack compatible mode described.
+
+
+---------------------------------------------------------------------------
