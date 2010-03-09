@@ -371,31 +371,10 @@ The application's data starts at the bottom of RAM, and this includes all
 of the thread stacks which are statically allocated arrays. The idle
 thread, main thread, and automated test thread stacks are allocated here.
 
-If your application includes a large amount of data which is nearing the
-top of RAM, then you must be careful that conflicts do not occur with the
-startup stack. The startup stack uses the 64 bytes from RAMTOP down. This
-is not reserved with the linker, so you will receive no warning if your
-own data encroaches on this area. It may not matter because the startup
-stack is only used before the OS is started, but if the data here cannot
-be corrupted before the OS is started then you should make other
-arrangements, such as moving the startup stack elsewhere or placing data
-which can be overwritten in this area. To check whether your application
-data overlaps with the startup stack you can view the MAP file for the
-application. This shows how much RAM is used by the data and BSS areas.
-If you have 2048 bytes RAM, then you will need to ensure that the
-application data uses less than (2048-64) bytes, or be sure that it is
-safe to utilise that area for the startup stack before the OS is started.
-
 The default layout provided with Atomthreads matches the STM8S-Discovery
-with 2KB RAM. The linker file reserves the first 0x500 bytes for data
+with 2KB RAM. The linker file reserves the first 0x7C0 bytes for data
 areas. The region from here up to the end of RAM (0x800) is used for the
-the 64 byte startup stack and any other data you require. You may wish
-to place some of your thread's stacks in the area above 0x500, or you may
-prefer to increase the size of the data area beyond 0x500. A simple
-layout would be to allow everything up to (RAMTOP-64) to be used for
-application data, leaving the top 64 bytes for use by the startup stack.
-This way the linker would warn you if your application data overlapped
-with the startup stack.
+the 64 byte startup stack.
 
 As mentioned previously, this RAM layout is only the one utilised by the
 test applications. You may choose whatever layout you like.
