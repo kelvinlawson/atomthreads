@@ -168,7 +168,7 @@ uint32_t test_start (void)
 
                 /* Log the stack usage */
 #ifdef TESTS_LOG_STACK_USAGE
-                ATOMLOG (_STR("StackUse:%d\n"), used_bytes);
+                ATOMLOG (_STR("StackUse:%d\n"), (int)used_bytes);
 #endif
             }
         }

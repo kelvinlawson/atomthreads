@@ -52,7 +52,7 @@ static ATOM_MUTEX uart_mutex;
 
 
 /*
- * Initialize the UART to 9600 Bd, tx/rx, 8N1.
+ * Initialize the UART to requested baudrate, tx/rx, 8N1.
  */
 int
 uart_init(uint32_t baudrate)

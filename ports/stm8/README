@@ -31,8 +31,9 @@ interrupt lockouts / critical sections:
 
 A few additional source files are also included here:
 
- * stm8_interrupt_vector.c: List of interrupt handlers for vector table
  * tests-main.c: Main application file (used for launching automated tests)
+ * stm8_interrupt_vector.c: List of interrupt handlers for vector table
+ * uart.c: UART wrapper to allow use of stdio/printf()
  * stm8s-periphs/*.*: Peripheral drivers as delivered by ST (no changes
      to distributed code).
 
@@ -123,9 +124,9 @@ This is also a good starting point for building your own applications:
 simply modify the file tests-main.c which starts the test application.
 You can run any of the other automated tests by replacing the file sem1.c
 within the project by another of the tests within the atomthreads tests
-folder. This is rather painful using a GUI interface, and you may prefer
-to use the Makefile-based system instead which builds all automated 
-tests in one command.
+folder. This is rather painful using a GUI interface due to the large
+number of test files, and you may prefer to use the Makefile-based system
+instead which builds all automated tests in one command.
 
 
 ---------------------------------------------------------------------------
@@ -179,37 +180,31 @@ PROGRAMMING MAKEFILE-BUILT APPLICATIONS TO THE TARGET DEVICE
 When developing within STVD, programs can be downloaded directly to the
 target. If, however, you are building applications separately using a
 Makefile or similar, then you are not able to program the application
-using STVD. The tools delivered by ST do not appear to offer any easy way
-of downloading and running applications built externally. For the time
-being the following (slow) development workflow is possible (note that
-these settings apply to the STM8S-Discovery):
+using STVD. None of the tools delivered by ST appear to be designed to
+cater for those who build applications externally, but it is possible using
+STVP.
+
+The following development workflow can be used (note that these settings
+apply to the STM8S-Discovery):
 
  * Build app using Makefile.
  * Open STVP and configure to use Swim ST-Link for CPU STM8105C6.
- * Program using STVP.
+ * Open application .s19 file and program using "Program All Tabs".
 
-Unfortunately STVP does not reset and start the CPU running. The
-following can be used to do this:
+Unfortunately STVP does not have a command to reset and start the CPU
+running, but it can be forced into doing so by reconfiguring the
+programmer:
 
- * cd \Program Files\STMicroelectronics\st_toolset\stvd\swim
- * ..\gdb7.exe --command=gdbswim_stlink.ini
- * emulator-reset-port-mcu usb://usb stm8s105c6
- * run
+ * Select "Configure ST Visual Programmer" from the Configure menu.
 
 Your application should now be programmed and running.
 
-If you wish to run another application, you must stop GDB using Ctrl-C
-and request STVP to communicate with the USB debugger again (either by
-selecting "Configure ST Visual Programmer" or just closing and reopening
-the STVP application). You can then download a new application and repeat
-the GDB steps. You must force a USB reconnect within STVP because it loses
-communication with the debugger while GDB is in use.
+If you wish to program and run another application then you can open and
+program it in STVP, then use the Configure menu again to reset the
+device and start it running.
 
-This is clearly not a very efficient workflow but it appears that at
-this time there are no applications for simple programming and running
-of applications to the STM8S-Discovery hardware. Other development
-platforms and debugger hardware may have better tools available, this
-only applies to the Discovery.
+Other programming tools may exist but are not apparent in the toolset
+delivered for use the STM8S Discovery platform.
 
 
 ---------------------------------------------------------------------------
@@ -219,14 +214,38 @@ STM8S-DISCOVERY SPECIFICS
 There are very minimal board-specific aspects to the STM8 port so it is
 trivial to run Atomthreads on other STM8 platforms.
 
-The test application makes use of an LED on one of the GPIO ports of the 
-Discovery board to indicate whether the automated tests passed or failed.
-This is not a core port feature and would not be required in user
-applications.
+The test applications make use of a LED to indicate test pass/fail status.
+This is currently configured to use a bit in GPIOD, which on the Discovery
+board maps to the board's only LED. You may change the port and register
+bit in tests-main.c to utilise a different pin on other hardware platforms.
+You may also completely omit the LED flashing in the test application if
+you prefer to use the UART for monitoring test status.
+
+The test applications also make use of the UART to print out pass/fail
+indications and other information. For this you should connect a serial
+cable to the Discovery board via the external pin connectors. Use of
+a UART is not required if you prefer to use the LED or some other method
+of notifying test pass/fail status.
+
+To connect a serial cable to the Discovery you will need to connect to
+the following pins on the external connectors:
+ Vcc: CN2 pin 8
+ GND: CN2 pin 7
+ UART TX: CN4 pin 10 (connect to RX at the PC end)
+ UART RX: CN4 pin 9 (connect to TX at the PC end)
+Note that the board uses TTL levels so you may need to use a level
+converter. External level converters may need to be powered using
+a Vdd of 5v, which can be achieved by positioning JP1 on the Discovery.
+
+The STM8 device on the Discovery only offers UART2. If you are using a
+different device or wish to use an alternative UART then you must change
+the stm8s_conf.h file.
 
 If you are using a CPU other than the STM8S105C6 you should modify
-stm8s_conf.h to specify your CPU. You may also wish to enable in that file
-any CPU peripherals which you wish to use.
+PART in the Makefile (or the preprocessor settings for both Debug and
+Release projects if using the STVD project) to specify your CPU. You may
+also wish to enable any CPU peripherals which you wish to use in the
+stm8s_conf.h file.
 
 
 ---------------------------------------------------------------------------
@@ -239,12 +258,16 @@ port to prove that all core functionality is working on your target.
 The full set of tests can be found in the top-level 'tests' folder. Each of
 these tests is built as an independent application in the 'build' folder.
 Run them individually using the STVP process described above. For example
-to run the 'kern1.c' test usr STVP to program it, and GDB to start the
-application running.
+to run the 'kern1.c' test use STVP to program and run it.
 
 To view the test results, watch the LED on the STM8S-Discovery. This will
 flash once per second if the test passed, and once every 1/8 second if the
 test failed.
+
+If you wish to use the UART, connect a serial debug cable to your target
+platform (defaults to 9600bps 8N1). On starting, the test applications
+print out "Go" on the UART. Once the test is complete they will print
+out "Pass" or "Fail", along with other information if the test failed.
 
 Most of the tests complete within a few seconds, but some (particularly
 the stress tests) can take several seconds, so be patient. 
@@ -254,7 +277,8 @@ as possible, and can be used for quick confirmation of core OS
 functionality if you ever need to make a change to the kernel or port.
 
 The test application main() is contained in tests-main.c. This initialises
-the OS, creates a main thread, and calls out to the test modules.
+the OS, creates a main thread, and calls out to the test modules. It also
+initialises the UART driver for use by stdout.
 
 
 ---------------------------------------------------------------------------
@@ -263,9 +287,9 @@ WRITING APPLICATIONS
 
 The easiest way to start a new application which utilises the Atomthreads
 scheduler is to base your main application startup on tests-main.c. This
-initialises the OS and calls out to the test module entry functions. You
-can generally simply replace the call to the test modules by a call to your
-own application startup code.
+initialises the OS, sets up a UART and calls out to the test module entry
+functions. You can generally simply replace the call to the test modules by
+a call to your own application startup code.
 
 
 ---------------------------------------------------------------------------
@@ -304,10 +328,13 @@ interrupt handlers interrupting while the thread is deep within a kernel
 or application call stack. You will need to increase this depending on
 what level of stack the application code in question requires.
 
-While 128 bytes has so far been found to be sufficient for the stack
-needs of all of the automated test module threads, the main test thread
-does typically require more due to the additional variables and
-subroutines called.
+At this time the maximum stack consumed by the test threads within the
+automated test modules is 95 bytes of stack, and the main test thread has
+been seen to consume 161 bytes of stack. At this time the timer2 test is
+the largest consumer of test thread stack (95 bytes) and the sem4 test
+consumes the largest main thread stack (161 bytes). If your applications
+have large amounts of local data or call several subroutines then you may
+find that you need larger than 128 bytes.
 
 You may monitor the stack usage of your application threads during runtime
 by defining the macro ATOM_STACK_CHECKING and calling

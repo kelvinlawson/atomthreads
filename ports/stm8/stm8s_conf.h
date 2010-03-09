@@ -23,8 +23,6 @@
 #ifndef __STM8S_CONF_H
 #define __STM8S_CONF_H
 
-/* Atomthreads port: Use STM8S105 */
-#define STM8S105
 
 /* Includes ------------------------------------------------------------------*/
 #include "stm8s.h"
@@ -127,8 +125,9 @@
 /* #define _UART1 (1) */
 #endif /* (STM8S208) ||(STM8S207)  || (STM8S103) || (STM8S903)  */
 
+/* Atomthreads port: Use UART2 on STM8S Discovery, change if required */
 #ifdef STM8S105
-/* #define _UART2 (1) */
+#define _UART2 (1)
 #endif /* STM8S105 */
 
 #if defined(STM8S208) ||defined(STM8S207)

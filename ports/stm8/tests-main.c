@@ -28,10 +28,13 @@
  */
 
 
+#include <stdio.h>
+
 #include "atom.h"
 #include "atomport-private.h"
 #include "atomtests.h"
 #include "atomtimer.h"
+#include "uart.h"
 #include "stm8s.h"
 
 
@@ -58,14 +61,21 @@
  * this with your own application thread.
  *
  * In this case the Main thread is responsible for calling out to the
- * test routines. Once a test routine has finished, the thread remains
- * running in a loop flashing a LED.
+ * test routines. Once a test routine has finished, the test status is
+ * printed out on the UART and the thread remains running in a loop
+ * flashing a LED.
  *
  * The Main thread stack generally needs to be larger than the idle
  * thread stack, as not only does it need to store interrupt handler
  * stack saves and context switch saves, but the application main thread
  * will generally be carrying out more nested function calls and require
  * stack for application code local variables etc.
+ *
+ * With all OS tests implemented to date on the STM8, the Main thread
+ * stack has not exceeded 256 bytes. To allow all tests to run we set
+ * a minimum main thread stack size of 204 bytes. This may increase in
+ * future as the codebase changes but for the time being is enough to
+ * cope with all of the automated tests.
  */
 #define MAIN_STACK_SIZE_BYTES       256
 
@@ -174,7 +184,16 @@ void main ( void )
 static void main_thread_func (uint32_t data)
 {
     uint32_t test_status;
-	int sleep_ticks;
+    int sleep_ticks;
+
+    /* Initialise UART (9600bps) */
+    if (uart_init(9600) != 0)
+    {
+        /* Error initialising UART */
+    }
+
+    /* Put a message out on the UART */
+    printf("Go\n");
 
     /* Start test. All tests use the same start API. */
     test_status = test_start();
@@ -191,11 +210,28 @@ static void main_thread_func (uint32_t data)
             /* Check the thread did not use up to the end of stack */
             if (free_bytes == 0)
             {
+                printf ("Main stack overflow\n");
                 test_status++;
             }
+
+            /* Log the stack usage */
+#ifdef TESTS_LOG_STACK_USAGE
+            printf ("MainUse:%d\n", (int)used_bytes);
+#endif
         }
+
     }
 #endif
+
+    /* Log final status */
+    if (test_status == 0)
+    {
+        printf ("Pass\n");
+    }
+    else
+    {
+        printf ("Fail(%d)\n", (int)test_status);
+    }
 
     /* Flash LED once per second if passed, very quickly if failed */
     sleep_ticks = (test_status == 0) ? SYSTEM_TICKS_PER_SEC : (SYSTEM_TICKS_PER_SEC/8);

@@ -33,8 +33,11 @@
 /* Include Atomthreads kernel API */
 #include "atom.h"
 
-/* Logger macro for viewing test results (UART not used on this platform) */
-#define ATOMLOG
+/* Prerequisite include for ATOMLOG() macro (via printf) */
+#include <stdio.h>
+
+/* Logger macro for viewing test results */
+#define ATOMLOG     printf
 
 /*
  * String location macro: for platforms which need to place strings in

@@ -11,8 +11,9 @@
 +seg .ubsct -a .bsct -n .ubsct
 +seg .bit -a .ubsct -n .bit -id
 +seg .share -a .bit -n .share -is
-# Segment Ram:
-+seg .data -b 0x100 -m 0x500 -n .data
+# Segment Ram (allow up to RAMTOP-64 to be used for data
+# sections, leaving 64 bytes for the startup stack):
++seg .data -b 0x100 -m 0x6c0 -n .data
 +seg .bss -a .data -n .bss
 #<END SEGMENT_CONF>
 
@@ -30,10 +31,13 @@ build\atommutex.o
 build\atomqueue.o
 build\atomsem.o
 build\atomtimer.o
+build\stm8s_clk.o
 build\stm8s_gpio.o
 build\stm8s_tim1.o
+build\stm8s_uart2.o
 build\tests-main.o
 build\atomport.o
+build\uart.o
 build\atomport-asm.o
 # Caller passes in test application object name as param1
 @1
@@ -58,6 +62,6 @@ build/stm8_interrupt_vector.o
 +def __endzp=@.ubsct			# end of uninitialized zpage
 +def __memory=@.bss				# end of bss segment
 +def __startmem=@.bss
-+def __endmem=0x5ff
++def __endmem=0x7bf
 +def __stack=0x7ff
 #<END DEFINED_VARIABLES>

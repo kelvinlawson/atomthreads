@@ -83,10 +83,10 @@ String.100.0=STM8S105C6
 
 [Root.Config.0.Settings.3]
 String.2.0=Compiling $(InputFile)...
-String.3.0=cxstm8 +modsl0 -customDebCompat -customOpt-no -customC-pp -customLst -l -istm8s-periphs -i../../kernel -i../../tests $(ToolsetIncOpts) -cl$(IntermPath) -co$(IntermPath) $(InputFile)
+String.3.0=cxstm8 +modsl0 -customDebCompat -customOpt-no -customC-pp -customLst -l -dSTM8S105 -dATOM_STACK_CHECKING -istm8s-periphs -i../../kernel -i../../tests $(ToolsetIncOpts) -cl$(IntermPath) -co$(IntermPath) $(InputFile)
 String.4.0=$(IntermPath)$(InputName).$(ObjectExt)
 String.5.0=$(IntermPath)$(InputName).ls
-String.6.0=2010,2,15,19,3,34
+String.6.0=2010,3,6,17,19,51
 
 [Root.Config.0.Settings.4]
 String.2.0=Assembling $(InputFile)...
@@ -106,7 +106,7 @@ String.3.0=clnk $(ToolsetLibOpts) -o $(OutputPath)$(TargetSName).sm8 -fakeIntege
 String.3.1=cvdwarf $(OutputPath)$(TargetSName).sm8
 String.4.0=$(OutputPath)$(TargetFName)
 String.5.0=$(OutputPath)$(ProjectSFile).elf $(OutputPath)$(TargetSName).map
-String.6.0=2010,2,14,20,36,55
+String.6.0=2010,3,9,0,24,9
 String.100.0=
 String.101.0=crtsi.st7
 String.102.0=+seg .const -b 0x8080 -m 0x7f80 -n .const -it
@@ -116,14 +116,14 @@ String.102.3=+seg .bsct -b 0x2 -m 0xfe -n .bsct
 String.102.4=+seg .ubsct -a .bsct -n .ubsct
 String.102.5=+seg .bit -a .ubsct -n .bit -id
 String.102.6=+seg .share -a .bit -n .share -is
-String.102.7=+seg .data -b 0x100 -m 0x500 -n .data
+String.102.7=+seg .data -b 0x100 -m 0x6c0 -n .data
 String.102.8=+seg .bss -a .data -n .bss
 String.103.0=Code,Constants[0x8080-0xffff]=.const,.text
 String.103.1=Eeprom[0x4000-0x43ff]=.eeprom
 String.103.2=Zero Page[0x2-0xff]=.bsct,.ubsct,.bit,.share
-String.103.3=Ram[0x100-0x5ff]=.data,.bss
+String.103.3=Ram[0x100-0x7bf]=.data,.bss
 String.104.0=0x7ff
-String.105.0=libis0.sm8;libm0.sm8
+String.105.0=libisl0.sm8;libm0.sm8
 Int.0=0
 Int.1=0
 
@@ -166,10 +166,10 @@ String.100.0=STM8S105C6
 
 [Root.Config.1.Settings.3]
 String.2.0=Compiling $(InputFile)...
-String.3.0=cxstm8 +modsl0 -customC-pp -istm8s-periphs -i../../kernel -i../../tests $(ToolsetIncOpts) -cl$(IntermPath) -co$(IntermPath) $(InputFile)
+String.3.0=cxstm8 +modsl0 -customC-pp -dSTM8S105 -dATOM_STACK_CHECKING -istm8s-periphs -i../../kernel -i../../tests $(ToolsetIncOpts) -cl$(IntermPath) -co$(IntermPath) $(InputFile)
 String.4.0=$(IntermPath)$(InputName).$(ObjectExt)
 String.5.0=$(IntermPath)$(InputName).ls
-String.6.0=2010,2,15,19,3,34
+String.6.0=2010,3,6,17,19,51
 
 [Root.Config.1.Settings.4]
 String.2.0=Assembling $(InputFile)...
@@ -188,8 +188,8 @@ String.2.0=Running Linker
 String.3.0=clnk $(ToolsetLibOpts) -o $(OutputPath)$(TargetSName).sm8 -fakeInteger -fakeOutFile$(ProjectSFile).elf -fakeRunConv -fakeStartupcrtsi0.sm8 -fakeAutoGen -fakeVectFilestm8_interrupt_vector.c -fakeVectAddr0x8000 -customMapAddress -customCfgFile $(OutputPath)$(TargetSName).lkf 
 String.3.1=cvdwarf $(OutputPath)$(TargetSName).sm8
 String.4.0=$(OutputPath)$(TargetFName)
-String.5.0=
-String.6.0=2010,2,15,19,3,34
+String.5.0=$(OutputPath)$(ProjectSFile).elf
+String.6.0=2010,3,9,0,24,9
 String.100.0=
 String.101.0=crtsi.st7
 String.102.0=+seg .const -b 0x8080 -m 0x7f80 -n .const -it
@@ -199,12 +199,12 @@ String.102.3=+seg .bsct -b 0x2 -m 0xfe -n .bsct
 String.102.4=+seg .ubsct -a .bsct -n .ubsct
 String.102.5=+seg .bit -a .ubsct -n .bit -id
 String.102.6=+seg .share -a .bit -n .share -is
-String.102.7=+seg .data -b 0x100 -m 0x500 -n .data
+String.102.7=+seg .data -b 0x100 -m 0x6c0 -n .data
 String.102.8=+seg .bss -a .data -n .bss
 String.103.0=Code,Constants[0x8080-0xffff]=.const,.text
 String.103.1=Eeprom[0x4000-0x43ff]=.eeprom
 String.103.2=Zero Page[0x2-0xff]=.bsct,.ubsct,.bit,.share
-String.103.3=Ram[0x100-0x5ff]=.data,.bss
+String.103.3=Ram[0x100-0x7bf]=.data,.bss
 String.104.0=0x7ff
 String.105.0=libis0.sm8;libm0.sm8
 Int.0=0
@@ -247,10 +247,10 @@ Int.1=0
 
 [Root.Kernel.Config.0.Settings.1]
 String.2.0=Compiling $(InputFile)...
-String.3.0=cxstm8 +modsl0 -customDebCompat -customOpt-no -customC-pp -customLst -l -istm8s-periphs -i../../kernel -i../../tests $(ToolsetIncOpts) -cl$(IntermPath) -co$(IntermPath) $(InputFile)
+String.3.0=cxstm8 +modsl0 -customDebCompat -customOpt-no -customC-pp -customLst -l -dSTM8S105 -dATOM_STACK_CHECKING -istm8s-periphs -i../../kernel -i../../tests $(ToolsetIncOpts) -cl$(IntermPath) -co$(IntermPath) $(InputFile)
 String.4.0=$(IntermPath)$(InputName).$(ObjectExt)
 String.5.0=$(IntermPath)$(InputName).ls
-String.6.0=2010,2,15,19,3,34
+String.6.0=2010,3,6,17,19,51
 
 [Root.Kernel.Config.0.Settings.2]
 String.2.0=Assembling $(InputFile)...
@@ -271,10 +271,10 @@ Int.1=0
 
 [Root.Kernel.Config.1.Settings.1]
 String.2.0=Compiling $(InputFile)...
-String.3.0=cxstm8 +modsl0 -customC-pp -istm8s-periphs -i../../kernel -i../../tests $(ToolsetIncOpts) -cl$(IntermPath) -co$(IntermPath) $(InputFile)
+String.3.0=cxstm8 +modsl0 -customC-pp -dSTM8S105 -dATOM_STACK_CHECKING -istm8s-periphs -i../../kernel -i../../tests $(ToolsetIncOpts) -cl$(IntermPath) -co$(IntermPath) $(InputFile)
 String.4.0=$(IntermPath)$(InputName).$(ObjectExt)
 String.5.0=$(IntermPath)$(InputName).ls
-String.6.0=2010,2,15,19,3,34
+String.6.0=2010,3,6,17,19,51
 
 [Root.Kernel.Config.1.Settings.2]
 String.2.0=Assembling $(InputFile)...
@@ -339,7 +339,7 @@ PathName=..\..\kernel\atomtimer.h
 [Root.Peripherals]
 ElemType=Folder
 PathName=Peripherals
-Child=Root.Peripherals.stm8s-periphs\stm8s_gpio.c
+Child=Root.Peripherals.stm8s-periphs\stm8s_clk.c
 Next=Root.Port
 Config.0=Root.Peripherals.Config.0
 Config.1=Root.Peripherals.Config.1
@@ -364,10 +364,10 @@ Int.1=0
 
 [Root.Peripherals.Config.0.Settings.1]
 String.2.0=Compiling $(InputFile)...
-String.3.0=cxstm8 +modsl0 -customDebCompat -customOpt-no -customC-pp -customLst -l -istm8s-periphs -i../../kernel -i../../tests $(ToolsetIncOpts) -cl$(IntermPath) -co$(IntermPath) $(InputFile)
+String.3.0=cxstm8 +modsl0 -customDebCompat -customOpt-no -customC-pp -customLst -l -dSTM8S105 -dATOM_STACK_CHECKING -istm8s-periphs -i../../kernel -i../../tests $(ToolsetIncOpts) -cl$(IntermPath) -co$(IntermPath) $(InputFile)
 String.4.0=$(IntermPath)$(InputName).$(ObjectExt)
 String.5.0=$(IntermPath)$(InputName).ls
-String.6.0=2010,2,15,19,3,34
+String.6.0=2010,3,6,17,19,51
 
 [Root.Peripherals.Config.0.Settings.2]
 String.2.0=Assembling $(InputFile)...
@@ -391,10 +391,10 @@ Int.1=0
 
 [Root.Peripherals.Config.1.Settings.1]
 String.2.0=Compiling $(InputFile)...
-String.3.0=cxstm8 +modsl0 -customC-pp -istm8s-periphs -i../../kernel -i../../tests $(ToolsetIncOpts) -cl$(IntermPath) -co$(IntermPath) $(InputFile)
+String.3.0=cxstm8 +modsl0 -customC-pp -dSTM8S105 -dATOM_STACK_CHECKING -istm8s-periphs -i../../kernel -i../../tests $(ToolsetIncOpts) -cl$(IntermPath) -co$(IntermPath) $(InputFile)
 String.4.0=$(IntermPath)$(InputName).$(ObjectExt)
 String.5.0=$(IntermPath)$(InputName).ls
-String.6.0=2010,2,15,19,3,34
+String.6.0=2010,3,6,17,19,51
 
 [Root.Peripherals.Config.1.Settings.2]
 String.2.0=Assembling $(InputFile)...
@@ -409,6 +409,21 @@ String.3.0=
 String.4.0=
 String.5.0=
 String.6.0=2010,2,9,1,12,48
+
+[Root.Peripherals.stm8s-periphs\stm8s_clk.c]
+ElemType=File
+PathName=stm8s-periphs\stm8s_clk.c
+Next=Root.Peripherals.stm8s-periphs\stm8s_uart2.h
+
+[Root.Peripherals.stm8s-periphs\stm8s_uart2.h]
+ElemType=File
+PathName=stm8s-periphs\stm8s_uart2.h
+Next=Root.Peripherals.stm8s-periphs\stm8s_uart2.c
+
+[Root.Peripherals.stm8s-periphs\stm8s_uart2.c]
+ElemType=File
+PathName=stm8s-periphs\stm8s_uart2.c
+Next=Root.Peripherals.stm8s-periphs\stm8s_gpio.c
 
 [Root.Peripherals.stm8s-periphs\stm8s_gpio.c]
 ElemType=File
@@ -476,10 +491,10 @@ Int.1=0
 
 [Root.Port.Config.0.Settings.1]
 String.2.0=Compiling $(InputFile)...
-String.3.0=cxstm8 +modsl0 -customDebCompat -customOpt-no -customC-pp -customLst -l -istm8s-periphs -i../../kernel -i../../tests $(ToolsetIncOpts) -cl$(IntermPath) -co$(IntermPath) $(InputFile)
+String.3.0=cxstm8 +modsl0 -customDebCompat -customOpt-no -customC-pp -customLst -l -dSTM8S105 -dATOM_STACK_CHECKING -istm8s-periphs -i../../kernel -i../../tests $(ToolsetIncOpts) -cl$(IntermPath) -co$(IntermPath) $(InputFile)
 String.4.0=$(IntermPath)$(InputName).$(ObjectExt)
 String.5.0=$(IntermPath)$(InputName).ls
-String.6.0=2010,2,15,19,3,34
+String.6.0=2010,3,6,17,19,51
 
 [Root.Port.Config.0.Settings.2]
 String.2.0=Assembling $(InputFile)...
@@ -503,10 +518,10 @@ Int.1=0
 
 [Root.Port.Config.1.Settings.1]
 String.2.0=Compiling $(InputFile)...
-String.3.0=cxstm8 +modsl0 -customC-pp -istm8s-periphs -i../../kernel -i../../tests $(ToolsetIncOpts) -cl$(IntermPath) -co$(IntermPath) $(InputFile)
+String.3.0=cxstm8 +modsl0 -customC-pp -dSTM8S105 -dATOM_STACK_CHECKING -istm8s-periphs -i../../kernel -i../../tests $(ToolsetIncOpts) -cl$(IntermPath) -co$(IntermPath) $(InputFile)
 String.4.0=$(IntermPath)$(InputName).$(ObjectExt)
 String.5.0=$(IntermPath)$(InputName).ls
-String.6.0=2010,2,15,19,3,34
+String.6.0=2010,3,6,17,19,51
 
 [Root.Port.Config.1.Settings.2]
 String.2.0=Assembling $(InputFile)...
@@ -525,6 +540,16 @@ String.6.0=2010,2,9,1,12,48
 [Root.Port...\..\tests\sem1.c]
 ElemType=File
 PathName=..\..\tests\sem1.c
+Next=Root.Port.uart.h
+
+[Root.Port.uart.h]
+ElemType=File
+PathName=uart.h
+Next=Root.Port.uart.c
+
+[Root.Port.uart.c]
+ElemType=File
+PathName=uart.c
 Next=Root.Port.atomport-tests.h
 
 [Root.Port.atomport-tests.h]

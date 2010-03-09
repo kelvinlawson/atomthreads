@@ -31,8 +31,8 @@ interrupt lockouts / critical sections:
 
 A couple of additional source files are also included here:
 
- * uart.c: Simple driver for the ATmega UART
  * tests-main.c: Main application file (used for launching automated tests)
+ * uart.c: Simple driver for the ATmega UART
 
 Atomthreads includes a suite of automated tests which prove the key OS
 functionality, and can be used with any architecture ports. This port
@@ -113,10 +113,19 @@ STK500 SPECIFICS
 If the STK500 is used, you should connect your serial programming cable to
 the "RS232 CTRL" connector.
 
-The test applications also make use of the UART to print out Pass/Fail
+The test applications make use of a LED to indicate test pass/fail status.
+This is currently configured to use a bit in PORTB, which on the STK500
+maps to a LED on the carrier board. You may change the port and register
+bit in tests-main.c to utilise a different pin on other hardware platforms.
+You may also completely omit the LED flashing in the test application if
+you prefer to use the UART for monitoring test status.
+
+The test applications also make use of the UART to print out pass/fail
 indications and other information. For this you should connect a serial
 debug cable to the STK500 "RS232 SPARE" connector. You should also connect
-PD0/1 to "RS232 SPARE RXD/TXD" respectively using a two-wire link.
+PD0/1 to "RS232 SPARE RXD/TXD" respectively using a two-wire link. Use of
+a UART is not required if you prefer to use the LED or some other method
+of notifying test pass/fail status.
 
 
 ---------------------------------------------------------------------------
@@ -145,11 +154,12 @@ out on the terminal. You can use this to verify that your platform has
 enough program and data space to run the application.
 
 To view the test results, connect a serial debug cable to your target
-platform. On starting, the test applications print out "Go" on the UART.
-Once the test is complete they will print out "Pass" or "Fail", along 
-with other information if the test failed. Most of the tests complete
-within a few seconds, but some (particularly the stress tests) can take
-minutes, so be patient. 
+platform (defaults to 9600bps 8N1). On starting, the test applications
+print out "Go" on the UART. Once the test is complete they will print
+out "Pass" or "Fail", along with other information if the test failed.
+
+Most of the tests complete within a few seconds, but some (particularly
+the stress tests) can take minutes, so be patient. 
 
 Note that some tests utilise four test threads, which together with the
 idle thread and main test thread can consume significant RAM resource.

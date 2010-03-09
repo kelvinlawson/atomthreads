@@ -14,6 +14,7 @@ CC=cxstm8
 ASM=castm8
 LINK=clnk
 CHEX=chex
+PART=STM8S105
 
 # Enable stack-checking
 STACK_CHECK=true
@@ -22,11 +23,11 @@ STACK_CHECK=true
 BUILD_DIR=build
 
 # Port/application object files
-APP_OBJECTS = atomport.o tests-main.o stm8_interrupt_vector.o
+APP_OBJECTS = atomport.o tests-main.o stm8_interrupt_vector.o uart.o
 APP_ASM_OBJECTS = atomport-asm.o
 
 # STM8S Peripheral driver object files
-PERIPH_OBJECTS = stm8s_gpio.o stm8s_tim1.o
+PERIPH_OBJECTS = stm8s_gpio.o stm8s_tim1.o stm8s_clk.o stm8s_uart2.o
 
 # Kernel object files
 KERNEL_OBJECTS = atomkernel.o atomsem.o atommutex.o atomtimer.o atomqueue.o
@@ -48,8 +49,8 @@ vpath %.elf .\$(BUILD_DIR)
 vpath %.hex .\$(BUILD_DIR)
 
 # Compiler/Assembler flags
-CFLAGS=+modsl0 -pp
-DBG_CFLAGS=+modsl0 +debug -pxp -no -pp -l 
+CFLAGS=+modsl0 -pp -d$(PART)
+DBG_CFLAGS=+modsl0 +debug -pxp -no -pp -l -d$(PART)
 ASMFLAGS=
 DBG_ASMFLAGS=-xx -u
 

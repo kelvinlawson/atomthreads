@@ -29,14 +29,12 @@
 
 #include <stdio.h>
 
-#include <avr/pgmspace.h>
-
 #include "atom.h"
 #include "atomport-private.h"
 #include "atomtests.h"
 #include "atomtimer.h"
-
 #include "uart.h"
+#include <avr/pgmspace.h>
 
 
 /* Constants */
@@ -228,7 +226,7 @@ int main ( void )
 static void main_thread_func (uint32_t data)
 {
     uint32_t test_status;
-	int sleep_ticks;
+    int sleep_ticks;
 
     /* Enable all LEDs (STK500-specific) */
     DDRB = 0xFF;
