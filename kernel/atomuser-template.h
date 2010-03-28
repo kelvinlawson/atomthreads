@@ -27,8 +27,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef __ATOM_USER_H
-#define __ATOM_USER_H
+#ifndef __ATOM_PORT_H
+#define __ATOM_PORT_H
 
 
 /* Required number of system ticks per second (normally 100 for 10ms tick) */
@@ -57,4 +57,8 @@
 #define CRITICAL_END()      SREG = sreg
 
 
-#endif /* __ATOM_USER_H */
+/* Uncomment to enable stack-checking */
+/* #define ATOM_STACK_CHECKING */
+
+
+#endif /* __ATOM_PORT_H */
