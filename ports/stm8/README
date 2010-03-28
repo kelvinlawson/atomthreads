@@ -291,6 +291,23 @@ initialises the OS, sets up a UART and calls out to the test module entry
 functions. You can generally simply replace the call to the test modules by
 a call to your own application startup code.
 
+Projects developed within STVD can be started using the sample workspace
+atomthreads-sample.stw. If you wish to create your own STVD project from
+scratch, then you should ensure you change the project settings for both
+Debug and Release builds as follows:
+
+* Toolset: "STM8 Cosmic"
+* MCU Selection: Appropriate for your platform (STM8S10C56 for Discovery)
+* C Compiler Memory Model: "+modsl0"
+* C Compiler Preprocessor Definitions: CPU part (e.g. "STM8S105")
+* C Compiler Preprocessor Definitions: Enable thread stack checking if
+  desired by adding "ATOM_STACK_CHECKING", for example the full
+  preprocessor line for Discovery might be: "STM8S105 ATOM_STACK_CHECKING"
+* Linker Input: Zero Page from 0x2 to 0xFF (allows NULL-pointer checks by
+  preventing the linker from using address 0x0.
+* Linker Input: Ram from 0x100 to 0x7BF (if you wish to allow 0x100 to
+  0x7BF for application usage, and 0x7C0 to 0x7FF for startup stack.
+
 
 ---------------------------------------------------------------------------
 
