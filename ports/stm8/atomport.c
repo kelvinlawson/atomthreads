@@ -49,7 +49,7 @@ static void thread_shell (void);
  *
  * This is an optional function for a port, because interrupts could
  * be enabled by the first-thread and normal context restore routines,
- * but that would require special handling in the normal context 
+ * but that would require special handling in the normal context
  * switch routine (archContextSwitch()) that is only needed the first
  * time a thread is started. A much neater method is to direct all
  * threads through this shell routine first, so that interrupts will
@@ -102,7 +102,7 @@ static void thread_shell (void)
  * archContextSwitch().
  *
  * On this port we take advantage of the fact that when the context
- * switch routine is called the compiler will automatically stack 
+ * switch routine is called the compiler will automatically stack
  * all registers which should not be clobbered. This means that the
  * context switch need only save and restore the stack pointer,
  * which is stored in the thread's TCB. Because of this, it is not
@@ -115,7 +115,7 @@ static void thread_shell (void)
  * faking a return to a caller which never actually existed.
  *
  * We could pre-initialise the stack so that the RET call goes
- * directly to the thread entry point, with the thread entry 
+ * directly to the thread entry point, with the thread entry
  * parameter filled in. On this architecture, however, we use an
  * outer thread shell routine which is used to call all threads.
  * The thread entry point and parameter are stored in the thread's
@@ -124,7 +124,7 @@ static void thread_shell (void)
  * entry and parameter within the stack.
  *
  * Note that interrupts must be enabled the first time a thread is
- * run. On some architectures this might be done by setting an 
+ * run. On some architectures this might be done by setting an
  * initial value for the interrupt-enable register within the stack
  * area. In this port, however, we use the thread shell to enable
  * interrupts at the start of any thread.
@@ -162,8 +162,8 @@ void archThreadContextInit (ATOM_TCB *tcb_ptr, void *stack_top, void (*entry_poi
     *stack_ptr-- = (uint8_t)(((uint16_t)thread_shell >> 8) & 0xFF);
 
     /**
-     * Because we are using a thread shell which is responsible for 
-     * calling the real entry point, it also passes the parameters 
+     * Because we are using a thread shell which is responsible for
+     * calling the real entry point, it also passes the parameters
      * to entry point and we need not stack the entry parameter here.
      *
      * Other ports may wish to store entry_param in the appropriate
@@ -173,8 +173,8 @@ void archThreadContextInit (ATOM_TCB *tcb_ptr, void *stack_top, void (*entry_poi
 
     /**
      * In this port we do not initialise any registers via the initial
-     * stack context at all. All thread context has now been 
-     * initialised. All that is left is to save the current stack 
+     * stack context at all. All thread context has now been
+     * initialised. All that is left is to save the current stack
      * pointer to the thread's TCB so that it knows where to start
      * looking when the thread is started.
      */
@@ -194,7 +194,7 @@ void archInitSystemTickTimer ( void )
 {
     /* Reset TIM1 */
     TIM1_DeInit();
-    
+
     /* Configure a 10ms tick */
     TIM1_TimeBaseInit(10000, TIM1_COUNTERMODE_UP, 1, 0);
 
@@ -220,14 +220,14 @@ void archInitSystemTickTimer ( void )
  *
  * The system may decide to schedule in a new thread during the call to
  * atomTimerTick(), in which case the program counter will be redirected
- * to the new thread's running location during atomIntExit(). This ISR 
+ * to the new thread's running location during atomIntExit(). This ISR
  * function will not actually complete until the thread we interrupted is
- * scheduled back in, at which point the end of this function will be 
+ * scheduled back in, at which point the end of this function will be
  * reached (after atomIntExit()) and the IRET call by the compiler will
  * return us to the interrupted thread as if we hadn't run any other
  * thread in the meantime. In other words the interrupted thread can be
  * scheduled out by atomIntExit() and several threads could run before we
- * actually reach the end of this function. When this function does 
+ * actually reach the end of this function. When this function does
  * finally complete, the return address (the PC of the thread which was
  * interrupted) will be on the interrupted thread's stack because it was
  * saved on there by the CPU when the interrupt triggered.
@@ -251,8 +251,8 @@ void TIM1_SystemTickISR (void)
     /* Call the OS system tick handler */
     atomTimerTick();
 
-    /* Ack the interrupt */
-    TIM1_ClearITPendingBit(TIM1_IT_UPDATE);
+    /* Ack the interrupt (Clear TIM1:SR1 register bit 0) */
+    TIM1->SR1 = (uint8_t)(~(uint8_t)TIM1_IT_UPDATE);
 
     /* Call the interrupt exit routine */
     atomIntExit(TRUE);
