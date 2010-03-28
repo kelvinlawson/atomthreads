@@ -420,6 +420,10 @@ during the ISR causes a context switch to a new thread, then the ISR's
 data will remain on the thread's stack until the thread is scheduled back
 in.
 
+Interrupt priorities (via the ITC_SPRx registers) are left in their
+default power-on state, which disables interrupt nesting. Kernel changes
+may be required to support interrupt nesting.
+
 Note that the STM8 programming manual currently describes the following
 feature:
 
