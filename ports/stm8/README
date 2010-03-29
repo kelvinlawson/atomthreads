@@ -146,7 +146,7 @@ with the Cosmic compiler from:
 Assuming you install the above into C:\Program Files\GNU_MAKE, you
 should set up your environment variables as follows:
 
- * set PATH=%PATH%;C:\Program Files\GNU_MAKE;C:\Program Files\COSMIC\STMS_16K
+ * set PATH=%PATH%;C:\Program Files\GNU_MAKE;C:\Program Files\COSMIC\CXSTM8_16K
  * set MAKE_MODE=DOS
 
 
