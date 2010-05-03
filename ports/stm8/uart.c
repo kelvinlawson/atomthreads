@@ -68,6 +68,9 @@ char putchar (char c)
         while (UART2_GetFlagStatus(UART2_FLAG_TXE) == RESET)
             ;
 
+        /* Return mutex access */
+        atomMutexPut(&uart_mutex);
+
     }
 
     return (c);
