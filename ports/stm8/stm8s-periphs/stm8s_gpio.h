@@ -47,18 +47,18 @@
   */
 typedef enum
 {
-  GPIO_MODE_IN_FL_NO_IT      = (u8)0b00000000,  /*!< Input floating, no external interrupt */
-  GPIO_MODE_IN_PU_NO_IT      = (u8)0b01000000,  /*!< Input pull-up, no external interrupt */
-  GPIO_MODE_IN_FL_IT         = (u8)0b00100000,  /*!< Input floating, external interrupt */
-  GPIO_MODE_IN_PU_IT         = (u8)0b01100000,  /*!< Input pull-up, external interrupt */
-  GPIO_MODE_OUT_OD_LOW_FAST  = (u8)0b10100000,  /*!< Output open-drain, low level, 10MHz */
-  GPIO_MODE_OUT_PP_LOW_FAST  = (u8)0b11100000,  /*!< Output push-pull, low level, 10MHz */
-  GPIO_MODE_OUT_OD_LOW_SLOW  = (u8)0b10000000,  /*!< Output open-drain, low level, 2MHz */
-  GPIO_MODE_OUT_PP_LOW_SLOW  = (u8)0b11000000,  /*!< Output push-pull, low level, 2MHz */
-  GPIO_MODE_OUT_OD_HIZ_FAST  = (u8)0b10110000,  /*!< Output open-drain, high-impedance level,10MHz */
-  GPIO_MODE_OUT_PP_HIGH_FAST = (u8)0b11110000,  /*!< Output push-pull, high level, 10MHz */
-  GPIO_MODE_OUT_OD_HIZ_SLOW  = (u8)0b10010000,  /*!< Output open-drain, high-impedance level, 2MHz */
-  GPIO_MODE_OUT_PP_HIGH_SLOW = (u8)0b11010000   /*!< Output push-pull, high level, 2MHz */
+  GPIO_MODE_IN_FL_NO_IT      = (u8)0x00, // 0b00000000,  /*!< Input floating, no external interrupt */
+  GPIO_MODE_IN_PU_NO_IT      = (u8)0x40, // 0b01000000,  /*!< Input pull-up, no external interrupt */
+  GPIO_MODE_IN_FL_IT         = (u8)0x20, // 0b00100000,  /*!< Input floating, external interrupt */
+  GPIO_MODE_IN_PU_IT         = (u8)0x60, // 0b01100000,  /*!< Input pull-up, external interrupt */
+  GPIO_MODE_OUT_OD_LOW_FAST  = (u8)0xA0, // 0b10100000,  /*!< Output open-drain, low level, 10MHz */
+  GPIO_MODE_OUT_PP_LOW_FAST  = (u8)0xE0, // 0b11100000,  /*!< Output push-pull, low level, 10MHz */
+  GPIO_MODE_OUT_OD_LOW_SLOW  = (u8)0x80, // 0b10000000,  /*!< Output open-drain, low level, 2MHz */
+  GPIO_MODE_OUT_PP_LOW_SLOW  = (u8)0xC0, // 0b11000000,  /*!< Output push-pull, low level, 2MHz */
+  GPIO_MODE_OUT_OD_HIZ_FAST  = (u8)0xB0, // 0b10110000,  /*!< Output open-drain, high-impedance level,10MHz */
+  GPIO_MODE_OUT_PP_HIGH_FAST = (u8)0xF0, // 0b11110000,  /*!< Output push-pull, high level, 10MHz */
+  GPIO_MODE_OUT_OD_HIZ_SLOW  = (u8)0x90, // 0b10010000,  /*!< Output open-drain, high-impedance level, 2MHz */
+  GPIO_MODE_OUT_PP_HIGH_SLOW = (u8)0xD0 // 0b11010000   /*!< Output push-pull, high level, 2MHz */
 }GPIO_Mode_TypeDef;
 
 /**

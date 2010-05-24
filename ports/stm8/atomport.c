@@ -79,7 +79,11 @@ static void thread_shell (void)
      * Enable interrupts - these will not be enabled when a thread
      * is first restored.
      */
+#if defined(__CSMC__)
     _asm("rim");
+#elif defined(__IAR_SYSTEMS_ICC__)
+    rim();
+#endif
 
     /* Call the thread entry point */
     if (curr_tcb && curr_tcb->entry_point)
@@ -101,18 +105,29 @@ static void thread_shell (void)
  * and running the thread via archFirstThreadRestore() or
  * archContextSwitch().
  *
- * On this port we take advantage of the fact that when the context
- * switch routine is called the compiler will automatically stack
- * all registers which should not be clobbered. This means that the
- * context switch need only save and restore the stack pointer,
- * which is stored in the thread's TCB. Because of this, it is not
- * necessary to prefill a new thread's stack with any register
- * values here. The only entry we need to make in the stack is the
- * thread's entry point - this is not exactly restored when the
+ * (COSMIC) On this port we take advantage of the fact that when
+ * the context switch routine is called the compiler will
+ * automatically stack all registers which should not be clobbered.
+ * This means that the context switch need only save and restore the
+ * stack pointer, which is stored in the thread's TCB. Because of
+ * this, it is not necessary to prefill a new thread's stack with any
+ * register values here. The only entry we need to make in the stack
+ * is the thread's entry point - this is not exactly restored when
  * the thread is context switched in, but rather is popped off the
  * stack by the context switch routine's RET call. That is used to
  * direct the program counter to our thread's entry point - we are
  * faking a return to a caller which never actually existed.
+ *
+ * (IAR) The IAR compiler works around the lack of CPU registers on
+ * STM8 by allocating some space in low SRAM which is used for
+ * "virtual" registers. The compiler uses these like normal CPU
+ * registers, and hence their values must be preserved when
+ * context-switching between threads. Some of these (?b8 to ?b15)
+ * are expected to be preserved by called functions, and hence we
+ * actually need to save/restore those registers (unlike the rest
+ * of the virtual registers and the standard CPU registers). We
+ * therefore must prefill the stack with values for ?b8 to ?b15
+ * here.
  *
  * We could pre-initialise the stack so that the RET call goes
  * directly to the thread entry point, with the thread entry
@@ -172,11 +187,28 @@ void archThreadContextInit (ATOM_TCB *tcb_ptr, void *stack_top, void (*entry_poi
      */
 
     /**
-     * In this port we do not initialise any registers via the initial
-     * stack context at all. All thread context has now been
-     * initialised. All that is left is to save the current stack
-     * pointer to the thread's TCB so that it knows where to start
-     * looking when the thread is started.
+     * (IAR) Set up initial values for ?b8 to ?b15.
+     */
+#if defined(__IAR_SYSTEMS_ICC__)
+    *stack_ptr-- = 0;    // ?b8
+    *stack_ptr-- = 0;    // ?b9
+    *stack_ptr-- = 0;    // ?b10
+    *stack_ptr-- = 0;    // ?b11
+    *stack_ptr-- = 0;    // ?b12
+    *stack_ptr-- = 0;    // ?b13
+    *stack_ptr-- = 0;    // ?b14
+    *stack_ptr-- = 0;    // ?b15
+#endif
+
+    /**
+     * (COSMIC) We do not initialise any registers via the initial
+     * stack context at all.
+     */
+
+    /**
+     * All thread context has now been initialised. All that is left
+     * is to save the current stack pointer to the thread's TCB so 
+     * that it knows where to start looking when the thread is started.
      */
     tcb_ptr->sp_save_ptr = stack_ptr;
 
@@ -243,6 +275,10 @@ void archInitSystemTickTimer ( void )
  *
  * @return None
  */
+#if defined(__IAR_SYSTEMS_ICC__)
+#pragma vector = 13
+__interrupt 
+#endif
 void TIM1_SystemTickISR (void)
 {
     /* Call the interrupt entry routine */

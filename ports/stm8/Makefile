@@ -24,7 +24,7 @@ BUILD_DIR=build
 
 # Port/application object files
 APP_OBJECTS = atomport.o tests-main.o stm8_interrupt_vector.o uart.o
-APP_ASM_OBJECTS = atomport-asm.o
+APP_ASM_OBJECTS = atomport-asm-cosmic.o
 
 # STM8S Peripheral driver object files
 PERIPH_OBJECTS = stm8s_gpio.o stm8s_tim1.o stm8s_clk.o stm8s_uart2.o

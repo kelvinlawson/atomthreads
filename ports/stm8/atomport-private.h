@@ -33,7 +33,10 @@
 
 /* Function prototypes */
 void archInitSystemTickTimer (void);
+#ifdef __CSMC__
 @far @interrupt void TIM1_SystemTickISR (void);
-
+#elif __IAR_SYSTEMS_ICC__
+__interrupt void TIM1_SystemTickISR (void);
+#endif
 
 #endif /* __ATOM_PORT_PRIVATE_H */

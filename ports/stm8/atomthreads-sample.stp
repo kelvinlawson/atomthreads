@@ -580,11 +580,11 @@ Next=Root.Port.atomport.c
 [Root.Port.atomport.c]
 ElemType=File
 PathName=atomport.c
-Next=Root.Port.atomport-asm.s
+Next=Root.Port.atomport-asm-cosmic.s
 
-[Root.Port.atomport-asm.s]
+[Root.Port.atomport-asm-cosmic.s]
 ElemType=File
-PathName=atomport-asm.s
+PathName=atomport-asm-cosmic.s
 Next=Root.Port.stm8_interrupt_vector.c
 
 [Root.Port.stm8_interrupt_vector.c]

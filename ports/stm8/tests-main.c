@@ -32,6 +32,7 @@
 
 #include "atom.h"
 #include "atomport-private.h"
+#include "atomport-tests.h"
 #include "atomtests.h"
 #include "atomtimer.h"
 #include "uart.h"
@@ -104,10 +105,10 @@ extern int _stack;
 static ATOM_TCB main_tcb;
 
 /* Main thread's stack area (large so place outside of the small page0 area on STM8) */
-@near static uint8_t main_thread_stack[MAIN_STACK_SIZE_BYTES];
+NEAR static uint8_t main_thread_stack[MAIN_STACK_SIZE_BYTES];
 
 /* Idle thread's stack area (large so place outside of the small page0 area on STM8) */
-@near static uint8_t idle_thread_stack[IDLE_STACK_SIZE_BYTES];
+NEAR static uint8_t idle_thread_stack[IDLE_STACK_SIZE_BYTES];
 
 
 /* Forward declarations */
@@ -161,9 +162,6 @@ void main ( void )
             atomOSStart();
         }
     }
-
-    while (1)
-        ;
 
     /* There was an error starting the OS if we reach here */
     return;

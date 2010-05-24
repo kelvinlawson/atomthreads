@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stddef.h>
 
 #include "stm8s.h"
 
@@ -44,15 +45,15 @@ int uart_init(uint32_t baudrate)
 
 
 /**
- * \b putchar
+ * \b uart_putchar
  *
- * Retarget putchar() to use UART2
+ * Write a char out via UART2
  *
  * @param[in] c Character to send
  *
  * @return Character sent
  */
-char putchar (char c)
+char uart_putchar (char c)
 {
     /* Block on private access to the UART */
     if (atomMutexGet(&uart_mutex, 0) == ATOM_OK)
@@ -76,3 +77,62 @@ char putchar (char c)
     return (c);
 }
 
+
+/* COSMIC: Requires putchar() routine to override stdio */
+#if defined(__CSMC__)
+/**
+ * \b putchar
+ *
+ * Retarget putchar() to use UART2
+ *
+ * @param[in] c Character to send
+ *
+ * @return Character sent
+ */
+char putchar (char c)
+{
+    return (uart_putchar(c));
+}
+#endif /* __CSMC__ */
+
+
+/* IAR: Requires __write() routine to override stdio */
+#if defined(__IAR_SYSTEMS_ICC__)
+/**
+ * \b __write
+ *
+ * Override for IAR stream output
+ *
+ * @param[in] handle Stdio handle. -1 to flush.
+ * @param[in] buf Pointer to buffer to be written
+ * @param[in] bufSize Number of characters to be written
+ *
+ * @return Number of characters sent
+ */
+size_t __write(int handle, const unsigned char *buf, size_t bufSize)
+{
+    size_t chars_written = 0;
+    
+    /* Ignore flushes */
+    if (handle == -1)
+    {
+      chars_written = (size_t)0; 
+    }
+    /* Only allow stdout/stderr output */
+    else if ((handle != 1) && (handle != 2))
+    {
+      chars_written = (size_t)-1; 
+    }
+    /* Parameters OK, call the low-level character output routine */
+    else
+    {
+        while (chars_written < bufSize)
+        {
+            uart_putchar (buf[chars_written]);
+            chars_written++;
+        }
+    }
+    
+    return (chars_written);
+}
+#endif /* __IAR_SYSTEMS_ICC__ */

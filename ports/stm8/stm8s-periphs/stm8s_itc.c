@@ -45,9 +45,16 @@ u8 ITC_GetCPUCC(void)
     _asm("push cc");
     _asm("pop a");
     return; /* Ignore compiler warning, the returned value is in A register */
-#else /* _RAISONANCE_ */
+#endif
+    
+#ifdef _RAISONANCE_
     return _getCC_();
-#endif /* _COSMIC_*/
+#endif
+
+#ifdef _IAR_SYSTEMS_
+    __asm("push cc");
+    __asm("pop a");
+#endif
 }
 
 

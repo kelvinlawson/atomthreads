@@ -3,6 +3,9 @@
  */
 
 
+/* COSMIC: Requires interrupt vector table */
+#if defined(__CSMC__)
+
 /* Import Atomthreads system tick ISR prototype */
 #include "atomport-private.h"
 
@@ -58,3 +61,5 @@ struct interrupt_vector const _vectab[] = {
 	{0x82, NonHandledInterrupt}, /* irq28 */
 	{0x82, NonHandledInterrupt}, /* irq29 */
 };
+
+#endif /* __CSMC__ */

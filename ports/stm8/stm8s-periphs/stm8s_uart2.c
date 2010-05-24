@@ -31,6 +31,14 @@
 /* Private functions ---------------------------------------------------------*/
 /* Public functions ----------------------------------------------------------*/
 
+/**
+* IAR EWSTM8: Ignore unused variable warning on dummy variable.
+ */
+#ifdef __IAR_SYSTEMS_ICC__
+#pragma diag_suppress=Pe550
+#endif
+
+
 /** @}
   * @addtogroup UART2_Public_Functions
   * @{

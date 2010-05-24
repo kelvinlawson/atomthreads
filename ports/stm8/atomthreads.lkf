@@ -38,7 +38,7 @@ build\stm8s_uart2.o
 build\tests-main.o
 build\atomport.o
 build\uart.o
-build\atomport-asm.o
+build\atomport-asm-cosmic.o
 # Caller passes in test application object name as param1
 @1
 #<END OBJECT_FILES>

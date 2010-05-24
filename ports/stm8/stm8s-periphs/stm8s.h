@@ -29,10 +29,16 @@
 /* Check the used compiler */
 #if defined(__CSMC__)
  #undef _RAISONANCE_
+ #undef _IAR_SYSTEMS_
  #define _COSMIC_
 #elif defined(__RCST7__)
  #undef _COSMIC_
+ #undef _IAR_SYSTEMS_
  #define _RAISONANCE_
+#elif defined(__IAR_SYSTEMS_ICC__)
+ #undef _COSMIC_
+ #undef _RAISONANCE_
+ #define _IAR_SYSTEMS_
 #else
  #error "Unsupported Compiler!"          /* Compiler defines not found */
 #endif
@@ -42,7 +48,8 @@
    Tip: To avoid modifying this file each time you need to switch between these
         devices, you can define the device in your toolchain compiler preprocessor. */
 #if !defined (STM8S208) && !defined (STM8S207) && !defined (STM8S105) && !defined (STM8S103) && !defined (STM8S903)
- #define STM8S208
+ # error "STM8S device not specified"
+ /* #define STM8S208 */
  /* #define STM8S207 */
  /* #define STM8S105 */  
  /* #define STM8S103 */
@@ -67,12 +74,21 @@
  #define NEAR @near
  #define TINY @tiny
  #define __CONST  const
-#else /* __RCST7__ */
+#endif
+
+#ifdef _RAISONANCE_
  #define FAR  far
  #define NEAR data
  #define TINY page0
  #define __CONST  code
-#endif /* __CSMC__ */
+#endif
+
+#ifdef _IAR_SYSTEMS_
+ #define FAR  __far
+ #define NEAR __near
+ #define TINY __tiny
+ #define __CONST  const
+#endif
 
 #ifdef PointerAttr_Far
  #define PointerAttr FAR 
@@ -2495,7 +2511,9 @@ CFG_TypeDef;
  #define trap()              _trap_() /* Trap (soft IT) */
  #define wfi()               _wfi_()  /* Wait For Interrupt */
  #define halt()              _halt_() /* Halt */
-#else /* COSMIC */
+#endif
+
+#ifdef _COSMIC_
  #define enableInterrupts() {_asm("rim\n");} /* enable interrupts */
  #define disableInterrupts() {_asm("sim\n");} /* disable interrupts */
  #define rim() {_asm("rim\n");} /* enable interrupts */
@@ -2504,6 +2522,18 @@ CFG_TypeDef;
  #define trap() {_asm("trap\n");} /* Trap (soft IT) */
  #define wfi() {_asm("wfi\n");} /* Wait For Interrupt */
  #define halt() {_asm("halt\n");} /* Halt */
+#endif
+
+#ifdef _IAR_SYSTEMS_
+ #include <intrinsics.h>
+ #define enableInterrupts()  __enable_interrupt()   /* enable interrupts */
+ #define disableInterrupts() __disable_interrupt()  /* disable interrupts */
+ #define rim()               __enable_interrupt()   /* enable interrupts */
+ #define sim()               __disable_interrupt()  /* disable interrupts */
+ #define nop()               __no_operation()       /* No Operation */
+ #define trap()              __trap_()              /* Trap (soft IT) */
+ #define wfi()               __wait_for_interrupt() /* Wait For Interrupt */
+ #define halt()              __halt_()              /* Halt */
 #endif
 
 /*============================== Handling bits ====================================*/

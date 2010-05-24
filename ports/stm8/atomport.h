@@ -33,6 +33,10 @@
 
 #include "stm8s_type.h"
 
+#if defined(__IAR_SYSTEMS_ICC__)
+#include "intrinsics.h"
+#endif
+
 
 /* Required number of system ticks per second (normally 100 for 10ms tick) */
 #define SYSTEM_TICKS_PER_SEC            100
@@ -51,10 +55,19 @@
 
 
 /* Critical region protection */
+
+/* COSMIC: Use inline assembler */
+#if defined(__CSMC__)
 #define CRITICAL_STORE      uint8_t ccr
 #define CRITICAL_START()    _asm ("push CC\npop a\nld (X),A\nsim", &ccr)
 #define CRITICAL_END()      _asm ("ld A,(X)\npush A\npop CC", &ccr)
 
+/* IAR: Use intrinsics */
+#elif defined(__IAR_SYSTEMS_ICC__)
+#define CRITICAL_STORE      __istate_t _istate
+#define CRITICAL_START()    _istate = __get_interrupt_state(); __disable_interrupt()
+#define CRITICAL_END()      __set_interrupt_state(_istate)
+#endif
 
 /* Uncomment to enable stack-checking */
 /* #define ATOM_STACK_CHECKING */

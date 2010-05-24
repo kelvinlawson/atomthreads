@@ -1,5 +1,5 @@
 ;
-; Copyright (c) 2005, Atomthreads Project. All rights reserved.
+; Copyright (c) 2010, Atomthreads Project. All rights reserved.
 ;
 ; Redistribution and use in source and binary forms, with or without
 ; Modification, are permitted provided that the following conditions
@@ -28,8 +28,14 @@
 ;
 
 
-;  Export functions to other modules
-xdef _archContextSwitch, _archFirstThreadRestore
+; IAR assembler routines
+
+
+  NAME ATOMPORTASM
+  SECTION .text:code
+
+; Get definitions for virtual registers used by the compiler
+#include "vregs.inc"
 
 
 ;  \b archContextSwitch
@@ -47,11 +53,12 @@ xdef _archContextSwitch, _archFirstThreadRestore
 ;  @return None
 ; 
 ;  void archContextSwitch (ATOM_TCB *old_tcb_ptr, ATOM_TCB *new_tcb_ptr)
-_archContextSwitch:
+  PUBLIC archContextSwitch
+archContextSwitch:
 
-    ; Parameter locations:
+    ; Parameter locations (IAR calling convention):
     ;   old_tcb_ptr = X register (word-width)
-    ;   new_tcb_ptr = stack (word-width)
+    ;   new_tcb_ptr = Y register (word-width)
 
     ; STM8 CPU Registers:
     ;
@@ -60,37 +67,65 @@ _archContextSwitch:
     ; PC: Program counter
     ; CC: Code condition register
     ;
+    ; IAR compiler virtual registers
+    ;
+    ; ?b0 - ?b7: Scratch registers
+    ; ?b8 - ?b15: Preserved registers
     ; 
+    ; The basic scheme is that some registers will already be saved
+    ; onto the stack if the caller wishes them not to be clobbered.
+    ; We only need to context-switch additional registers which the
+    ; caller does not expect to be modified in a subroutine.
+    ;
     ; If this is a cooperative context switch (a thread has called us
-    ; to schedule itself out), the Cosmic compiler will have saved any
-    ; of the registers which it does not want us to clobber. There are
-    ; no registers which are expected to retain their value across a
-    ; function call, hence for cooperative context switches with this
-    ; compiler we do not actually need to save any registers at all.
+    ; to schedule itself out), the IAR compiler will have saved any
+    ; of the registers which it does not want us to clobber. For IAR
+    ; only virtual registers ?b8 to ?b15 are expected to retain their
+    ; value across a function call, hence for cooperative context
+    ; switches with this compiler we only need to save ?b8 to ?b15.
     ;
     ; If we were called from an interrupt routine (because a thread
     ; is being preemptively scheduled out), the situation is exactly
     ; the same. Any ISR which calls out to a subroutine will have
-    ; similarly saved all registers which it needs us not to clobber
-    ; which in the case of this compiler is all registers. Again, we
-    ; do not need to save any registers because no registers are
-	; expected to be unclobbered by a subroutine.
+    ; similarly saved all registers which it needs us not to clobber,
+    ; leaving only ?b8 to ?b15 which must be saved.
     ;
-    ; This is an unusual context switch routine, because it does not
-	; need to actually save any registers. Instead, the act of
-	; calling this function causes all registers which must not be
-	; clobbered to be saved on the stack anyway in the case of 
-	; cooperative context switches. For preemptive switches, the
-	; interrupt service routine which calls out to here causes all
-	; registers to be saved in a similar fashion.
+    ; The Cosmic compiler version of this context switch routine
+    ; does not require any registers to be saved/restored, whereas
+    ; this IAR equivalent reqires that 8 of the virtual registers
+    ; are. 
 
-    ; We do have to do some work in here though: we need to store
+    ; We also have to do a little more work in here: we need to store
     ; the current stack pointer to the current thread's TCB, and
     ; switch in the new thread by taking the stack pointer from
     ; the new thread's TCB and making that our new stack pointer.
 
+    ; (IAR) Compiler will have already saved any scratch registers
+    ; (A, X, Y, CC, and ?b0 to ?b7) which it needs before calling here
+    ; for cooperative switches. So these will already be on the stack
+    ; and do not need to be context-switched. This assumes that 
+    ; __interrupt funcs (although EWSTM8 docs say they don't save
+    ; vregs) do actually save ?b0 to ?b7 if they call out to another
+    ; function. Can't verify this with Kickstart edition. If this
+    ; assumption is incorrect then we actually need to save all vregs
+    ; here, and this would be inefficient if called for a cooperative
+    ; switch where we know ?b0 to ?b7 do not need to be saved.
+    PUSH ?b8
+    PUSH ?b9
+    PUSH ?b10
+    PUSH ?b11
+    PUSH ?b12
+    PUSH ?b13
+    PUSH ?b14
+    PUSH ?b15
+
     ; The parameter pointing to the the old TCB (a word-width
     ;	pointer) is still untouched in the X register.
+
+    ; (IAR) Take a copy of the new_tcb_ptr parameter from Y-reg in
+    ; a temporary (?b0) register. We need to use Y briefly for SP
+    ; access.
+    ldw ?b0, Y
 
     ; Store current stack pointer as first entry in old_tcb_ptr
     ldw Y, SP    ; Move current stack pointer into Y register
@@ -98,41 +133,28 @@ _archContextSwitch:
 
 
     ; At this point, all of the current thread's context has been saved
-    ; so we no longer care about keeping the contents of any registers.
-    ; We do still need the first two bytes on the current thread's stack,
-    ; however, which contain new_tcb_ptr (a pointer to the TCB of the
-    ; thread which we wish to switch in).
+    ; so we no longer care about keeping the contents of any registers
+    ; except ?b0 which contains our passed new_tcb_ptr parameter (a 
+    ; pointer to the TCB of the thread which we wish to switch in).
     ;
-    ; Our stack frame now contains all registers (if this is a preemptive
-    ; switch due to an interrupt handler) or those registers which the
-    ; calling function did not wish to be clobbered (if this is a
-    ; cooperative context switch). It also contains the return address 
+    ; Our stack frame now contains all registers which need to be
+    ; preserved or context-switched. It also contains the return address 
     ; which will be either a function called via an ISR (for preemptive
     ; switches) or a function called from thread context (for cooperative
-    ; switches). Finally, the stack also contains the aforementioned
-    ; word which is the new_tcb_ptr parameter passed via the stack.
+    ; switches).
     ;
     ; In addition, the thread's stack pointer (after context-save) is
     ; stored in the thread's TCB.
 
-    ; We are now ready to restore the new thread's context. In most 
-    ; architecture ports we would typically switch our stack pointer
-    ; to the new thread's stack pointer, and pop all of its context
-    ; off the stack, before returning to the caller (the original
-    ; caller when the new thread was last scheduled out). In this
-    ; port, however, we do not need to actually restore any
-    ; registers here because none are saved when we switch out (at
-    ; least not by this function). We switch to the new thread's
-    ; stack pointer and then return to the original caller, which
-    ; will restore any registers which had to be saved.
+    ; We are now ready to restore the new thread's context. We switch
+    ; our stack pointer to the new thread's stack pointer, and pop its
+    ; context off the stack, before returning to the caller (the
+    ; original caller when the new thread was last scheduled out).
 
     ; Get the new thread's stack pointer off the TCB (new_tcb_ptr).
-    ; new_tcb_ptr is still stored in the previous thread's stack.
-    ; We are free to use any registers here.
-
-    ; Pull the new_tcb_ptr parameter from the stack into X register
-    ldw X,($3,SP)
-    
+    ; We kept a copy of new_tcb_ptr earlier in ?b0, copy it into X.
+    ldw X,?b0
+ 
     ; Pull the first entry out of new_tcb_ptr (the new thread's 
     ; stack pointer) into X register.
     ldw X,(X)
@@ -140,9 +162,15 @@ _archContextSwitch:
     ; Switch our current stack pointer to that of the new thread.
     ldw SP,X
 
-    ; Normally we would start restoring registers from the new
-    ; thread's stack here, but we don't save/restore any. We're
-    ; almost done.
+    ; (IAR) We only save/restore ?b8 to ?b15
+    POP ?b15
+    POP ?b14
+    POP ?b13
+    POP ?b12
+    POP ?b11
+    POP ?b10
+    POP ?b9
+    POP ?b8
 
     ; The return address on the stack will now be the new thread's return
     ; address - i.e. although we just entered this function from a
@@ -316,8 +344,8 @@ _archContextSwitch:
 ; @return None
 ;
 ; void archFirstThreadRestore (ATOM_TCB *new_tcb_ptr)
-_archFirstThreadRestore:
-
+  PUBLIC archFirstThreadRestore
+archFirstThreadRestore:
     ; Parameter locations:
     ;  new_tcb_ptr = X register (word-width)
 
@@ -342,6 +370,16 @@ _archFirstThreadRestore:
     
     ; Switch our current stack pointer to that of the new thread.
     ldw SP,X
+
+    ; (IAR) We only context switch ?b8 to ?b15
+    POP ?b15
+    POP ?b14
+    POP ?b13
+    POP ?b12
+    POP ?b11
+    POP ?b10
+    POP ?b9
+    POP ?b8
 
     ; The "return address" left on the stack now will be the new
     ; thread's entry point. RET will take us there as if we had

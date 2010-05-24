@@ -139,7 +139,7 @@ uint32_t test_start (void)
         /* Check that time has advanced by exactly 1 tick */
         if ((end_time - start_time) != 1)
         {
-            ATOMLOG (_STR("Tick1:%d\n"), (end_time-start_time));
+            ATOMLOG (_STR("Tick1:%d\n"), (int)(end_time-start_time));
             failures++;
         }
     }
@@ -175,7 +175,7 @@ uint32_t test_start (void)
         /* Check that time has advanced by exactly 2 ticks */
         if ((end_time - start_time) != 2)
         {
-            ATOMLOG (_STR("Tick2:%d\n"), (end_time-start_time));
+            ATOMLOG (_STR("Tick2:%d\n"), (int)(end_time-start_time));
             failures++;
         }
     }
@@ -211,7 +211,7 @@ uint32_t test_start (void)
         /* Check that time has advanced by exactly 500 ticks */
         if ((end_time - start_time) != 500)
         {
-            ATOMLOG (_STR("Tick500:%d\n"), (end_time-start_time));
+            ATOMLOG (_STR("Tick500:%d\n"), (int)(end_time-start_time));
             failures++;
         }
     }

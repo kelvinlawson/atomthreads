@@ -136,7 +136,7 @@ uint32_t test_start (void)
     {
         if (cb_order[i] != i)
         {
-            ATOMLOG (_STR("T%d=%d\n"), i, cb_order[i]);
+            ATOMLOG (_STR("T%d=%d\n"), i, (int)cb_order[i]);
             failures++;
         }
     }
