@@ -103,13 +103,17 @@ archContextSwitch:
     ; (IAR) Compiler will have already saved any scratch registers
     ; (A, X, Y, CC, and ?b0 to ?b7) which it needs before calling here
     ; for cooperative switches. So these will already be on the stack
-    ; and do not need to be context-switched. This assumes that 
-    ; __interrupt funcs (although EWSTM8 docs say they don't save
-    ; vregs) do actually save ?b0 to ?b7 if they call out to another
-    ; function. Can't verify this with Kickstart edition. If this
-    ; assumption is incorrect then we actually need to save all vregs
-    ; here, and this would be inefficient if called for a cooperative
-    ; switch where we know ?b0 to ?b7 do not need to be saved.
+    ; and do not need to be context-switched. The same goes for 
+    ; __interrupt functions (i.e. preemptive switches): the IAR
+    ; compiler saves A, X, Y and CC for interrupt handlers, and
+    ; (because we call out from interrupt handlers to C kernel code
+    ; (e.g. atomIntExit()) before calling here for a context-switch,
+    ; the compiler also has to save ?b0 to ?b7. This is because those
+    ; called C functions cannot know they were called from an interrupt
+    ; and will assume that they have ?b0 to ?b7 available as scratch
+    ; registers. Either way (cooperative or interrupt/preemptive) we
+    ; know that the only registers which must be preserved that are not
+    ; already on the stack-frame are ?b8 to ?b15.
     PUSH ?b8
     PUSH ?b9
     PUSH ?b10
