@@ -4,9 +4,9 @@
 Keyword=ST7Workspace-V0.7
 
 [Project0]
-Filename=atomthreads-sample.stp
+Filename=atomthreads-sample-cosmic.stp
 Dependencies=
 [Options]
 ActiveProject=atomthreads
-ActiveConfig=Debug
+ActiveConfig=Release
 AddSortedElements=0

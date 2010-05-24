@@ -113,9 +113,9 @@ automated tests.
 BUILD VIA STVD PROJECT
 
 For building applications using STVD you can use the sample project file
-atomthreads-sample.stw. This builds a sample full application which runs
-the "sem1" automated test. Applications can be downloaded directly to the
-target hardware (e.g. STM8S-Discovery) and run via the integrated
+atomthreads-sample-cosmic.stw. This builds a sample full application which
+runs the "sem1" automated test. Applications can be downloaded directly to
+the target hardware (e.g. STM8S-Discovery) and run via the integrated
 debugger. Press the exclamation button to run, and confirm that the LED
 flashes once per second (if running on an STM8S-Discovery) to ensure that
 the test has passed. 
@@ -292,9 +292,9 @@ functions. You can generally simply replace the call to the test modules by
 a call to your own application startup code.
 
 Projects developed within STVD can be started using the sample workspace
-atomthreads-sample.stw. If you wish to create your own STVD project from
-scratch, then you should ensure you change the project settings for both
-Debug and Release builds as follows:
+atomthreads-sample-cosmic.stw. If you wish to create your own STVD project
+from scratch, then you should ensure you change the project settings for
+both Debug and Release builds as follows:
 
 * Toolset: "STM8 Cosmic"
 * MCU Selection: Appropriate for your platform (STM8S10C56 for Discovery)
