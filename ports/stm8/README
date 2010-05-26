@@ -20,7 +20,7 @@ as the context-switch routine which saves and restores processor registers
 on a thread switch. In this case, the kernel port is split into two files:
 
  * atomport.c: Those functions which can be written in C
- * atomport-asm.s: The main register save/restore assembler routines
+ * atomport-asm-cosmic.s: The main register save/restore assembler routines
 
 Each Atomthreads port requires also a header file which describes various
 architecture-specific details such as appropriate types for 8-bit, 16-bit
