@@ -34,7 +34,7 @@
 
 
 /** Forward declarations */
-static void thread_shell (void);
+static NO_REG_SAVE void thread_shell (void);
 
 
 /**
@@ -66,9 +66,16 @@ static void thread_shell (void);
  * first time because you can preinitialise the stack context with
  * a suitable register value that will enable interrupts.
  *
+ * If the compiler supports it, stack space can be saved by preventing
+ * the function from saving registers on entry. This is because we
+ * are called directly by the context-switch assembler, and know that
+ * threads cannot return from here. The NO_REG_SAVE macro is used to
+ * denote such functions in a compiler-agnostic way, though not all
+ * compilers support it.
+ *
  * @return None
  */
-static void thread_shell (void)
+static NO_REG_SAVE void thread_shell (void)
 {
     ATOM_TCB *curr_tcb;
 
@@ -207,7 +214,7 @@ void archThreadContextInit (ATOM_TCB *tcb_ptr, void *stack_top, void (*entry_poi
 
     /**
      * All thread context has now been initialised. All that is left
-     * is to save the current stack pointer to the thread's TCB so 
+     * is to save the current stack pointer to the thread's TCB so
      * that it knows where to start looking when the thread is started.
      */
     tcb_ptr->sp_save_ptr = stack_ptr;
@@ -277,9 +284,8 @@ void archInitSystemTickTimer ( void )
  */
 #if defined(__IAR_SYSTEMS_ICC__)
 #pragma vector = 13
-__interrupt 
 #endif
-void TIM1_SystemTickISR (void)
+INTERRUPT void TIM1_SystemTickISR (void)
 {
     /* Call the interrupt entry routine */
     atomIntEnter();

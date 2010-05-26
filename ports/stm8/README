@@ -437,3 +437,70 @@ you will need to put the device in the stack compatible mode described.
 
 
 ---------------------------------------------------------------------------
+
+WRITING NEW INTERRUPT HANDLERS
+
+All interrupt handlers which will call out to the OS kernel and potentially
+cause a thread switch must call atomIntEnter() and atomIntExit(). An
+example of this can be seen in the timer tick ISR in atomport.c.
+
+With the Cosmic compiler port it is also necessary to add the @svlreg
+modifier to any interrupt handlers which call out to the OS kernel.
+Alternatively you may use the INTERRUPT macro from atomport-private.h which
+always adds the @svlreg modifier. This modifier ensures that the c_lreg
+virtual register is saved on the interrupted thread's stack for any
+preemptive context switches. It also ensures that longs are available for
+use within any OS kernel code called as part of the interrupt handling. 
+
+You may also implement fast interrupt handlers in the system which do not
+call atomIntEnter()/atomIntExit() and which do not need the @svlreg
+modifier, however these ISRs cannot perform OS functions such as posting
+semaphores or effecting a thread switch.
+
+
+---------------------------------------------------------------------------
+
+COSMIC COMPILER VIRTUAL REGISTERS
+
+The STM8 has only very few CPU registers, so the Cosmic compiler augments
+them with three "virtual" registers, which are simply locations in fast
+memory. These registers are called c_x, c_y and c_lreg.
+
+The Atomthreads context switch for Cosmic/STM8 takes advantage of the fact
+that all CPU and virtual registers are automatically saved on the stack by
+the compiler when calling out to C functions.
+
+For cooperative context switches (where a thread calls an OS kernel
+function to schedule itself out), any of these registers which should be
+preserved across the function call are automatically saved on the stack by
+the compiler before the context switch is even called. This means that no
+CPU or virtual registers actually have to be saved in the context switch
+routine, making cooperative switches potentially very cheap if few
+registers must be preserved.
+
+For preemptive switches (where an ISR has interrupted a thread and wishes
+to switch to a new thread), the interrupt handler prologue also saves all
+CPU and virtual registers. In this case all registers must always be saved
+because the ISR has no knowledge of what registers the interrupted thread
+was using, so we cannot take advantage of the potential for saving fewer
+than the full set of registers that we achieve with cooperative switches.
+With the Cosmic compiler, interrupt handlers that call out to C functions
+(as would happen on a thread switch) always save the CPU registers and
+the virtual registers c_x and c_y. For the Atomthreads port we force
+interrupt handlers to also save the virtual register c_lreg. This is to
+ensure that the interrupted thread's c_lreg value is preserved across a
+thread switch, but also ensures that longs can be used within the OS
+kernel code called by interrupt handlers (c_lreg is used by the compiler
+for handling longs and floats).
+
+An alternative scheme would be to not save c_lreg in all interrupt
+handlers and instead save it in the context-switch function. This would
+allow interrupt handlers to avoid saving the 4-byte c_lreg on the stack,
+but it would mean that any OS kernel code called by interrupt handlers
+could not deal with longs, which would be an unfortunate burden on the
+core portable OS code just for the benefit of this one architecture and
+compiler. It would also mean that c_lreg is always saved unnecessarily
+for every cooperative context switch. 
+
+
+---------------------------------------------------------------------------

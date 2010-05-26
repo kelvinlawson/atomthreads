@@ -122,8 +122,15 @@ static void main_thread_func (uint32_t data);
  *
  * Sets up the STM8 hardware resources (system tick timer interrupt) necessary
  * for the OS to be started. Creates an application thread and starts the OS.
+ *
+ * If the compiler supports it, stack space can be saved by preventing
+ * the function from saving registers on entry. This is because we
+ * are called directly by the C startup assembler, and know that we will
+ * never return from here. The NO_REG_SAVE macro is used to denote such 
+ * functions in a compiler-agnostic way, though not all compilers support it.
+ *
  */
-void main ( void )
+NO_REG_SAVE void main ( void )
 {
     int8_t status;
 
@@ -164,7 +171,10 @@ void main ( void )
     }
 
     /* There was an error starting the OS if we reach here */
-    return;
+    while (1)
+    {
+    }
+
 }
 
 

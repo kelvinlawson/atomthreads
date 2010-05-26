@@ -39,19 +39,19 @@
 
 
 ;  \b archContextSwitch
-; 
+;
 ;  Architecture-specific context switch routine.
-; 
+;
 ;  Note that interrupts are always locked out when this routine is
 ;  called. For cooperative switches, the scheduler will have entered
 ;  a critical region. For preemptions (called from an ISR), the
 ;  ISR will have disabled interrupts on entry.
-; 
+;
 ;  @param[in] old_tcb_ptr Pointer to the thread being scheduled out
 ;  @param[in] new_tcb_ptr Pointer to the thread being scheduled in
-; 
+;
 ;  @return None
-; 
+;
 ;  void archContextSwitch (ATOM_TCB *old_tcb_ptr, ATOM_TCB *new_tcb_ptr)
   PUBLIC archContextSwitch
 archContextSwitch:
@@ -190,7 +190,7 @@ archContextSwitch:
     ; because this is a subroutine regardless of whether we were called
     ; during an ISR or by a thread cooperatively switching out. The
     ; difference between RET and IRET on the STM8 architecture is that
-    ; RET only pops the return address off the stack, while IRET also 
+    ; RET only pops the return address off the stack, while IRET also
     ; pops from the stack all of the CPU registers saved when the ISR
     ; started, including restoring the interrupt-enable bits from the CC
     ; register.
@@ -272,8 +272,8 @@ archContextSwitch:
     ;    different thread's stack. Because the stack pointer is
     ;    switched, it does not matter that on entry via ISRs more
     ;    registers are saved on the original thread's stack than entries
-    ;    via non-ISRs. Those extra registers will be restored properly 
-    ;    by an IRET when the thread is eventually scheduled back in 
+    ;    via non-ISRs. Those extra registers will be restored properly
+    ;    by an IRET when the thread is eventually scheduled back in
     ;    (which could be a long way off). This assumes that the CPU does
     ;    not have hidden behaviour that occurs on interrupts, and we can
     ;    in fact trick it into leaving via another thread's call stack,
@@ -298,7 +298,7 @@ archContextSwitch:
 ; data for being restored by either this function or the normal
 ; function used for scheduling threads in, archContextSwitch(). Only
 ; the first thread run by the system is launched via this function,
-; after which all other new threads will first be run by 
+; after which all other new threads will first be run by
 ; archContextSwitch().
 ;
 ; Typically ports will implement something similar here to the
@@ -306,21 +306,21 @@ archContextSwitch:
 ; switch does not restore many registers, and instead relies on the
 ; fact that returning from any function which called
 ; archContextSwitch() will restore any of the necessary registers.
-; For new threads which have never been run there is no calling 
+; For new threads which have never been run there is no calling
 ; function which will restore context on return, therefore we
 ; do not restore many register values here. It is not necessary
 ; for the new threads to have initialised values for the scratch
-; registers A, X and Y or the code condition register CC which 
+; registers A, X and Y or the code condition register CC which
 ; leaves SP and PC. SP is restored because this is always needed to
-; switch to a new thread's stack context. It is not necessary to 
-; restore PC, because the thread's entry point is in the stack 
-; context (when this function returns using RET the PC is 
+; switch to a new thread's stack context. It is not necessary to
+; restore PC, because the thread's entry point is in the stack
+; context (when this function returns using RET the PC is
 ; automatically changed to the thread's entry point because the
-; entry point is stored in the preinitialised stack). 
+; entry point is stored in the preinitialised stack).
 ;
 ; When new threads are started interrupts must be enabled, so there
 ; is some scope for enabling interrupts in the CC here. It must be
-; done for all new threads, however, not just the first thread, so 
+; done for all new threads, however, not just the first thread, so
 ; we use a different system. We instead use a thread shell routine
 ; which all functions run when they are first started, and
 ; interrupts are enabled in there. This allows us to avoid having
@@ -356,7 +356,7 @@ archFirstThreadRestore:
     ; As described above, first thread restores in this port do not
     ; expect any initial register context to be pre-initialised in
     ; the thread's stack area. The thread's initial stack need only
-    ; contain the thread's initial entry point, and we do not even 
+    ; contain the thread's initial entry point, and we do not even
     ; "restore" that within this function. We leave the thread's entry
     ; point in the stack, and RET at the end of the function pops it
     ; off and "returns" to the entry point as if we were called from
@@ -371,7 +371,7 @@ archFirstThreadRestore:
     ; pointer it conveniently located at the top of the TCB so no
     ; indexing is required to pull it out.
     ldw X,(X)
-    
+
     ; Switch our current stack pointer to that of the new thread.
     ldw SP,X
 

@@ -31,12 +31,40 @@
 #define __ATOM_PORT_PRIVATE_H
 
 
+/**
+ * Compiler-specific modifier to prevent some functions from saving
+ * and restoring registers on entry and exit, if the function is
+ * known to never complete (e.g. thread entry points).
+ * Reduces stack usage on supporting compilers.
+ */
+#ifdef __IAR_SYSTEMS_ICC__
+#define NO_REG_SAVE __task
+#else
+#define NO_REG_SAVE
+#endif
+
+
+/**
+ * Compiler-specific modifiers for interrupt handler functions.
+ *
+ * COSMIC: Uses @interrupt modifier for interrupt handlers. We
+ * also force all interrupts to save c_lreg, a separate memory
+ * area which Cosmic uses for longs and floats. This memory
+ * area must be saved by interrupt handlers for context
+ * switch purposes, and to avoid making it impossible to use
+ * longs in any OS kernel code accessed by interrupt handlers.
+ *
+ * IAR: Uses __interrupt modifier for interrupt handlers.
+ */
+#ifdef __CSMC__
+#define INTERRUPT @far @interrupt @svlreg
+#else
+#define INTERRUPT __interrupt
+#endif
+
+
 /* Function prototypes */
 void archInitSystemTickTimer (void);
-#ifdef __CSMC__
-@far @interrupt void TIM1_SystemTickISR (void);
-#elif __IAR_SYSTEMS_ICC__
-__interrupt void TIM1_SystemTickISR (void);
-#endif
+INTERRUPT void TIM1_SystemTickISR (void);
 
 #endif /* __ATOM_PORT_PRIVATE_H */

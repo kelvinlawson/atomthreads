@@ -63,16 +63,16 @@ uint32_t test_start (void)
     uint8_t eight = 8;
     uint8_t nine = 9;
     uint8_t ten = 10;
-    uint8_t eleven = 11;
-    uint8_t twelve = 12;
-    uint8_t thirteen = 13;
-    uint8_t fourteen = 14;
-    uint8_t fifteen = 15;
-    uint8_t sixteen = 16;
-    uint8_t seventeen = 17;
-    uint8_t eighteen = 18;
-    uint8_t nineteen = 19;
-    uint8_t twenty = 20;
+    uint16_t eleven = 11;
+    uint16_t twelve = 12;
+    uint16_t thirteen = 13;
+    uint16_t fourteen = 14;
+    uint16_t fifteen = 15;
+    uint32_t sixteen = 16;
+    uint32_t seventeen = 17;
+    uint32_t eighteen = 18;
+    uint32_t nineteen = 19;
+    uint32_t twenty = 20;
 
     /* Default to zero failures */
     failures = 0;
