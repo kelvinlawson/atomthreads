@@ -49,8 +49,8 @@ vpath %.elf .\$(BUILD_DIR)
 vpath %.hex .\$(BUILD_DIR)
 
 # Compiler/Assembler flags
-CFLAGS=+modsl0 -pp -d$(PART)
-DBG_CFLAGS=+modsl0 +debug -pxp -no -pp -l -d$(PART)
+CFLAGS=+modsl0 +split -pp -d$(PART)
+DBG_CFLAGS=+modsl0 +split +debug -pxp -no -pp -l -d$(PART)
 ASMFLAGS=
 DBG_ASMFLAGS=-xx -u
 
@@ -79,7 +79,7 @@ $(TEST_S19S): %.s19: %.stm8
 
 # Test ELF files (one application build for each test)
 $(TEST_STM8S): %.stm8: %.o $(KERNEL_OBJECTS) $(PERIPH_OBJECTS) $(APP_OBJECTS) $(APP_ASM_OBJECTS)
-	$(LINK) -l$(LIBS_DIR) -o $(BUILD_DIR)/$@ atomthreads.lkf $(BUILD_DIR)/$(notdir $<)
+	$(LINK) -l$(LIBS_DIR) -o $(BUILD_DIR)/$@ -m $(BUILD_DIR)/$(basename $@).map atomthreads.lkf $(BUILD_DIR)/$(notdir $<)
 
 # Kernel objects builder
 $(KERNEL_OBJECTS): %.o: $(KERNEL_DIR)/%.c
