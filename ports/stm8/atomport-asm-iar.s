@@ -71,7 +71,7 @@ archContextSwitch:
     ;
     ; ?b0 - ?b7: Scratch registers
     ; ?b8 - ?b15: Preserved registers
-    ; 
+    ;
     ; The basic scheme is that some registers will already be saved
     ; onto the stack if the caller wishes them not to be clobbered.
     ; We only need to context-switch additional registers which the
@@ -93,7 +93,7 @@ archContextSwitch:
     ; The Cosmic compiler version of this context switch routine
     ; does not require any registers to be saved/restored, whereas
     ; this IAR equivalent reqires that 8 of the virtual registers
-    ; are. 
+    ; are.
 
     ; We also have to do a little more work in here: we need to store
     ; the current stack pointer to the current thread's TCB, and
@@ -103,12 +103,13 @@ archContextSwitch:
     ; (IAR) Compiler will have already saved any scratch registers
     ; (A, X, Y, CC, and ?b0 to ?b7) which it needs before calling here
     ; for cooperative switches. So these will already be on the stack
-    ; and do not need to be context-switched. The same goes for 
-    ; __interrupt functions (i.e. preemptive switches): the IAR
-    ; compiler saves A, X, Y and CC for interrupt handlers, and
-    ; (because we call out from interrupt handlers to C kernel code
-    ; (e.g. atomIntExit()) before calling here for a context-switch,
-    ; the compiler also has to save ?b0 to ?b7. This is because those
+    ; and do not need to be context-switched. The same goes for
+    ; __interrupt functions (i.e. preemptive switches): with the IAR
+    ; compiler A, X, Y and CC will already be saved by interrupt handlers
+    ; (those are actually automatically done by the CPU), and (because
+    ; we call out from interrupt handlers to C kernel code (e.g.
+    ; atomIntExit()) before calling here for a context-switch, the
+    ; compiler will also have saved ?b0 to ?b7. This is because those
     ; called C functions cannot know they were called from an interrupt
     ; and will assume that they have ?b0 to ?b7 available as scratch
     ; registers. Either way (cooperative or interrupt/preemptive) we
@@ -138,11 +139,11 @@ archContextSwitch:
 
     ; At this point, all of the current thread's context has been saved
     ; so we no longer care about keeping the contents of any registers
-    ; except ?b0 which contains our passed new_tcb_ptr parameter (a 
+    ; except ?b0 which contains our passed new_tcb_ptr parameter (a
     ; pointer to the TCB of the thread which we wish to switch in).
     ;
     ; Our stack frame now contains all registers which need to be
-    ; preserved or context-switched. It also contains the return address 
+    ; preserved or context-switched. It also contains the return address
     ; which will be either a function called via an ISR (for preemptive
     ; switches) or a function called from thread context (for cooperative
     ; switches).
@@ -158,11 +159,11 @@ archContextSwitch:
     ; Get the new thread's stack pointer off the TCB (new_tcb_ptr).
     ; We kept a copy of new_tcb_ptr earlier in ?b0, copy it into X.
     ldw X,?b0
- 
-    ; Pull the first entry out of new_tcb_ptr (the new thread's 
+
+    ; Pull the first entry out of new_tcb_ptr (the new thread's
     ; stack pointer) into X register.
     ldw X,(X)
-    
+
     ; Switch our current stack pointer to that of the new thread.
     ldw SP,X
 
