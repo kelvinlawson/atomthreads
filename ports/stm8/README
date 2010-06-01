@@ -7,10 +7,11 @@ License:      BSD Revised
 
 ---------------------------------------------------------------------------
 
-STM8 PORT
+STM8 PORT - COSMIC COMPILER
 
 This folder contains a port of the Atomthreads real time kernel for the
-STM8 processor architecture.
+STM8 processor architecture. These instructions cover usage of Atomthreads
+with the Cosmic compiler (CXSTM8).
 
 All of the cross-platform kernel code is contained in the top-level 
 'kernel' folder, while ports to specific CPU architectures are contained in
@@ -43,10 +44,12 @@ provides an easy mechanism for building, downloading and running the test
 suite to prove the OS on your target.
 
 The port was carried out and tested on an STM8S105C6 running within an
-STM8S-Discovery board, utilising the Cosmic compiler tools. It is possible
-to use it with other processors in the STM8 range, as well as other 
-hardware platforms and compilers, with minimal changes. Platform and 
-compiler specific code has been kept to an absolute minimum.
+STM8S-Discovery board, and supports both the Cosmic and IAR compiler tools.
+It is possible to use it with other processors in the STM8 range, as well
+as other hardware platforms and compilers, with minimal changes. Platform
+and  compiler specific code has been kept to an absolute minimum. This
+README covers usage of Atomthreads with the Cosmic compiler. Instructions
+for users of the IAR compiler are available in README-IAR.
 
 
 ---------------------------------------------------------------------------
@@ -73,7 +76,7 @@ The core software prerequisites are therefore:
 Optionally, application build, program and debug can be carried out
 using ST's visual debug tool, STVD.
 
-Use with alternative compiler tools may require some modification, but you
+Use with alternative compiler tools will require some modification, but you
 can easily replace STVP by your own favourite programmer if required.
 
 
@@ -255,10 +258,11 @@ RUNNING THE AUTOMATED TESTS
 Atomthreads contains a set of generic kernel tests which can be run on any
 port to prove that all core functionality is working on your target.
 
-The full set of tests can be found in the top-level 'tests' folder. Each of
-these tests is built as an independent application in the 'build' folder.
-Run them individually using the STVP process described above. For example
-to run the 'kern1.c' test use STVP to program and run it.
+The full set of tests can be found in the top-level 'tests' folder. The
+Makefile builds each of these tests as independent applications in the
+'build' folder. Run them individually using the STVP process described
+above. For example to run the 'kern1.c' test use STVP to program and run
+it.
 
 To view the test results, watch the LED on the STM8S-Discovery. This will
 flash once per second if the test passed, and once every 1/8 second if the
@@ -347,9 +351,9 @@ what level of stack the application code in question requires.
 
 At this time the maximum stack consumed by the test threads within the
 automated test modules is 95 bytes of stack, and the main test thread has
-been seen to consume 161 bytes of stack. At this time the timer2 test is
-the largest consumer of test thread stack (95 bytes) and the sem4 test
-consumes the largest main thread stack (161 bytes). If your applications
+been seen to consume 163 bytes of stack. At this time the timer2 test is
+the largest consumer of test thread stack (95 bytes) and the sem3 test
+consumes the largest main thread stack (163 bytes). If your applications
 have large amounts of local data or call several subroutines then you may
 find that you need larger than 128 bytes.
 
@@ -468,7 +472,8 @@ memory. These registers are called c_x, c_y and c_lreg.
 
 The Atomthreads context switch for Cosmic/STM8 takes advantage of the fact
 that all CPU and virtual registers are automatically saved on the stack by
-the compiler when calling out to C functions.
+the compiler when calling out to C functions (and even then only if
+necessary).
 
 For cooperative context switches (where a thread calls an OS kernel
 function to schedule itself out), any of these registers which should be
@@ -479,18 +484,19 @@ routine, making cooperative switches potentially very cheap if few
 registers must be preserved.
 
 For preemptive switches (where an ISR has interrupted a thread and wishes
-to switch to a new thread), the interrupt handler prologue also saves all
-CPU and virtual registers. In this case all registers must always be saved
+to switch to a new thread), the interrupt handler prologue automatically
+saves all CPU registers (actually done automatically by the CPU) and all
+of the virtual registers. In this case all registers must always be saved
 because the ISR has no knowledge of what registers the interrupted thread
 was using, so we cannot take advantage of the potential for saving fewer
 than the full set of registers that we achieve with cooperative switches.
 With the Cosmic compiler, interrupt handlers that call out to C functions
-(as would happen on a thread switch) always save the CPU registers and
-the virtual registers c_x and c_y. For the Atomthreads port we force
-interrupt handlers to also save the virtual register c_lreg. This is to
-ensure that the interrupted thread's c_lreg value is preserved across a
-thread switch, but also ensures that longs can be used within the OS
-kernel code called by interrupt handlers (c_lreg is used by the compiler
+(as would happen on a thread switch) always save the CPU registers (done by
+the CPU in fact) and the virtual registers c_x and c_y. For the Atomthreads
+port we force interrupt handlers to also save the virtual register c_lreg.
+This is to ensure that the interrupted thread's c_lreg value is preserved
+across a thread switch, but also ensures that longs can be used within the
+OS kernel code called by interrupt handlers (c_lreg is used by the compiler
 for handling longs and floats).
 
 An alternative scheme would be to not save c_lreg in all interrupt
