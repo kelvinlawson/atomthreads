@@ -99,7 +99,7 @@ $(BUILD_DIR):
 # Test HEX files (one application build for each test)
 $(TEST_S19S): %.s19: %.elf
 	@echo Building $@
-	$(HEX) $(BUILD_DIR)/$< $(BUILD_DIR)/$@ --srec
+	$(HEX) $(BUILD_DIR)/$(notdir $<) $(BUILD_DIR)/$@ --srec
 
 # Test ELF files (one application build for each test)
 $(TEST_ELFS): %.elf: %.o $(KERNEL_OBJECTS) $(PERIPH_OBJECTS) $(APP_OBJECTS) $(APP_ASM_OBJECTS)
