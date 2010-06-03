@@ -56,8 +56,10 @@ users of the Cosmic compiler are available in README-COSMIC.
 PREREQUISITES
 
 The port works out-of-the-box with the IAR compiler tools for building.
-Applications are generated in .out form and can be programmed and debugged
-using the IAR Embedded Workbench GUI.
+Applications are generated in ELF format and can be programmed and debugged
+using the IAR Embedded Workbench GUI or the free STVP (visual programmer
+tool). At this time there does not appear to be a command-line programmer
+application suitable for use with STM8.
 
 IAR Embedded Workbench for STM8 is a Windows-only application. For
 users of other operating systems the IAR tools may work in environments
@@ -70,18 +72,21 @@ The core software prerequisites are therefore:
 
 Use with alternative compiler tools will require some modification, but you
 can easily replace the EWSTM8 IDE by your own favourite programmer if
-required.
+required (e.g. STVP).
 
 
 ---------------------------------------------------------------------------
 
 BUILDING THE SOURCE
 
-A sample EWSTM8 project has been provided. This permits easy building,
-programming and debugging within the EWSTM8 IDE.
-
-Unlike the Cosmic compiler port, there is currently no Makefile-based build
-provided for use with EWSTM8. Only a sample IDE project is available.
+You may build Atomthreads using whichever build environment you desire. For
+your convenience we provide both a ready-rolled Makefile-based build system
+and an Embedded Workbench (EWSTM8) project. The EWSTM8 project permits easy
+building, programming and debugging, but does not easily support building
+a wide range of application builds within the same project, which is
+useful for building the numerous automated tests. For the automated tests
+you may find it easier to use the Makefile which automatically builds all
+automated tests.
 
 
 ---------------------------------------------------------------------------
@@ -100,17 +105,87 @@ This is also a good starting point for building your own applications:
 simply modify the file tests-main.c which starts the test application.
 You can run any of the other automated tests by replacing the file sem1.c
 within the project by another of the tests within the atomthreads tests
-folder. In time a Makefile will be provided that will build all of the
-automated tests with one command. Currently the Makefile supports only the
-Cosmic compiler.
+folder. This is rather painful using a GUI interface due to the large
+number of test files, and you may prefer to use the Makefile-based system
+instead which builds all automated tests in one command.
 
 
 ---------------------------------------------------------------------------
 
 BUILD VIA MAKEFILE
 
-The STM8 port Makefile currently only supports building for the Cosmic
-compiler. An IAR-capable Makefile will be released soon.
+A Makefile is also provided for building the kernel, port and automated
+tests. This is particularly useful for building the automated tests
+because many different independent applications need to be built which is
+not easily achieved within the EWSTM8 environment.
+
+For a Windows system you can obtain a Make application suitable for use
+with the IAR compiler from:
+
+ * http://www.cosmic-software.com/comp_utils/GNU_Make.zip
+
+Assuming you install the above into C:\Program Files\GNU_MAKE, you
+should set up your environment variables as follows:
+
+ * set PATH=%PATH%;C:\Program Files\IAR Systems\Embedded Workbench 6.0\stm8\bin
+ * set MAKE_MODE=DOS
+
+
+The full build is carried out using simply:
+
+ * make -f iar.mak
+
+All objects are built into the 'build-iar' folder under ports/stm8. The
+build process builds separate target applications for each automated test,
+and appropriate .elf or .s19 files can be found in the build folder ready
+for downloading to and running on the target. Because of the limited
+resources on the STM8, and the large amount of automated tests, each test
+is built and run as a separate application.
+
+
+All built objects etc can be cleaned using:
+
+ * make -f iar.mak clean
+
+
+The Atomthreads sources are documented using Doxygen markup. You can build
+both the kernel and STM8 port documentation from this folder using:
+
+ * make -f iar.mak doxygen
+
+
+---------------------------------------------------------------------------
+
+PROGRAMMING MAKEFILE-BUILT APPLICATIONS TO THE TARGET DEVICE
+
+When developing within EWSTM8, programs can be downloaded directly to the
+target. If, however, you are building applications separately using a
+Makefile or similar, then you are not able to program the application
+using EWSTM8. None of the tools delivered by ST appear to be designed to
+cater for those who build applications externally, but it is possible using
+STVP.
+
+The following development workflow can be used (note that these settings
+apply to the STM8S-Discovery):
+
+ * Build app using Makefile.
+ * Open STVP and configure to use Swim ST-Link for CPU STM8105C6.
+ * Open application .s19 file and program using "Program All Tabs".
+
+Unfortunately STVP does not have a command to reset and start the CPU
+running, but it can be forced into doing so by reconfiguring the
+programmer:
+
+ * Select "Configure ST Visual Programmer" from the Configure menu.
+
+Your application should now be programmed and running.
+
+If you wish to program and run another application then you can open and
+program it in STVP, then use the Configure menu again to reset the
+device and start it running.
+
+Other programming tools may exist but are not apparent in the toolset
+delivered for use the STM8S Discovery platform.
 
 
 ---------------------------------------------------------------------------
@@ -147,11 +222,13 @@ The STM8 device on the Discovery only offers UART2. If you are using a
 different device or wish to use an alternative UART then you must change
 the stm8s_conf.h file.
 
-If you are using a CPU other than the STM8S105C6 you should modify
-the project C/C++ Compiler Preprocessor settings for both Debug and Release
-projects to specify your CPU (currently set to STM8S105), and set the
-target device in the project "General Options". You may also wish to enable
-any CPU peripherals which you wish to use in the stm8s_conf.h file.
+If you are using a CPU other than the STM8S105C6 you should change the
+PART macro from "STM8S105" to your target CPU. This can be changed in the
+iar.mak Makefile. If you are using the EWSTM8 project it should be
+changed in the project C/C++ Compiler Preprocessor settings for both Debug
+and Release builds, and you must also change the target device in the
+project's "General Options". You may also wish to enable any CPU
+peripherals which you wish to use in the stm8s_conf.h file.
 
 
 ---------------------------------------------------------------------------
@@ -161,17 +238,16 @@ RUNNING THE AUTOMATED TESTS
 Atomthreads contains a set of generic kernel tests which can be run on any
 port to prove that all core functionality is working on your target.
 
-The full set of tests can be found in the top-level 'tests' folder. Each
-test is built and run as a single individual application. To run the full
-test suite with EWSTM8 you must modify the EWSTM8 sample project many
-times, swapping out the 'sem1' test included by default. This is not
-currently automated, so for the time being you must swap the test module,
-build the project and run it, repeating this for each test. For example to
-run the 'kern1.c' test you remove 'sem1.c' from the project and add
-'kern1.c', then build the project and run on the target.
+The full set of tests can be found in the top-level 'tests' folder. The
+Makefile builds each of these tests as independent applications in the
+'build' folder. Run them individually using the STVP process described
+above. For example to run the 'kern1.c' test use STVP to program and run
+it.
 
-A Makefile to build all applications in one command is planned, but for
-the time being a Makefile is only available for the Cosmic compiler.
+You may also build the tests using the EWSTM8 project, but to run each
+different test you must manually remove the previous test module (e.g.
+kern1.c) and replace it with one of other tests, which can be quite time
+consuming compared to building all tests in one command via the Makefile.
 
 To view the test results, watch the LED on the STM8S-Discovery. This will
 flash once per second if the test passed, and once every 1/8 second if the

@@ -59,8 +59,8 @@ PREREQUISITES
 The port works out-of-the-box with the Cosmic compiler tools for building.
 Applications are generated in .s19 form and can be programmed with any
 supporting programming software, including the free STVP (visual
-programmer tool). At this time ST do not provide a command-line programmer
-application suitable for use with STM8.
+programmer tool). At this time there does not appear to be a command-line
+programmer application suitable for use with STM8.
 
 The Cosmic compiler and STVP are currently Windows-only applications. For
 users of other operating systems the Cosmic compiler may work in 
@@ -157,12 +157,12 @@ The full build is carried out using simply:
 
  * make -f cosmic.mak
 
-All objects are built into the 'build' folder under ports/stm8. The build
-process builds separate target applications for each automated test, and
-appropriate .stm8 or .s19 files can be found in the build folder ready for
-downloading to and running on the target. Because of the limited resources
-on the STM8, and the large amount of automated tests, each test is built
-and run as a separate application.
+All objects are built into the 'build-cosmic' folder under ports/stm8. The
+build process builds separate target applications for each automated test,
+and appropriate .stm8 or .s19 files can be found in the build folder ready
+for downloading to and running on the target. Because of the limited
+resources on the STM8, and the large amount of automated tests, each test
+is built and run as a separate application.
 
 
 All built objects etc can be cleaned using:
@@ -244,11 +244,12 @@ The STM8 device on the Discovery only offers UART2. If you are using a
 different device or wish to use an alternative UART then you must change
 the stm8s_conf.h file.
 
-If you are using a CPU other than the STM8S105C6 you should modify
-PART in the Makefile (or the preprocessor settings for both Debug and
-Release projects if using the STVD project) to specify your CPU. You may
-also wish to enable any CPU peripherals which you wish to use in the
-stm8s_conf.h file.
+If you are using a CPU other than the STM8S105C6 you should change the
+PART macro from "STM8S105" to your target CPU. This can be changed in the
+cosmic.mak Makefile. If you are using the STVD project it should be
+changed in the project preprocessor settings for both Debug and Release
+builds. You may also wish to enable any CPU peripherals which you wish to
+use in the stm8s_conf.h file.
 
 
 ---------------------------------------------------------------------------
@@ -263,6 +264,11 @@ Makefile builds each of these tests as independent applications in the
 'build' folder. Run them individually using the STVP process described
 above. For example to run the 'kern1.c' test use STVP to program and run
 it.
+
+You may also build the tests using the STVD project, but to run each
+different test you must manually remove the previous test module (e.g.
+kern1.c) and replace it with one of other tests, which can be quite time
+consuming compared to building all tests in one command via the Makefile.
 
 To view the test results, watch the LED on the STM8S-Discovery. This will
 flash once per second if the test passed, and once every 1/8 second if the
