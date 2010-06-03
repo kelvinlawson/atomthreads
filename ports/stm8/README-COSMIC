@@ -155,7 +155,7 @@ should set up your environment variables as follows:
 
 The full build is carried out using simply:
 
- * make
+ * make -f cosmic.mak
 
 All objects are built into the 'build' folder under ports/stm8. The build
 process builds separate target applications for each automated test, and
@@ -167,13 +167,13 @@ and run as a separate application.
 
 All built objects etc can be cleaned using:
 
- * make clean
+ * make -f cosmic.mak clean
 
 
 The Atomthreads sources are documented using Doxygen markup. You can build
 both the kernel and STM8 port documentation from this folder using:
 
- * make doxygen
+ * make -f cosmic.mak doxygen
 
 
 ---------------------------------------------------------------------------
