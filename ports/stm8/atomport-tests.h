@@ -51,6 +51,14 @@
 /* Uncomment to enable logging of stack usage to UART */
 #define TESTS_LOG_STACK_USAGE
 
+/**
+ * IAR EWSTM8: Ignore warnings on volatile ordering thrown up
+ * by ATOMLOG() statements in the test modules.
+ */
+#ifdef __IAR_SYSTEMS_ICC__
+#pragma diag_suppress=Pa082
+#endif
+
 
 #endif /* __ATOM_PORT_TESTS_H */
 
