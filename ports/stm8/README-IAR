@@ -127,7 +127,7 @@ with the IAR compiler from:
 Assuming you install the above into C:\Program Files\GNU_MAKE, you
 should set up your environment variables as follows:
 
- * set PATH=%PATH%;C:\Program Files\IAR Systems\Embedded Workbench 6.0\stm8\bin
+ * set PATH=%PATH%;C:\Program Files\GNU_MAKE;C:\Program Files\IAR Systems\Embedded Workbench 6.0\stm8\bin
  * set MAKE_MODE=DOS
 
 
