@@ -39,7 +39,6 @@ static ATOM_TIMER timer_cb[4];
 /* Global test data */
 static volatile uint32_t cb_order[4];
 static int cb_cnt = 0;
-static uint32_t cb_time[4];
 
 
 /* Forward declarations */
@@ -164,9 +163,6 @@ static void testCallback (POINTER cb_data)
 
     /* Store our callback order in cb_order[] */
     cb_order[cb_cnt] = expected_order;
-
-    /* Store the current time for debug purposes */
-    cb_time[cb_cnt] = atomTimeGet();
 
     /* Interrupts are locked out so we can modify cb_cnt without protection */
     cb_cnt++;
