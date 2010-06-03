@@ -7,7 +7,7 @@
 #   set MAKE_MODE=DOS
 
 # Build all test applications:
-#   make
+#   make -f iar.mak
 
 
 # Location of build tools and atomthreads sources

@@ -2,8 +2,13 @@
 # Settings #
 ############
 
+# Set up build environment (using GNU Make)
+#   set PATH=%PATH%;C:\Program Files\GNU_MAKE;C:\Program Files\COSMIC\CXSTM8_16K
+#   set MAKE_MODE=DOS
+
 # Build all test applications:
-#   make
+#   make -f cosmic.mak
+
 
 # Location of build tools and atomthreads sources
 KERNEL_DIR=../../kernel
@@ -14,13 +19,15 @@ CC=cxstm8
 ASM=castm8
 LINK=clnk
 CHEX=chex
+
+# CPU part number
 PART=STM8S105
 
 # Enable stack-checking
 STACK_CHECK=true
 
 # Directory for built objects
-BUILD_DIR=build
+BUILD_DIR=build-cosmic
 
 # Port/application object files
 APP_OBJECTS = atomport.o tests-main.o stm8_interrupt_vector.o uart.o
@@ -106,7 +113,7 @@ clean:
 	rm -f *.o *.elf *.map *.hex *.bin *.lst *.stm8 *.s19
 	rm -rf doxygen-kernel
 	rm -rf doxygen-stm8
-	rm -rf build
+	rm -rf build-cosmic
 
 doxygen:
 	doxygen $(KERNEL_DIR)/Doxyfile
