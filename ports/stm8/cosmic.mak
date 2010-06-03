@@ -73,7 +73,7 @@ endif
 #################
 
 # All tests
-all: $(BUILD_DIR) $(TEST_S19S) Makefile
+all: $(BUILD_DIR) $(TEST_S19S) cosmic.mak
 
 # Make build/output directory
 $(BUILD_DIR):
