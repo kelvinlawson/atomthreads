@@ -112,7 +112,7 @@ NEAR static uint8_t idle_thread_stack[IDLE_STACK_SIZE_BYTES];
 
 
 /* Forward declarations */
-static void main_thread_func (uint32_t data);
+static void main_thread_func (uint32_t param);
 
 
 /**
@@ -185,14 +185,17 @@ NO_REG_SAVE void main ( void )
  *
  * This is the first thread that will be executed when the OS is started.
  *
- * @param[in] data Unused (optional thread entry parameter)
+ * @param[in] param Unused (optional thread entry parameter)
  *
  * @return None
  */
-static void main_thread_func (uint32_t data)
+static void main_thread_func (uint32_t param)
 {
     uint32_t test_status;
     int sleep_ticks;
+
+    /* Compiler warnings */
+    param = param;
 
     /* Initialise UART (9600bps) */
     if (uart_init(9600) != 0)
