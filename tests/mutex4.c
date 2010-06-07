@@ -56,7 +56,7 @@ static volatile int g_failures;
 
 
 /* Forward declarations */
-static void test_thread_func (uint32_t data);
+static void test_thread_func (uint32_t param);
 
 
 /**
@@ -242,15 +242,18 @@ uint32_t test_start (void)
  * Entry point for test thread. The same thread entry point is used for all
  * four test threads.
  *
- * @param[in] data Unused (optional thread entry parameter)
+ * @param[in] param Unused (optional thread entry parameter)
  *
  * @return None
  */
-static void test_thread_func (uint32_t data)
+static void test_thread_func (uint32_t param)
 {
     uint32_t loop_cnt;
     uint8_t status;
     CRITICAL_STORE;
+
+    /* Compiler warnings */
+    param = param;
 
     /* Run a Get/Put pair many times */
     loop_cnt = NUM_TEST_LOOPS;

@@ -50,7 +50,7 @@ static int volatile test_started;
 
 
 /* Forward declarations */
-static void test_thread_func (uint32_t data);
+static void test_thread_func (uint32_t param);
 
 
 /**
@@ -184,11 +184,11 @@ uint32_t test_start (void)
  *
  * Entry point for test thread.
  *
- * @param[in] data Thread ID (0 to 3)
+ * @param[in] param Thread ID (0 to 3)
  *
  * @return None
  */
-static void test_thread_func (uint32_t data)
+static void test_thread_func (uint32_t param)
 {
     int thread_id, expected_thread;
     int time_error, thread_error;
@@ -196,7 +196,7 @@ static void test_thread_func (uint32_t data)
     CRITICAL_STORE;
 
     /* Pull out thread ID */
-    thread_id = (int)data;
+    thread_id = (int)param;
 
     /* Run forever */
     while (1)

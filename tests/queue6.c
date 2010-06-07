@@ -70,7 +70,7 @@ static volatile int g_result;
 
 
 /* Forward declarations */
-static void test1_thread_func (uint32_t data);
+static void test1_thread_func (uint32_t param);
 
 
 /**
@@ -215,14 +215,17 @@ uint32_t test_start (void)
  *
  * Entry point for test thread 1.
  *
- * @param[in] data Unused (optional thread entry parameter)
+ * @param[in] param Unused (optional thread entry parameter)
  *
  * @return None
  */
-static void test1_thread_func (uint32_t data)
+static void test1_thread_func (uint32_t param)
 {
     uint32_t msg;
     int num_entries, count, failures;
+
+    /* Compiler warnings */
+    param = param;
 
     /* Default to no errors */
     failures = 0;

@@ -48,7 +48,7 @@ static volatile int shared_data;
 
 
 /* Forward declarations */
-static void test_thread_func (uint32_t data);
+static void test_thread_func (uint32_t param);
 
 
 /**
@@ -185,13 +185,16 @@ uint32_t test_start (void)
  *
  * Entry point for test thread.
  *
- * @param[in] data Unused (optional thread entry parameter)
+ * @param[in] param Unused (optional thread entry parameter)
  *
  * @return None
  */
-static void test_thread_func (uint32_t data)
+static void test_thread_func (uint32_t param)
 {
     uint8_t status;
+
+    /* Compiler warnings */
+    param = param;
 
     /* Block on the mutex */
     if ((status = atomMutexGet (&mutex1, 0)) != ATOM_OK)

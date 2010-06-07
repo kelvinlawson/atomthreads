@@ -50,7 +50,7 @@ static volatile int g_failure_cnt[3];
 
 
 /* Forward declarations */
-static void test_thread_func (uint32_t data);
+static void test_thread_func (uint32_t param);
 
 
 /**
@@ -157,17 +157,17 @@ uint32_t test_start (void)
  * three test threads, with the thread number/ID (1-3) passed as the entry
  * point parameter.
  *
- * @param[in] data Thread number (1,2,3)
+ * @param[in] param Thread number (1,2,3)
  *
  * @return None
  */
-static void test_thread_func (uint32_t data)
+static void test_thread_func (uint32_t param)
 {
     uint8_t thread_id;
     uint32_t start_time, end_time;
 
     /* Thread ID is passed through the function parameter */
-    thread_id = (uint8_t)data;
+    thread_id = (uint8_t)param;
 
     /*
      * Sleep for 1 tick to ensure that the thread starts near

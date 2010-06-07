@@ -48,7 +48,7 @@ static volatile int test_running;
 
 
 /* Forward declarations */
-static void test_thread_func (uint32_t data);
+static void test_thread_func (uint32_t param);
 static void testCallback (POINTER cb_data);
 
 
@@ -221,17 +221,17 @@ uint32_t test_start (void)
  *
  * Entry point for test thread.
  *
- * @param[in] data sleep_flag passed through here
+ * @param[in] param sleep_flag passed through here
  *
  * @return None
  */
-static void test_thread_func (uint32_t data)
+static void test_thread_func (uint32_t param)
 {
     uint8_t status;
     int sleep_flag, count, failures;
 
     /* Were we requested to sleep occasionally? */
-    sleep_flag = (int)data;
+    sleep_flag = (int)param;
 
     /* Run until the main thread sets the finish flag or we get an error */
     failures = 0;

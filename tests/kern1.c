@@ -39,7 +39,7 @@ static uint8_t test_thread_stack[TEST_THREAD_STACK_SIZE];
 
 
 /* Forward declarations */
-static void test_thread_func (uint32_t data);
+static void test_thread_func (uint32_t param);
 
 
 /**
@@ -107,12 +107,15 @@ uint32_t test_start (void)
  *
  * Entry point for test thread.
  *
- * @param[in] data Unused (optional thread entry parameter)
+ * @param[in] param Unused (optional thread entry parameter)
  *
  * @return None
  */
-static void test_thread_func (uint32_t data)
+static void test_thread_func (uint32_t param)
 {
+    /* Compiler warnings */
+    param = param;
+
     /* Wait forever */
     while (1)
     {

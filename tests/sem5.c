@@ -44,7 +44,7 @@ static uint8_t test_thread_stack[NUM_TEST_THREADS][TEST_THREAD_STACK_SIZE];
 
 
 /* Forward declarations */
-static void test_thread_func (uint32_t data);
+static void test_thread_func (uint32_t param);
 
 
 /**
@@ -193,13 +193,16 @@ uint32_t test_start (void)
  *
  * Entry point for test thread.
  *
- * @param[in] data Unused (optional thread entry parameter)
+ * @param[in] param Unused (optional thread entry parameter)
  *
  * @return None
  */
-static void test_thread_func (uint32_t data)
+static void test_thread_func (uint32_t param)
 {
     uint8_t status;
+
+    /* Compiler warnings */
+    param = param;
 
     /* Block on sem1. Main thread will post when we should wake up. */
     if ((status = atomSemGet (&sem1, 0)) != ATOM_OK)

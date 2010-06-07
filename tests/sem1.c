@@ -45,8 +45,8 @@ static uint8_t test_thread_stack[NUM_TEST_THREADS][TEST_THREAD_STACK_SIZE];
 
 
 /* Forward declarations */
-static void test1_thread_func (uint32_t data);
-static void test2_thread_func (uint32_t data);
+static void test1_thread_func (uint32_t param);
+static void test2_thread_func (uint32_t param);
 
 
 /**
@@ -298,13 +298,16 @@ uint32_t test_start (void)
  *
  * Entry point for test thread 1.
  *
- * @param[in] data Unused (optional thread entry parameter)
+ * @param[in] param Unused (optional thread entry parameter)
  *
  * @return None
  */
-static void test1_thread_func (uint32_t data)
+static void test1_thread_func (uint32_t param)
 {
     uint8_t status;
+
+    /* Compiler warnings */
+    param = param;
 
     /*
      * Wait on sem1 with no timeout. We are expecting to be woken up
@@ -337,13 +340,16 @@ static void test1_thread_func (uint32_t data)
  *
  * Entry point for test thread 2.
  *
- * @param[in] data Unused (optional thread entry parameter)
+ * @param[in] param Unused (optional thread entry parameter)
  *
  * @return None
  */
-static void test2_thread_func (uint32_t data)
+static void test2_thread_func (uint32_t param)
 {
     uint8_t status;
+    
+    /* Compiler warnings */
+    param = param;
 
     /*
      * Wait on sem1 with timeout. We are expecting to be woken up

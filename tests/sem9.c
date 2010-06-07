@@ -48,7 +48,7 @@ static volatile int pass_flag[3];
 
 
 /* Forward declarations */
-static void test_thread_func (uint32_t data);
+static void test_thread_func (uint32_t param);
 
 
 /**
@@ -185,17 +185,17 @@ uint32_t test_start (void)
  *
  * Entry point for test threads.
  *
- * @param[in] data Thread ID (0-2)
+ * @param[in] param Thread ID (0-2)
  *
  * @return None
  */
-static void test_thread_func (uint32_t data)
+static void test_thread_func (uint32_t param)
 {
     uint8_t status;
     int thread_id;
 
     /* Pull out the passed thread ID */
-    thread_id = (int)data;
+    thread_id = (int)param;
 
     /*
      * Wait on sem1 with timeout. We are expecting to be woken up

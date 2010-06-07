@@ -53,7 +53,7 @@ static volatile uint8_t wake_cnt;
 static volatile uint8_t wake_order[4];
 
 /* Forward declarations */
-static void test_thread_func (uint32_t data);
+static void test_thread_func (uint32_t param);
 
 
 /**
@@ -263,17 +263,17 @@ uint32_t test_start (void)
  * four test threads, with the thread number/ID (1-4) passed as the entry
  * point parameter.
  *
- * @param[in] data Thread number (1,2,3,4)
+ * @param[in] param Thread number (1,2,3,4)
  *
  * @return None
  */
-static void test_thread_func (uint32_t data)
+static void test_thread_func (uint32_t param)
 {
     uint8_t thread_id;
     uint8_t msg;
 
     /* Thread ID is passed through the function parameter */
-    thread_id = (uint8_t)data;
+    thread_id = (uint8_t)param;
 
     /*
      * Wait for a message to appear on queue1. At creation of all test
