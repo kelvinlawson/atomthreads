@@ -96,6 +96,25 @@ char putchar (char c)
 #endif /* __CSMC__ */
 
 
+/* RAISONANCE: Requires putchar() routine to override stdio */
+#if defined(__RCSTM8__)
+/**
+ * \b putchar
+ *
+ * Retarget putchar() to use UART2
+ *
+ * @param[in] c Character to send
+ *
+ * @return 1 on success
+ */
+int putchar (char c)
+{
+    uart_putchar(c);
+    return (1);
+}
+#endif /* __RCSTM8__ */
+
+
 /* IAR: Requires __write() routine to override stdio */
 #if defined(__IAR_SYSTEMS_ICC__)
 /**
