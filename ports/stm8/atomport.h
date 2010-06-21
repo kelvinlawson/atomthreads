@@ -35,6 +35,8 @@
 
 #if defined(__IAR_SYSTEMS_ICC__)
 #include "intrinsics.h"
+#elif defined (__RCSTM8__)
+#include <intrins.h>
 #endif
 
 
@@ -67,6 +69,12 @@
 #define CRITICAL_STORE      __istate_t _istate
 #define CRITICAL_START()    _istate = __get_interrupt_state(); __disable_interrupt()
 #define CRITICAL_END()      __set_interrupt_state(_istate)
+
+/* Raisonance: Use intrinsics */
+#elif defined(__RCSTM8__)
+#define CRITICAL_STORE      unsigned char ccr
+#define CRITICAL_START()    ccr = _getCC_(); _sim_()
+#define CRITICAL_END()      _setCC_(ccr)
 #endif
 
 /* Uncomment to enable stack-checking */
