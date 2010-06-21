@@ -115,13 +115,15 @@ automated tests.
 
 BUILD VIA STVD PROJECT
 
-For building applications using STVD you can use the sample project file
-atomthreads-sample-cosmic.stw. This builds a sample full application which
-runs the "sem1" automated test. Applications can be downloaded directly to
-the target hardware (e.g. STM8S-Discovery) and run via the integrated
-debugger. Press the exclamation button to run, and confirm that the LED
-flashes once per second (if running on an STM8S-Discovery) to ensure that
-the test has passed. 
+For building applications using STVD you can use the sample workspace
+atomthreads-sample-stvd.stw which contains both Cosmic compiler and
+Raisonance compiler based projects. You can also import the Cosmic-only
+project file atomthreads-sample-cosmic.stp directly. This builds a sample
+full application which runs the "sem1" automated test. Applications can be
+downloaded directly to the target hardware (e.g. STM8S-Discovery) and run
+via the integrated debugger. Press the exclamation button to run, and
+confirm that the LED flashes once per second (if running on an
+STM8S-Discovery) to ensure that the test has passed. 
 
 This is also a good starting point for building your own applications:
 simply modify the file tests-main.c which starts the test application.
@@ -301,8 +303,8 @@ initialises the OS, sets up a UART and calls out to the test module entry
 functions. You can generally simply replace the call to the test modules by
 a call to your own application startup code.
 
-Projects developed within STVD can be started using the sample workspace
-atomthreads-sample-cosmic.stw. If you wish to create your own STVD project
+Projects developed within STVD can be started using the sample project
+atomthreads-sample-cosmic.stp. If you wish to create your own STVD project
 from scratch, then you should ensure you change the project settings for
 both Debug and Release builds as follows:
 
