@@ -55,11 +55,17 @@
  * longs in any OS kernel code accessed by interrupt handlers.
  *
  * IAR: Uses __interrupt modifier for interrupt handlers.
+ *
+ * RAISONANCE: Uses no prefix modifier, but specifies
+ * interrupt vector after (see TIM1_SystemTickISR() for an
+ * example).
  */
-#ifdef __CSMC__
+#if defined(__CSMC__)
 #define INTERRUPT @far @interrupt @svlreg
-#else
+#elif defined (__IAR_SYSTEMS_ICC__)
 #define INTERRUPT __interrupt
+#elif defined(__RCSTM8__)
+#define INTERRUPT
 #endif
 
 
