@@ -96,7 +96,7 @@ $(KERNEL_OBJECTS): %.o: $(KERNEL_DIR)/%.c
 $(TEST_OBJECTS): %.o: $(TESTS_DIR)/%.c
 	$(CC) $(CFLAGS) -i. -i$(KERNEL_DIR) -i$(PERIPHS_DIR) -co$(BUILD_DIR) $<
 
-# Kernel objects builder
+# Peripheral objects builder
 $(PERIPH_OBJECTS): %.o: $(PERIPHS_DIR)/%.c
 	$(CC) $(CFLAGS) -i. -i$(PERIPHS_DIR) -co$(BUILD_DIR) $<
 

@@ -113,7 +113,7 @@ $(KERNEL_OBJECTS): %.o: $(KERNEL_DIR)/%.c
 $(TEST_OBJECTS): %.o: $(TESTS_DIR)/%.c
 	$(CC) $< $(CFLAGS) -I . -I $(KERNEL_DIR) -I $(PERIPHS_DIR) -o $(BUILD_DIR)
 
-# Kernel objects builder
+# Peripheral objects builder
 $(PERIPH_OBJECTS): %.o: $(PERIPHS_DIR)/%.c
 	$(CC) $< $(CFLAGS) -I . -I $(PERIPHS_DIR) -o $(BUILD_DIR)
 
