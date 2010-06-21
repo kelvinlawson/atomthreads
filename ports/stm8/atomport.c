@@ -31,6 +31,9 @@
 #include "atom.h"
 #include "atomport-private.h"
 #include "stm8s_tim1.h"
+#if defined(__RCSTM8__)
+#include <intrins.h>
+#endif
 
 
 /** Forward declarations */
@@ -90,6 +93,8 @@ static NO_REG_SAVE void thread_shell (void)
     _asm("rim");
 #elif defined(__IAR_SYSTEMS_ICC__)
     rim();
+#elif defined(__RCSTM8__)
+    _rim_();
 #endif
 
     /* Call the thread entry point */
@@ -112,8 +117,8 @@ static NO_REG_SAVE void thread_shell (void)
  * and running the thread via archFirstThreadRestore() or
  * archContextSwitch().
  *
- * (COSMIC) On this port we take advantage of the fact that when
- * the context switch routine is called the compiler will
+ * (COSMIC & RAISONANCE) On this port we take advantage of the fact
+ * that when the context switch routine is called these compilers will
  * automatically stack all registers which should not be clobbered.
  * This means that the context switch need only save and restore the
  * stack pointer, which is stored in the thread's TCB. Because of
@@ -208,8 +213,8 @@ void archThreadContextInit (ATOM_TCB *tcb_ptr, void *stack_top, void (*entry_poi
 #endif
 
     /**
-     * (COSMIC) We do not initialise any registers via the initial
-     * stack context at all.
+     * (COSMIC & RAISONANCE) We do not initialise any registers via the
+     * initial stack context at all.
      */
 
     /**
@@ -286,6 +291,9 @@ void archInitSystemTickTimer ( void )
 #pragma vector = 13
 #endif
 INTERRUPT void TIM1_SystemTickISR (void)
+#if defined(__RCSTM8__)
+interrupt 11
+#endif
 {
     /* Call the interrupt entry routine */
     atomIntEnter();
