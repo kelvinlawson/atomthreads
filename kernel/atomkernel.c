@@ -28,7 +28,7 @@
  */
 
 
-/** 
+/**
  * \file
  * Kernel library.
  *
@@ -114,7 +114,7 @@
  * run since the thread was created. The context-save area is formatted in
  * exactly the same manner.
  *
- * 
+ *
  * \b Functions contained in this module:\n
  *
  * \b Application-callable initialisation functions: \n
@@ -501,7 +501,7 @@ uint8_t atomThreadCreate (ATOM_TCB *tcb_ptr, uint8_t priority, void (*entry_poin
  * have strayed outside of the allowable stack area while leaving some of
  * the known-value bytes unmodified. This simple method cannot trap stack
  * usage outside of the thread's allocated stack, for which you could use
- * additional guard areas (still limited in scope) or compiler/CPU/MMU 
+ * additional guard areas (still limited in scope) or compiler/CPU/MMU
  * features.
  *
  * The function takes a thread's TCB and returns both the number of stack
