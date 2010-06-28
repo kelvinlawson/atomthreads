@@ -7,11 +7,11 @@ License:      BSD Revised
 
 ---------------------------------------------------------------------------
 
-STM8 PORT - IAR COMPILER
+STM8 PORT - RAISONANCE COMPILER
 
 This folder contains a port of the Atomthreads real time kernel for the
 STM8 processor architecture. These instructions cover usage of Atomthreads
-with the IAR Embedded Workbench compiler (EWSTM8).
+with the Raisonance compiler (RCSTM8).
 
 All of the cross-platform kernel code is contained in the top-level 
 'kernel' folder, while ports to specific CPU architectures are contained in
@@ -21,7 +21,7 @@ as the context-switch routine which saves and restores processor registers
 on a thread switch. In this case, the kernel port is split into two files:
 
  * atomport.c: Those functions which can be written in C
- * atomport-asm-iar.s: The main register save/restore assembler routines
+ * atomport-asm-raisonance.s: Main register save/restore assembler routines
 
 Each Atomthreads port requires also a header file which describes various
 architecture-specific details such as appropriate types for 8-bit, 16-bit
@@ -47,33 +47,46 @@ STM8S-Discovery board, and supports the Cosmic, Raisonance and IAR compiler
 tools. It is possible to use it with other processors in the STM8 range, as
 well as other hardware platforms and compilers, with minimal changes.
 Platform and compiler specific code has been kept to an absolute minimum.
-This README covers usage of Atomthreads with the IAR compiler. Instructions
-for users of the other compilers are available in README-COSMIC and
-README-RAISONANCE.
+This README covers usage of Atomthreads with the Raisonance compiler.
+Instructions for users of the other compilers are available in README-IAR
+and README-COSMIC.
 
 
 ---------------------------------------------------------------------------
 
 PREREQUISITES
 
-The port works out-of-the-box with the IAR compiler tools for building.
-Applications are generated in ELF format and can be programmed and debugged
-using the IAR Embedded Workbench GUI or the free STVP (visual programmer
-tool). At this time there does not appear to be a command-line programmer
-application suitable for use with STM8.
+The port works out-of-the-box with the Raisonance compiler tools for
+building. Applications are generated in .hex form and can be programmed
+with any supporting programming software, including the free STVP (visual
+programmer tool). At this time there does not appear to be a command-line
+programmer application suitable for use with STM8.
 
-IAR Embedded Workbench for STM8 is a Windows-only application. For
-users of other operating systems the IAR tools may work in environments
-like Wine, but the USB programming tools are less likely to be supported.
-Embedded Workbench for STM8 can, however, be run successfully within a VM
-such as VirtualBox, including USB download and debug.
+The Raisonance compiler and STVP are currently Windows-only applications.
+For users of other operating systems the Raisonance compiler may work in 
+environments like Wine, but the USB programming tools are less likely to
+be supported. Both the compiler and the USB programming tool for
+STM8S-Discovery (STVP) can, however, be run successfully within a VM such
+as VirtualBox.
 
 The core software prerequisites are therefore:
- * IAR Embedded Workbench STM8
+ * Raisonance STM8 compiler
+ * Programming software (e.g. ST's STVP tool)
+
+Optionally, application build, program and debug can be carried out
+using ST's visual debug tool, STVD.
 
 Use with alternative compiler tools may require some modification, but you
-can easily replace the EWSTM8 IDE by your own favourite programmer if
-required (e.g. STVP).
+can easily replace STVP by your own favourite programmer if required.
+
+
+---------------------------------------------------------------------------
+
+MEMORY MODEL
+
+The sample build configurations use the Small memory model. All global
+variables are placed in the Data section rather than page0, which allows
+for large arrays such as thread stacks which would not fit in page0.
 
 
 ---------------------------------------------------------------------------
@@ -82,7 +95,7 @@ BUILDING THE SOURCE
 
 You may build Atomthreads using whichever build environment you desire. For
 your convenience we provide both a ready-rolled Makefile-based build system
-and an Embedded Workbench (EWSTM8) project. The EWSTM8 project permits easy
+and an STVD visual debugger project. The STVD project permits easy
 building, programming and debugging, but does not easily support building
 a wide range of application builds within the same project, which is
 useful for building the numerous automated tests. For the automated tests
@@ -92,15 +105,18 @@ automated tests.
 
 ---------------------------------------------------------------------------
 
-BUILD VIA EWSTM8 PROJECT
+BUILD VIA STVD PROJECT
 
-For building applications using the EWSTM8 IDE you can use the sample 
-project file atomthreads-sample-iar.ewp. This builds a sample full
-application which runs the "sem1" automated test. Applications can be
-downloaded directly to the target hardware (e.g. STM8S-Discovery) and run
-via the integrated debugger. You can start the application running, and
-confirm that the LED flashes once per second (if running on an
-STM8S-Discovery) to ensure that the test has passed. 
+For building applications using STVD you can use the sample workspace
+atomthreads-sample-stvd.stw which contains both Cosmic compiler and
+Raisonance compiler based projects. You can also import the 
+Raisonance-only project file atomthreads-sample-raisonance.stp directly.
+This builds a sample full application which runs the "sem1" automated test.
+Applications can be downloaded directly to the target hardware (e.g.
+STM8S-Discovery) and run via the integrated debugger. Press the
+exclamation button to run, and confirm that the LED flashes once per
+second (if running on an STM8S-Discovery) to ensure that the test has
+passed. 
 
 This is also a good starting point for building your own applications:
 simply modify the file tests-main.c which starts the test application.
@@ -118,51 +134,51 @@ BUILD VIA MAKEFILE
 A Makefile is also provided for building the kernel, port and automated
 tests. This is particularly useful for building the automated tests
 because many different independent applications need to be built which is
-not easily achieved within the EWSTM8 environment.
+not easily achieved within the STVD environment.
 
 For a Windows system you can obtain a Make application suitable for use
-with the IAR compiler from:
+with the Raisonance compiler from:
 
  * http://www.cosmic-software.com/comp_utils/GNU_Make.zip
 
 Assuming you install the above into C:\Program Files\GNU_MAKE, you
 should set up your environment variables as follows:
 
- * set PATH=%PATH%;C:\Program Files\GNU_MAKE;C:\Program Files\IAR Systems\Embedded Workbench 6.0\stm8\bin
+ * set PATH=%PATH%;C:\Program Files\GNU_MAKE;C:\Program Files\Raisonance\Ride\bin
  * set MAKE_MODE=DOS
 
 
 The full build is carried out using simply:
 
- * make -f iar.mak
+ * make -f raisonance.mak
 
-All objects are built into the 'build-iar' folder under ports/stm8. The
-build process builds separate target applications for each automated test,
-and appropriate .elf or .s19 files can be found in the build folder ready
-for downloading to and running on the target. Because of the limited
+All objects are built into the 'build-raisonance' folder under ports/stm8.
+The build process builds separate target applications for each automated
+test, and appropriate .aof or .hex files can be found in the build folder
+ready for downloading to and running on the target. Because of the limited
 resources on the STM8, and the large amount of automated tests, each test
 is built and run as a separate application.
 
 
 All built objects etc can be cleaned using:
 
- * make -f iar.mak clean
+ * make -f raisonance.mak clean
 
 
 The Atomthreads sources are documented using Doxygen markup. You can build
 both the kernel and STM8 port documentation from this folder using:
 
- * make -f iar.mak doxygen
+ * make -f raisonance.mak doxygen
 
 
 ---------------------------------------------------------------------------
 
 PROGRAMMING MAKEFILE-BUILT APPLICATIONS TO THE TARGET DEVICE
 
-When developing within EWSTM8, programs can be downloaded directly to the
+When developing within STVD, programs can be downloaded directly to the
 target. If, however, you are building applications separately using a
 Makefile or similar, then you are not able to program the application
-using EWSTM8. None of the tools delivered by ST appear to be designed to
+using STVD. None of the tools delivered by ST appear to be designed to
 cater for those who build applications externally, but it is possible using
 STVP.
 
@@ -171,7 +187,7 @@ apply to the STM8S-Discovery):
 
  * Build app using Makefile.
  * Open STVP and configure to use Swim ST-Link for CPU STM8105C6.
- * Open application .s19 file and program using "Program All Tabs".
+ * Open application .hex file and program using "Program All Tabs".
 
 Unfortunately STVP does not have a command to reset and start the CPU
 running, but it can be forced into doing so by reconfiguring the
@@ -225,11 +241,10 @@ the stm8s_conf.h file.
 
 If you are using a CPU other than the STM8S105C6 you should change the
 PART macro from "STM8S105" to your target CPU. This can be changed in the
-iar.mak Makefile. If you are using the EWSTM8 project it should be
-changed in the project C/C++ Compiler Preprocessor settings for both Debug
-and Release builds, and you must also change the target device in the
-project's "General Options". You may also wish to enable any CPU
-peripherals which you wish to use in the stm8s_conf.h file.
+raisonance.mak Makefile. If you are using the STVD project it should be
+changed in the project preprocessor settings for both Debug and Release
+builds. You may also wish to enable any CPU peripherals which you wish to
+use in the stm8s_conf.h file.
 
 
 ---------------------------------------------------------------------------
@@ -245,7 +260,7 @@ Makefile builds each of these tests as independent applications in the
 above. For example to run the 'kern1.c' test use STVP to program and run
 it.
 
-You may also build the tests using the EWSTM8 project, but to run each
+You may also build the tests using the STVD project, but to run each
 different test you must manually remove the previous test module (e.g.
 kern1.c) and replace it with one of other tests, which can be quite time
 consuming compared to building all tests in one command via the Makefile.
@@ -281,35 +296,27 @@ initialises the OS, sets up a UART and calls out to the test module entry
 functions. You can generally simply replace the call to the test modules by
 a call to your own application startup code.
 
-Projects developed within EWSTM8 can be started using the sample project
-atomthreads-sample-iar.ewp. If you wish to create your own EWSTM8 project
-from scratch, then you should ensure you change the project settings for
-both Debug and Release builds as follows:
+Projects developed within STVD can be started using the sample project
+atomthreads-sample-raisonance.stp. If you wish to create your own STVD
+project from scratch, then you should ensure you change the project settings
+for both Debug and Release builds as follows:
 
-* General Options -> Target -> Device: CPU part (e.g. "STM8S105C6")
-* C/C++ Compiler -> Diagnostics: Suppress "Pa050"
-* C/C++ Compiler -> Preprocessor -> Defined Symbols: 
-            CPU part (e.g. "STM8S105")
-            Thread stack-checking if required ("ATOM_STACK_CHECKING")
-            For example "STM8S105, ATOM_STACK_CHECKING"
-* Assembler -> Diagnostics: Suppress "Pa050"
-* Repeat above for Debug and Release projects (you may want to 
-  disable ATOM_STACK_CHECKING for Release builds).
+* Toolset: "Raisonance"
+* MCU Selection: Appropriate for your platform (STM8S10C56 for Discovery)
+* C Compiler Memory Model: "Small"
+* C Compiler Preprocessor Definitions: CPU part (e.g. "STM8S105")
+* C Compiler Preprocessor Definitions: Enable thread stack checking if
+  desired by adding "ATOM_STACK_CHECKING", for example the full
+  preprocessor line for Discovery might be: "STM8S105 ATOM_STACK_CHECKING"
+* Linker Input: You may need to change the DATA setion to start from 0x1
+  rather than 0x0 to prevent the linker from placing OS data at address
+  0x0 (which would cause NULL-pointer checks to fail). So far this has
+  not actually proved necessary, however.
 
-Other options you may wish to change:
-
-* Tools -> Options -> Editor -> EOL Characters: "Preserve". This preserves
-  the line endings, bearing in mind that the Atomthreads kernels works
-  with many host operating system toolchains.
-* Options -> Debugger -> "ST Link" (e.g. for STM8S Discovery)
-
-Add the .C and .S modules from the following folders:
-* kernel
-* ports/stm8
-* ports/stm8s-periphs
-
-Set include paths as appropriate.
-
+Note that for an RTOS like this the Raisonance compiler must place all
+functions in reentrant mode, however it does this by default on the STM8
+platform so no user action is required (unlike when targeting the STM7
+platform with Raisonance).
 
 ---------------------------------------------------------------------------
 
@@ -348,22 +355,22 @@ or application call stack. You will need to increase this depending on
 what level of stack the application code in question requires.
 
 At this time the maximum stack consumed by the test threads within the
-automated test modules is 85 bytes of stack, and the main test thread has
-been seen to consume 193 bytes of stack. At this time the queue9 test is
-the largest consumer of test thread stack (85 bytes) and the sem8 test
-consumes the largest main thread stack (193 bytes). If your applications
+automated test modules is 95 bytes of stack, and the main test thread has
+been seen to consume 163 bytes of stack. At this time the queue9 test is
+the largest consumer of test thread stack (95 bytes) and the sem1 test
+consumes the largest main thread stack (137 bytes). If your applications
 have large amounts of local data or call several subroutines then you may
 find that you need larger than 128 bytes.
 
 You may monitor the stack usage of your application threads during runtime
 by defining the macro ATOM_STACK_CHECKING and calling
-atomThreadStackCheck(). This macro is defined by default in the EWSTM8
-Debug project so that the automated test modules can check for stack
-overflows, but you may wish to undefine this in your application
-when you are happy that the stack usage is acceptable. Enabling 
-ATOM_STACK_CHECKING will increase the size of your threads' TCBs
-slightly, and will incur a minor CPU cycles overhead whenever threads are
-created due to prefilling the thread stack with a known value.
+atomThreadStackCheck(). This macro is defined by default in the Makefile
+so that the automated test modules can check for stack overflows, but you
+may wish to undefine this in your application Makefiles when you are happy
+that the stack usage is acceptable. Enabling ATOM_STACK_CHECKING will
+increase the size of your threads' TCBs slightly, and will incur a minor
+CPU cycles overhead whenever threads are created due to prefilling the
+thread stack with a known value.
 
 With careful consideration and few threads it would be possible to use
 a platform with 512 bytes RAM, but not all of the automated test suite
@@ -414,36 +421,32 @@ functions such as posting semaphores or effecting a thread switch.
 
 ---------------------------------------------------------------------------
 
-IAR COMPILER VIRTUAL REGISTERS
+RAISONANCE COMPILER VIRTUAL REGISTERS
 
-The STM8 has only very few CPU registers, so the IAR compiler augments
-them with sixteen "virtual" registers, which are simply locations in fast
-memory. These registers are called ?b0 to ?b15.
+The STM8 has only very few CPU registers, so the Raisonance compiler
+augments them with four "virtual" registers, which are simply locations in
+fast memory. These registers are called BH, BL, CH and CL.
 
-The Atomthreads context switch for IAR/STM8 takes advantage of the fact
-that all CPU and most virtual registers are automatically saved on the
+The Atomthreads context switch for Raisonance/STM8 takes advantage of the
+fact that all CPU and virtual registers are automatically saved on the
 stack by the compiler when calling out to C functions (and even then only
-if necessary). Only the virtual registers ?b8 to ?b15 are expected to be
-preserved by called functions, so these are the only registers that
-callers to the context switch routine will not automatically save if
-necessary.
+if necessary).
 
 For cooperative context switches (where a thread calls an OS kernel
-function to schedule itself out), most registers will therefore already
-be saved on a thread's stack if necessary. Only ?b8 to ?b15 actually have
-to be saved in the context switch routine, making cooperative switches
-potentially very cheap if few registers must be preserved.
+function to schedule itself out), any of these registers which should be
+preserved across the function call are automatically saved on the stack by
+the compiler before the context switch is even called. This means that no
+CPU or virtual registers actually have to be saved in the context switch
+routine, making cooperative switches potentially very cheap if few
+registers must be preserved.
 
 For preemptive switches (where an ISR has interrupted a thread and wishes
 to switch to a new thread), the interrupt handler prologue automatically
-saves all CPU registers (actually done automatically by the CPU) and the
-virtual registers ?b0 to ?b7. Still only the registers ?b8 to ?b15 have to
-be saved by the context-switch routine, but in this case ?b0 to ?b7 and the
-CPU registers are always saved on the thread's stack by the ISR prologue.
-This is because the ISR has no knowledge of what registers the interrupted
-thread was using, so we cannot take advantage of the potential for saving
-fewer than the full set of registers that we achieve with cooperative
-switches.
+saves all CPU registers (actually done automatically by the CPU) and all
+of the virtual registers. In this case all registers must always be saved
+because the ISR has no knowledge of what registers the interrupted thread
+was using, so we cannot take advantage of the potential for saving fewer
+than the full set of registers that we achieve with cooperative switches.
 
 
 ---------------------------------------------------------------------------

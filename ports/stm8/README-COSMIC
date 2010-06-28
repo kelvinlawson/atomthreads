@@ -44,12 +44,13 @@ provides an easy mechanism for building, downloading and running the test
 suite to prove the OS on your target.
 
 The port was carried out and tested on an STM8S105C6 running within an
-STM8S-Discovery board, and supports both the Cosmic and IAR compiler tools.
-It is possible to use it with other processors in the STM8 range, as well
-as other hardware platforms and compilers, with minimal changes. Platform
-and  compiler specific code has been kept to an absolute minimum. This
-README covers usage of Atomthreads with the Cosmic compiler. Instructions
-for users of the IAR compiler are available in README-IAR.
+STM8S-Discovery board, and supports the Cosmic, Raisonance and IAR compiler
+tools. It is possible to use it with other processors in the STM8 range, as
+well as other hardware platforms and compilers, with minimal changes.
+Platform and compiler specific code has been kept to an absolute minimum.
+This README covers usage of Atomthreads with the Cosmic compiler.
+Instructions for users of the other compilers are available in README-IAR
+and README-RAISONANCE.
 
 
 ---------------------------------------------------------------------------
@@ -76,7 +77,7 @@ The core software prerequisites are therefore:
 Optionally, application build, program and debug can be carried out
 using ST's visual debug tool, STVD.
 
-Use with alternative compiler tools will require some modification, but you
+Use with alternative compiler tools may require some modification, but you
 can easily replace STVP by your own favourite programmer if required.
 
 
