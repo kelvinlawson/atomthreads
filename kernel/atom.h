@@ -67,7 +67,7 @@ typedef struct atom_tcb
 #endif
 
 #ifdef ATOM_TLS
-	ATOM_TLS
+	ATOM_TLS                    /* Thread Local Storage */
 #endif
 
 } ATOM_TCB;
