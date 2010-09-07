@@ -30,31 +30,31 @@
 #include "atomvm.h"
 #include <string.h>
 
-#define CONTEXT_VM											(CONTEXT_INTEGER | CONTEXT_CONTROL | CONTEXT_SEGMENTS)
+#define CONTEXT_VM                                          (CONTEXT_INTEGER | CONTEXT_CONTROL | CONTEXT_SEGMENTS)
 
-#define ATOMVM_ATOMVM_PERF_COUNTER(patomvm, counter)		(InterlockedIncrement(&patomvm->perf_counters.counter))
+#define ATOMVM_ATOMVM_PERF_COUNTER(patomvm, counter)        (InterlockedIncrement(&patomvm->perf_counters.counter))
 
 /* Data types */
 
 /* Forward declarations */
-typedef struct ATOMVM_S *					PATOMVM ;
-typedef struct ATOMVM_CALLBACK_S *			PATOMVM_CALLBACK ;
-typedef struct ATOMVM_CONTEXT_S *			PATOMVM_CONTEXT ;
+typedef struct ATOMVM_S *                   PATOMVM ;
+typedef struct ATOMVM_CALLBACK_S *          PATOMVM_CALLBACK ;
+typedef struct ATOMVM_CONTEXT_S *           PATOMVM_CONTEXT ;
 
 typedef  uint32_t (*ATOMVM_CALLBACK_F) (PATOMVM, PATOMVM_CALLBACK) ;
 
 typedef struct ATOMVM_CALLBACK_S {
 
     /* Address of callback function */
-    volatile ATOMVM_CALLBACK_F		callback ;
+    volatile ATOMVM_CALLBACK_F      callback ;
 
     /* Synchronization lock, the virtual machine will be suspended during
     the callback. Regular WIN32 synchronization methods cant be used
     because SuspendThread() is used on the vm thread. */
-    volatile uint32_t 				lock ;
+    volatile uint32_t               lock ;
 
     /* Result of the call */
-    volatile uint32_t 				result ;
+    volatile uint32_t               result ;
 
 } ATOMVM_CALLBACK, *PATOMVM_CALLBACK ;
 
@@ -63,24 +63,24 @@ typedef struct ATOMVM_CALLBACK_S {
 that take as parameter a pointer to a ATOMVM_CONTEXT to operate on */
 typedef struct ATOMVM_CALLBACK_CONTEXT_S {
 
-    ATOMVM_CALLBACK					callback ;
+    ATOMVM_CALLBACK                 callback ;
 
     /* Context the callback function will operate on */
-    volatile PATOMVM_CONTEXT		pcontext ;
+    volatile PATOMVM_CONTEXT        pcontext ;
 
 } ATOMVM_CALLBACK_CONTEXT, *PATOMVM_CALLBACK_CONTEXT ;
 
 typedef struct ATOMVM_PERF_COUNTERS_S {
 
     /* Number of interrupt requests */
-    uint32_t						int_request ;
+    uint32_t                        int_request ;
 
     /* Number of service calls (context switches and
     context init from atom virtual machime) */
-    uint32_t						service_call ;
+    uint32_t                        service_call ;
 
     /* Total number of context switches */
-    uint32_t						context_switch ;
+    uint32_t                        context_switch ;
 
 } ATOMVM_PERF_COUNTERS, *PATOMVM_PERF_COUNTERS ;
 
@@ -90,14 +90,14 @@ typedef struct ATOMVM_CONTEXT_S {
 
     /* A virtual machine thread context. These are saved and restored
     during context initialization and context switches */
-    CONTEXT							context ;
+    CONTEXT                         context ;
 
     /* When entering a critical section the critical_count is
     incremented for the context. Interrupts will only occur while
     the critical_count is zero. The functions atomvmExitCritical()
     and atomvmEnterCritical() will respectively decrement and
     increment the critical count  */
-    volatile uint32_t				critical_count ;
+    volatile uint32_t               critical_count ;
 
 } ATOMVM_CONTEXT, *PATOMVM_CONTEXT ;
 
@@ -106,40 +106,40 @@ by a call to atomvmCtrlInit(). */
 typedef struct ATOMVM_S {
 
     /* Thread the virtual machine will run in */
-    HANDLE							vm_thread ;
+    HANDLE                          vm_thread ;
 
     /* Handles to events and mutexes used for synchronization */
-    HANDLE							atomvm_call ;
-    HANDLE							atomvm_int ;
-    HANDLE							atomvm_int_complete ;
-    HANDLE							atomvm_close ;
+    HANDLE                          atomvm_call ;
+    HANDLE                          atomvm_int ;
+    HANDLE                          atomvm_int_complete ;
+    HANDLE                          atomvm_close ;
 
     /* next ISR */
-    volatile void					(*isr)(void) ;
+    volatile void                   (*isr)(void) ;
     /* True if in an ISR */
-    volatile uint32_t				status_isr ;
+    volatile uint32_t               status_isr ;
 
     /* The current context that was scheduled by a call
     to atomvmContextSwitch() */
-    PATOMVM_CONTEXT					current_context ;
+    PATOMVM_CONTEXT                 current_context ;
 
     /* Service call address, synchronization lock, parameters
     and, return value for the current service call */
-    PATOMVM_CALLBACK				service_call ;
+    PATOMVM_CALLBACK                service_call ;
 
     /* Context for startup, before any context was scheduled
     (workaround to not check everytime if the first context
     was already started) */
-    ATOMVM_CONTEXT					atom_init_context ;
+    ATOMVM_CONTEXT                  atom_init_context ;
 
     /* Performance counters */
-    volatile ATOMVM_PERF_COUNTERS	perf_counters ;
+    volatile ATOMVM_PERF_COUNTERS   perf_counters ;
 
 } ATOMVM, *PATOMVM ;
 
 
 /* Forward declaration for the atom virtual machine thread */
-static DWORD WINAPI		vm_thread (LPVOID lpParameter) ;
+static DWORD WINAPI                 vm_thread (LPVOID lpParameter) ;
 
 
 /**
@@ -202,11 +202,11 @@ atomvmCtrlInit (HATOMVM *atomvm)
 void
 atomvmCtrlRun (HATOMVM atomvm, uint32_t flags)
 {
-    PATOMVM				patomvm = (PATOMVM) atomvm ;
-    HANDLE				wait[3] ;
-    uint32_t			res ;
-    uint32_t			wait_object ;
-    PATOMVM_CALLBACK	pservice_call ;
+    PATOMVM             patomvm = (PATOMVM) atomvm ;
+    HANDLE              wait[3] ;
+    uint32_t            res ;
+    uint32_t            wait_object ;
+    PATOMVM_CALLBACK    service_call ;
 
     ResumeThread (patomvm->vm_thread) ;
 
@@ -222,9 +222,8 @@ atomvmCtrlRun (HATOMVM atomvm, uint32_t flags)
 
             ATOMVM_ATOMVM_PERF_COUNTER(patomvm, service_call) ;
 
-            //InterlockedExchange ((volatile uint32_t*)&pservice_call, (uint32_t)patomvm->service_call) ;
-            pservice_call = patomvm->service_call ;
-            while (!pservice_call->lock) {
+            service_call = patomvm->service_call ;
+            while (!service_call->lock) {
                 SwitchToThread () ;
             }
 
@@ -236,8 +235,8 @@ atomvmCtrlRun (HATOMVM atomvm, uint32_t flags)
                 is stopped before executing the next instruction. */
             FlushProcessWriteBuffers ();
 #endif
-            InterlockedExchange (&pservice_call->result, pservice_call->callback (patomvm, pservice_call)) ;
-            InterlockedExchange (&pservice_call->lock, 0) ;
+            InterlockedExchange (&service_call->result, service_call->callback (patomvm, service_call)) ;
+            InterlockedExchange (&service_call->lock, 0) ;
             ResetEvent (patomvm->atomvm_call) ;
             res = ResumeThread (patomvm->vm_thread) ;
             ATOMVM_ASSERT(res == 1 , _T("ResumeThread failed")) ;
@@ -313,8 +312,8 @@ atomvmCtrlRun (HATOMVM atomvm, uint32_t flags)
 void
 atomvmCtrlClose (HATOMVM atomvm)
 {
-    PATOMVM		patomvm = (PATOMVM) atomvm ;
-    DWORD		code ;
+    PATOMVM     patomvm = (PATOMVM) atomvm ;
+    DWORD       code ;
 
     __atomvmClose () ;
 
@@ -392,8 +391,8 @@ invokeCallback (PATOMVM patomvm, ATOMVM_CALLBACK_F callback, PATOMVM_CALLBACK se
 int32_t
 atomvmExitCritical (HATOMVM atomvm)
 {
-    PATOMVM	patomvm = (PATOMVM) atomvm ;
-    int32_t count = 0;
+    PATOMVM         patomvm = (PATOMVM) atomvm ;
+    int32_t         count = 0;
 
     if (patomvm->status_isr == 0) {
         count = InterlockedDecrement (&patomvm->current_context->critical_count) ;
@@ -421,8 +420,8 @@ atomvmExitCritical (HATOMVM atomvm)
 int32_t
 atomvmEnterCritical (HATOMVM atomvm)
 {
-    PATOMVM	patomvm = (PATOMVM) atomvm ;
-    int32_t count = 0 ;
+    PATOMVM         patomvm = (PATOMVM) atomvm ;
+    int32_t         count = 0 ;
 
     if (patomvm->status_isr == 0) {
         count = InterlockedIncrement (&patomvm->current_context->critical_count) ;
@@ -452,7 +451,7 @@ atomvmEnterCritical (HATOMVM atomvm)
 void
 atomvmCtrlIntRequest (HATOMVM atomvm, uint32_t isr)
 {
-    PATOMVM	patomvm = (PATOMVM) atomvm ;
+    PATOMVM         patomvm = (PATOMVM) atomvm ;
 
     while (InterlockedCompareExchange ((volatile uint32_t *)&patomvm->isr, isr, 0) == 0) {
 		SwitchToThread() ;
@@ -477,8 +476,8 @@ atomvmCtrlIntRequest (HATOMVM atomvm, uint32_t isr)
 uint32_t
 callbackContextCreate (PATOMVM patomvm, PATOMVM_CALLBACK callback)
 {
-    PATOMVM_CALLBACK_CONTEXT context_switch = (PATOMVM_CALLBACK_CONTEXT)callback;
-    CONTEXT * pcontext = &context_switch->pcontext->context ;
+    PATOMVM_CALLBACK_CONTEXT    context_switch = (PATOMVM_CALLBACK_CONTEXT)callback;
+    CONTEXT *                   pcontext = &context_switch->pcontext->context ;
 
     pcontext->ContextFlags = CONTEXT_VM ;
 
@@ -505,11 +504,11 @@ callbackContextCreate (PATOMVM patomvm, PATOMVM_CALLBACK callback)
 uint32_t
 atomvmContextCreate (HATOMVM atomvm, HATOMVM_CONTEXT* atomvm_context, uint32_t stack, uint32_t entry)
 {
-    uint32_t res ;
-    PATOMVM	patomvm = (PATOMVM) atomvm ;
-    PATOMVM_CONTEXT new_context = (PATOMVM_CONTEXT)malloc (sizeof(ATOMVM_CONTEXT)) ;
-    CONTEXT* pcontext = &new_context->context ;
-    ATOMVM_CALLBACK_CONTEXT context_init ;
+    uint32_t            res ;
+    PATOMVM             patomvm = (PATOMVM) atomvm ;
+    PATOMVM_CONTEXT     new_context = (PATOMVM_CONTEXT)malloc (sizeof(ATOMVM_CONTEXT)) ;
+    CONTEXT*            pcontext = &new_context->context ;
+    ATOMVM_CALLBACK_CONTEXT     context_init ;
 
     context_init.pcontext = new_context ;
 
@@ -543,10 +542,10 @@ atomvmContextCreate (HATOMVM atomvm, HATOMVM_CONTEXT* atomvm_context, uint32_t s
 uint32_t
 callbackContextSwitch (PATOMVM patomvm, PATOMVM_CALLBACK callback)
 {
-    uint32_t res1 ;
-    uint32_t res2 ;
-    PATOMVM_CALLBACK_CONTEXT context_switch = (PATOMVM_CALLBACK_CONTEXT)callback ;
-    CONTEXT* pnew_context = &context_switch->pcontext->context ;
+    uint32_t                    res1 ;
+    uint32_t                    res2 ;
+    PATOMVM_CALLBACK_CONTEXT    context_switch = (PATOMVM_CALLBACK_CONTEXT)callback ;
+    CONTEXT*                    pnew_context = &context_switch->pcontext->context ;
 
     ATOMVM_ATOMVM_PERF_COUNTER(patomvm, context_switch) ;
 
@@ -576,8 +575,8 @@ callbackContextSwitch (PATOMVM patomvm, PATOMVM_CALLBACK callback)
 uint32_t
 atomvmContextSwitch  (HATOMVM atomvm, HATOMVM_CONTEXT new_context)
 {
-    PATOMVM	patomvm = (PATOMVM) atomvm ;
-    ATOMVM_CALLBACK_CONTEXT context_switch ;
+    PATOMVM                     patomvm = (PATOMVM) atomvm ;
+    ATOMVM_CALLBACK_CONTEXT     context_switch ;
 
     context_switch.pcontext = (PATOMVM_CONTEXT) new_context ;
 
@@ -599,7 +598,7 @@ atomvmContextSwitch  (HATOMVM atomvm, HATOMVM_CONTEXT new_context)
 void
 atomvmContextDesrtroy  (HATOMVM atomvm, HATOMVM_CONTEXT context)
 {
-    PATOMVM	patomvm = (PATOMVM) atomvm ;
+    PATOMVM     patomvm = (PATOMVM) atomvm ;
 
     ATOMVM_ASSERT(patomvm->current_context !=  (PATOMVM_CONTEXT)context,
     			_T("atomvmContextDesrtroy failed")) ;

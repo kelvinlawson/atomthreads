@@ -34,7 +34,7 @@
 
 
 #ifdef _DEBUG
-#define ATOMVM_ASSERT(x, msg)			_ASSERT(x)
+#define ATOMVM_ASSERT(x, msg)           _ASSERT(x)
 #else
 #define ATOMVM_ASSERT(x, msg)
 #endif
@@ -44,29 +44,28 @@
 
 /* This is an opaque handle to an instance of an atomvm created
    by a call to atomvmCtrlInit() */
-typedef struct ATOMVM*					HATOMVM ; 
+typedef struct ATOMVM*                  HATOMVM ; 
 
 /* This is an opaque handle to an atomvm context created
    by a call to atomvmContextCreate() */
-typedef struct ATOMVM_CONTEXT*			HATOMVM_CONTEXT ; 
+typedef struct ATOMVM_CONTEXT*          HATOMVM_CONTEXT ; 
 
 
 /* Function prototypes used for controlling the atom virtual machine */
-extern uint32_t			atomvmCtrlInit (HATOMVM* atomvm) ;
-extern void				atomvmCtrlRun (HATOMVM atomvm, uint32_t flags) ;
-extern void				atomvmCtrlIntRequest (HATOMVM atomvm, uintptr_t isr) ;
-extern void				atomvmCtrlClose (HATOMVM atomvm) ;
+extern uint32_t         atomvmCtrlInit (HATOMVM* atomvm) ;
+extern void             atomvmCtrlRun (HATOMVM atomvm, uint32_t flags) ;
+extern void             atomvmCtrlIntRequest (HATOMVM atomvm, uintptr_t isr) ;
+extern void             atomvmCtrlClose (HATOMVM atomvm) ;
 
 /* Function prototypes for use by the atom virtual machine */
-extern int32_t			atomvmExitCritical (HATOMVM atomvm) ;
-extern int32_t			atomvmEnterCritical (HATOMVM atomvm) ;
-extern uint32_t			atomvmContextCreate (HATOMVM atomvm, HATOMVM_CONTEXT* context, uint32_t stack, uint32_t entry) ;
-extern uint32_t			atomvmContextSwitch (HATOMVM atomvm, HATOMVM_CONTEXT new_context) ;
-extern void				atomvmContextDesrtroy (HATOMVM atomvm, HATOMVM_CONTEXT context) ;
+extern int32_t          atomvmExitCritical (HATOMVM atomvm) ;
+extern int32_t          atomvmEnterCritical (HATOMVM atomvm) ;
+extern uint32_t         atomvmContextCreate (HATOMVM atomvm, HATOMVM_CONTEXT* context, uint32_t stack, uint32_t entry) ;
+extern uint32_t         atomvmContextSwitch (HATOMVM atomvm, HATOMVM_CONTEXT new_context) ;
+extern void             atomvmContextDesrtroy (HATOMVM atomvm, HATOMVM_CONTEXT context) ;
 
 /* Function prototypes to be implemted in the atom virtual machine */
-extern  void			__atomvmReset (void) ;
-extern  void			__atomvmClose (void) ;
+extern  void            __atomvmReset (void) ;
+extern  void            __atomvmClose (void) ;
 
- 
 #endif /* __ATOMVM_H__ */
