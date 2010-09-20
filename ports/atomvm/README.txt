@@ -16,9 +16,9 @@ in a user friendly environment.
 
 BUILDING THE SOURCE
 
-To test this project, just add all the files from the “atomthreads/kernel” 
-directory and the “atomthreads/ports/atomvm” directory as well as the test 
-program “atomthreads/ports/atomvm/test/main.c” to your project. Add both the 
+To test this project, just add all the files from the "atomthreads/kernel" 
+directory and the "atomthreads/ports/atomvm" directory as well as the test 
+program "atomthreads/ports/atomvm/test/main.c" to your project. Add both the 
 before mentioned directories to the include paths of your project and compile.
 
 Atomvm was designed for multi core systems but also runs fine on any single 
