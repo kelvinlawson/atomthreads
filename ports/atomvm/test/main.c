@@ -91,8 +91,10 @@ monitor_thread (uint32_t parm)
 		printf("\nIdle Threadd 1 Counter =   %d\nIdle Theadrd 2 Counter =   %d\nInterrupt Counter      =   %d",test2_counter,test3_counter,test_isr_count);
 		printf ("\n\n") ;
 		CRITICAL_END();
-
-		atomTimerDelay (300) ;
+        //for (i=0; i<100;i++) {
+        //    atomvmInterruptWait () ;
+        //}
+		atomTimerDelay (150) ;
 
 	}
 }

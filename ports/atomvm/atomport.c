@@ -85,7 +85,7 @@ thread_shell (void)
      * is first restored.
      */
     // sei();
-	atomvmExitCritical (the_atomvm) ;
+	atomvmExitCritical () ;
 
     /* Call the thread entry point */
     if (curr_tcb && curr_tcb->entry_point)
@@ -110,7 +110,7 @@ archThreadContextInit (ATOM_TCB *tcb_ptr, void *stack_top, void (*entry_point)(u
 	tcb_ptr->entry_param = entry_param ;
 	tcb_ptr->entry_point = entry_point ;
 
-	atomvmContextCreate (the_atomvm, &tcb_ptr->context, (unsigned int )stack_top, (unsigned int )thread_shell) ;
+	atomvmContextCreate (&tcb_ptr->context, (unsigned int )stack_top, (unsigned int )thread_shell) ;
 }
 
 
@@ -123,7 +123,7 @@ archThreadContextInit (ATOM_TCB *tcb_ptr, void *stack_top, void (*entry_point)(u
 void 
 archFirstThreadRestore(ATOM_TCB * p_sp_new)
 {
-	atomvmContextSwitch (the_atomvm, p_sp_new->context) ;
+	atomvmContextSwitch (0, p_sp_new->context) ;
 }
  
 
@@ -136,7 +136,7 @@ archFirstThreadRestore(ATOM_TCB * p_sp_new)
 void
 archContextSwitch (ATOM_TCB * p_sp_old, ATOM_TCB * p_sp_new)
 {
-	atomvmContextSwitch (the_atomvm, p_sp_new->context) ;
+    atomvmContextSwitch (p_sp_old->context, p_sp_new->context) ;
 }
 
 
@@ -161,12 +161,12 @@ void archTimerTickIrqHandler ()
 unsigned int 
 __enter_critical () 
 {
-	return atomvmEnterCritical (the_atomvm) ;
+	return atomvmEnterCritical () ;
 }
 
 
 void  
 __exit_critical (unsigned int isr) 
 {
-	atomvmExitCritical (the_atomvm) ;
+	atomvmExitCritical () ;
 }
