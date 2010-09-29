@@ -65,6 +65,12 @@ static HANDLE			isr_thread_2 ;
 static HANDLE			isr_thread_3 ;
 static HANDLE			isr_thread_4 ;
 
+void
+ipi_sr()
+{
+    printf("ipi\r\n") ;
+}
+
 void 
 monitor_thread (uint32_t parm)
 {
@@ -72,6 +78,8 @@ monitor_thread (uint32_t parm)
 	int i  ;
 	int c = 0 ;
 	ATOM_TCB *tcb ;
+    static unsigned int idle_1 = 0, idle_2 = 0, int_count = 0 ;
+    unsigned int delta_idle_1 , delta_idle_2 , delta_int_count  ;
 
 	tcb = atomCurrentContext() ;
 
@@ -88,13 +96,24 @@ monitor_thread (uint32_t parm)
 			printf("Thr %.2d cnt %08d\t",i+TEST_THREADS/3,test_counter[i+TEST_THREADS/3]);	
 			printf("Thr %.2d cnt %08d\n",i+TEST_THREADS*2/3,test_counter[i+TEST_THREADS*2/3]);	
 		}
-		printf("\nIdle Threadd 1 Counter =   %d\nIdle Theadrd 2 Counter =   %d\nInterrupt Counter      =   %d",test2_counter,test3_counter,test_isr_count);
+
+        delta_idle_1 = test2_counter - idle_1 ;
+        delta_idle_2 = test3_counter - idle_2 ;
+        delta_int_count = test_isr_count - int_count ;
+		printf("\nIdle Threadd 1 Counter =	%d	%d	%d\nIdle Theadrd 2 Counter =	%d	%d	%d\nInterrupt Counter      =	%d	%d	%d",
+                test2_counter, delta_idle_1, (unsigned int)(test2_counter / c),
+                test3_counter, delta_idle_2, (unsigned int)(test3_counter / c),
+                test_isr_count, delta_int_count, (unsigned int)(test_isr_count / c));
 		printf ("\n\n") ;
+        idle_1 = test2_counter ; 
+        idle_2 = test3_counter ;
+        int_count = test_isr_count ;
 		CRITICAL_END();
         //for (i=0; i<100;i++) {
         //    atomvmInterruptWait () ;
         //}
 		atomTimerDelay (150) ;
+        //atomvmScheduleIpi (atomvmGetVmId(), (uint32_t) ipi_sr) ;
 
 	}
 }

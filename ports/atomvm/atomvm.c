@@ -554,9 +554,9 @@ atomvmEnterCritical ()
 * \ingroup atomvm
 * \b atomvmCriticalCount
 *
-* Rerurns the critical cont of the current context.
+* Rerurns the critical count of the current context.
 *
-* @return the critical cont of the current context.
+* @return the critical count of the current context.
 */
 int32_t
 atomvmCriticalCount ()
@@ -898,6 +898,7 @@ atomvmEventSend  ()
 uint32_t
 callbackInterruptWait (PATOMVM patomvm, PATOMVM_CALLBACK callback)
 {
+    //WaitForSingleObject (patomvm->atomvm_int_complete, INFINITE) ;
     return WaitForSingleObject (patomvm->atomvm_int, INFINITE) == WAIT_OBJECT_0 ;
 }
 
@@ -942,12 +943,13 @@ callbackScheduleIpi (PATOMVM patomvm, PATOMVM_CALLBACK callback)
     PATOMVM_CALLBACK_IPI callback_ipi = (PATOMVM_CALLBACK_IPI)callback ;
     uint32_t res = 0 ;
 
-    if ((callback_ipi->target < ATOMVM_MAX_VM) &&
-        (g_vms[callback_ipi->target] != patomvm) ) {
+    if (callback_ipi->target < ATOMVM_MAX_VM) {
+        if (g_vms[callback_ipi->target] != patomvm) {
 
-        atomvmCtrlIntRequest ((HATOMVM)g_vms[callback_ipi->target], callback_ipi->isr) ;
-        res = 1 ;
+            atomvmCtrlIntRequest ((HATOMVM)g_vms[callback_ipi->target], callback_ipi->isr) ;
+            res = 1 ;
 
+        } 
     }
 
     return res ;
