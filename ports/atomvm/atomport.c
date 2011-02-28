@@ -54,14 +54,14 @@ void
 atomvmRun ()
 {
 	atomvmCtrlInit (&the_atomvm) ;
-	cntrl_thread = CreateThread (NULL, 0, cntrl_thread_proc, 0, CREATE_SUSPENDED, NULL) ;
+	cntrl_thread = CreateThread (NULL, 0, cntrl_thread_proc, (uint32_t*)the_atomvm, CREATE_SUSPENDED, NULL) ;
 	ResumeThread (cntrl_thread) ;
 }
 
 DWORD WINAPI 
 cntrl_thread_proc (LPVOID lpParameter)
  {
-	atomvmCtrlRun (the_atomvm, 0) ;
+	atomvmCtrlRun ((HATOMVM)lpParameter, 0) ;
 	return 0 ;
  }
 

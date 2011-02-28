@@ -11,7 +11,7 @@
 extern uint32_t test_start (void) ;
 #endif
 
-#define TEST_THREADS				51
+#define TEST_THREADS				47
 
 #define TEST_STACK_BYTE_SIZE		0x10000
 #define IDLE_STACK_BYTE_SIZE		0x10000

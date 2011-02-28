@@ -64,7 +64,7 @@
 
 
 #if defined _DEBUG || defined DEBUG
-#define ATOMVM_ASSERT(x, msg)           _ASSERT(x)
+#define ATOMVM_ASSERT(x, msg)           _ASSERT((x))
 #else
 #define ATOMVM_ASSERT(x, msg)
 #endif
