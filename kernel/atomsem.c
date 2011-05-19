@@ -91,10 +91,6 @@
 #include <stdio.h>
 #endif
 
-#ifdef STAND_ALONE
-#include <atom-types.h>
-#endif
-
 #include "atom.h"
 #include "atomsem.h"
 #include "atomtimer.h"

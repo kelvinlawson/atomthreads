@@ -33,10 +33,9 @@
 #ifndef _PRINTK_H
 #define _PRINTK_H
 
-#include <atomport-types.h>
-#include <stdarg.h>
+#include "atomport.h"
 
-extern void putch (uint8_t *ch);
+extern void putch (uint8_t ch);
 extern void puts (const uint8_t *text);
 extern void printk (const char*format, ...);
 

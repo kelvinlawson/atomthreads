@@ -28,7 +28,7 @@
  */
 
 #include <atomport-asm-macros.h>
-#include <atomport-types.h>
+#include <atomport.h>
 #include <atom.h>
 
 void mips_setup_interrupts()

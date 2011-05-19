@@ -27,7 +27,6 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-
 #include "atom.h"
 #include "atomsem.h"
 #include "atomtimer.h"

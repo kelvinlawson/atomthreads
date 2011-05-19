@@ -29,10 +29,10 @@
 
 #include "atom.h"
 #include "atomport-private.h"
+#include "atomport.h"
 #include "atomtests.h"
 #include "atomtimer.h"
 #include "system.h"
-#include "printk.h"
 #include "atomport-interrupts.h"
 
 /* Constants */

@@ -29,13 +29,10 @@
  */
 
 #include <system.h>
-#include <atomport-types.h>
-
+#include <atomport.h>
 #include <stdarg.h>
 
 static int8_t buf[2048];
-
-extern void putch(uint8_t ch);
 
 /* Uses the above routine to output a string... */
 void puts(const uint8_t *text)

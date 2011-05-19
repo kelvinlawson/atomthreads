@@ -30,8 +30,20 @@
 #ifndef __ATOM_PORT_H
 #define __ATOM_PORT_H
 
-#include "atomport-types.h"
 #include "atomport-timer.h"
+
+typedef signed int int32_t;
+typedef signed short int16_t;
+typedef signed char int8_t;
+typedef unsigned int uint32_t;
+typedef unsigned short uint16_t;
+typedef unsigned char uint8_t;
+typedef long long int64_t;
+typedef unsigned long size_t;
+
+#define UINT32 uint32_t
+
+#define NULL ((void *)(0))
 
 /**
  * Architecture-specific types.
@@ -39,6 +51,8 @@
  * included above.
  */
 #define POINTER void *
+
+#include "printk.h"
 
 /* Critical region protection */
 #define CRITICAL_STORE	    unsigned int status_reg

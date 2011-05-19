@@ -92,8 +92,6 @@
  
 #ifndef STAND_ALONE
 #include <stdio.h>
-#else
-#include <atom-types.h>
 #endif
 
 #include <string.h>
