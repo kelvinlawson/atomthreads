@@ -28,7 +28,7 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <atomport-types.h>
+#include <atomport.h>
 #include <system.h>
 
 void *memcpy(void *dest, const void *src, size_t count)

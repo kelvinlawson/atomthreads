@@ -1,12 +1,12 @@
 /* vsprintf.c -- Lars Wirzenius & Linus Torvalds. */
 /*
  * Wirzenius wrote this portably, Torvalds fucked it up :-)
- * and Himanshu Fucked it up further for Freax :))
+ * and Himanshu Fucked it up further :))
  */
 
 #include <stdarg.h>
 #include <system.h>
-#include <atomport-types.h>
+#include <atomport.h>
 
 /* we use this so that we can do without the ctype library */
 #define is_digit(c)	((c) >= '0' && (c) <= '9')

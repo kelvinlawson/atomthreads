@@ -31,7 +31,7 @@
 #ifndef _SYSTEM_H
 #define _SYSTEM_H
 
-#include <atomport-types.h>
+#include <atomport.h>
 #include <stdarg.h>
 
 extern const uint8_t *kernel_name;

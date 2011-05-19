@@ -28,7 +28,7 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <atomport-types.h>
+#include <atomport.h>
 
 uint8_t ioreadb (void *addr)
 {
