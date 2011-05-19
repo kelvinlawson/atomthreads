@@ -87,6 +87,12 @@
  *
  */
 
+<<<<<<< HEAD
+=======
+#ifndef STAND_ALONE
+#include <stdio.h>
+#endif
+>>>>>>> Change related to upstream merge.
 
 #include "atom.h"
 #include "atomsem.h"
