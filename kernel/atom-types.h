@@ -27,22 +27,11 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef __ATOM_PORT_TESTS_H
-#define __ATOM_PORT_TESTS_H
+#ifndef __ATOM_TYPES_H
+#define __ATOM_TYPES_H
 
-/* Include Atomthreads kernel API */
-#include "atom.h"
+#include <atomport-types.h>
 
-/* Logger macro for viewing test results */
-/* FIXME: Add uart out routine once uart is supported */
-#define ATOMLOG printk
-#define _STR
+#define NULL ((void *)(0))
 
-/* Default thread stack size (in bytes) */
-#define TEST_THREAD_STACK_SIZE      128
-
-/* Uncomment to enable logging of stack usage to UART */
-/* #define TESTS_LOG_STACK_USAGE */
-
-#endif /* __ATOM_PORT_TESTS_H */
-
+#endif /* __ATOM_TYPES_H */

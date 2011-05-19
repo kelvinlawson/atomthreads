@@ -14,6 +14,24 @@ TESTS_DIR=../../tests
 CC=mips-linux-gnu-gcc
 OBJCOPY=mips-linux-gnu-objcopy
 
+# Check if verbosity is ON for build process
+VERBOSE_DEFAULT    := 0
+CMD_PREFIX_DEFAULT := @
+ifdef VERBOSE
+	ifeq ("$(origin VERBOSE)", "command line")
+		VB := $(VERBOSE)
+	else
+		VB := $(VERBOSE_DEFAULT)
+	endif
+else
+	VB := $(VERBOSE_DEFAULT)
+endif
+ifeq ($(VB), 1)
+	V :=
+else
+	V := $(CMD_PREFIX_DEFAULT)
+endif
+
 # Enable stack-checking. WARNING: the full automated test suite currently
 # requires a little over 1KB RAM with stack-checking enabled. If you are 
 # using a device with 1KB internal SRAM and no external SRAM then you
@@ -24,14 +42,15 @@ OBJCOPY=mips-linux-gnu-objcopy
 BUILD_DIR=build
 
 # Port/application object files
-APP_OBJECTS = atomport.o test-main.o
-APP_ASM_OBJECTS = atomport-asm.o atomport-entry.o
+APP_OBJECTS = atomport.o tests-main.o 8250-serial.o printk.o string.o vsprintf.o io.o
+
+APP_ASM_OBJECTS = atomport-entry.o atomport-asm.o
 
 # Kernel object files
 KERNEL_OBJECTS = atomkernel.o atomsem.o atommutex.o atomtimer.o atomqueue.o
 
 # Collection of built objects (excluding test applications)
-ALL_OBJECTS = $(APP_OBJECTS) $(APP_ASM_OBJECTS) $(KERNEL_OBJECTS)
+ALL_OBJECTS = $(APP_ASM_OBJECTS) $(APP_OBJECTS) $(KERNEL_OBJECTS)
 BUILT_OBJECTS = $(patsubst %,$(BUILD_DIR)/%,$(ALL_OBJECTS))
 
 # Test object files (dealt with separately as only one per application build)
@@ -47,13 +66,22 @@ vpath %.elf ./$(BUILD_DIR)
 vpath %.hex ./$(BUILD_DIR)
 
 # GCC flags
-CFLAGS=-g -Wall -Werror
+CFLAGS= -g \
+	-Wall \
+	-Werror \
+	-O \
+	-fstrength-reduce \
+	-fomit-frame-pointer \
+	-finline-functions \
+	-nostdinc \
+	-fno-builtin \
+	-fno-stack-protector \
+	-DSTAND_ALONE
 
 # Enable stack-checking (disable if not required)
 ifeq ($(STACK_CHECK),true)
 CFLAGS += -DATOM_STACK_CHECKING
 endif
-
 
 #################
 # Build targets #
@@ -68,36 +96,42 @@ $(BUILD_DIR):
 
 # Test HEX files (one application build for each test)
 $(TEST_HEXS): %.hex: %.elf
-	@echo Building $@
-	$(OBJCOPY) -j .text -j .data -O ihex $(BUILD_DIR)/$< $(BUILD_DIR)/$@
+	$(if $(V), @echo " (HEX)        $(subst $(build_dir)/,,$@)")
+	$(V)$(OBJCOPY) -j .text -j .data -O ihex $(BUILD_DIR)/$< $(BUILD_DIR)/$@
 
 # Test ELF files (one application build for each test)
-$(TEST_ELFS): %.elf: %.o $(KERNEL_OBJECTS) $(APP_OBJECTS) $(APP_ASM_OBJECTS)
-	$(CC) $(CFLAGS) $(BUILD_DIR)/$(notdir $<) $(BUILT_OBJECTS) --output $(BUILD_DIR)/$@ -Wl,-Map,$(BUILD_DIR)/$(basename $@).map
+$(TEST_ELFS): %.elf: %.o $(APP_ASM_OBJECTS) $(KERNEL_OBJECTS) $(APP_OBJECTS)
+	$(if $(V), @echo " (ELF)        $(subst $(build_dir)/,,$@)")
+	$(V)$(CC) $(CFLAGS) -nostdlib -nodefaultlibs $(BUILD_DIR)/$(notdir $<) $(BUILT_OBJECTS) --output $(BUILD_DIR)/$@ -Wl -T linker.ld
 
 # Kernel objects builder
 $(KERNEL_OBJECTS): %.o: $(KERNEL_DIR)/%.c
-	$(CC) -c $(CFLAGS) -I. $< -o $(BUILD_DIR)/$(notdir $@)
+	$(if $(V), @echo " (CC)         $(subst $(build_dir)/,,$@)")
+	$(V)$(CC) -c $(CFLAGS) -I. -I$(KERNEL_DIR) $< -o $(BUILD_DIR)/$(notdir $@)
 
 # Test objects builder
 $(TEST_OBJECTS): %.o: $(TESTS_DIR)/%.c
-	$(CC) -c $(CFLAGS) -I. -I$(KERNEL_DIR) $< -o $(BUILD_DIR)/$(notdir $@)
+	$(if $(V), @echo " (CC)         $(subst $(build_dir)/,,$@)")
+	$(V)$(CC) -c $(CFLAGS) -I. -I$(KERNEL_DIR) $< -o $(BUILD_DIR)/$(notdir $@)
 
 # Application C objects builder
 $(APP_OBJECTS): %.o: ./%.c
-	$(CC) -c $(CFLAGS) -I. -I$(KERNEL_DIR) -I$(TESTS_DIR) $< -o $(BUILD_DIR)/$(notdir $@)
+	$(if $(V), @echo " (CC)         $(subst $(build_dir)/,,$@)")
+	$(V)$(CC) -c $(CFLAGS) -I. -I$(KERNEL_DIR) -I$(TESTS_DIR) $< -o $(BUILD_DIR)/$(notdir $@)
 
 # Application asm objects builder
 $(APP_ASM_OBJECTS): %.o: ./%.s
-	$(CC) -c $(CFLAGS) -x assembler-with-cpp -I. -I$(KERNEL_DIR) $< -o $(BUILD_DIR)/$(notdir $@)
+	$(if $(V), @echo " (AS)         $(subst $(build_dir)/,,$@)")
+	$(V)$(CC) -c $(CFLAGS) -D__ASSEMBLY__ -x assembler-with-cpp -I. -I$(KERNEL_DIR) $< -o $(BUILD_DIR)/$(notdir $@)
 
 # .lst file builder
 %.lst: %.c
-	$(CC) $(CFLAGS) -I. -I$(KERNEL_DIR) -I$(TESTS_DIR) -Wa,-al $< > $@
+	$(if $(V), @echo " (LST)        $(subst $(build_dir)/,,$@)")
+	$(V)$(CC) $(CFLAGS) -I. -I$(KERNEL_DIR) -I$(TESTS_DIR) -Wa,-al $< > $@
 
 # Clean
 clean:
-	rm -f *.o *.elf *.map *.hex *.bin *.lst
+	$(V)rm -f *.o *.elf *.map *.hex *.bin *.lst
 	rm -rf doxygen-kernel
 	rm -rf doxygen-avr
 	rm -rf build
