@@ -139,10 +139,4 @@
 #define CP0_DATAHI                $29,1
 #define CP0_ERRORPC               $30
 
-#define SAVE_REG(addr, reg, val)     \
-        sw reg, (reg ## _IDX * WORD_SIZE)(addr)
-
-#define LOAD_REG(addr, reg, val)     \
-        lw reg, (reg ## _IDX * WORD_SIZE)(addr)
-
 #endif /* __ATOMPORT_PRIVATE_H_ */

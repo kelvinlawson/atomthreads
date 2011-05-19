@@ -31,6 +31,9 @@
 #include "atom.h"
 #include "atomtests.h"
 
+#ifdef STAND_ALONE
+#include <printk.h>
+#endif
 
 /* Number of test threads */
 #define NUM_TEST_THREADS      4

@@ -31,6 +31,9 @@
 #include "atom.h"
 #include "atomtests.h"
 
+#ifdef STAND_ALONE
+#include <printk.h>
+#endif
 
 /**
  * \b test_start

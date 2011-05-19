@@ -100,8 +100,12 @@
  *
  */
 
-
+#ifndef STAND_ALONE
 #include <stdio.h>
+#else
+#include <atom-types.h>
+#endif
+
 #include "atom.h"
 #include "atommutex.h"
 #include "atomtimer.h"

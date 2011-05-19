@@ -27,22 +27,48 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef __ATOM_PORT_TESTS_H
-#define __ATOM_PORT_TESTS_H
+OUTPUT_FORMAT("elf32-tradbigmips")
+OUTPUT_ARCH("mips")
+ENTRY(_start)
 
-/* Include Atomthreads kernel API */
-#include "atom.h"
+SECTIONS 
+{
+	. = 0x80000000;
+	.text :
+ 	{
+		*(.start.text)
+		*(.text)
+		. = ALIGN(4);
+		_etext = .;
+	}
 
-/* Logger macro for viewing test results */
-/* FIXME: Add uart out routine once uart is supported */
-#define ATOMLOG printk
-#define _STR
+	.data :
+	{
+		*(.data)
+		. = ALIGN(4);
+		_edata = .;
+	}
 
-/* Default thread stack size (in bytes) */
-#define TEST_THREAD_STACK_SIZE      128
+	.bss :
+	{
+		*(.bss)
+		. = ALIGN(4);
+		_ebss = .;
+	}
 
-/* Uncomment to enable logging of stack usage to UART */
-/* #define TESTS_LOG_STACK_USAGE */
+	.rodata :
+	{
+		*(.rodata .rodata.*)
+		. = ALIGN(4);
+		_erodata = .;
+	}
 
-#endif /* __ATOM_PORT_TESTS_H */
-
+	PROVIDE(_stack_end = .);
+	. = . + 8192;
+	. = ALIGN(4);
+	PROVIDE(_stack_start = .);
+	PROVIDE(_int_stack_end = .);
+	. = . + 8192;
+	. = ALIGN(4);
+	PROVIDE(_int_stack = .);
+}

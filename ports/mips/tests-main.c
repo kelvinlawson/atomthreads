@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010, Kelvin Lawson. All rights reserved.
+ * Copyright (c) 2011, Himanshu Chauhan. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,6 +31,8 @@
 #include "atomport-private.h"
 #include "atomtests.h"
 #include "atomtimer.h"
+#include "system.h"
+#include "printk.h"
 
 /* Constants */
 
@@ -124,13 +126,8 @@ static uint8_t main_thread_stack[MAIN_STACK_SIZE_BYTES];
 /* Idle thread's stack area */
 static uint8_t idle_thread_stack[IDLE_STACK_SIZE_BYTES];
 
-/* STDIO stream */
-static FILE uart_stdout = FDEV_SETUP_STREAM(uart_putchar, NULL, _FDEV_SETUP_WRITE);
-
-
 /* Forward declarations */
 static void main_thread_func (uint32_t data);
-
 
 /**
  * \b main
@@ -144,12 +141,6 @@ static void main_thread_func (uint32_t data);
 int main ( void )
 {
     int8_t status;
-
-    /**
-     * Reuse part of the idle thread's stack for the stack required
-     * during this startup function.
-     */
-    SP = (int)&idle_thread_stack[(IDLE_STACK_SIZE_BYTES/2) - 1];
 
     /**
      * Note: to protect OS structures and data during initialisation,
@@ -172,11 +163,11 @@ int main ( void )
      * If you are not reusing the idle thread's stack during startup then
      * you should pass in the correct size here.
      */
-    status = atomOSInit(&idle_thread_stack[IDLE_STACK_SIZE_BYTES - 1], (IDLE_STACK_SIZE_BYTES/2));
+    status = atomOSInit(&idle_thread_stack[IDLE_STACK_SIZE_BYTES - 1],
+			(IDLE_STACK_SIZE_BYTES/2));
     if (status == ATOM_OK)
     {
-        /* Enable the system tick timer */
-        avrInitSystemTickTimer();
+        /* FIXME: Enable the system tick timer */
 
         /* Create an application thread */
         status = atomThreadCreate(&main_tcb,
@@ -221,77 +212,14 @@ int main ( void )
 static void main_thread_func (uint32_t data)
 {
     uint32_t test_status;
-    int sleep_ticks;
 
-    /* Enable all LEDs (STK500-specific) */
-    DDRB = 0xFF;
-    PORTB = 0xFF;
-
-    /* Initialise UART (9600bps) */
-    if (uart_init(9600) != 0)
-    {
-        /* Error initialising UART */
-    }
-
-    /**
-     * Redirect stdout via the UART. Note that the UART write routine
-     * is protected via a semaphore, so the OS must be started before
-     * use of the UART.
-     */
-    stdout = &uart_stdout;
+    init_console();
 
     /* Put a message out on the UART */
-    printf_P(PSTR("Go\n"));
+    printk("Main Thread\n");
 
     /* Start test. All tests use the same start API. */
     test_status = test_start();
 
-    /* Check main thread stack usage (if enabled) */
-#ifdef ATOM_STACK_CHECKING
-    if (test_status == 0)
-    {
-        uint32_t used_bytes, free_bytes;
-
-        /* Check idle thread stack usage */
-        if (atomThreadStackCheck (&main_tcb, &used_bytes, &free_bytes) == ATOM_OK)
-        {
-            /* Check the thread did not use up to the end of stack */
-            if (free_bytes == 0)
-            {
-                printf_P (PSTR("Main stack overflow\n"));
-                test_status++;
-            }
-
-            /* Log the stack usage */
-#ifdef TESTS_LOG_STACK_USAGE
-            printf_P (PSTR("MainUse:%d\n"), used_bytes);
-#endif
-        }
-
-    }
-#endif
-
-    /* Log final status */
-    if (test_status == 0)
-    {
-        printf_P (PSTR("Pass\n"));
-    }
-    else
-    {
-        printf_P (PSTR("Fail(%d)\n"), test_status);
-    }
-
-    /* Flash LED once per second if passed, very quickly if failed */
-    sleep_ticks = (test_status == 0) ? SYSTEM_TICKS_PER_SEC : (SYSTEM_TICKS_PER_SEC/8);
-
-    /* Test finished, flash slowly for pass, fast for fail */
-    while (1)
-    {
-        /* Toggle a LED (STK500-specific) */
-        PORTB ^= (1 << 7);
-
-        /* Sleep then toggle LED again */
-        atomTimerDelay(sleep_ticks);
-    }
-
+    while(1);
 }
