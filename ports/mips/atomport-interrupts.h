@@ -27,25 +27,12 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef __ATOM_PORT_H
-#define __ATOM_PORT_H
+#ifndef __ATOMPORT_INTERRUPTS_H
+#define __ATOMPORT_INTERRUPTS_H
 
-#include "atomport-types.h"
-#include "atomport-timer.h"
+void mips_setup_interrupts();
+void mips_enable_global_interrupts(void);
+void mips_disable_global_interrupts(void);
+void handle_mips_systick(void);
 
-/**
- * Architecture-specific types.
- * Most of these are available from stdint.h on this platform, which is
- * included above.
- */
-#define POINTER void *
-
-/* Critical region protection */
-#define CRITICAL_STORE
-#define CRITICAL_START()    __asm__ __volatile__("di $0\n\t")
-#define CRITICAL_END()      __asm__ __volatile__("ei $0\n\t");
-
-/* Uncomment to enable stack-checking */
-/* #define ATOM_STACK_CHECKING */
-
-#endif /* __ATOM_PORT_H */
+#endif /* __ATOMPORT_INTERRUPTS_H */

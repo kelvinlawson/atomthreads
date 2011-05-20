@@ -42,7 +42,7 @@ endif
 BUILD_DIR=build
 
 # Port/application object files
-APP_OBJECTS = atomport.o tests-main.o 8250-serial.o printk.o string.o vsprintf.o io.o
+APP_OBJECTS = atomport.o tests-main.o 8250-serial.o printk.o string.o vsprintf.o io.o atomport-interrupts.o atomport-timer.o
 
 APP_ASM_OBJECTS = atomport-entry.o atomport-asm.o
 
