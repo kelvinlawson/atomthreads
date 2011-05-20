@@ -26,26 +26,12 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
+#ifndef __ATOM_PORT_TIMER_H
+#define __ATOM_PORT_TIMER_H
 
-#ifndef __ATOM_PORT_H
-#define __ATOM_PORT_H
+/* Required number of system ticks per second (normally 100 for 10ms tick) */
+#define SYSTEM_TICKS_PER_SEC            100
 
-#include "atomport-types.h"
-#include "atomport-timer.h"
+void mips_cpu_timer_enable(void);
 
-/**
- * Architecture-specific types.
- * Most of these are available from stdint.h on this platform, which is
- * included above.
- */
-#define POINTER void *
-
-/* Critical region protection */
-#define CRITICAL_STORE
-#define CRITICAL_START()    __asm__ __volatile__("di $0\n\t")
-#define CRITICAL_END()      __asm__ __volatile__("ei $0\n\t");
-
-/* Uncomment to enable stack-checking */
-/* #define ATOM_STACK_CHECKING */
-
-#endif /* __ATOM_PORT_H */
+#endif /* __ATOM_PORT_TIMER_H */

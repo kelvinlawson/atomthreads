@@ -34,10 +34,11 @@
 #include <stdarg.h>
 #include <8250-serial.h>
 
-#define PORT1 (void *)0x140003f8
-#define PORT2 (void *)0x140002F8
-#define PORT3 (void *)0x140003E8
-#define PORT4 (void *)0x140002E8
+//#define PORT1 (void *)0x140003f8
+//#define PORT2 (void *)0x140002F8
+//#define PORT3 (void *)0x140003E8
+//#define PORT4 (void *)0x140002E8
+#define PORT1 (void *)0xc00003f8
 
 static inline unsigned int serial_in(int offset)
 {

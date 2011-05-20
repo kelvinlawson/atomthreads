@@ -31,6 +31,7 @@
 #include <atom.h>
 #include <atomport-private.h>
 #include <atomport.h>
+#include <string.h>
 
 /**
  * This function initialises each thread's stack during creation, before the
@@ -56,20 +57,20 @@ void archThreadContextInit (ATOM_TCB *tcb_ptr, void *stack_top,
 #define STORE_VAL(base, reg, val) \
 	*((uint32_t *)(base + ((reg ## _IDX) * WORD_SIZE))) = (uint32_t)val
 
-    void *stack_start = (stack_top - (WORD_SIZE * NUM_REGISTERS));
+	uint32_t stack_start = (uint32_t)(stack_top - (WORD_SIZE * NUM_REGISTERS));
 
-    tcb_ptr->sp_save_ptr = stack_start;
+	tcb_ptr->sp_save_ptr = (void *)stack_start;
 
-    STORE_VAL(stack_start, sp, stack_start);
-    STORE_VAL(stack_start, s8, stack_start);
-    STORE_VAL(stack_start, s1, 0);
-    STORE_VAL(stack_start, s2, 0);
-    STORE_VAL(stack_start, s3, 0);
-    STORE_VAL(stack_start, s4, 0);
-    STORE_VAL(stack_start, s5, 0);
-    STORE_VAL(stack_start, s6, 0);
-    STORE_VAL(stack_start, s7, 0);
-    STORE_VAL(stack_start, ra, entry_point);
-    STORE_VAL(stack_start, a0, entry_param);
+	STORE_VAL(stack_start, sp, stack_start);
+	STORE_VAL(stack_start, s8, stack_start);
+	STORE_VAL(stack_start, s1, 0);
+	STORE_VAL(stack_start, s2, 0);
+	STORE_VAL(stack_start, s3, 0);
+	STORE_VAL(stack_start, s4, 0);
+	STORE_VAL(stack_start, s5, 0);
+	STORE_VAL(stack_start, s6, 0);
+	STORE_VAL(stack_start, s7, 0);
+	STORE_VAL(stack_start, ra, entry_point);
+	STORE_VAL(stack_start, a0, entry_param);
 }
 

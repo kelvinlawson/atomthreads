@@ -27,25 +27,32 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef __ATOM_PORT_H
-#define __ATOM_PORT_H
+#include <atomport-asm-macros.h>
+#include <atomport-types.h>
+#include <atom.h>
 
-#include "atomport-types.h"
-#include "atomport-timer.h"
+void mips_setup_interrupts()
+{
+        uint32_t ebase = read_c0_ebase();
+        ebase &= ~0x3FFF000UL;
+        write_c0_ebase(ebase);
 
-/**
- * Architecture-specific types.
- * Most of these are available from stdint.h on this platform, which is
- * included above.
- */
-#define POINTER void *
+        uint32_t sr = read_c0_status();
+        sr &= ~(0x01UL << 22);
+        sr &= ~(0x3UL << 1);
+        write_c0_status(sr);
 
-/* Critical region protection */
-#define CRITICAL_STORE
-#define CRITICAL_START()    __asm__ __volatile__("di $0\n\t")
-#define CRITICAL_END()      __asm__ __volatile__("ei $0\n\t");
+        uint32_t cause = read_c0_status();
+        cause |= 0x01UL << 23;
+        write_c0_cause(cause);
+}
 
-/* Uncomment to enable stack-checking */
-/* #define ATOM_STACK_CHECKING */
+void mips_enable_global_interrupts(void)
+{
+	__asm__ __volatile__ ("ei $0\t\n");
+}
 
-#endif /* __ATOM_PORT_H */
+void mips_disable_global_interrupts(void)
+{
+	__asm__ __volatile__("di $0\t\n");
+}

@@ -27,7 +27,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <atomport-private.h>
+#include <atomport-asm-macros.h>
 
 .section .text
 
@@ -40,34 +40,44 @@
  */
 .globl archContextSwitch
 archContextSwitch:
+    move v0, a0 /* return old tcb when we return from here */
     lw k0, 0(a0) /* assume that sp_save_ptr is always at base of ATOM_TCB */
+    sw s0, (s0_IDX * 4)(k0)
+    sw s1, (s1_IDX * 4)(k0)
+    sw s2, (s2_IDX * 4)(k0)
+    sw s3, (s3_IDX * 4)(k0)
+    sw s4, (s4_IDX * 4)(k0)
+    sw s5, (s5_IDX * 4)(k0)
+    sw s6, (s6_IDX * 4)(k0)
+    sw s7, (s7_IDX * 4)(k0)
+    sw s8, (s8_IDX * 4)(k0)
+    sw sp, (sp_IDX * 4)(k0)
+    sw gp, (gp_IDX * 4)(k0)
+    mfc0 k1, CP0_EPC
+    nop
+    nop
+    nop
+    sw k1, (ra_IDX * 4)(k0)
+
     lw k1, 0(a1)
+    lw s0, (s0_IDX * 4)(k1)
+    lw s1, (s1_IDX * 4)(k1)
+    lw s2, (s2_IDX * 4)(k1)
+    lw s3, (s3_IDX * 4)(k1)
+    lw s4, (s4_IDX * 4)(k1)
+    lw s5, (s5_IDX * 4)(k1)
+    lw s6, (s6_IDX * 4)(k1)
+    lw s7, (s7_IDX * 4)(k1)
+    lw s8, (s8_IDX * 4)(k1)
+    lw sp, (sp_IDX * 4)(k1)
+    lw gp, (gp_IDX * 4)(k1)
+    lw k0, (ra_IDX * 4)(k1)
+    mtc0 k0, CP0_EPC
+    nop
+    nop
+    nop
 
-    sw s0, (s0_IDX * 4)(a0)
-    sw s1, (s1_IDX * 4)(a0)
-    sw s2, (s2_IDX * 4)(a0)
-    sw s3, (s3_IDX * 4)(a0)
-    sw s4, (s4_IDX * 4)(a0)
-    sw s5, (s5_IDX * 4)(a0)
-    sw s6, (s6_IDX * 4)(a0)
-    sw s7, (s7_IDX * 4)(a0)
-    sw s8, (s8_IDX * 4)(a0)
-    sw sp, (sp_IDX * 4)(a0)
-    sw gp, (gp_IDX * 4)(a0)
-
-    lw s0, (s0_IDX * 4)(a1)
-    lw s1, (s1_IDX * 4)(a1)
-    lw s2, (s2_IDX * 4)(a1)
-    lw s3, (s3_IDX * 4)(a1)
-    lw s4, (s4_IDX * 4)(a1)
-    lw s5, (s5_IDX * 4)(a1)
-    lw s6, (s6_IDX * 4)(a1)
-    lw s7, (s7_IDX * 4)(a1)
-    lw s8, (s8_IDX * 4)(a1)
-    lw sp, (sp_IDX * 4)(a1)
-    lw gp, (gp_IDX * 4)(a1)
-
-    j ra
+    jr ra
     nop
 
 /**
@@ -94,4 +104,5 @@ archFirstThreadRestore:
     nop
     nop
     nop
+    enable_global_interrupts
     eret

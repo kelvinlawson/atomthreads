@@ -27,25 +27,41 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef __ATOM_PORT_H
-#define __ATOM_PORT_H
+#include <atomport-asm-macros.h>
+#include <atomport-types.h>
+#include <atom.h>
+#include <atomport-timer.h>
 
-#include "atomport-types.h"
-#include "atomport-timer.h"
+/** CPU frequency in MHz */
+#define CPU_FREQ_MHZ					100
 
-/**
- * Architecture-specific types.
- * Most of these are available from stdint.h on this platform, which is
- * included above.
- */
-#define POINTER void *
+/** Number of counter counter should increase to get required ticks */
+#define COUNTER_TICK_COUNT				((1000000 * SYSTEM_TICKS_PER_SEC) / CPU_FREQ_MHZ)
 
-/* Critical region protection */
-#define CRITICAL_STORE
-#define CRITICAL_START()    __asm__ __volatile__("di $0\n\t")
-#define CRITICAL_END()      __asm__ __volatile__("ei $0\n\t");
+unsigned long long jiffies;
 
-/* Uncomment to enable stack-checking */
-/* #define ATOM_STACK_CHECKING */
+void mips_cpu_timer_enable(void)
+{
+	uint32_t sr = read_c0_status();
+	sr |= ((0x1UL << 7) << 8);
+	write_c0_status(sr);
 
-#endif /* __ATOM_PORT_H */
+	uint32_t cause = read_c0_cause();
+	cause &= ~(0x1UL << 27);
+	write_c0_cause(cause);
+	write_c0_compare(read_c0_count() + COUNTER_TICK_COUNT);
+}
+
+void handle_mips_systick(void)
+{
+	/* Call the interrupt entry routine */
+	atomIntEnter();
+
+	/* Call the OS system tick handler */
+	atomTimerTick();
+
+	/* Call the interrupt exit routine */
+	atomIntExit(TRUE);
+
+	write_c0_compare(read_c0_count() + COUNTER_TICK_COUNT);
+}

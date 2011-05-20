@@ -51,6 +51,11 @@ LEAF(_start)
 	mtc0	zero, CP0_COMPARE
 	mtc0	zero, CP0_COUNT
 
+        li      a0, 0xC0000000 /* FIXME: Remove these two hard codings */
+	li      a1, 0x14000000
+	bal     create_tlb_entry
+	move    zero, a2
+
 	la	sp, _stack_start	/* setup the stack (bss segment) */
 	la	t0, main
 	j	t0			/* Call the C- code now */
@@ -59,31 +64,38 @@ LEAF(_start)
 1:	b 	1b 			/* we should not come here whatsoever */
 END(_start)
 
-.extern vmm_cpu_handle_pagefault
-
 LEAF(_handle_tlbmiss)
-	//disable_global_interrupts
-	//move k0, sp
-	//SAVE_INT_CONTEXT(_int_stack)
-	//move a0, sp
-	//bal vmm_cpu_handle_pagefault
-	//nop
-	//enable_global_interrupts
-	//eret
+#if 0
+	disable_global_interrupts
+	move k0, sp
+	SAVE_INT_CONTEXT(_int_stack)
+	move a0, sp
+	bal vmm_cpu_handle_pagefault
+	nop
+	enable_global_interrupts
+	eret
+#else
+	b _handle_tlbmiss
+	nop
+#endif
 END(_handle_tlbmiss)
 
-.extern generic_int_handler
+.extern handle_mips_systick
 .extern _int_stack
-.extern vmm_regs_dump
 LEAF(_handle_interrupt)
-	//disable_global_interrupts
-	//SAVE_INT_CONTEXT(_int_stack)
-	//move a0, sp
-	//bal generic_int_handler
-	//nop
-	//RESTORE_INT_CONTEXT(sp)
-	//enable_global_interrupts
-	//eret
+	disable_global_interrupts
+	mfc0 k0, CP0_CAUSE
+	lui k1, 0x4000
+	and k0, k1, k0
+	beq k0, zero, 1f
+	nop
+	move k0, sp
+	la sp, _int_stack	
+	bal handle_mips_systick
+	nop
+1:	
+	enable_global_interrupts
+	eret
 END(_handle_interrupt)
 
 LEAF(_handle_cache_error)

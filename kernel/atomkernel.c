@@ -348,7 +348,7 @@ static void atomThreadSwitch(ATOM_TCB *old_tcb, ATOM_TCB *new_tcb)
         curr_tcb = new_tcb;
 
         /* Call the architecture-specific context switch */
-        archContextSwitch (old_tcb, new_tcb);
+        old_tcb = archContextSwitch (old_tcb, new_tcb);
     }
 
     /**
