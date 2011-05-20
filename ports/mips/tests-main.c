@@ -120,6 +120,7 @@
 
 /* Application threads' TCBs */
 static ATOM_TCB main_tcb;
+static ATOM_TCB secondary_tcb;
 
 /* Main thread's stack area */
 static uint8_t main_thread_stack[MAIN_STACK_SIZE_BYTES] __attribute__((aligned (4)));
@@ -129,6 +130,7 @@ static uint8_t idle_thread_stack[IDLE_STACK_SIZE_BYTES] __attribute__((aligned (
 
 /* Forward declarations */
 static void main_thread_func (uint32_t data);
+static void secondary_thread_func (uint32_t data);
 
 /**
  * \b main
