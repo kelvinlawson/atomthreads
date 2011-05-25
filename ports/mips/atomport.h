@@ -41,9 +41,22 @@
 #define POINTER void *
 
 /* Critical region protection */
-#define CRITICAL_STORE
-#define CRITICAL_START()    __asm__ __volatile__("di $0\n\t")
-#define CRITICAL_END()      __asm__ __volatile__("ei $0\n\t");
+#define CRITICAL_STORE	    unsigned int status_reg
+#define CRITICAL_START()					\
+	__asm__ __volatile__("di %0\t\n"			\
+			     "ssnop\t\n"			\
+			     "ssnop\t\n"			\
+			     "ssnop\t\n"			\
+			     "ehb\t\n"				\
+			     :"=r"(status_reg));
+
+#define CRITICAL_END()						\
+	__asm__ __volatile__("ei %0\t\n"			\
+			     "ssnop\t\n"			\
+			     "ssnop\t\n"			\
+			     "ssnop\t\n"			\
+			     "ehb\t\n"				\
+			     ::"r"(status_reg));
 
 /* Uncomment to enable stack-checking */
 /* #define ATOM_STACK_CHECKING */
