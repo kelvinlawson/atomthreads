@@ -57,7 +57,7 @@ void archThreadContextInit (ATOM_TCB *tcb_ptr, void *stack_top,
 #define STORE_VAL(base, reg, val) \
 	*((uint32_t *)(base + ((reg ## _IDX) * WORD_SIZE))) = (uint32_t)val
 
-	uint32_t stack_start = (uint32_t)(stack_top - (WORD_SIZE * NUM_REGISTERS));
+	uint32_t stack_start = (uint32_t)(stack_top - (WORD_SIZE * (NUM_REGISTERS + 1)));
 
 	tcb_ptr->sp_save_ptr = (void *)stack_start;
 
@@ -70,6 +70,7 @@ void archThreadContextInit (ATOM_TCB *tcb_ptr, void *stack_top,
 	STORE_VAL(stack_start, s5, 0);
 	STORE_VAL(stack_start, s6, 0);
 	STORE_VAL(stack_start, s7, 0);
+	STORE_VAL(stack_start, cp0_epc, entry_point);
 	STORE_VAL(stack_start, ra, entry_point);
 	STORE_VAL(stack_start, a0, entry_param);
 }
