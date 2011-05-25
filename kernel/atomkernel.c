@@ -143,12 +143,6 @@
  *
  */
 
-#ifndef STAND_ALONE
-#include <stddef.h>
-#else
-#include <atom-types.h>
-#include <printk.h>
-#endif
 
 #include "atom.h"
 

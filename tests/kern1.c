@@ -27,12 +27,6 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef STAND_ALONE
-#include <stddef.h>
-#else
-#include <printk.h>
-#include <atom-types.h>
-#endif
 
 #include "atom.h"
 #include "atomtests.h"

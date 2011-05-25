@@ -37,6 +37,8 @@
 /* Portable uint8_t and friends available from stdint.h on this platform */
 #include <stdint.h>
 
+/* Definition of NULL is available from stddef.h on this platform */
+#include <stddef.h>
 
 /* Required number of system ticks per second (normally 100 for 10ms tick) */
 #define SYSTEM_TICKS_PER_SEC            100
