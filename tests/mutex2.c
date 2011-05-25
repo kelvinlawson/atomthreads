@@ -28,7 +28,6 @@
  */
 
 
-#include <stddef.h>
 #include "atom.h"
 #include "atommutex.h"
 #include "atomtests.h"

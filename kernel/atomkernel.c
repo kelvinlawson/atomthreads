@@ -144,7 +144,6 @@
  */
 
 
-#include <stddef.h>
 #include "atom.h"
 
 
