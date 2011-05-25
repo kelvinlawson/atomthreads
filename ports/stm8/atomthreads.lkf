@@ -26,19 +26,19 @@ crtsi0.sm8
 
 # Object files list - section reserved for STVD
 #<BEGIN OBJECT_FILES>
-build\atomkernel.o
-build\atommutex.o
-build\atomqueue.o
-build\atomsem.o
-build\atomtimer.o
-build\stm8s_clk.o
-build\stm8s_gpio.o
-build\stm8s_tim1.o
-build\stm8s_uart2.o
-build\tests-main.o
-build\atomport.o
-build\uart.o
-build\atomport-asm-cosmic.o
+build-cosmic\atomkernel.o
+build-cosmic\atommutex.o
+build-cosmic\atomqueue.o
+build-cosmic\atomsem.o
+build-cosmic\atomtimer.o
+build-cosmic\stm8s_clk.o
+build-cosmic\stm8s_gpio.o
+build-cosmic\stm8s_tim1.o
+build-cosmic\stm8s_uart2.o
+build-cosmic\tests-main.o
+build-cosmic\atomport.o
+build-cosmic\uart.o
+build-cosmic\atomport-asm-cosmic.o
 # Caller passes in test application object name as param1
 @1
 #<END OBJECT_FILES>
@@ -54,7 +54,7 @@ libm0.sm8
 # Interrupt vectors file
 #<BEGIN VECTOR_FILE>
 +seg .const -b 0x8000 -k
-build/stm8_interrupt_vector.o
+build-cosmic\stm8_interrupt_vector.o
 #<END VECTOR_FILE>
 
 # Defines
