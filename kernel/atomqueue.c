@@ -90,9 +90,6 @@
  *
  */
  
-#ifndef STAND_ALONE
-#include <stdio.h>
-#endif
 
 #include <string.h>
 

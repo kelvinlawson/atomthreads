@@ -100,9 +100,6 @@
  *
  */
 
-#ifndef STAND_ALONE
-#include <stdio.h>
-#endif
 
 #include "atom.h"
 #include "atommutex.h"
