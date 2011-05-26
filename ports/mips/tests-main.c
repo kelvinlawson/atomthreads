@@ -120,7 +120,6 @@
 
 /* Application threads' TCBs */
 static ATOM_TCB main_tcb;
-static ATOM_TCB secondary_tcb;
 
 /* Main thread's stack area */
 static uint8_t main_thread_stack[MAIN_STACK_SIZE_BYTES] __attribute__((aligned (4)));
@@ -128,11 +127,8 @@ static uint8_t main_thread_stack[MAIN_STACK_SIZE_BYTES] __attribute__((aligned (
 /* Idle thread's stack area */
 static uint8_t idle_thread_stack[IDLE_STACK_SIZE_BYTES] __attribute__((aligned (4)));
 
-static uint8_t secondary_thread_stack[MAIN_STACK_SIZE_BYTES] __attribute__((aligned (4)));
-
 /* Forward declarations */
 static void main_thread_func (uint32_t data);
-static void secondary_thread_func (uint32_t data);
 
 /**
  * \b main
@@ -183,26 +179,19 @@ int main ( void )
                      MAIN_STACK_SIZE_BYTES);
         if (status == ATOM_OK)
         {
-		status = atomThreadCreate(&secondary_tcb, TEST_THREAD_PRIO,
-					  secondary_thread_func, 0,
-					  &secondary_thread_stack[MAIN_STACK_SIZE_BYTES],
-					  MAIN_STACK_SIZE_BYTES);
+		mips_cpu_timer_enable();
 
-		if (status == ATOM_OK) {
-			mips_cpu_timer_enable();
-
-			/**
-			 * First application thread successfully created. It is
-			 * now possible to start the OS. Execution will not return
-			 * from atomOSStart(), which will restore the context of
-			 * our application thread and start executing it.
-			 *
-			 * Note that interrupts are still disabled at this point.
-			 * They will be enabled as we restore and execute our first
-			 * thread in archFirstThreadRestore().
-			 */
-			atomOSStart();
-		}
+		/**
+		 * First application thread successfully created. It is
+		 * now possible to start the OS. Execution will not return
+		 * from atomOSStart(), which will restore the context of
+		 * our application thread and start executing it.
+		 *
+		 * Note that interrupts are still disabled at this point.
+		 * They will be enabled as we restore and execute our first
+		 * thread in archFirstThreadRestore().
+		 */
+		atomOSStart();
 	}
     }
 
@@ -228,15 +217,11 @@ static void main_thread_func (uint32_t data)
 {
 	while (1) {
 		/* Put a message out on the UART */
-		printk("Main Thread\n");
-		atomTimerDelay(SYSTEM_TICKS_PER_SEC);
-	}
-}
-
-static void secondary_thread_func (uint32_t data)
-{
-	while (1) {
-		printk("Secondary Thread\n");
-		atomTimerDelay (SYSTEM_TICKS_PER_SEC);
+		printk("Running Tests... ");
+		if (test_start() != 0) {
+			printk("FAILED!\n");
+		} else {
+			printk("SUCCESS!\n");
+		}
 	}
 }
