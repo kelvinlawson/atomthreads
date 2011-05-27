@@ -34,7 +34,7 @@
 
 
 /*   Number of queue entries */
-#define QUEUE_ENTRIES           8
+#define QUEUE_ENTRIES           4
 
 
 /* Number of test threads */
