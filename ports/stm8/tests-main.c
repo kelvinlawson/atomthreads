@@ -139,7 +139,7 @@ NO_REG_SAVE void main ( void )
      */
 
     /* Initialise the OS before creating our threads */
-    status = atomOSInit(&idle_thread_stack[IDLE_STACK_SIZE_BYTES - 1], IDLE_STACK_SIZE_BYTES);
+    status = atomOSInit(&idle_thread_stack[0], IDLE_STACK_SIZE_BYTES, TRUE);
     if (status == ATOM_OK)
     {
         /* Enable the system tick timer */
@@ -148,8 +148,9 @@ NO_REG_SAVE void main ( void )
         /* Create an application thread */
         status = atomThreadCreate(&main_tcb,
                      TEST_THREAD_PRIO, main_thread_func, 0,
-                     &main_thread_stack[MAIN_STACK_SIZE_BYTES - 1],
-                     MAIN_STACK_SIZE_BYTES);
+                     &main_thread_stack[0],
+                     MAIN_STACK_SIZE_BYTES,
+					 TRUE);
         if (status == ATOM_OK)
         {
             /**
