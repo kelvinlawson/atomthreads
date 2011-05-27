@@ -41,6 +41,9 @@
  */
 #define NULL      ((void *)(0))
 
+/* Size of each stack entry / stack alignment size (e.g. 8 bits) */
+#define STACK_ALIGN_SIZE                sizeof(unsigned char)
+
 /**
  * Architecture-specific types.
  * Uses the stdint.h naming convention, so if stdint.h is available on the

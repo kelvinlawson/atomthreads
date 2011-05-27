@@ -71,7 +71,7 @@
  * stack for application code local variables etc.
  *
  * With all OS tests implemented to date on the AVR, the Main thread
- * stack has not exceeded 198 bytes. To allow all tests to run we set
+ * stack has not exceeded 201 bytes. To allow all tests to run we set
  * a minimum main thread stack size of 204 bytes. This may increase in
  * future as the codebase changes but for the time being is enough to
  * cope with all of the automated tests.
@@ -167,17 +167,15 @@ int main ( void )
     /**
      * Initialise the OS before creating our threads.
      *
-     * Note that we tell the OS that the idle stack is half its actual
-     * size. This prevents it prefilling the bottom half with known
-     * values for stack-checkig purposes, which we cannot allow because
-     * we are temporarily using it for our own stack. The remainder will
-     * still be available once the OS is started, this only prevents the
-     * OS from prefilling it.
+     * Note that we cannot enable stack-checking on the idle thread on
+     * this platform because we are already using part of the idle
+     * thread's stack now as our startup stack. Prefilling for stack
+     * checking would overwrite our current stack.
      *
      * If you are not reusing the idle thread's stack during startup then
-     * you should pass in the correct size here.
+     * you are free to enable stack-checking here.
      */
-    status = atomOSInit(&idle_thread_stack[IDLE_STACK_SIZE_BYTES - 1], (IDLE_STACK_SIZE_BYTES/2));
+    status = atomOSInit(&idle_thread_stack[0], IDLE_STACK_SIZE_BYTES, FALSE);
     if (status == ATOM_OK)
     {
         /* Enable the system tick timer */
@@ -186,8 +184,9 @@ int main ( void )
         /* Create an application thread */
         status = atomThreadCreate(&main_tcb,
                      TEST_THREAD_PRIO, main_thread_func, 0,
-                     &main_thread_stack[MAIN_STACK_SIZE_BYTES - 1],
-                     MAIN_STACK_SIZE_BYTES);
+                     &main_thread_stack[0],
+                     MAIN_STACK_SIZE_BYTES,
+					 TRUE);
         if (status == ATOM_OK)
         {
             /**

@@ -43,6 +43,8 @@
 /* Required number of system ticks per second (normally 100 for 10ms tick) */
 #define SYSTEM_TICKS_PER_SEC            100
 
+/* Size of each stack entry / stack alignment size (8 bits on AVR) */
+#define STACK_ALIGN_SIZE                sizeof(uint8_t)
 
 /**
  * Architecture-specific types.
