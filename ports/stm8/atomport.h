@@ -60,7 +60,12 @@
 #define POINTER  void *
 
 
-/* Critical region protection */
+/**
+ * Critical region protection: this should disable interrupts
+ * to protect OS data structures during modification. It must
+ * allow nested calls, which means that interrupts should only
+ * be re-enabled when the outer CRITICAL_END() is reached.
+ */
 
 /* COSMIC: Use inline assembler */
 #if defined(__CSMC__)
