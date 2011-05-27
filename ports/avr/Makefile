@@ -112,7 +112,7 @@ clean:
 
 # Send to STK500
 program : $(BUILD_DIR)/$(app).hex
-	$(SIZE) -C $(BUILD_DIR)/$(app).elf
+	$(SIZE) -C --mcu=$(PART) $(BUILD_DIR)/$(app).elf
 	$(UISP) -dprog=stk500 -dserial=$(UISP_DEV) -dpart=$(PART) --erase --upload --verify if=$(BUILD_DIR)/$(app).hex
 
 doxygen:
