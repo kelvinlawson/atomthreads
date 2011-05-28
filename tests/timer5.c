@@ -32,7 +32,6 @@
 #include "atomtimer.h"
 #include "atomtests.h"
 
-
 /* Global test data */
 static volatile int callback_ran_flag;
 

@@ -31,7 +31,6 @@
 #include "atom.h"
 #include "atomtests.h"
 
-
 /**
  * \b test_start
  *
