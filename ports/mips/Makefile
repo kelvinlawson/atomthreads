@@ -75,8 +75,7 @@ CFLAGS= -g \
 	-finline-functions \
 	-nostdinc \
 	-fno-builtin \
-	-fno-stack-protector \
-	-DSTAND_ALONE
+	-fno-stack-protector
 
 # Enable stack-checking (disable if not required)
 ifeq ($(STACK_CHECK),true)

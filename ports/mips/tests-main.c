@@ -130,6 +130,9 @@ static uint8_t idle_thread_stack[IDLE_STACK_SIZE_BYTES] __attribute__((aligned (
 /* Forward declarations */
 static void main_thread_func (uint32_t data);
 
+/* Global Data */
+uint32_t at_preempt_count;
+
 /**
  * \b main
  *
@@ -142,6 +145,8 @@ static void main_thread_func (uint32_t data);
 int main ( void )
 {
     int8_t status;
+
+    at_preempt_count = 0;
 
     /**
      * Note: to protect OS structures and data during initialisation,
@@ -164,8 +169,8 @@ int main ( void )
      * If you are not reusing the idle thread's stack during startup then
      * you should pass in the correct size here.
      */
-    status = atomOSInit(&idle_thread_stack[IDLE_STACK_SIZE_BYTES],
-			IDLE_STACK_SIZE_BYTES);
+    status = atomOSInit(&idle_thread_stack[0],
+			IDLE_STACK_SIZE_BYTES, 0);
     if (status == ATOM_OK)
     {
         /* FIXME: Enable the system tick timer */
@@ -175,8 +180,8 @@ int main ( void )
         /* Create an application thread */
         status = atomThreadCreate(&main_tcb,
                      TEST_THREAD_PRIO, main_thread_func, 0,
-                     &main_thread_stack[MAIN_STACK_SIZE_BYTES],
-                     MAIN_STACK_SIZE_BYTES);
+                     &main_thread_stack[0],
+				  MAIN_STACK_SIZE_BYTES, 0);
         if (status == ATOM_OK)
         {
 		mips_cpu_timer_enable();

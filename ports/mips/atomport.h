@@ -42,7 +42,7 @@ typedef long long int64_t;
 typedef unsigned long size_t;
 
 #define UINT32 uint32_t
-
+#define STACK_ALIGN_SIZE sizeof(uint32_t)
 #define NULL ((void *)(0))
 
 /**
@@ -54,23 +54,40 @@ typedef unsigned long size_t;
 
 #include "printk.h"
 
-/* Critical region protection */
-#define CRITICAL_STORE	    unsigned int status_reg
-#define CRITICAL_START()					\
-	__asm__ __volatile__("di %0\t\n"			\
-			     "ssnop\t\n"			\
-			     "ssnop\t\n"			\
-			     "ssnop\t\n"			\
-			     "ehb\t\n"				\
-			     :"=r"(status_reg));
+extern uint32_t at_preempt_count;
 
-#define CRITICAL_END()						\
-	__asm__ __volatile__("ei %0\t\n"			\
-			     "ssnop\t\n"			\
-			     "ssnop\t\n"			\
-			     "ssnop\t\n"			\
-			     "ehb\t\n"				\
-			     ::"r"(status_reg));
+/* Critical region protection */
+#define CRITICAL_STORE	    uint32_t status_reg
+#define CRITICAL_START()					\
+	do {							\
+		extern uint32_t at_preempt_count;		\
+		__asm__ __volatile__("di %0\t\n"		\
+				     "ehb\t\n"			\
+				     :"=r"(status_reg));	\
+		at_preempt_count++;				\
+	}while(0);
+
+#define CRITICAL_END()							\
+	do {								\
+		extern uint32_t at_preempt_count;			\
+		if (at_preempt_count == 0) {				\
+			printk("BUG: Preempt count is zero!\n");	\
+			for(;;);					\
+		}							\
+		at_preempt_count--;					\
+									\
+		if (at_preempt_count == 0) {				\
+			if (atomCurrentContext()) {			\
+				printk("+");				\
+				__asm__ __volatile__("ei %0\t\n"	\
+						     "ehb\t\n"		\
+						     ::"r"(status_reg));\
+			} else {					\
+				printk(".");				\
+			}						\
+		}							\
+									\
+	}while(0);
 
 /* Uncomment to enable stack-checking */
 /* #define ATOM_STACK_CHECKING */
