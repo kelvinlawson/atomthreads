@@ -150,7 +150,7 @@ NO_REG_SAVE void main ( void )
                      TEST_THREAD_PRIO, main_thread_func, 0,
                      &main_thread_stack[0],
                      MAIN_STACK_SIZE_BYTES,
-					 TRUE);
+                     TRUE);
         if (status == ATOM_OK)
         {
             /**
