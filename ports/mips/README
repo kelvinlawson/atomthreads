@@ -1,0 +1,3 @@
+ * Required Ubuntu packages: qemu, qemu-kvm-extras
+ * Compiler: CodeSourcery
+ * Run test: qemu-system-mips -M mips -m 128 -kernel build/kern1.elf -nographic
