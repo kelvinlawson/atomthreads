@@ -245,7 +245,7 @@ static void main_thread_func (uint32_t data)
     stdout = &uart_stdout;
 
     /* Put a message out on the UART */
-    printf_P(PSTR("Go\n"));
+    printf_P (PSTR("Go\n"));
 
     /* Start test. All tests use the same start API. */
     test_status = test_start();
@@ -295,7 +295,7 @@ static void main_thread_func (uint32_t data)
         PORTB ^= (1 << 7);
 
         /* Sleep then toggle LED again */
-        atomTimerDelay(sleep_ticks);
+        atomTimerDelay (sleep_ticks);
     }
 
 }
