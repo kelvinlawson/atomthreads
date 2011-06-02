@@ -48,7 +48,7 @@
  * In this case, the idle stack is allocated on the BSS via the
  * idle_thread_stack[] byte array.
  */
-#define IDLE_STACK_SIZE_BYTES       4096
+#define IDLE_STACK_SIZE_BYTES       8192
 
 
 /*
@@ -122,10 +122,10 @@
 static ATOM_TCB main_tcb;
 
 /* Main thread's stack area */
-static uint8_t main_thread_stack[MAIN_STACK_SIZE_BYTES] __attribute__((aligned (4)));
+static uint8_t main_thread_stack[MAIN_STACK_SIZE_BYTES];
 
 /* Idle thread's stack area */
-static uint8_t idle_thread_stack[IDLE_STACK_SIZE_BYTES] __attribute__((aligned (4)));
+static uint8_t idle_thread_stack[IDLE_STACK_SIZE_BYTES];
 
 /* Forward declarations */
 static void main_thread_func (uint32_t data);

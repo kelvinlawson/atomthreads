@@ -39,7 +39,7 @@
 #define _STR
 
 /* Default thread stack size (in bytes) */
-#define TEST_THREAD_STACK_SIZE      128
+#define TEST_THREAD_STACK_SIZE      8192
 
 /* Uncomment to enable logging of stack usage to UART */
 /* #define TESTS_LOG_STACK_USAGE */

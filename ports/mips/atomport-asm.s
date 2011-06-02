@@ -32,6 +32,8 @@
 .section .text
 
 .extern atomCurrentContext
+.extern at_preempt_count
+
 /**
  * Function that performs the contextSwitch. Whether its a voluntary release
  * of CPU by thread or a pre-emption, under both conditions this function is
@@ -145,7 +147,15 @@ __unwind_int_context:
     RESTORE_INT_CONTEXT
 
 __ret_from_switch:
+    la k0, at_preempt_count
+    lw k1, (k0)
+    addi k1, k1, -1
+    sw k1, (k0)
+    bnez k1, __return_from_int
+    nop
     enable_global_interrupts
+    ehb
+__return_from_int:
     eret
 
 /**

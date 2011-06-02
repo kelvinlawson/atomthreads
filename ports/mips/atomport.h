@@ -78,12 +78,9 @@ extern uint32_t at_preempt_count;
 									\
 		if (at_preempt_count == 0) {				\
 			if (atomCurrentContext()) {			\
-				printk("+");				\
 				__asm__ __volatile__("ei %0\t\n"	\
 						     "ehb\t\n"		\
 						     ::"r"(status_reg));\
-			} else {					\
-				printk(".");				\
 			}						\
 		}							\
 									\
