@@ -32,32 +32,25 @@
 .section .text
 
 /**
- * Function that performs the contextSwitch. Whether its a voluntary release
- * of CPU by thread or a pre-emption, under both conditions this function is
- * called. The signature is as follows:
- *
- * archContextSwitch(ATOM_TCB *old_tcb, ATOM_TCB *new_tcb)
+ * int archSetJumpLowLevel(pt_regs_t *regs)
  */
-.globl archContextSwitch
-archContextSwitch:
+.globl archSetJumpLowLevel
+archSetJumpLowLevel:
 	bx	lr
 
 /**
- * archFirstThreadRestore(ATOM_TCB *new_tcb)
- *
- * This function is responsible for restoring and starting the first
- * thread the OS runs. It expects to find the thread context exactly
- * as it would be if a context save had previously taken place on it.
- * The only real difference between this and the archContextSwitch()
- * routine is that there is no previous thread for which context must
- * be saved.
- *
- * The final action this function must do is to restore interrupts.
+ * void archLongJumpLowLevel(pt_regs_t *regs)
  */
-.globl archFirstThreadRestore
-archFirstThreadRestore:
-	ldr	r0, [r0]
-	mov	sp, r0
+.globl archLongJumpLowLevel
+archLongJumpLowLevel:
+	bx	lr
+
+/**
+ * void archFirstThreadRestoreLowLevel(pt_regs_t *regs)
+ */
+.globl archFirstThreadRestoreLowLevel
+archFirstThreadRestoreLowLevel:
+	add	r0, r0, #(4 * 17)
 	mrs	r1, cpsr
 	SET_CURRENT_MODE CPSR_MODE_UNDEFINED
 	mov	sp, r0
@@ -68,6 +61,7 @@ archFirstThreadRestore:
 	SET_CURRENT_MODE CPSR_MODE_FIQ
 	mov	sp, r0
 	msr	cpsr, r1
+	mov	sp, r0
 	sub	sp, sp, #(4 * 17)
 	ldr     r0, [sp], #0x0004;      /* Get CPSR from stack */
 	msr     spsr_all, r0;

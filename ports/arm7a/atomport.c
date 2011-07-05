@@ -68,3 +68,48 @@ void archThreadContextInit (ATOM_TCB *tcb_ptr, void *stack_top,
 	regs->pc = (uint32_t)entry_point;
 }
 
+extern void archFirstThreadRestoreLowLevel(pt_regs_t *regs);
+
+/**
+ * archFirstThreadRestore(ATOM_TCB *new_tcb)
+ *
+ * This function is responsible for restoring and starting the first
+ * thread the OS runs. It expects to find the thread context exactly
+ * as it would be if a context save had previously taken place on it.
+ * The only real difference between this and the archContextSwitch()
+ * routine is that there is no previous thread for which context must
+ * be saved.
+ *
+ * The final action this function must do is to restore interrupts.
+ */
+void archFirstThreadRestore(ATOM_TCB *new_tcb)
+{
+	pt_regs_t *regs = NULL;
+	regs = (pt_regs_t *)((uint32_t)new_tcb->sp_save_ptr 
+							- sizeof(pt_regs_t));
+	archFirstThreadRestoreLowLevel(regs);
+}
+
+extern int archSetJumpLowLevel(pt_regs_t *regs);
+extern void archLongJumpLowLevel(pt_regs_t *regs);
+
+/**
+ * Function that performs the contextSwitch. Whether its a voluntary release
+ * of CPU by thread or a pre-emption, under both conditions this function is
+ * called. The signature is as follows:
+ *
+ * archContextSwitch(ATOM_TCB *old_tcb, ATOM_TCB *new_tcb)
+ */
+void archContextSwitch(ATOM_TCB *old_tcb, ATOM_TCB *new_tcb)
+{
+	pt_regs_t *old_regs = NULL;
+	pt_regs_t *new_regs = NULL;
+	old_regs = (pt_regs_t *)((uint32_t)old_tcb->sp_save_ptr 
+							- sizeof(pt_regs_t));
+	new_regs = (pt_regs_t *)((uint32_t)new_tcb->sp_save_ptr 
+							- sizeof(pt_regs_t));
+	if (archSetJumpLowLevel(old_regs)) {
+		archLongJumpLowLevel(new_regs);
+	}
+}
+
