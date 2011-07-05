@@ -36,28 +36,56 @@ arm_irq_handler_t irq_hndls[NR_IRQS_PBA8];
 
 void do_undefined_instruction(pt_regs_t *regs)
 {
+	/* Call the interrupt entry routine */
+	atomIntEnter();
+
+	/* Call the interrupt exit routine */
+	atomIntExit(TRUE);
 }
 
 void do_software_interrupt(pt_regs_t *regs)
 {
+	/* Call the interrupt entry routine */
+	atomIntEnter();
+
+	/* Call the interrupt exit routine */
+	atomIntExit(TRUE);
 }
 
 void do_prefetch_abort(pt_regs_t *regs)
 {
+	/* Call the interrupt entry routine */
+	atomIntEnter();
+
+	/* Call the interrupt exit routine */
+	atomIntExit(TRUE);
 }
 
 void do_data_abort(pt_regs_t *regs)
 {
+	/* Call the interrupt entry routine */
+	atomIntEnter();
+
+	/* Call the interrupt exit routine */
+	atomIntExit(TRUE);
 }
 
 void do_not_used(pt_regs_t *regs)
 {
+	/* Call the interrupt entry routine */
+	atomIntEnter();
+
+	/* Call the interrupt exit routine */
+	atomIntExit(TRUE);
 }
 
 void do_irq(pt_regs_t *uregs)
 {
 	int rc = 0;
 	int irq = arm_gic_active_irq(0);
+
+	/* Call the interrupt entry routine */
+	atomIntEnter();
 
 	if (-1 < irq) {
 		if (irq_hndls[irq]) {
@@ -71,10 +99,18 @@ void do_irq(pt_regs_t *uregs)
 			while (1);
 		}
 	}
+
+	/* Call the interrupt exit routine */
+	atomIntExit(TRUE);
 }
 
 void do_fiq(pt_regs_t *uregs)
 {
+	/* Call the interrupt entry routine */
+	atomIntEnter();
+
+	/* Call the interrupt exit routine */
+	atomIntExit(TRUE);
 }
 
 void arm_irq_setup(void)
@@ -147,5 +183,24 @@ void arm_irq_enable(void)
 void arm_irq_disable(void)
 {
 	__asm( "cpsid if" );
+}
+
+irq_flags_t arm_irq_save(void)
+{
+	unsigned long retval;
+
+	asm volatile (" mrs     %0, cpsr\n\t" " cpsid   i"	/* Syntax CPSID <iflags> {, #<p_mode>}
+								 * Note: This instruction is supported 
+								 * from ARM6 and above
+								 */
+		      :"=r" (retval)::"memory", "cc");
+
+	return retval;
+}
+
+void arm_irq_restore(irq_flags_t flags)
+{
+	asm volatile (" msr     cpsr_c, %0"::"r" (flags)
+		      :"memory", "cc");
 }
 

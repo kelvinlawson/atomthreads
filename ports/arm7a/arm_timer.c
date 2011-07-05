@@ -62,14 +62,8 @@ void arm_timer_clearirq(void)
 
 int arm_timer_irqhndl(uint32_t irq_no, pt_regs_t * regs)
 {
-	/* Call the interrupt entry routine */
-	atomIntEnter();
-
 	/* Call the OS system tick handler */
 	atomTimerTick();
-
-	/* Call the interrupt exit routine */
-	atomIntExit(TRUE);
 
 	arm_timer_clearirq();
 

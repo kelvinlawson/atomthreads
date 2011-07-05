@@ -51,5 +51,7 @@ void arm_irq_setup(void);
 void arm_irq_register(uint32_t irq_no, arm_irq_handler_t hndl);
 void arm_irq_enable(void);
 void arm_irq_disable(void);
+irq_flags_t arm_irq_save(void);
+void arm_irq_restore(irq_flags_t flags);
 
 #endif /* __ARM_IRQ_H */

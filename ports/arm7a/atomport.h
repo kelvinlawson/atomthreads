@@ -71,38 +71,12 @@ struct pt_regs {
 typedef struct pt_regs pt_regs_t;
 
 #include <printk.h>
+#include <arm_irq.h>
 
-extern uint32_t at_preempt_count;
-
-#if 0
 /* Critical region protection */
-#define CRITICAL_STORE	    uint32_t status_reg
-#define CRITICAL_START()					\
-	do {							\
-		extern uint32_t at_preempt_count;		\
-		at_preempt_count++;				\
-	}while(0);
-
-#define CRITICAL_END()							\
-	do {								\
-		extern uint32_t at_preempt_count;			\
-		if (at_preempt_count == 0) {				\
-			printk("BUG: Preempt count is zero!\n");	\
-			for(;;);					\
-		}							\
-		at_preempt_count--;					\
-									\
-		if (at_preempt_count == 0) {				\
-			if (atomCurrentContext()) {			\
-			}						\
-		}							\
-									\
-	}while(0);
-#else
-#define CRITICAL_STORE
-#define CRITICAL_START()
-#define CRITICAL_END()
-#endif
+#define CRITICAL_STORE		irq_flags_t status_flags
+#define CRITICAL_START()	status_flags = arm_irq_save();
+#define CRITICAL_END()		arm_irq_restore(status_flags);
 
 /* Uncomment to enable stack-checking */
 /* #define ATOM_STACK_CHECKING */
