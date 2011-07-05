@@ -27,6 +27,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include <arm_asm_macro.h>
+
 .section .text
 
 /**
@@ -54,5 +56,22 @@ archContextSwitch:
  */
 .globl archFirstThreadRestore
 archFirstThreadRestore:
-	bx	lr
+	ldr	r0, [r0]
+	mov	sp, r0
+	mrs	r1, cpsr
+	SET_CURRENT_MODE CPSR_MODE_UNDEFINED
+	mov	sp, r0
+	SET_CURRENT_MODE CPSR_MODE_ABORT
+	mov	sp, r0
+	SET_CURRENT_MODE CPSR_MODE_IRQ
+	mov	sp, r0
+	SET_CURRENT_MODE CPSR_MODE_FIQ
+	mov	sp, r0
+	msr	cpsr, r1
+	sub	sp, sp, #(4 * 17)
+	ldr     r0, [sp], #0x0004;      /* Get CPSR from stack */
+	msr     spsr_all, r0;
+	ldmia   sp, {r0-r14};          /* Restore registers */
+	mov     r0, r0;                 /* NOP for previous isnt */
+	movs	pc, lr
 

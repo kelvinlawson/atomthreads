@@ -64,75 +64,11 @@ SECTIONS
 		_erodata = .;
 	}
 
-	.cmdbtl :
-	{
-		PROVIDE(_cmdtbl_start = .);
-		*(.cmdtbl)
-		. = ALIGN(4);
-		PROVIDE(_cmdtbl_end = .);
-	}
-
-	.modtbl :
-	{
-		PROVIDE(_modtbl_start = .);
-		*(.modtbl)
-		. = ALIGN(4);
-		PROVIDE(_modtbl_end = .);
-	}
-
- 	.svc_stack :
+ 	.initial_stack :
         {
-                PROVIDE(_svc_stack_start = .);
+                PROVIDE(_initial_stack_start = .);
                 . = . + 4096;
                 . = ALIGN(4);
-                PROVIDE(_svc_stack_end = .);
-        }
-
- 	.mon_stack :
-        {
-                PROVIDE(_mon_stack_start = .);
-                . = . + 4096;
-                . = ALIGN(4);
-                PROVIDE(_mon_stack_end = .);
-        }
-
- 	.abt_stack :
-        {
-                PROVIDE(_abt_stack_start = .);
-                . = . + 4096;
-                . = ALIGN(4);
-                PROVIDE(_abt_stack_end = .);
-        }
-
- 	.und_stack :
-        {
-                PROVIDE(_und_stack_start = .);
-                . = . + 4096;
-                . = ALIGN(4);
-                PROVIDE(_und_stack_end = .);
-        }
-
- 	.irq_stack :
-        {
-                PROVIDE(_irq_stack_start = .);
-                . = . + 4096;
-                . = ALIGN(4);
-                PROVIDE(_irq_stack_end = .);
-        }
-
- 	.fiq_stack :
-        {
-                PROVIDE(_fiq_stack_start = .);
-                . = . + 4096;
-                . = ALIGN(4);
-                PROVIDE(_fiq_stack_end = .);
-        }
-
- 	.usr_stack :
-        {
-                PROVIDE(_usr_stack_start = .);
-                . = . + 4096;
-                . = ALIGN(4);
-                PROVIDE(_usr_stack_end = .);
+                PROVIDE(_initial_stack_end = .);
         }
 }

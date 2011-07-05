@@ -28,7 +28,6 @@
  */
 
 #include <atom.h>
-#include <atomport-private.h>
 #include <atomport.h>
 #include <atomtests.h>
 #include <atomtimer.h>

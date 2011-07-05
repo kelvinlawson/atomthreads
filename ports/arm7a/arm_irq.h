@@ -31,7 +31,7 @@
 #define __ARM_IRQ_H
 
 #include <atomport.h>
-#include <atomport-private.h>
+#include <arm_defines.h>
 
 typedef int (*arm_irq_handler_t) (uint32_t irq_no, pt_regs_t * regs);
 

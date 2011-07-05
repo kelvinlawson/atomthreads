@@ -27,71 +27,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <atomport-private.h>
-
-.macro SET_CURRENT_FLAGS flags, treg
-	mrs	\treg, cpsr
-	orr	\treg, \treg, #(\flags)
-	msr 	cpsr, \treg
-.endm
-
-.macro SET_CURRENT_MODE mode
-	cps	#(\mode)
-.endm
-
-.macro SET_CURRENT_STACK new_stack
-	ldr	sp, \new_stack
-.endm
-
-.macro START_EXCEPTION_HANDLER irqname, lroffset
-	.align 5
-\irqname:
-	sub	lr, lr, #\lroffset
-.endm
-
-/* Save User Registers */
-.macro PUSH_USER_REGS
-	str     lr, [sp, #-4]!;         /* Push the return address */
-	sub     sp, sp, #(4*15);        /* Adjust the stack pointer */
-	stmia   sp, {r0-r12};           /* Push user mode registers */
-	add     r0, sp, #(4*13);        /* Adjust the stack pointer */
-	stmia   r0, {r13-r14}^;         /* Push user mode registers */
-	mov     r0, r0;                 /* NOP for previous inst */
-	mrs     r0, spsr_all;           /* Put the SPSR on the stack */
-	str     r0, [sp, #-4]!
-.endm
-
-/* Save User Registers in FIQ */
-.macro PUSH_FIQUSER_REGS
-	str     lr, [sp, #-4]!;         /* Push the return address */
-	sub     sp, sp, #(4*15);        /* Adjust the stack pointer */
-	stmia   sp, {r0-r7};            /* Push user mode registers */
-	add     r0, sp, #(4*8);         /* Adjust the stack pointer */
-	stmia   r0, {r8-r14}^;          /* Push user mode registers */
-	mov     r0, r0;                 /* NOP for previous inst */
-	mrs     r0, spsr_all;           /* Put the SPSR on the stack */
-	str     r0, [sp, #-4]!
-.endm
-
-/* Call C function to handle exception */
-.macro CALL_EXCEPTION_CFUNC cfunc
-	mov	r0, sp
-	bl	\cfunc
-.endm
-
-/* Restore User Registers */
-.macro PULL_USER_REGS
-	ldr     r0, [sp], #0x0004;      /* Get SPSR from stack */
-	msr     spsr_all, r0;
-	ldmia   sp, {r0-r14}^;          /* Restore registers (user) */
-	mov     r0, r0;                 /* NOP for previous isnt */
-	add     sp, sp, #(4*15);        /* Adjust the stack pointer */
-	ldr     lr, [sp], #0x0004       /* Pull return address */
-.endm
-
-.macro END_EXCEPTION_HANDLER
-	movs	pc, lr
-.endm
+#include <arm_asm_macro.h>
 
 	.section .expvect, "ax", %progbits
 	.globl _start_vect
@@ -123,18 +59,8 @@ __fiq:
 	.global _end_vect
 _end_vect:
 
-__svc_stack_end:
-	.word _svc_stack_end
-__und_stack_end:
-	.word _und_stack_end
-__abt_stack_end:
-	.word _abt_stack_end
-__irq_stack_end:
-	.word _irq_stack_end
-__fiq_stack_end:
-	.word _fiq_stack_end
-__usr_stack_end:
-	.word _usr_stack_end
+__initial_stack_end:
+	.word _initial_stack_end
 
 	.globl _reset
 _reset:
@@ -144,69 +70,82 @@ _reset:
 	cpsid if
 	/* Set Supervisor Mode Stack */
 	SET_CURRENT_MODE CPSR_MODE_SUPERVISOR
-	SET_CURRENT_STACK __svc_stack_end
+	SET_CURRENT_STACK __initial_stack_end
 	/* Set Undefined Mode Stack */
 	SET_CURRENT_MODE CPSR_MODE_UNDEFINED
-	SET_CURRENT_STACK __und_stack_end
+	SET_CURRENT_STACK __initial_stack_end
 	/* Set Abort Mode Stack */
 	SET_CURRENT_MODE CPSR_MODE_ABORT
-	SET_CURRENT_STACK __abt_stack_end
+	SET_CURRENT_STACK __initial_stack_end
 	/* Set IRQ Mode Stack */
 	SET_CURRENT_MODE CPSR_MODE_IRQ
-	SET_CURRENT_STACK __irq_stack_end
+	SET_CURRENT_STACK __initial_stack_end
 	/* Set FIQ Mode Stack */
 	SET_CURRENT_MODE CPSR_MODE_FIQ
-	SET_CURRENT_STACK __fiq_stack_end
+	SET_CURRENT_STACK __initial_stack_end
 	/* Set System Mode Stack */
 	SET_CURRENT_MODE CPSR_MODE_SYSTEM
-	SET_CURRENT_STACK __usr_stack_end
+	SET_CURRENT_STACK __initial_stack_end
 	/* Set to Supervisor Mode */
 	SET_CURRENT_MODE CPSR_MODE_SUPERVISOR
 	/* Call main function */
 	bl	main
 	/* We should never reach here */
 	b	.
-	
 
 START_EXCEPTION_HANDLER _undefined_instruction, 4
 	PUSH_USER_REGS
+	PUSH_BANKED_REGS _undefined_instruction_bankpush_skip
 	CALL_EXCEPTION_CFUNC do_undefined_instruction
+	PULL_BANKED_REGS _undefined_instruction_bankpull_skip
 	PULL_USER_REGS
 END_EXCEPTION_HANDLER
 
 START_EXCEPTION_HANDLER _software_interrupt, 4
 	PUSH_USER_REGS
+	PUSH_BANKED_REGS _software_interrupt_bankpush_skip
 	CALL_EXCEPTION_CFUNC do_software_interrupt
+	PULL_BANKED_REGS _software_interrupt_bankpull_skip
 	PULL_USER_REGS
 END_EXCEPTION_HANDLER
 
 START_EXCEPTION_HANDLER _prefetch_abort, 4
 	PUSH_USER_REGS
+	PUSH_BANKED_REGS _prefetch_abort_bankpush_skip
 	CALL_EXCEPTION_CFUNC do_prefetch_abort
+	PULL_BANKED_REGS _prefetch_abort_bankpull_skip
 	PULL_USER_REGS
 END_EXCEPTION_HANDLER
 
 START_EXCEPTION_HANDLER _data_abort, 8
 	PUSH_USER_REGS
+	PUSH_BANKED_REGS _data_abort_bankpush_skip
 	CALL_EXCEPTION_CFUNC do_data_abort
+	PULL_BANKED_REGS _data_abort_bankpull_skip
 	PULL_USER_REGS
 END_EXCEPTION_HANDLER
 
 START_EXCEPTION_HANDLER _not_used, 4
 	PUSH_USER_REGS
+	PUSH_BANKED_REGS _not_used_bankpush_skip
 	CALL_EXCEPTION_CFUNC do_not_used
+	PULL_BANKED_REGS _not_used_bankpull_skip
 	PULL_USER_REGS
 END_EXCEPTION_HANDLER
 
 START_EXCEPTION_HANDLER _irq, 4
 	PUSH_USER_REGS
+	PUSH_BANKED_REGS _irq_bankpush_skip
 	CALL_EXCEPTION_CFUNC do_irq
+	PULL_BANKED_REGS _irq_bankpull_skip
 	PULL_USER_REGS
 END_EXCEPTION_HANDLER
 
 START_EXCEPTION_HANDLER _fiq, 4
-	PUSH_FIQUSER_REGS
+	PUSH_USER_REGS
+	PUSH_BANKED_REGS _fiq_bankpush_skip
 	CALL_EXCEPTION_CFUNC do_fiq
+	PULL_BANKED_REGS _fiq_bankpull_skip
 	PULL_USER_REGS
 END_EXCEPTION_HANDLER
 

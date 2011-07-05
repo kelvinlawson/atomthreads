@@ -29,9 +29,9 @@
  */
 
 #include <atom.h>
-#include <atomport-private.h>
 #include <atomport.h>
 #include <string.h>
+#include <arm_defines.h>
 
 /**
  * This function initialises each thread's stack during creation, before the
@@ -53,6 +53,18 @@ void archThreadContextInit (ATOM_TCB *tcb_ptr, void *stack_top,
                             void (*entry_point)(UINT32),
                             UINT32 entry_param)
 {
+	int i;
+	pt_regs_t *regs = (pt_regs_t *)((uint32_t)stack_top - sizeof(pt_regs_t));
 
+	tcb_ptr->sp_save_ptr = stack_top;
+	regs->cpsr = CPSR_COND_ZERO_MASK |
+		    CPSR_ASYNC_ABORT_DISABLED | CPSR_MODE_SUPERVISOR;
+	regs->gpr[0] = entry_param;
+	for (i = 1; i < 13; i++) {
+		regs->gpr[i] = 0x0;
+	}
+	regs->sp = (uint32_t)stack_top - sizeof(pt_regs_t) - 2048;
+	regs->lr = (uint32_t)entry_point;
+	regs->pc = (uint32_t)entry_point;
 }
 
