@@ -131,9 +131,6 @@ static uint8_t idle_thread_stack[IDLE_STACK_SIZE_BYTES];
 /* Forward declarations */
 static void main_thread_func (uint32_t data);
 
-/* Global Data */
-uint32_t at_preempt_count;
-
 /**
  * \b main
  *
@@ -146,8 +143,6 @@ uint32_t at_preempt_count;
 int main ( void )
 {
     int8_t status;
-
-    at_preempt_count = 0;
 
     /**
      * Note: to protect OS structures and data during initialisation,

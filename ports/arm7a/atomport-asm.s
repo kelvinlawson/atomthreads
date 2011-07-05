@@ -29,29 +29,46 @@
 
 #include <arm_asm_macro.h>
 
-.section .text
+	.section .text
+
+/**
+ * uint32_t archGetCPSR(void)
+ */
+	.globl archGetCPSR
+archGetCPSR:
+	mrs	r0, cpsr_all
+	bx	lr
 
 /**
  * int archSetJumpLowLevel(pt_regs_t *regs)
  */
-.globl archSetJumpLowLevel
+	.globl archSetJumpLowLevel
 archSetJumpLowLevel:
+	add	r0, r0, #(4 * 16)
+	str	lr, [r0]
+	sub	r0, r0, #(4 * 14)
+	stm	r0, {r1-r14}
+	mov	r0, r0 /* NOP */
+	sub	sp, sp, #4
+	str	r1, [sp]
+	mov	r1, #0
+	sub	r0, r0, #4
+	str	r1, [r0]
+	mrs	r1, cpsr_all
+	add	r0, r0, #4
+	str	r1, [r0]
+	ldr	r1, [sp]
+	sub	sp, sp, #4
+	mov	r0, #1
 	bx	lr
 
 /**
  * void archLongJumpLowLevel(pt_regs_t *regs)
  */
-.globl archLongJumpLowLevel
+	.globl archLongJumpLowLevel
 archLongJumpLowLevel:
-	bx	lr
-
-/**
- * void archFirstThreadRestoreLowLevel(pt_regs_t *regs)
- */
-.globl archFirstThreadRestoreLowLevel
-archFirstThreadRestoreLowLevel:
 	add	r0, r0, #(4 * 17)
-	mrs	r1, cpsr
+	mrs	r1, cpsr_all
 	SET_CURRENT_MODE CPSR_MODE_UNDEFINED
 	mov	sp, r0
 	SET_CURRENT_MODE CPSR_MODE_ABORT
@@ -60,12 +77,10 @@ archFirstThreadRestoreLowLevel:
 	mov	sp, r0
 	SET_CURRENT_MODE CPSR_MODE_FIQ
 	mov	sp, r0
-	msr	cpsr, r1
-	mov	sp, r0
-	sub	sp, sp, #(4 * 17)
-	ldr     r0, [sp], #0x0004;      /* Get CPSR from stack */
-	msr     spsr_all, r0;
-	ldmia   sp, {r0-r14};          /* Restore registers */
-	mov     r0, r0;                 /* NOP for previous isnt */
-	movs	pc, lr
+	msr	cpsr_all, r1
+	sub	r0, r0, #(4 * 17)
+	ldr     r1, [r0], #4 /* Get CPSR from stack */
+	msr	cpsr_all, r1
+	ldm	r0, {r0-r15}
+	mov	r0, r0 /* NOP */
 

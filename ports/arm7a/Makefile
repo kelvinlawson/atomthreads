@@ -75,21 +75,18 @@ TEST_OBJECTS = $(notdir $(patsubst %.c,%.o,$(wildcard $(tests_dir)/*.c)))
 TEST_ELFS = $(patsubst %.o,%.elf,$(TEST_OBJECTS))
 
 # Search build/output directory for dependencies
-vpath %.o ./$(build_dir)
-vpath %.elf ./$(build_dir)
+#vpath %.o ./$(build_dir)
+#vpath %.elf ./$(build_dir)
 
 # GCC flags
 CFLAGS= -g \
 	-Wall \
 	-Werror \
-	-O \
 	-mcpu=$(CPU) \
-	-fstrength-reduce \
-	-fomit-frame-pointer \
-	-finline-functions \
 	-nostdinc \
-	-fno-builtin \
-	-fno-stack-protector
+	-nostdlib \
+	-nodefaultlibs \
+	-fno-builtin
 
 # Enable stack-checking (disable if not required)
 ifeq ($(STACK_CHECK),true)
@@ -107,7 +104,7 @@ all: $(TEST_ELFS) Makefile
 $(TEST_ELFS): %.elf: %.o $(APP_ASM_OBJECTS) $(KERNEL_OBJECTS) $(APP_OBJECTS)
 	$(V)mkdir -p `dirname $(build_dir)/$@`
 	$(if $(V), @echo " (ELF)        $(subst $(build_dir)/,,$@)")
-	$(V)$(CC) $(CFLAGS) -nostdlib -nodefaultlibs $(build_dir)/$(notdir $<) $(BUILT_OBJECTS) -static-libgcc -lgcc --output $(build_dir)/$@ -Wl -T linker.ld
+	$(V)$(CC) $(CFLAGS) $(build_dir)/$(notdir $<) $(BUILT_OBJECTS) -static-libgcc -lgcc --output $(build_dir)/$@ -Wl -T linker.ld
 
 # Kernel objects builder
 $(KERNEL_OBJECTS): %.o: $(kernel_dir)/%.c

@@ -68,7 +68,9 @@ void archThreadContextInit (ATOM_TCB *tcb_ptr, void *stack_top,
 	regs->pc = (uint32_t)entry_point;
 }
 
-extern void archFirstThreadRestoreLowLevel(pt_regs_t *regs);
+extern int archSetJumpLowLevel(pt_regs_t *regs);
+extern void archLongJumpLowLevel(pt_regs_t *regs);
+extern uint32_t archGetCPSR(void);
 
 /**
  * archFirstThreadRestore(ATOM_TCB *new_tcb)
@@ -87,11 +89,8 @@ void archFirstThreadRestore(ATOM_TCB *new_tcb)
 	pt_regs_t *regs = NULL;
 	regs = (pt_regs_t *)((uint32_t)new_tcb->sp_save_ptr 
 							- sizeof(pt_regs_t));
-	archFirstThreadRestoreLowLevel(regs);
+	archLongJumpLowLevel(regs);
 }
-
-extern int archSetJumpLowLevel(pt_regs_t *regs);
-extern void archLongJumpLowLevel(pt_regs_t *regs);
 
 /**
  * Function that performs the contextSwitch. Whether its a voluntary release
@@ -102,14 +101,28 @@ extern void archLongJumpLowLevel(pt_regs_t *regs);
  */
 void archContextSwitch(ATOM_TCB *old_tcb, ATOM_TCB *new_tcb)
 {
+	uint32_t mode;
+	pt_regs_t tmp;
 	pt_regs_t *old_regs = NULL;
 	pt_regs_t *new_regs = NULL;
 	old_regs = (pt_regs_t *)((uint32_t)old_tcb->sp_save_ptr 
 							- sizeof(pt_regs_t));
 	new_regs = (pt_regs_t *)((uint32_t)new_tcb->sp_save_ptr 
 							- sizeof(pt_regs_t));
-	if (archSetJumpLowLevel(old_regs)) {
-		archLongJumpLowLevel(new_regs);
+	mode = archGetCPSR() & CPSR_MODE_MASK;
+	if ((mode == CPSR_MODE_IRQ) || (mode == CPSR_MODE_FIQ)) {
+		/* Interrupt Context */
+		memcpy(&tmp, old_regs, sizeof(pt_regs_t));
+		if (archSetJumpLowLevel(old_regs)) {
+			archLongJumpLowLevel(new_regs);
+		} else {
+			memcpy(old_regs, &tmp, sizeof(pt_regs_t));
+		}
+	} else {
+		/* Thread Context */
+		if (archSetJumpLowLevel(old_regs)) {
+			archLongJumpLowLevel(new_regs);
+		}
 	}
 }
 
