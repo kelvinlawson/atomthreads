@@ -40,34 +40,31 @@ archGetCPSR:
 	bx	lr
 
 /**
- * int archSetJumpLowLevel(pt_regs_t *regs)
+ * int archSetJump(pt_regs_t *regs)
  */
-	.globl archSetJumpLowLevel
-archSetJumpLowLevel:
+	.globl archSetJump
+archSetJump:
 	add	r0, r0, #(4 * 16)
 	str	lr, [r0]
 	sub	r0, r0, #(4 * 14)
 	stm	r0, {r1-r14}
 	mov	r0, r0 /* NOP */
-	sub	sp, sp, #4
-	str	r1, [sp]
-	mov	r1, #0
+	str	r2, [r1]
+	mov	r2, #0
 	sub	r0, r0, #4
-	str	r1, [r0]
-	mrs	r1, cpsr_all
-	add	r0, r0, #4
-	str	r1, [r0]
-	ldr	r1, [sp]
-	sub	sp, sp, #4
+	str	r2, [r0]
+	mrs	r2, cpsr_all
+	sub	r0, r0, #4
+	str	r2, [r0]
+	ldr	r2, [r1]
 	mov	r0, #1
 	bx	lr
 
 /**
- * void archLongJumpLowLevel(pt_regs_t *regs)
+ * void archLongJump(pt_regs_t *regs)
  */
-	.globl archLongJumpLowLevel
-archLongJumpLowLevel:
-	add	r0, r0, #(4 * 17)
+	.globl archLongJump
+archLongJump:
 	mrs	r1, cpsr_all
 	SET_CURRENT_MODE CPSR_MODE_UNDEFINED
 	mov	sp, r0
@@ -78,9 +75,10 @@ archLongJumpLowLevel:
 	SET_CURRENT_MODE CPSR_MODE_FIQ
 	mov	sp, r0
 	msr	cpsr_all, r1
-	sub	r0, r0, #(4 * 17)
 	ldr     r1, [r0], #4 /* Get CPSR from stack */
+	msr	spsr_all, r1
+	orr	r1, r1, #(CPSR_IRQ_DISABLED | CPSR_FIQ_DISABLED)
 	msr	cpsr_all, r1
-	ldm	r0, {r0-r15}
+	ldm	r0, {r0-r15}^
 	mov	r0, r0 /* NOP */
 

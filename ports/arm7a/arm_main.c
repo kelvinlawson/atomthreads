@@ -171,7 +171,7 @@ int main ( void )
     {
 	arm_irq_setup();
 
-	arm_timer_init(1000, 1);
+	arm_timer_init((1000000 / SYSTEM_TICKS_PER_SEC), 1);
 
 	arm_uart_init();
 

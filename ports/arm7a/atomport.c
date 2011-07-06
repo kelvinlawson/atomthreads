@@ -63,13 +63,13 @@ void archThreadContextInit (ATOM_TCB *tcb_ptr, void *stack_top,
 	for (i = 1; i < 13; i++) {
 		regs->gpr[i] = 0x0;
 	}
-	regs->sp = (uint32_t)stack_top - sizeof(pt_regs_t) - 2048;
+	regs->sp = (uint32_t)stack_top - sizeof(pt_regs_t) - 1024;
 	regs->lr = (uint32_t)entry_point;
 	regs->pc = (uint32_t)entry_point;
 }
 
-extern int archSetJumpLowLevel(pt_regs_t *regs);
-extern void archLongJumpLowLevel(pt_regs_t *regs);
+extern int archSetJump(pt_regs_t *regs, uint32_t *tmp);
+extern void archLongJump(pt_regs_t *regs);
 extern uint32_t archGetCPSR(void);
 
 /**
@@ -86,10 +86,9 @@ extern uint32_t archGetCPSR(void);
  */
 void archFirstThreadRestore(ATOM_TCB *new_tcb)
 {
-	pt_regs_t *regs = NULL;
-	regs = (pt_regs_t *)((uint32_t)new_tcb->sp_save_ptr 
+	pt_regs_t *regs = (pt_regs_t *)((uint32_t)new_tcb->sp_save_ptr 
 							- sizeof(pt_regs_t));
-	archLongJumpLowLevel(regs);
+	archLongJump(regs);
 }
 
 /**
@@ -101,28 +100,15 @@ void archFirstThreadRestore(ATOM_TCB *new_tcb)
  */
 void archContextSwitch(ATOM_TCB *old_tcb, ATOM_TCB *new_tcb)
 {
-	uint32_t mode;
-	pt_regs_t tmp;
-	pt_regs_t *old_regs = NULL;
-	pt_regs_t *new_regs = NULL;
-	old_regs = (pt_regs_t *)((uint32_t)old_tcb->sp_save_ptr 
+	uint32_t tmp = 0x0, lr = 0x0;
+	pt_regs_t *old_regs = (pt_regs_t *)((uint32_t)old_tcb->sp_save_ptr
 							- sizeof(pt_regs_t));
-	new_regs = (pt_regs_t *)((uint32_t)new_tcb->sp_save_ptr 
+	pt_regs_t *new_regs = (pt_regs_t *)((uint32_t)new_tcb->sp_save_ptr
 							- sizeof(pt_regs_t));
-	mode = archGetCPSR() & CPSR_MODE_MASK;
-	if ((mode == CPSR_MODE_IRQ) || (mode == CPSR_MODE_FIQ)) {
-		/* Interrupt Context */
-		memcpy(&tmp, old_regs, sizeof(pt_regs_t));
-		if (archSetJumpLowLevel(old_regs)) {
-			archLongJumpLowLevel(new_regs);
-		} else {
-			memcpy(old_regs, &tmp, sizeof(pt_regs_t));
-		}
-	} else {
-		/* Thread Context */
-		if (archSetJumpLowLevel(old_regs)) {
-			archLongJumpLowLevel(new_regs);
-		}
+	asm volatile (" mov %0, lr\n\t" :"=r"(lr):);
+	if (archSetJump(old_regs, &tmp)) {
+		old_regs->lr = lr;
+		archLongJump(new_regs);
 	}
 }
 
