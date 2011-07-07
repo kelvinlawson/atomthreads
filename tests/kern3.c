@@ -45,9 +45,9 @@ static uint8_t test_thread_stack[NUM_TEST_THREADS][TEST_THREAD_STACK_SIZE];
 static volatile int running_flag[2];
 static volatile int sleep_request[2];
 
+
 /* Forward declarations */
 static void test_thread_func (uint32_t param);
-static int test_iter = 0;
 
 
 /**
@@ -93,29 +93,23 @@ uint32_t test_start (void)
     running_flag[0] = running_flag[1] = FALSE;
     sleep_request[0] = sleep_request[1] = FALSE;
 
-    /* Create threads in first iteration only */
-    if (test_iter == 0) {
-        /* Create low priority thread */
-        if (atomThreadCreate (&tcb[0], 253, test_thread_func, 0,
-                &test_thread_stack[0][0],
-                TEST_THREAD_STACK_SIZE, TRUE) != ATOM_OK)
-        {
-            ATOMLOG (_STR("Bad thread create\n"));
-            failures++;
-        }
-
-        /* Create high priority thread */
-        else if (atomThreadCreate (&tcb[1], 252, test_thread_func, 1,
-                &test_thread_stack[1][0],
-                TEST_THREAD_STACK_SIZE, TRUE) != ATOM_OK)
-        {
-            ATOMLOG (_STR("Bad thread create\n"));
-            failures++;
-        }
+    /* Create low priority thread */
+    if (atomThreadCreate (&tcb[0], 253, test_thread_func, 0,
+            &test_thread_stack[0][0],
+            TEST_THREAD_STACK_SIZE, TRUE) != ATOM_OK)
+    {
+        ATOMLOG (_STR("Bad thread create\n"));
+        failures++;
     }
 
-    /* Increment test iteration count */
-    test_iter++;
+    /* Create high priority thread */
+    else if (atomThreadCreate (&tcb[1], 252, test_thread_func, 1,
+            &test_thread_stack[1][0],
+            TEST_THREAD_STACK_SIZE, TRUE) != ATOM_OK)
+    {
+        ATOMLOG (_STR("Bad thread create\n"));
+        failures++;
+    }
 
     /* Repeat test a few times */
     for (i = 0; i < 8; i++)

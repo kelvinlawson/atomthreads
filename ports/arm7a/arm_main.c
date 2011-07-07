@@ -218,13 +218,14 @@ int main ( void )
  */
 static void main_thread_func (uint32_t data)
 {
-	while (1) {
-		/* Put a message out on the UART */
-		printk("Running Tests... ");
-		if (test_start() != 0) {
-			printk("FAILED!\n");
-		} else {
-			printk("SUCCESS!\n");
-		}
+	/* Put a message out on the UART */
+	printk("Test Started ... ");
+	if (test_start() != 0) {
+		printk("FAILED!\n");
+	} else {
+		printk("SUCCESS!\n");
 	}
+	printk("Reset your board !!!!!");
+	/* Test finished so just hang !!! */
+	while (1);
 }
