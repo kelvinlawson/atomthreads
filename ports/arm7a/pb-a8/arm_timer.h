@@ -51,6 +51,6 @@
 void arm_timer_enable(void);
 void arm_timer_disable(void);
 void arm_timer_clearirq(void);
-int arm_timer_init(uint32_t usecs, uint32_t ensel);
+int arm_timer_init(uint32_t ticks_per_sec);
 
 #endif /* __ARM_TIMER_H */

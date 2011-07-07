@@ -70,7 +70,6 @@ void archThreadContextInit (ATOM_TCB *tcb_ptr, void *stack_top,
 
 extern int archSetJump(pt_regs_t *regs, uint32_t *tmp);
 extern void archLongJump(pt_regs_t *regs);
-extern uint32_t archGetCPSR(void);
 
 /**
  * archFirstThreadRestore(ATOM_TCB *new_tcb)

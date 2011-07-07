@@ -51,7 +51,7 @@ static int volatile test_started;
 
 /* Forward declarations */
 static void test_thread_func (uint32_t param);
-
+static int test_iter = 0;
 
 /**
  * \b test_start
@@ -89,41 +89,47 @@ uint32_t test_start (void)
     /* Set test as not started until all threads are ready to go */
     test_started = FALSE;
 
-    /* 
-     * Create all four threads at the same priority as each other.
-     * They are given a lower priority than this thread, however,
-     * to ensure that once this thread wakes up to stop the test it
-     * can do so without confusing the scheduling tests by having
-     * a spell in which this thread was run.
-     */
-    if (atomThreadCreate (&tcb[0], TEST_THREAD_PRIO + 1, test_thread_func, 0,
-            &test_thread_stack[0][0],
-            TEST_THREAD_STACK_SIZE, TRUE) != ATOM_OK)
-    {
-        ATOMLOG (_STR("Bad thread create\n"));
-        failures++;
+    /* Create threads in first iteration only */
+    if (test_iter == 0) {
+        /* 
+         * Create all four threads at the same priority as each other.
+         * They are given a lower priority than this thread, however,
+         * to ensure that once this thread wakes up to stop the test it
+         * can do so without confusing the scheduling tests by having
+         * a spell in which this thread was run.
+         */
+        if (atomThreadCreate (&tcb[0], TEST_THREAD_PRIO + 1, test_thread_func, 0,
+                &test_thread_stack[0][0],
+                TEST_THREAD_STACK_SIZE, TRUE) != ATOM_OK)
+        {
+            ATOMLOG (_STR("Bad thread create\n"));
+            failures++;
+        }
+        else if (atomThreadCreate (&tcb[1], TEST_THREAD_PRIO + 1, test_thread_func, 1,
+                &test_thread_stack[1][0],
+                TEST_THREAD_STACK_SIZE, TRUE) != ATOM_OK)
+        {
+            ATOMLOG (_STR("Bad thread create\n"));
+            failures++;
+        }
+        else if (atomThreadCreate (&tcb[2], TEST_THREAD_PRIO + 1, test_thread_func, 2,
+                &test_thread_stack[2][0],
+                TEST_THREAD_STACK_SIZE, TRUE) != ATOM_OK)
+        {
+            ATOMLOG (_STR("Bad thread create\n"));
+            failures++;
+        }
+        else if (atomThreadCreate (&tcb[3], TEST_THREAD_PRIO + 1, test_thread_func, 3,
+                &test_thread_stack[3][0],
+                TEST_THREAD_STACK_SIZE, TRUE) != ATOM_OK)
+        {
+            ATOMLOG (_STR("Bad thread create\n"));
+            failures++;
+        }
     }
-    else if (atomThreadCreate (&tcb[1], TEST_THREAD_PRIO + 1, test_thread_func, 1,
-            &test_thread_stack[1][0],
-            TEST_THREAD_STACK_SIZE, TRUE) != ATOM_OK)
-    {
-        ATOMLOG (_STR("Bad thread create\n"));
-        failures++;
-    }
-    else if (atomThreadCreate (&tcb[2], TEST_THREAD_PRIO + 1, test_thread_func, 2,
-            &test_thread_stack[2][0],
-            TEST_THREAD_STACK_SIZE, TRUE) != ATOM_OK)
-    {
-        ATOMLOG (_STR("Bad thread create\n"));
-        failures++;
-    }
-    else if (atomThreadCreate (&tcb[3], TEST_THREAD_PRIO + 1, test_thread_func, 3,
-            &test_thread_stack[3][0],
-            TEST_THREAD_STACK_SIZE, TRUE) != ATOM_OK)
-    {
-        ATOMLOG (_STR("Bad thread create\n"));
-        failures++;
-    }
+
+    /* Increment test iteration count */
+    test_iter++;
 
     /* Start the test */
     test_started = TRUE;

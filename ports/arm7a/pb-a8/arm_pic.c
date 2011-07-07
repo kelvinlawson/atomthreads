@@ -29,7 +29,7 @@
 
 #include <arm_config.h>
 #include <arm_io.h>
-#include <arm_gic.h>
+#include <arm_pic.h>
 
 #define max(a,b)	((a) < (b) ? (b) : (a))
 
@@ -206,3 +206,42 @@ int arm_gic_cpu_init(uint32_t gic_nr, virtual_addr_t base)
 
 	return 0;
 }
+
+int arm_pic_active_irq(void)
+{
+	return arm_gic_active_irq(0);
+}
+
+int arm_pic_ack_irq(uint32_t irq)
+{
+	return arm_gic_ack_irq(0, irq);
+}
+
+int arm_pic_mask(uint32_t irq)
+{
+	return arm_gic_mask(0, irq);
+}
+
+int arm_pic_unmask(uint32_t irq)
+{
+	return arm_gic_unmask(0, irq);
+}
+
+int arm_pic_init(void)
+{
+	int rc = 0;
+
+	rc = arm_gic_dist_init(0, REALVIEW_PBA8_GIC_DIST_BASE, 
+							IRQ_PBA8_GIC_START);
+	if (rc) {
+		return rc;
+	}
+	rc = arm_gic_cpu_init(0, REALVIEW_PBA8_GIC_CPU_BASE);
+	if (rc) {
+		while(1);
+	}
+
+	return rc;
+}
+
+

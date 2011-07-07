@@ -1,5 +1,6 @@
 /*
- * Copyright (c) 2010, Atomthreads Project. All rights reserved.
+ * Copyright (c) 2011, Anup Patel for Atomthreads Project.
+ * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,14 +31,6 @@
 #include <arm_asm_macro.h>
 
 	.section .text
-
-/**
- * uint32_t archGetCPSR(void)
- */
-	.globl archGetCPSR
-archGetCPSR:
-	mrs	r0, cpsr_all
-	bx	lr
 
 /**
  * int archSetJump(pt_regs_t *regs)

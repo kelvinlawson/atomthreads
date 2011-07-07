@@ -29,7 +29,7 @@
 
 #include <atom.h>
 #include <arm_config.h>
-#include <arm_gic.h>
+#include <arm_pic.h>
 #include <arm_irq.h>
 
 arm_irq_handler_t irq_hndls[NR_IRQS_PBA8];
@@ -82,7 +82,7 @@ void do_not_used(pt_regs_t *regs)
 void do_irq(pt_regs_t *uregs)
 {
 	int rc = 0;
-	int irq = arm_gic_active_irq(0);
+	int irq = arm_pic_active_irq();
 
 	/* Call the interrupt entry routine */
 	atomIntEnter();
@@ -94,7 +94,7 @@ void do_irq(pt_regs_t *uregs)
 				while (1);
 			}
 		}
-		rc = arm_gic_ack_irq(0, irq);
+		rc = arm_pic_ack_irq(irq);
 		if (rc) {
 			while (1);
 		}
@@ -113,7 +113,7 @@ void do_fiq(pt_regs_t *uregs)
 	atomIntExit(TRUE);
 }
 
-void arm_irq_setup(void)
+void arm_irq_init(void)
 {
 	extern uint32_t _start_vect[];
 	uint32_t *vectors = (uint32_t *)NULL;
@@ -150,12 +150,7 @@ void arm_irq_setup(void)
 	/*
 	 * Initialize Generic Interrupt Controller
 	 */
-	vec = arm_gic_dist_init(0, REALVIEW_PBA8_GIC_DIST_BASE, 
-							IRQ_PBA8_GIC_START);
-	if (vec) {
-		while(1);
-	}
-	vec = arm_gic_cpu_init(0, REALVIEW_PBA8_GIC_CPU_BASE);
+	vec = arm_pic_init();
 	if (vec) {
 		while(1);
 	}
@@ -167,7 +162,7 @@ void arm_irq_register(uint32_t irq, arm_irq_handler_t hndl)
 	if (irq < NR_IRQS_PBA8) {
 		irq_hndls[irq] = hndl;
 		if (irq_hndls[irq]) {
-			rc = arm_gic_unmask(0, irq);
+			rc = arm_pic_unmask(irq);
 			if (rc) {
 				while (1);
 			}

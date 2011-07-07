@@ -70,16 +70,15 @@ int arm_timer_irqhndl(uint32_t irq_no, pt_regs_t * regs)
 	return 0;
 }
 
-int arm_timer_init(uint32_t usecs, uint32_t ensel)
+int arm_timer_init(uint32_t ticks_per_sec)
 {
 	uint32_t val;
 
 	/* 
 	 * set clock frequency: 
-	 *      REALVIEW_REFCLK is 32KHz
 	 *      REALVIEW_TIMCLK is 1MHz
 	 */
-	val = arm_readl((void *)REALVIEW_SCTL_BASE) | (REALVIEW_TIMCLK << ensel);
+	val = arm_readl((void *)REALVIEW_SCTL_BASE) | (REALVIEW_TIMCLK << 0x1);
 	arm_writel(val, (void *)REALVIEW_SCTL_BASE);
 
 	/* Register interrupt handler */
@@ -89,8 +88,10 @@ int arm_timer_init(uint32_t usecs, uint32_t ensel)
 	val &= ~TIMER_CTRL_ENABLE;
 	val |= (TIMER_CTRL_32BIT | TIMER_CTRL_PERIODIC | TIMER_CTRL_IE);
 	arm_writel(val, (void *)(REALVIEW_PBA8_TIMER0_1_BASE + TIMER_CTRL));
-	arm_writel(usecs, (void *)(REALVIEW_PBA8_TIMER0_1_BASE + TIMER_LOAD));
-	arm_writel(usecs, (void *)(REALVIEW_PBA8_TIMER0_1_BASE + TIMER_VALUE));
+	arm_writel((1000000 / ticks_per_sec), 
+		   (void *)(REALVIEW_PBA8_TIMER0_1_BASE + TIMER_LOAD));
+	arm_writel((1000000 / ticks_per_sec), 
+		   (void *)(REALVIEW_PBA8_TIMER0_1_BASE + TIMER_VALUE));
 
 	return 0;
 }

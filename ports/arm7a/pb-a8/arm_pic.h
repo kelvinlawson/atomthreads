@@ -52,11 +52,10 @@
 #define GIC_DIST_CONFIG			0xc00
 #define GIC_DIST_SOFTINT		0xf00
 
-int arm_gic_active_irq(uint32_t gic_nr);
-int arm_gic_ack_irq(uint32_t gic_nr, uint32_t irq);
-int arm_gic_mask(uint32_t gic_nr, uint32_t irq);
-int arm_gic_unmask(uint32_t gic_nr, uint32_t irq);
-int arm_gic_dist_init(uint32_t gic_nr, virtual_addr_t base, uint32_t irq_start);
-int arm_gic_cpu_init(uint32_t gic_nr, virtual_addr_t base);
+int arm_pic_active_irq(void);
+int arm_pic_ack_irq(uint32_t irq);
+int arm_pic_mask(uint32_t irq);
+int arm_pic_unmask(uint32_t irq);
+int arm_pic_init(void);
 
 #endif

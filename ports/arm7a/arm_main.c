@@ -169,9 +169,9 @@ int main ( void )
 			IDLE_STACK_SIZE_BYTES, 0);
     if (status == ATOM_OK)
     {
-	arm_irq_setup();
+	arm_irq_init();
 
-	arm_timer_init((1000000 / SYSTEM_TICKS_PER_SEC), 1);
+	arm_timer_init(SYSTEM_TICKS_PER_SEC);
 
 	arm_uart_init();
 

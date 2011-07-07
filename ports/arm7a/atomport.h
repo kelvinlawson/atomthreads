@@ -1,5 +1,6 @@
 /*
- * Copyright (c) 2011, Anup Patel. All rights reserved.
+ * Copyright (c) 2011, Anup Patel for Atomthreads Project.
+ * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,7 +32,7 @@
 #define __ATOM_PORT_H
 
 /* Required number of system ticks per second (normally 100 for 10ms tick) */
-#define SYSTEM_TICKS_PER_SEC            100
+#define SYSTEM_TICKS_PER_SEC            1000
 
 typedef signed int int32_t;
 typedef signed short int16_t;
