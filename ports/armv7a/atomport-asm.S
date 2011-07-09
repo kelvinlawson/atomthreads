@@ -59,19 +59,15 @@ archSetJump:
 	.globl archLongJump
 archLongJump:
 	mrs	r1, cpsr_all
-	SET_CURRENT_MODE CPSR_MODE_UNDEFINED
-	mov	sp, r0
-	SET_CURRENT_MODE CPSR_MODE_ABORT
-	mov	sp, r0
 	SET_CURRENT_MODE CPSR_MODE_IRQ
 	mov	sp, r0
 	SET_CURRENT_MODE CPSR_MODE_FIQ
 	mov	sp, r0
 	msr	cpsr_all, r1
 	ldr     r1, [r0], #4 /* Get CPSR from stack */
+	orr	r2, r1, #(CPSR_IRQ_DISABLED | CPSR_FIQ_DISABLED)
+	msr	cpsr_all, r2
 	msr	spsr_all, r1
-	orr	r1, r1, #(CPSR_IRQ_DISABLED | CPSR_FIQ_DISABLED)
-	msr	cpsr_all, r1
 	ldm	r0, {r0-r15}^
 	mov	r0, r0 /* NOP */
 
