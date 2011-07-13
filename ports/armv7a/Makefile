@@ -74,8 +74,10 @@ build_objs = $(foreach obj,$(objs),$(build_dir)/$(obj))
 # Target application filenames .elf for each test object
 tobjs = $(notdir $(patsubst %.c,%.o,$(wildcard $(tests_dir)/*.c)))
 telfs = $(patsubst %.o,%.elf,$(tobjs))
+tbins = $(patsubst %.o,%.bin,$(tobjs))
 build_tobjs = $(foreach tobj,$(tobjs),$(build_dir)/$(tobj))
 build_telfs = $(foreach telf,$(telfs),$(build_dir)/$(telf))
+build_tbins = $(foreach tbin,$(tbins),$(build_dir)/$(tbin))
 
 # GCC flags
 CFLAGS= -g \
@@ -98,7 +100,12 @@ endif
 
 # All
 .PHONY: all
-all: $(build_telfs) $(build_tobjs) $(build_objs) Makefile
+all: $(build_tbins) $(build_telfs) $(build_tobjs) $(build_objs) Makefile
+
+$(build_dir)/%.bin: $(build_dir)/%.elf
+	$(V)mkdir -p `dirname $@`
+	$(if $(V), @echo " (OBJCOPY)   $(subst $(build_dir)/,,$@)")
+	$(V)$(OBJCOPY) -O binary $< $@
 
 $(build_dir)/%.elf: $(build_dir)/%.o $(build_objs)
 	$(V)mkdir -p `dirname $@`
