@@ -28,10 +28,11 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <system.h>
-#include <atomport.h>
 #include <stdarg.h>
-#include <arm_uart.h>
+#include "system.h"
+#include "atomport.h"
+#include "printk.h"
+#include "arm_uart.h"
 
 static int8_t buf[2048];
 

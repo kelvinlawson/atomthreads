@@ -31,17 +31,33 @@
 #ifndef __ATOM_PORT_H
 #define __ATOM_PORT_H
 
+
 /* Required number of system ticks per second (normally 100 for 10ms tick) */
 #define SYSTEM_TICKS_PER_SEC            1000
 
-typedef signed int int32_t;
-typedef signed short int16_t;
-typedef signed char int8_t;
-typedef unsigned int uint32_t;
-typedef unsigned short uint16_t;
-typedef unsigned char uint8_t;
-typedef long long int64_t;
-typedef unsigned long size_t;
+/**
+ * Definition of NULL. stddef.h not available on this platform.
+ */
+#define NULL ((void *)(0))
+
+/* Size of each stack entry / stack alignment size (32 bits on ARMv7A) */
+#define STACK_ALIGN_SIZE                sizeof(uint32_t)
+
+/**
+ * Architecture-specific types.
+ * Provide stdint.h style types.
+ */
+#define uint8_t   unsigned char
+#define uint16_t  unsigned short
+#define uint32_t  unsigned int
+#define uint64_t  unsigned long long
+#define int8_t    signed char
+#define int16_t   signed short
+#define int32_t   signed int
+#define int64_t   long long
+#define size_t    unsigned long
+#define POINTER   void *
+#define UINT32    uint32_t
 
 typedef unsigned int irq_flags_t;
 typedef unsigned int virtual_addr_t;
@@ -50,17 +66,6 @@ typedef unsigned int physical_addr_t;
 typedef unsigned int physical_size_t;
 typedef unsigned int clock_freq_t;
 typedef unsigned long long jiffies_t;
-
-#define UINT32 uint32_t
-#define STACK_ALIGN_SIZE sizeof(uint32_t)
-#define NULL ((void *)(0))
-
-/**
- * Architecture-specific types.
- * Most of these are available from stdint.h on this platform, which is
- * included above.
- */
-#define POINTER void *
 
 struct pt_regs {
 	uint32_t cpsr;	// Current Program Status
@@ -71,15 +76,20 @@ struct pt_regs {
 } __attribute ((packed)) ;
 typedef struct pt_regs pt_regs_t;
 
-#include <printk.h>
-#include <arm_irq.h>
 
-/* Critical region protection */
+/**
+ * Critical region protection: this should disable interrupts
+ * to protect OS data structures during modification. It must
+ * allow nested calls, which means that interrupts should only
+ * be re-enabled when the outer CRITICAL_END() is reached.
+ */
+#include "arm_irq.h"
 #define CRITICAL_STORE		irq_flags_t status_flags
 #define CRITICAL_START()	status_flags = arm_irq_save();
 #define CRITICAL_END()		arm_irq_restore(status_flags);
 
 /* Uncomment to enable stack-checking */
 /* #define ATOM_STACK_CHECKING */
+
 
 #endif /* __ATOM_PORT_H */
