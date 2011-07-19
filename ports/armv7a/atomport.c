@@ -28,10 +28,11 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <atom.h>
-#include <atomport.h>
-#include <string.h>
-#include <arm_defines.h>
+#include "atom.h"
+#include "atomport.h"
+#include "atomport-private.h"
+#include "string.h"
+#include "arm_defines.h"
 
 /**
  * This function initialises each thread's stack during creation, before the
@@ -68,8 +69,6 @@ void archThreadContextInit (ATOM_TCB *tcb_ptr, void *stack_top,
 	regs->pc = (uint32_t)entry_point;
 }
 
-extern int archSetJump(pt_regs_t *regs, uint32_t *tmp);
-extern void archLongJump(pt_regs_t *regs);
 
 /**
  * archFirstThreadRestore(ATOM_TCB *new_tcb)

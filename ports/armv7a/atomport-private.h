@@ -1,6 +1,5 @@
 /*
- * Copyright (c) 2011, Anup Patel for Atomthreads Project.
- * All rights reserved.
+ * Copyright (c) 2011, Atomthreads Project. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,51 +27,28 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef __ATOM_PORT_H
-#define __ATOM_PORT_H
+#ifndef __ATOMPORT_PRIVATE_H_
+#define __ATOMPORT_PRIVATE_H_
 
+typedef unsigned int irq_flags_t;
+typedef unsigned int virtual_addr_t;
+typedef unsigned int virtual_size_t;
+typedef unsigned int physical_addr_t;
+typedef unsigned int physical_size_t;
+typedef unsigned int clock_freq_t;
+typedef unsigned long long jiffies_t;
 
-/* Required number of system ticks per second (normally 100 for 10ms tick) */
-#define SYSTEM_TICKS_PER_SEC            1000
+struct pt_regs {
+	uint32_t cpsr;	// Current Program Status
+	uint32_t gpr[13];	// R0 - R12
+	uint32_t sp;
+	uint32_t lr;
+	uint32_t pc;
+} __attribute ((packed)) ;
+typedef struct pt_regs pt_regs_t;
 
-/**
- * Definition of NULL. stddef.h not available on this platform.
- */
-#define NULL ((void *)(0))
+/* Function prototypes */
+extern int archSetJump(pt_regs_t *regs, uint32_t *tmp);
+extern void archLongJump(pt_regs_t *regs);
 
-/* Size of each stack entry / stack alignment size (32 bits on ARMv7A) */
-#define STACK_ALIGN_SIZE                sizeof(uint32_t)
-
-/**
- * Architecture-specific types.
- * Provide stdint.h style types.
- */
-#define uint8_t   unsigned char
-#define uint16_t  unsigned short
-#define uint32_t  unsigned int
-#define uint64_t  unsigned long long
-#define int8_t    signed char
-#define int16_t   signed short
-#define int32_t   signed int
-#define int64_t   long long
-#define size_t    unsigned long
-#define POINTER   void *
-#define UINT32    uint32_t
-
-/**
- * Critical region protection: this should disable interrupts
- * to protect OS data structures during modification. It must
- * allow nested calls, which means that interrupts should only
- * be re-enabled when the outer CRITICAL_END() is reached.
- */
-#include "arm_irq.h"
-#include "atomport-private.h"
-#define CRITICAL_STORE		irq_flags_t status_flags
-#define CRITICAL_START()	status_flags = arm_irq_save();
-#define CRITICAL_END()		arm_irq_restore(status_flags);
-
-/* Uncomment to enable stack-checking */
-/* #define ATOM_STACK_CHECKING */
-
-
-#endif /* __ATOM_PORT_H */
+#endif /* __ATOMPORT_PRIVATE_H_ */

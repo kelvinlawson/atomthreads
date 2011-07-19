@@ -27,14 +27,14 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <atom.h>
-#include <atomport.h>
-#include <atomtests.h>
-#include <atomtimer.h>
+#include "atom.h"
+#include "atomport.h"
+#include "atomtests.h"
+#include "atomtimer.h"
 #include "system.h"
-#include <arm_irq.h>
-#include <arm_timer.h>
-#include <arm_uart.h>
+#include "arm_irq.h"
+#include "arm_timer.h"
+#include "arm_uart.h"
 
 /* Constants */
 
@@ -169,11 +169,11 @@ int main ( void )
 			IDLE_STACK_SIZE_BYTES, 0);
     if (status == ATOM_OK)
     {
-	arm_irq_init();
+		arm_irq_init();
 
-	arm_timer_init(SYSTEM_TICKS_PER_SEC);
+		arm_timer_init(SYSTEM_TICKS_PER_SEC);
 
-	arm_uart_init();
+		arm_uart_init();
 
         /* Create an application thread */
         status = atomThreadCreate(&main_tcb,
@@ -182,23 +182,24 @@ int main ( void )
 				  MAIN_STACK_SIZE_BYTES, 0);
         if (status == ATOM_OK)
         {
-		arm_timer_enable();
+			arm_timer_enable();
 
-		/**
-		 * First application thread successfully created. It is
-		 * now possible to start the OS. Execution will not return
-		 * from atomOSStart(), which will restore the context of
-		 * our application thread and start executing it.
-		 *
-		 * Note that interrupts are still disabled at this point.
-		 * They will be enabled as we restore and execute our first
-		 * thread in archFirstThreadRestore().
-		 */
-		atomOSStart();
-	}
+            /**
+             * First application thread successfully created. It is
+             * now possible to start the OS. Execution will not return
+             * from atomOSStart(), which will restore the context of
+             * our application thread and start executing it.
+             *
+             * Note that interrupts are still disabled at this point.
+             * They will be enabled as we restore and execute our first
+             * thread in archFirstThreadRestore().
+             */
+            atomOSStart();
+        }
     }
 
-    while (1);
+    while (1)
+        ;
 
     /* There was an error starting the OS if we reach here */
     return (0);
@@ -227,5 +228,6 @@ static void main_thread_func (uint32_t data)
 	}
 	printk("Reset your board !!!!!");
 	/* Test finished so just hang !!! */
-	while (1);
+	while (1)
+		;
 }
