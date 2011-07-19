@@ -136,7 +136,7 @@ $(build_dir)/%.o: $(tests_dir)/%.c
 .PHONY: clean
 clean:
 	rm -rf doxygen-kernel
-	rm -rf doxygen-avr
+	rm -rf doxygen-armv7a
 	rm -rf $(build_dir)
 # Docs
 .PHONY: doxygen
