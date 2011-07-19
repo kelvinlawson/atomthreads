@@ -4,9 +4,6 @@
 
 # Build all test applications:
 #   make
-#
-# Program a test application using UISP (appname => test app e.g. sems1):
-#   make program app=appname
 
 # Location of build tools and atomthreads sources
 KERNEL_DIR=../../kernel
