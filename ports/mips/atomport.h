@@ -72,21 +72,14 @@ extern uint32_t at_preempt_count;
 		__asm__ __volatile__("di %0\t\n"		\
 				     "ehb\t\n"			\
 				     :"=r"(status_reg));	\
-		at_preempt_count++;				\
 	}while(0);
 
 #define CRITICAL_END()							\
 	do {								\
-		at_preempt_count--;					\
-									\
-		if (at_preempt_count == 0) {				\
-			if (atomCurrentContext()) {			\
-				__asm__ __volatile__("ei %0\t\n"	\
-						     "ehb\t\n"		\
-						     ::"r"(status_reg));\
-			}						\
-		}							\
-									\
+		__asm__ __volatile__("mtc0 %0, $12\t\n"			\
+				     "nop\t\n"				\
+				     "ehb\t\n"				\
+				     ::"r"(status_reg));		\
 	}while(0);
 
 /* Uncomment to enable stack-checking */

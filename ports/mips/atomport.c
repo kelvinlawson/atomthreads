@@ -31,7 +31,7 @@
 #include <atom.h>
 #include <atomport-private.h>
 #include <atomport.h>
-#include "regs.h"
+#include <atomport-asm-macros.h>
 #include <string.h>
 
 
@@ -58,11 +58,11 @@ void archThreadContextInit (ATOM_TCB *tcb_ptr, void *stack_top,
                             void (*entry_point)(UINT32),
                             UINT32 entry_param)
 {
-
 #define STORE_VAL(base, reg, val) \
 	*((uint32_t *)(base + ((reg ## _IDX) * WORD_SIZE))) = (uint32_t)val
 
-	uint32_t stack_start = (uint32_t)(stack_top - (WORD_SIZE * (NUM_REGISTERS + 1)));
+	/* Make space for context saving */
+	uint32_t stack_start = (uint32_t)(stack_top - (WORD_SIZE * NUM_CTX_REGS));
 
 	tcb_ptr->sp_save_ptr = (void *)stack_start;
 
@@ -75,7 +75,7 @@ void archThreadContextInit (ATOM_TCB *tcb_ptr, void *stack_top,
 	STORE_VAL(stack_start, s5, 0);
 	STORE_VAL(stack_start, s6, 0);
 	STORE_VAL(stack_start, s7, 0);
-	STORE_VAL(stack_start, cp0_epc, entry_point);
+	STORE_VAL(stack_start, cp0_epc, 0);
 	STORE_VAL(stack_start, ra, entry_point);
 	STORE_VAL(stack_start, a0, entry_param);
 }

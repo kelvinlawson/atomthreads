@@ -54,14 +54,19 @@ void mips_cpu_timer_enable(void)
 
 void handle_mips_systick(void)
 {
+	/* clear EXL from status */
+	uint32_t sr = read_c0_status();
+	sr &= ~0x00000002;
+	write_c0_status(sr);
+
 	/* Call the interrupt entry routine */
 	atomIntEnter();
 
 	/* Call the OS system tick handler */
 	atomTimerTick();
 
+	write_c0_compare(read_c0_count() + COUNTER_TICK_COUNT);
+
 	/* Call the interrupt exit routine */
 	atomIntExit(TRUE);
-
-	write_c0_compare(read_c0_count() + COUNTER_TICK_COUNT);
 }

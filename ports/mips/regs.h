@@ -101,6 +101,10 @@
 #define at_IDX           30
 #define zero_IDX         31
 #define cp0_epc_IDX      32
+#define cp0_status_IDX   33
+#define cp_cause_IDX     34
+
+#define NUM_CTX_REGS     35
 
 #define CP0_INDEX        $0
 #define CP0_RANDOM       $1

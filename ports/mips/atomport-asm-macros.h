@@ -47,7 +47,7 @@ fn:
         nop;					\
         nop;
 
-#define enable_global_interrupts		ei $0
+#define enable_global_interrupts		ei
 #define disable_global_interrupts		di $0
 
 #define EXCEPTION_VECTOR(_name, _offset, _where)\
@@ -63,70 +63,69 @@ _name:						\
 #define LOAD_REG(reg, treg)			\
         lw reg, ((reg ## _IDX) * 4)(treg)
 
-#define SAVE_INT_CONTEXT				\
-	addiu sp, sp, -((NUM_REGISTERS + 1)* 4);	\
+#define SAVE_INT_CONTEXT(treg)				\
         mfc0 k1, CP0_EPC;				\
-	SAVE_REG(t0,sp);				\
-	SAVE_REG(t1,sp);				\
-	SAVE_REG(t2,sp);				\
-	SAVE_REG(t3,sp);				\
-	SAVE_REG(t4,sp);				\
-	SAVE_REG(t5,sp);				\
-	SAVE_REG(t6,sp);				\
-	SAVE_REG(t7,sp);				\
-	SAVE_REG(t8,sp);				\
-	SAVE_REG(t9,sp);				\
-	SAVE_REG(v0,sp);				\
-	SAVE_REG(v1,sp);				\
-	SAVE_REG(a0,sp);				\
-	SAVE_REG(a1,sp);				\
-	SAVE_REG(a2,sp);				\
-	SAVE_REG(a3,sp);				\
-	SAVE_REG(s0,sp);				\
-	SAVE_REG(s1,sp);				\
-	SAVE_REG(s2,sp);				\
-	SAVE_REG(s3,sp);				\
-	SAVE_REG(s4,sp);				\
-	SAVE_REG(s5,sp);				\
-	SAVE_REG(s6,sp);				\
-	SAVE_REG(s7,sp);				\
-	SAVE_REG(gp,sp);				\
-	SAVE_REG(s8,sp);				\
-	SAVE_REG(ra,sp);				\
-        sw k0, (sp_IDX * 4)(sp);			\
-        sw k1, (NUM_REGISTERS * 4)(sp);
+	SAVE_REG(t0,treg);				\
+	SAVE_REG(t1,treg);				\
+	SAVE_REG(t2,treg);				\
+	SAVE_REG(t3,treg);				\
+	SAVE_REG(t4,treg);				\
+	SAVE_REG(t5,treg);				\
+	SAVE_REG(t6,treg);				\
+	SAVE_REG(t7,treg);				\
+	SAVE_REG(t8,treg);				\
+	SAVE_REG(t9,treg);				\
+	SAVE_REG(v0,treg);				\
+	SAVE_REG(v1,treg);				\
+	SAVE_REG(a0,treg);				\
+	SAVE_REG(a1,treg);				\
+	SAVE_REG(a2,treg);				\
+	SAVE_REG(a3,treg);				\
+	SAVE_REG(s0,treg);				\
+	SAVE_REG(s1,treg);				\
+	SAVE_REG(s2,treg);				\
+	SAVE_REG(s3,treg);				\
+	SAVE_REG(s4,treg);				\
+	SAVE_REG(s5,treg);				\
+	SAVE_REG(s6,treg);				\
+	SAVE_REG(s7,treg);				\
+	SAVE_REG(gp,treg);				\
+	SAVE_REG(s8,treg);				\
+	SAVE_REG(ra,treg);				\
+        sw k0, (sp_IDX * 4)(treg);			\
+        sw k1, (cp0_epc_IDX * 4)(treg);
 
-#define RESTORE_INT_CONTEXT				\
-        lw k1, (NUM_REGISTERS * 4)(sp);			\
+#define RESTORE_INT_CONTEXT(treg)			\
+        lw k1, (cp0_epc_IDX * 4)(treg);			\
         mtc0 k1, CP0_EPC;				\
-	LOAD_REG(s0,sp);				\
-	LOAD_REG(s1,sp);				\
-	LOAD_REG(s2,sp);				\
-	LOAD_REG(s3,sp);				\
-	LOAD_REG(s4,sp);				\
-	LOAD_REG(s5,sp);				\
-	LOAD_REG(s6,sp);				\
-	LOAD_REG(s7,sp);				\
-	LOAD_REG(v0,sp);				\
-	LOAD_REG(v1,sp);				\
-	LOAD_REG(a0,sp);				\
-	LOAD_REG(a1,sp);				\
-	LOAD_REG(a2,sp);				\
-	LOAD_REG(a3,sp);				\
-	LOAD_REG(t0,sp);				\
-	LOAD_REG(t1,sp);				\
-	LOAD_REG(t2,sp);				\
-	LOAD_REG(t3,sp);				\
-	LOAD_REG(t4,sp);				\
-	LOAD_REG(t5,sp);				\
-	LOAD_REG(t6,sp);				\
-	LOAD_REG(t7,sp);				\
-	LOAD_REG(t8,sp);				\
-	LOAD_REG(t9,sp);				\
-	LOAD_REG(gp,sp);				\
-	LOAD_REG(ra,sp);				\
-	LOAD_REG(s8,sp);				\
-	lw sp, (sp_IDX * 4)(sp);
+	LOAD_REG(s0,treg);				\
+	LOAD_REG(s1,treg);				\
+	LOAD_REG(s2,treg);				\
+	LOAD_REG(s3,treg);				\
+	LOAD_REG(s4,treg);				\
+	LOAD_REG(s5,treg);				\
+	LOAD_REG(s6,treg);				\
+	LOAD_REG(s7,treg);				\
+	LOAD_REG(v0,treg);				\
+	LOAD_REG(v1,treg);				\
+	LOAD_REG(a0,treg);				\
+	LOAD_REG(a1,treg);				\
+	LOAD_REG(a2,treg);				\
+	LOAD_REG(a3,treg);				\
+	LOAD_REG(t0,treg);				\
+	LOAD_REG(t1,treg);				\
+	LOAD_REG(t2,treg);				\
+	LOAD_REG(t3,treg);				\
+	LOAD_REG(t4,treg);				\
+	LOAD_REG(t5,treg);				\
+	LOAD_REG(t6,treg);				\
+	LOAD_REG(t7,treg);				\
+	LOAD_REG(t8,treg);				\
+	LOAD_REG(t9,treg);				\
+	LOAD_REG(gp,treg);				\
+	LOAD_REG(ra,treg);				\
+	LOAD_REG(s8,treg);				\
+	lw sp, (sp_IDX * 4)(treg);
 
 #endif /* __ASSEMBLY__ */
 
