@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010, Kelvin Lawson. All rights reserved.
+ * Copyright (c) 2011, Himanshu Chauhan. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,23 +30,21 @@
 #ifndef __ATOM_PORT_H
 #define __ATOM_PORT_H
 
+
 /* Required number of system ticks per second (normally 100 for 10ms tick) */
 #define SYSTEM_TICKS_PER_SEC            100
 
 /**
- * Definition of NULL.
- * If stddef.h is available on the platform it is simplest to include it
- * from this header, otherwise define below.
+ * Definition of NULL. stddef.h not available on this platform.
  */
-#define NULL      ((void *)(0))
+#define NULL ((void *)(0))
 
-/* Size of each stack entry / stack alignment size (e.g. 8 bits) */
-#define STACK_ALIGN_SIZE                sizeof(unsigned char)
+/* Size of each stack entry / stack alignment size (32 bits on MIPS) */
+#define STACK_ALIGN_SIZE                sizeof(uint32_t)
 
 /**
  * Architecture-specific types.
- * Uses the stdint.h naming convention, so if stdint.h is available on the
- * platform it is simplest to include it from this header.
+ * Provide stdint.h style types.
  */
 #define uint8_t   unsigned char
 #define uint16_t  unsigned short
@@ -56,7 +54,9 @@
 #define int16_t   short
 #define int32_t   long
 #define int64_t   long long
+#define size_t    unsigned long
 #define POINTER   void *
+#define UINT32    uint32_t
 
 
 /**
@@ -65,10 +65,22 @@
  * allow nested calls, which means that interrupts should only
  * be re-enabled when the outer CRITICAL_END() is reached.
  */
-#define CRITICAL_STORE      uint8_t sreg
-#define CRITICAL_START()    sreg = SREG; cli();
-#define CRITICAL_END()      SREG = sreg
+extern uint32_t at_preempt_count;
+#define CRITICAL_STORE	    uint32_t status_reg
+#define CRITICAL_START()					\
+	do {							\
+		__asm__ __volatile__("di %0\t\n"		\
+				     "ehb\t\n"			\
+				     :"=r"(status_reg));	\
+	}while(0);
 
+#define CRITICAL_END()							\
+	do {								\
+		__asm__ __volatile__("mtc0 %0, $12\t\n"			\
+				     "nop\t\n"				\
+				     "ehb\t\n"				\
+				     ::"r"(status_reg));		\
+	}while(0);
 
 /* Uncomment to enable stack-checking */
 /* #define ATOM_STACK_CHECKING */

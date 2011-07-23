@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010, Kelvin Lawson. All rights reserved.
+ * Copyright (c) 2011, Himanshu Chauhan. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,29 +27,32 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include <atomport-asm-macros.h>
+#include <atomport.h>
+#include <atom.h>
 
-#include "atom.h"
-#include "atomtests.h"
-
-/**
- * \b test_start
- *
- * Start test.
- *
- * @retval Number of failures
- */
-uint32_t test_start (void)
+void mips_setup_interrupts()
 {
-    int failures;
+        uint32_t ebase = read_c0_ebase();
+        ebase &= ~0x3FFF000UL;
+        write_c0_ebase(ebase);
 
-    /* Default to zero failures */
-    failures = 0;
+        uint32_t sr = read_c0_status();
+        sr &= ~(0x01UL << 22);
+        sr &= ~(0x3UL << 1);
+        write_c0_status(sr);
 
-    /* Run test and update "failures" count */
+        uint32_t cause = read_c0_status();
+        cause |= 0x01UL << 23;
+        write_c0_cause(cause);
+}
 
-    /* If threads are created, check for thread stack overflow */
+void mips_enable_global_interrupts(void)
+{
+	__asm__ __volatile__ ("ei $0\t\n");
+}
 
-    /* Quit */
-    return failures;
-
+void mips_disable_global_interrupts(void)
+{
+	__asm__ __volatile__("di $0\t\n");
 }

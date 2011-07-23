@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010, Kelvin Lawson. All rights reserved.
+ * Copyright (c) 2011, Himanshu Chauhan. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,29 +27,46 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include <atomport-asm-macros.h>
+#include <atomport.h>
+#include <atom.h>
+#include <atomport-private.h>
 
-#include "atom.h"
-#include "atomtests.h"
+/** CPU frequency in MHz */
+#define CPU_FREQ_MHZ					100
 
-/**
- * \b test_start
- *
- * Start test.
- *
- * @retval Number of failures
- */
-uint32_t test_start (void)
+/** Number of counter counter should increase to get required ticks */
+#define COUNTER_TICK_COUNT				((1000000 * SYSTEM_TICKS_PER_SEC) / CPU_FREQ_MHZ)
+
+unsigned long long jiffies;
+
+void mips_cpu_timer_enable(void)
 {
-    int failures;
+	uint32_t sr = read_c0_status();
+	sr |= ((0x1UL << 7) << 8);
+	write_c0_status(sr);
 
-    /* Default to zero failures */
-    failures = 0;
+	uint32_t cause = read_c0_cause();
+	cause &= ~(0x1UL << 27);
+	write_c0_cause(cause);
+	write_c0_compare(read_c0_count() + COUNTER_TICK_COUNT);
+}
 
-    /* Run test and update "failures" count */
+void handle_mips_systick(void)
+{
+	/* clear EXL from status */
+	uint32_t sr = read_c0_status();
+	sr &= ~0x00000002;
+	write_c0_status(sr);
 
-    /* If threads are created, check for thread stack overflow */
+	/* Call the interrupt entry routine */
+	atomIntEnter();
 
-    /* Quit */
-    return failures;
+	/* Call the OS system tick handler */
+	atomTimerTick();
 
+	write_c0_compare(read_c0_count() + COUNTER_TICK_COUNT);
+
+	/* Call the interrupt exit routine */
+	atomIntExit(TRUE);
 }

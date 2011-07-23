@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010, Kelvin Lawson. All rights reserved.
+ * Copyright (c) 2011, Himanshu Chauhan. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,30 +26,12 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
+#ifndef __ATOM_PORT_TIMER_H
+#define __ATOM_PORT_TIMER_H
 
+/* Required number of system ticks per second (normally 100 for 10ms tick) */
+#define SYSTEM_TICKS_PER_SEC            100
 
-#include "atom.h"
-#include "atomtests.h"
+void mips_cpu_timer_enable(void);
 
-/**
- * \b test_start
- *
- * Start test.
- *
- * @retval Number of failures
- */
-uint32_t test_start (void)
-{
-    int failures;
-
-    /* Default to zero failures */
-    failures = 0;
-
-    /* Run test and update "failures" count */
-
-    /* If threads are created, check for thread stack overflow */
-
-    /* Quit */
-    return failures;
-
-}
+#endif /* __ATOM_PORT_TIMER_H */

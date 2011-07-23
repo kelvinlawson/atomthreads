@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010, Kelvin Lawson. All rights reserved.
+ * Copyright (c) 2011, Himanshu Chauhan. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,29 +27,48 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+OUTPUT_FORMAT("elf32-tradbigmips")
+OUTPUT_ARCH("mips")
+ENTRY(_start)
 
-#include "atom.h"
-#include "atomtests.h"
-
-/**
- * \b test_start
- *
- * Start test.
- *
- * @retval Number of failures
- */
-uint32_t test_start (void)
+SECTIONS 
 {
-    int failures;
+	. = 0x80000000;
+	.text :
+ 	{
+		*(.start.text)
+		*(.text)
+		. = ALIGN(4);
+		_etext = .;
+	}
 
-    /* Default to zero failures */
-    failures = 0;
+	.data :
+	{
+		*(.data)
+		. = ALIGN(4);
+		_edata = .;
+	}
 
-    /* Run test and update "failures" count */
+	.bss :
+	{
+		*(.bss)
+		. = ALIGN(4);
+		_ebss = .;
+	}
 
-    /* If threads are created, check for thread stack overflow */
+	.rodata :
+	{
+		*(.rodata .rodata.*)
+		. = ALIGN(4);
+		_erodata = .;
+	}
 
-    /* Quit */
-    return failures;
-
+	PROVIDE(_stack_end = .);
+	. = . + 8192;
+	. = ALIGN(4);
+	PROVIDE(_stack_start = .);
+	PROVIDE(_int_stack_end = .);
+	. = . + 8192;
+	. = ALIGN(4);
+	PROVIDE(_int_stack = .);
 }
