@@ -33,8 +33,10 @@
 /* Include Atomthreads kernel API */
 #include "atom.h"
 
+/* Prerequisite include for ATOMLOG() macro (via printf) */
+#include "printk.h"
+
 /* Logger macro for viewing test results */
-/* FIXME: Add uart out routine once uart is supported */
 #define ATOMLOG printk
 #define _STR
 

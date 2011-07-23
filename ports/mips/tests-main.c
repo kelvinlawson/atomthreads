@@ -35,6 +35,7 @@
 #include "system.h"
 #include "atomport-interrupts.h"
 
+
 /* Constants */
 
 /*
@@ -130,8 +131,6 @@ static uint8_t idle_thread_stack[IDLE_STACK_SIZE_BYTES];
 /* Forward declarations */
 static void main_thread_func (uint32_t data);
 
-/* Global Data */
-uint32_t at_preempt_count;
 
 /**
  * \b main
@@ -146,8 +145,6 @@ int main ( void )
 {
     int8_t status;
 
-    at_preempt_count = 0;
-
     /**
      * Note: to protect OS structures and data during initialisation,
      * interrupts must remain disabled until the first thread
@@ -156,51 +153,38 @@ int main ( void )
      * reschedule to take place.
      */
 
-    /**
-     * Initialise the OS before creating our threads.
-     *
-     * Note that we tell the OS that the idle stack is half its actual
-     * size. This prevents it prefilling the bottom half with known
-     * values for stack-checkig purposes, which we cannot allow because
-     * we are temporarily using it for our own stack. The remainder will
-     * still be available once the OS is started, this only prevents the
-     * OS from prefilling it.
-     *
-     * If you are not reusing the idle thread's stack during startup then
-     * you should pass in the correct size here.
-     */
-    status = atomOSInit(&idle_thread_stack[0],
-			IDLE_STACK_SIZE_BYTES, 0);
+    /* Initialise the OS before creating our threads */
+    status = atomOSInit(&idle_thread_stack[0], IDLE_STACK_SIZE_BYTES, TRUE);
     if (status == ATOM_OK)
     {
-        /* FIXME: Enable the system tick timer */
+        /* Enable the system tick timer */
+        mips_cpu_timer_enable();
         mips_setup_interrupts();
-	init_console();
 
         /* Create an application thread */
         status = atomThreadCreate(&main_tcb,
                      TEST_THREAD_PRIO, main_thread_func, 0,
                      &main_thread_stack[0],
-				  MAIN_STACK_SIZE_BYTES, 0);
+                     MAIN_STACK_SIZE_BYTES,
+                     TRUE);
         if (status == ATOM_OK)
         {
-		mips_cpu_timer_enable();
-
-		/**
-		 * First application thread successfully created. It is
-		 * now possible to start the OS. Execution will not return
-		 * from atomOSStart(), which will restore the context of
-		 * our application thread and start executing it.
-		 *
-		 * Note that interrupts are still disabled at this point.
-		 * They will be enabled as we restore and execute our first
-		 * thread in archFirstThreadRestore().
-		 */
-		atomOSStart();
-	}
+            /**
+             * First application thread successfully created. It is
+             * now possible to start the OS. Execution will not return
+             * from atomOSStart(), which will restore the context of
+             * our application thread and start executing it.
+             *
+             * Note that interrupts are still disabled at this point.
+             * They will be enabled as we restore and execute our first
+             * thread in archFirstThreadRestore().
+             */
+            atomOSStart();
+        }
     }
 
-    while (1);
+    while (1)
+        ;
 
     /* There was an error starting the OS if we reach here */
     return (0);
@@ -220,13 +204,57 @@ int main ( void )
  */
 static void main_thread_func (uint32_t data)
 {
-	while (1) {
-		/* Put a message out on the UART */
-		printk("Running Tests... ");
-		if (test_start() != 0) {
-			printk("FAILED!\n");
-		} else {
-			printk("SUCCESS!\n");
-		}
-	}
+    uint32_t test_status;
+
+    /* Initialise UART */
+    init_console();
+
+    /* Put a message out on the UART */
+    printk ("Go\n");
+
+    /* Start test. All tests use the same start API. */
+    test_status = test_start();
+
+    /* Check main thread stack usage (if enabled) */
+#ifdef ATOM_STACK_CHECKING
+    if (test_status == 0)
+    {
+        uint32_t used_bytes, free_bytes;
+
+        /* Check idle thread stack usage */
+        if (atomThreadStackCheck (&main_tcb, &used_bytes, &free_bytes) == ATOM_OK)
+        {
+            /* Check the thread did not use up to the end of stack */
+            if (free_bytes == 0)
+            {
+                printk ("Main stack overflow\n");
+                test_status++;
+            }
+
+            /* Log the stack usage */
+#ifdef TESTS_LOG_STACK_USAGE
+            printk ("MainUse:%d\n", used_bytes);
+#endif
+        }
+
+    }
+#endif
+
+    /* Log final status */
+    if (test_status == 0)
+    {
+        printk ("Pass\n");
+    }
+    else
+    {
+        printk ("Fail(%d)\n", test_status);
+    }
+
+    /* Test finished, loop forever */
+    while (1)
+    {
+        /* Sleep */
+        atomTimerDelay (1);
+    }
+
 }

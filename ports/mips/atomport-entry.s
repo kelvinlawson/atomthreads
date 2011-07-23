@@ -90,32 +90,16 @@ LEAF(_handle_interrupt)
 	beq k0, zero, 1f
 	nop
 
-	move k0, ra
-	move k1, v0
-    	bal atomCurrentContext
-    	nop
-    	beq v0, zero, 2f /* v0 should be current context */
-    	nop
-
-	move ra, k0
-	lw k0, 0(v0)
-	move v0, k1
-	move k1, k0
-	/*
-	 * Note that we aren't loading any new SP. Context
-	 * will be save on the interrupted threads' stack.
-	 */
 	move k0, sp
-	move sp, k1
-	SAVE_INT_CONTEXT
+	/* Calculate interrupt context base */
+	addi sp, sp, -(NUM_CTX_REGS * WORD_SIZE)
+	SAVE_INT_CONTEXT(sp)
 	bal handle_mips_systick
 	nop
-	RESTORE_INT_CONTEXT
-1:	
+	RESTORE_INT_CONTEXT(sp)
+1:
 	enable_global_interrupts
 	eret
-	
-2:	b 2b
 END(_handle_interrupt)
 
 LEAF(_handle_cache_error)

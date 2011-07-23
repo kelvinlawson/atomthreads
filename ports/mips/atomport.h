@@ -30,63 +30,60 @@
 #ifndef __ATOM_PORT_H
 #define __ATOM_PORT_H
 
-#include "atomport-timer.h"
 
-typedef signed int int32_t;
-typedef signed short int16_t;
-typedef signed char int8_t;
-typedef unsigned int uint32_t;
-typedef unsigned short uint16_t;
-typedef unsigned char uint8_t;
-typedef long long int64_t;
-typedef unsigned long size_t;
+/* Required number of system ticks per second (normally 100 for 10ms tick) */
+#define SYSTEM_TICKS_PER_SEC            100
 
-#define UINT32 uint32_t
-#define STACK_ALIGN_SIZE sizeof(uint32_t)
+/**
+ * Definition of NULL. stddef.h not available on this platform.
+ */
 #define NULL ((void *)(0))
+
+/* Size of each stack entry / stack alignment size (32 bits on MIPS) */
+#define STACK_ALIGN_SIZE                sizeof(uint32_t)
 
 /**
  * Architecture-specific types.
- * Most of these are available from stdint.h on this platform, which is
- * included above.
+ * Provide stdint.h style types.
  */
-#define POINTER void *
+#define uint8_t   unsigned char
+#define uint16_t  unsigned short
+#define uint32_t  unsigned long
+#define uint64_t  unsigned long long
+#define int8_t    char
+#define int16_t   short
+#define int32_t   long
+#define int64_t   long long
+#define size_t    unsigned long
+#define POINTER   void *
+#define UINT32    uint32_t
 
-#include "printk.h"
 
+/**
+ * Critical region protection: this should disable interrupts
+ * to protect OS data structures during modification. It must
+ * allow nested calls, which means that interrupts should only
+ * be re-enabled when the outer CRITICAL_END() is reached.
+ */
 extern uint32_t at_preempt_count;
-
-/* Critical region protection */
 #define CRITICAL_STORE	    uint32_t status_reg
 #define CRITICAL_START()					\
 	do {							\
-		extern uint32_t at_preempt_count;		\
 		__asm__ __volatile__("di %0\t\n"		\
 				     "ehb\t\n"			\
 				     :"=r"(status_reg));	\
-		at_preempt_count++;				\
 	}while(0);
 
 #define CRITICAL_END()							\
 	do {								\
-		extern uint32_t at_preempt_count;			\
-		if (at_preempt_count == 0) {				\
-			printk("BUG: Preempt count is zero!\n");	\
-			for(;;);					\
-		}							\
-		at_preempt_count--;					\
-									\
-		if (at_preempt_count == 0) {				\
-			if (atomCurrentContext()) {			\
-				__asm__ __volatile__("ei %0\t\n"	\
-						     "ehb\t\n"		\
-						     ::"r"(status_reg));\
-			}						\
-		}							\
-									\
+		__asm__ __volatile__("mtc0 %0, $12\t\n"			\
+				     "nop\t\n"				\
+				     "ehb\t\n"				\
+				     ::"r"(status_reg));		\
 	}while(0);
 
 /* Uncomment to enable stack-checking */
 /* #define ATOM_STACK_CHECKING */
+
 
 #endif /* __ATOM_PORT_H */

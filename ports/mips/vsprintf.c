@@ -5,8 +5,8 @@
  */
 
 #include <stdarg.h>
-#include <system.h>
-#include <atomport.h>
+#include "system.h"
+#include "atomport.h"
 
 /* we use this so that we can do without the ctype library */
 #define is_digit(c)	((c) >= '0' && (c) <= '9')
@@ -40,7 +40,7 @@ static uint32_t do_div (int32_t *n, int32_t base)
 	return remainder;
 }
 
-static int8_t * number(int8_t * str, int num, int32_t base, 
+static int8_t * number(int8_t * str, int32_t num, int32_t base, 
 		     int32_t size, int32_t precision, int32_t type)
 {
 	int8_t c,sign,tmp[36];
@@ -100,7 +100,7 @@ static int8_t * number(int8_t * str, int num, int32_t base,
 	return str;
 }
 
-int32_t vsprintf (int8_t *buf, const int8_t *fmt, va_list args)
+int vsprintf (int8_t *buf, const int8_t *fmt, va_list args)
 {
 	int32_t len;
 	int32_t i;

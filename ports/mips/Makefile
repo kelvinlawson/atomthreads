@@ -4,9 +4,6 @@
 
 # Build all test applications:
 #   make
-#
-# Program a test application using UISP (appname => test app e.g. sems1):
-#   make program app=appname
 
 # Location of build tools and atomthreads sources
 KERNEL_DIR=../../kernel
@@ -132,7 +129,7 @@ $(APP_ASM_OBJECTS): %.o: ./%.s
 clean:
 	$(V)rm -f *.o *.elf *.map *.hex *.bin *.lst
 	rm -rf doxygen-kernel
-	rm -rf doxygen-avr
+	rm -rf doxygen-mips
 	rm -rf build
 
 doxygen:
