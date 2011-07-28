@@ -27,12 +27,10 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-
 #include "atom.h"
 #include "atomsem.h"
 #include "atomtimer.h"
 #include "atomtests.h"
-
 
 /* Global test data */
 static volatile int callback_ran_flag;

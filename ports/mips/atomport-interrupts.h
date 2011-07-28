@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010, Kelvin Lawson. All rights reserved.
+ * Copyright (c) 2011, Himanshu Chauhan. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,29 +27,12 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+#ifndef __ATOMPORT_INTERRUPTS_H
+#define __ATOMPORT_INTERRUPTS_H
 
-#include "atom.h"
-#include "atomtests.h"
+void mips_setup_interrupts();
+void mips_enable_global_interrupts(void);
+void mips_disable_global_interrupts(void);
+void handle_mips_systick(void);
 
-/**
- * \b test_start
- *
- * Start test.
- *
- * @retval Number of failures
- */
-uint32_t test_start (void)
-{
-    int failures;
-
-    /* Default to zero failures */
-    failures = 0;
-
-    /* Run test and update "failures" count */
-
-    /* If threads are created, check for thread stack overflow */
-
-    /* Quit */
-    return failures;
-
-}
+#endif /* __ATOMPORT_INTERRUPTS_H */

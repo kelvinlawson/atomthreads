@@ -31,7 +31,6 @@
 #include "atommutex.h"
 #include "atomtests.h"
 
-
 /* Number of test threads */
 #define NUM_TEST_THREADS      2
 

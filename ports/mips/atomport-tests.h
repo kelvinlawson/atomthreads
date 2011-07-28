@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010, Kelvin Lawson. All rights reserved.
+ * Copyright (c) 2011, Himanshu Chauhan. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,29 +27,24 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+#ifndef __ATOM_PORT_TESTS_H
+#define __ATOM_PORT_TESTS_H
 
+/* Include Atomthreads kernel API */
 #include "atom.h"
-#include "atomtests.h"
 
-/**
- * \b test_start
- *
- * Start test.
- *
- * @retval Number of failures
- */
-uint32_t test_start (void)
-{
-    int failures;
+/* Prerequisite include for ATOMLOG() macro (via printf) */
+#include "printk.h"
 
-    /* Default to zero failures */
-    failures = 0;
+/* Logger macro for viewing test results */
+#define ATOMLOG printk
+#define _STR
 
-    /* Run test and update "failures" count */
+/* Default thread stack size (in bytes) */
+#define TEST_THREAD_STACK_SIZE      8192
 
-    /* If threads are created, check for thread stack overflow */
+/* Uncomment to enable logging of stack usage to UART */
+/* #define TESTS_LOG_STACK_USAGE */
 
-    /* Quit */
-    return failures;
+#endif /* __ATOM_PORT_TESTS_H */
 
-}

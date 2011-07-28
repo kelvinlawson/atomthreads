@@ -1,0 +1,8 @@
+ * Required Ubuntu packages: qemu, qemu-kvm-extras
+   * Lucid 0.12.3 no good, better to install from source, make && sudo make install
+ * Compiler: CodeSourcery
+ * Run test: qemu-system-mips -M mips -m 128 -kernel build/kern1.elf -nographic
+
+ * GDB: Add -S -s to qemu startup
+ * mips-linux-gnu-gdb, target remote localhost:1234, file build/mutex5.elf
+ * ddd ---debugger mips-linux-gnu-gdb build/mutex5.elf
