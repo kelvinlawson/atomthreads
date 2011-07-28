@@ -28,11 +28,11 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <atom.h>
-#include <atomport-private.h>
-#include <atomport.h>
-#include <atomport-asm-macros.h>
-#include <string.h>
+#include "atom.h"
+#include "atomport-private.h"
+#include "atomport.h"
+#include "atomport-asm-macros.h"
+#include "string.h"
 
 
 /* Used for managing nesting of atomport.h critical sections */
