@@ -13,8 +13,12 @@ endif
 src_dir=$(CURDIR)
 
 # Configuration
+ifndef CPU
 CPU=cortex-a8
+endif
+ifndef BOARD
 BOARD=pb-a8
+endif
 CC=$(CROSS_COMPILE)gcc
 OBJCOPY=$(CROSS_COMPILE)objcopy
 # Enable stack-checking. WARNING: the full automated test suite currently
@@ -107,10 +111,10 @@ $(build_dir)/%.bin: $(build_dir)/%.elf
 	$(if $(V), @echo " (OBJCOPY)   $(subst $(build_dir)/,,$@)")
 	$(V)$(OBJCOPY) -O binary $< $@
 
-$(build_dir)/%.elf: $(build_dir)/%.o $(build_objs)
+$(build_dir)/%.elf: $(build_dir)/%.o $(build_objs) $(board_dir)/linker.ld
 	$(V)mkdir -p `dirname $@`
 	$(if $(V), @echo " (ELF)       $(subst $(build_dir)/,,$@)")
-	$(V)$(CC) $(CFLAGS) $(build_objs) $< -static-libgcc -lgcc  -Wl -T linker.ld -o $@
+	$(V)$(CC) $(CFLAGS) $(build_objs) $< -static-libgcc -lgcc  -Wl -T $(board_dir)/linker.ld -o $@
 
 $(build_dir)/%.o: $(src_dir)/%.S
 	$(V)mkdir -p `dirname $@`
