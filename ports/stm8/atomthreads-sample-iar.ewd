@@ -12,7 +12,7 @@
       <name>C-SPY</name>
       <archiveVersion>1</archiveVersion>
       <data>
-        <version>0</version>
+        <version>1</version>
         <wantNonLocal>1</wantNonLocal>
         <debug>1</debug>
         <option>
@@ -82,6 +82,30 @@
         <option>
           <name>CSpyImagesPath3</name>
           <state></state>
+        </option>
+        <option>
+          <name>CSpyImagesOffset1</name>
+          <state></state>
+        </option>
+        <option>
+          <name>CSpyImagesOffset2</name>
+          <state></state>
+        </option>
+        <option>
+          <name>CSpyImagesOffset3</name>
+          <state></state>
+        </option>
+        <option>
+          <name>CSpyImagesUse1</name>
+          <state>0</state>
+        </option>
+        <option>
+          <name>CSpyImagesUse2</name>
+          <state>0</state>
+        </option>
+        <option>
+          <name>CSpyImagesUse3</name>
+          <state>0</state>
         </option>
       </data>
     </settings>
@@ -162,16 +186,16 @@
     </settings>
     <debuggerPlugins>
       <plugin>
+        <file>$TOOLKIT_DIR$\plugins\rtos\embOS\embOSPlugin.ewplugin</file>
+        <loadFlag>0</loadFlag>
+      </plugin>
+      <plugin>
         <file>$EW_DIR$\common\plugins\CodeCoverage\CodeCoverage.ENU.ewplugin</file>
         <loadFlag>1</loadFlag>
       </plugin>
       <plugin>
         <file>$EW_DIR$\common\plugins\Orti\Orti.ENU.ewplugin</file>
         <loadFlag>0</loadFlag>
-      </plugin>
-      <plugin>
-        <file>$EW_DIR$\common\plugins\Profiling\Profiling.ENU.ewplugin</file>
-        <loadFlag>1</loadFlag>
       </plugin>
       <plugin>
         <file>$EW_DIR$\common\plugins\Stack\Stack.ENU.ewplugin</file>
@@ -193,7 +217,7 @@
       <name>C-SPY</name>
       <archiveVersion>1</archiveVersion>
       <data>
-        <version>0</version>
+        <version>1</version>
         <wantNonLocal>1</wantNonLocal>
         <debug>0</debug>
         <option>
@@ -263,6 +287,30 @@
         <option>
           <name>CSpyImagesPath3</name>
           <state></state>
+        </option>
+        <option>
+          <name>CSpyImagesOffset1</name>
+          <state></state>
+        </option>
+        <option>
+          <name>CSpyImagesOffset2</name>
+          <state></state>
+        </option>
+        <option>
+          <name>CSpyImagesOffset3</name>
+          <state></state>
+        </option>
+        <option>
+          <name>CSpyImagesUse1</name>
+          <state>0</state>
+        </option>
+        <option>
+          <name>CSpyImagesUse2</name>
+          <state>0</state>
+        </option>
+        <option>
+          <name>CSpyImagesUse3</name>
+          <state>0</state>
         </option>
       </data>
     </settings>
@@ -343,16 +391,16 @@
     </settings>
     <debuggerPlugins>
       <plugin>
+        <file>$TOOLKIT_DIR$\plugins\rtos\embOS\embOSPlugin.ewplugin</file>
+        <loadFlag>0</loadFlag>
+      </plugin>
+      <plugin>
         <file>$EW_DIR$\common\plugins\CodeCoverage\CodeCoverage.ENU.ewplugin</file>
         <loadFlag>1</loadFlag>
       </plugin>
       <plugin>
         <file>$EW_DIR$\common\plugins\Orti\Orti.ENU.ewplugin</file>
         <loadFlag>0</loadFlag>
-      </plugin>
-      <plugin>
-        <file>$EW_DIR$\common\plugins\Profiling\Profiling.ENU.ewplugin</file>
-        <loadFlag>1</loadFlag>
       </plugin>
       <plugin>
         <file>$EW_DIR$\common\plugins\Stack\Stack.ENU.ewplugin</file>

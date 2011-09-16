@@ -10,7 +10,7 @@
     <debug>1</debug>
     <settings>
       <name>General</name>
-      <archiveVersion>1</archiveVersion>
+      <archiveVersion>2</archiveVersion>
       <data>
         <version>1</version>
         <wantNonLocal>1</wantNonLocal>
@@ -115,7 +115,7 @@
     </settings>
     <settings>
       <name>ICCSTM8</name>
-      <archiveVersion>1</archiveVersion>
+      <archiveVersion>2</archiveVersion>
       <data>
         <version>8</version>
         <wantNonLocal>1</wantNonLocal>
@@ -306,7 +306,7 @@
     </settings>
     <settings>
       <name>ASTM8</name>
-      <archiveVersion>1</archiveVersion>
+      <archiveVersion>2</archiveVersion>
       <data>
         <version>1</version>
         <wantNonLocal>1</wantNonLocal>
@@ -499,9 +499,9 @@
     </settings>
     <settings>
       <name>ILINK</name>
-      <archiveVersion>1</archiveVersion>
+      <archiveVersion>2</archiveVersion>
       <data>
-        <version>0</version>
+        <version>1</version>
         <wantNonLocal>1</wantNonLocal>
         <debug>1</debug>
         <option>
@@ -723,11 +723,19 @@
           <name>IlinkLogUnusedFragments</name>
           <state>0</state>
         </option>
+        <option>
+          <name>IlinkCrcReverseByteOrder</name>
+          <state>0</state>
+        </option>
+        <option>
+          <name>IlinkCrcUseAsInput</name>
+          <state>1</state>
+        </option>
       </data>
     </settings>
     <settings>
       <name>IARCHIVE</name>
-      <archiveVersion>1</archiveVersion>
+      <archiveVersion>2</archiveVersion>
       <data>
         <version>0</version>
         <wantNonLocal>1</wantNonLocal>
@@ -760,7 +768,7 @@
     <debug>0</debug>
     <settings>
       <name>General</name>
-      <archiveVersion>1</archiveVersion>
+      <archiveVersion>2</archiveVersion>
       <data>
         <version>1</version>
         <wantNonLocal>1</wantNonLocal>
@@ -865,7 +873,7 @@
     </settings>
     <settings>
       <name>ICCSTM8</name>
-      <archiveVersion>1</archiveVersion>
+      <archiveVersion>2</archiveVersion>
       <data>
         <version>8</version>
         <wantNonLocal>1</wantNonLocal>
@@ -1056,7 +1064,7 @@
     </settings>
     <settings>
       <name>ASTM8</name>
-      <archiveVersion>1</archiveVersion>
+      <archiveVersion>2</archiveVersion>
       <data>
         <version>1</version>
         <wantNonLocal>1</wantNonLocal>
@@ -1249,9 +1257,9 @@
     </settings>
     <settings>
       <name>ILINK</name>
-      <archiveVersion>1</archiveVersion>
+      <archiveVersion>2</archiveVersion>
       <data>
-        <version>0</version>
+        <version>1</version>
         <wantNonLocal>1</wantNonLocal>
         <debug>0</debug>
         <option>
@@ -1473,11 +1481,19 @@
           <name>IlinkLogUnusedFragments</name>
           <state>0</state>
         </option>
+        <option>
+          <name>IlinkCrcReverseByteOrder</name>
+          <state>0</state>
+        </option>
+        <option>
+          <name>IlinkCrcUseAsInput</name>
+          <state>1</state>
+        </option>
       </data>
     </settings>
     <settings>
       <name>IARCHIVE</name>
-      <archiveVersion>1</archiveVersion>
+      <archiveVersion>2</archiveVersion>
       <data>
         <version>0</version>
         <wantNonLocal>1</wantNonLocal>
@@ -2332,7 +2348,7 @@
       <name>$PROJ_DIR$\stm8s-periphs\stm8s_clk.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\stm8s-periphs\stm8s_clk.h</name>
+      <name>$PROJ_DIR$\STM8S-PERIPHS\stm8s_clk.h</name>
     </file>
     <file>
       <name>$PROJ_DIR$\stm8s-periphs\stm8s_gpio.c</name>
@@ -2359,7 +2375,7 @@
       <name>$PROJ_DIR$\STM8S-PERIPHS\stm8s_uart2.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\stm8s-periphs\stm8s_uart2.h</name>
+      <name>$PROJ_DIR$\STM8S-PERIPHS\stm8s_uart2.h</name>
     </file>
     <configuration>
       <name>Debug</name>
