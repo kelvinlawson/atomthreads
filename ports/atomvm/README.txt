@@ -33,8 +33,4 @@ testing the Real Time Operating System. However, this test can also run the
 unit tests of atomthreads by using the preprocessor directive "UNIT_TESTS" and 
 linking in the desired unit test into the project.
 
----------------------------------------------------------------------------
 
-FINALLY
-
-Good luck, but most of all, have fun!!
