@@ -29,7 +29,7 @@
 #include "atom.h"
 #include "atomport.h"
 #include "atomvm.h"
-
+#include "windows.h"
 
 /** Forward declarations */
 static void thread_shell (void);
