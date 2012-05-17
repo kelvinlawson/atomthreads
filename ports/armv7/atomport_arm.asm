@@ -61,7 +61,7 @@ ARM_IRQ_MODE_BITS               EQU         0x12
 ;
 contextInit
 
-        BX             lr
+        BX      lr
 
 ;--
 ;  \b contextSwitch
@@ -79,25 +79,25 @@ contextInit
 ;  @return None
 ;
 contextSwitch
-    STMFD	sp!, {r4 - r11, lr}             ;- Save registers
+    STMFD       sp!, {r4 - r11, lr}             ;- Save registers
 
-	;- IF :DEF:CONTEXT_THREAD_ID
-    MRC     p15, 0, r3, c13, c0, 2
-    STMFD	sp!, {r3}
-	;-   ENDIF
+    ;- IF :DEF:CONTEXT_THREAD_ID
+    MRC         p15, 0, r3, c13, c0, 2
+    STMFD       sp!, {r3}
+    ;-   ENDIF
   
-    STR     sp, [r0]                        ;- Save old stack pointer
-	LDR		r1, [r1]						;- Load new stack pointer
-    MOV	    sp, r1                           
+    STR         sp, [r0]                        ;- Save old stack pointer
+    LDR         r1, [r1]                        ;- Load new stack pointer
+    MOV         sp, r1                           
 
-	ISB
+    ISB
 
-	;-   IF :DEF:CONTEXT_THREAD_ID
-    LDMFD	sp!, {r3}
-    MCR     p15, 0, r3, c13, c0, 2
-	;-   ENDIF
+    ;-   IF :DEF:CONTEXT_THREAD_ID
+    LDMFD       sp!, {r3}
+    MCR         p15, 0, r3, c13, c0, 2
+    ;-   ENDIF
 
-    LDMFD	sp!, {r4 - r11, pc}             ;- Load new registers
+    LDMFD       sp!, {r4 - r11, pc}             ;- Load new registers
 
 ;--
 ;  \b contextStart
@@ -109,15 +109,15 @@ contextSwitch
 ;  @return Does not return
 ;
 contextStart
-	LDR		r0, [r0]
-    MOV		sp, r0                             ;- Load new stack pointer
+    LDR         r0, [r0]
+    MOV         sp, r0                          ;- Load new stack pointer
 
-	;-   IF :DEF:CONTEXT_THREAD_ID
-    LDMFD	sp!, {r3}
-    MCR     p15, 0, r3, c13, c0, 2
-	;-   ENDIF
+    ;-   IF :DEF:CONTEXT_THREAD_ID
+    LDMFD       sp!, {r3}
+    MCR         p15, 0, r3, c13, c0, 2
+    ;-   ENDIF
 
-    LDMFD	sp!, {r4 - r11, pc}             ;- Load new registers
+    LDMFD       sp!, {r4 - r11, pc}             ;- Load new registers
 
 ;--
 ;  \b contextId
@@ -127,8 +127,8 @@ contextStart
 ;  @return ID
 ;
 contextId
-    MRC      p15, 0, r0, c13, c0, 2
-    BX       lr
+    MRC         p15, 0, r0, c13, c0, 2
+    BX          lr
 
 ;--
 ;  \b contextEnableInterrupts
@@ -138,11 +138,11 @@ contextId
 ;  @return None
 ;
 contextEnableInterrupts
-    MRS     r0, CPSR
-    MOV     r1, #0x80
-    BIC     r0, r0, r1
-    MSR     CPSR_c, r0
-    BX      lr
+    MRS         r0, CPSR
+    MOV         r1, #0x80
+    BIC         r0, r0, r1
+    MSR         CPSR_c, r0
+    BX          lr
 
 ;--
 ;  \b contextExitCritical
@@ -154,8 +154,8 @@ contextEnableInterrupts
 ;  @return None
 ;
 contextExitCritical
-    MSR 	CPSR_cxsf, r0
-    BX		lr
+    MSR         CPSR_cxsf, r0
+    BX          lr
 
 ;--
 ;  \b contextEnterCritical
@@ -165,10 +165,10 @@ contextExitCritical
 ;  @return Current interrupt posture
 ;
 contextEnterCritical
-    MRS     r0, CPSR
-    ORR     r1, r0, #0x80
-    MSR     CPSR_cxsf, r1
-    BX      lr
+    MRS         r0, CPSR
+    ORR         r1, r0, #0x80
+    MSR         CPSR_cxsf, r1
+    BX          lr
 
 ;--
 ;  \b archIRQHandler
@@ -183,28 +183,28 @@ contextEnterCritical
 ;
 archIRQHandler
 
-    MSR     cpsr_c, #ARM_SVC_MODE    		;- Save current process context in process stack
-    STMFD   sp!, {r0 - r3, ip, lr}
+    MSR         cpsr_c, #ARM_SVC_MODE           ;- Save current process context in process stack
+    STMFD       sp!, {r0 - r3, ip, lr}
 
-    MSR     cpsr_c, #ARM_IRQ_MODE           ;- Save lr_irq and spsr_irq in process stack
-    SUB     lr, lr, #4
-    MOV     r1, lr
-    MRS     r2, spsr
-    MSR     cpsr_c, #ARM_SVC_MODE
-    STMFD   sp!, {r1, r2}
-	
-    BL  	__context_preempt_handler      	;- Dispatch the interrupt to archTickHandler for the timer tick interrupt or a simular function for other interrupts which might call atomthread functions. 
+    MSR         cpsr_c, #ARM_IRQ_MODE           ;- Save lr_irq and spsr_irq in process stack
+    SUB         lr, lr, #4
+    MOV         r1, lr
+    MRS         r2, spsr
+    MSR         cpsr_c, #ARM_SVC_MODE
+    STMFD       sp!, {r1, r2}
+    
+    BL          __context_preempt_handler       ;- Dispatch the interrupt to archTickHandler for the timer tick interrupt or a simular function for other interrupts which might call atomthread functions. 
 
-    LDMFD   sp!, {r1, r2}                   ;- Restore lr_irq and spsr_irq from process stack
-    MSR     cpsr_c, #ARM_IRQ_MODE
-    STMFD   sp!, {r1}
-    MSR     spsr_cxsf, r2
+    LDMFD       sp!, {r1, r2}                   ;- Restore lr_irq and spsr_irq from process stack
+    MSR         cpsr_c, #ARM_IRQ_MODE
+    STMFD       sp!, {r1}
+    MSR         spsr_cxsf, r2
 
-    MSR     cpsr_c, #ARM_SVC_MODE       	;- Restore process regs
-    LDMFD   sp!, {r0 - r3, ip, lr}
+    MSR         cpsr_c, #ARM_SVC_MODE           ;- Restore process regs
+    LDMFD       sp!, {r0 - r3, ip, lr}
 
-    MSR     cpsr_c, #ARM_IRQ_MODE           ;- Exit from IRQ
-    LDMFD   sp!, {pc}^
+    MSR         cpsr_c, #ARM_IRQ_MODE           ;- Exit from IRQ
+    LDMFD       sp!, {pc}^
 
 
 ;--
