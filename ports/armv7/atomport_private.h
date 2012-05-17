@@ -33,5 +33,7 @@
 
 /* Function prototypes */
 extern void        archTickHandler (void) ;
+extern void        archTickInit (void) ;
+extern void        archIRQHandler (void) ;
 
 #endif /* __ATOM_PORT_PRIVATE_H__ */

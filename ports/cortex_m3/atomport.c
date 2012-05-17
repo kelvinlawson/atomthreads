@@ -94,7 +94,7 @@ archThreadContextInit (ATOM_TCB *tcb_ptr, void *stack_top, void (*entry_point)(u
 
     *stack_ptr = 0x01000000L;                       //-- xPSR
     stack_ptr--;
-    *stack_ptr = ((uint32_t)entry_point) | 1;       //-- Entry Point (1 for THUMB mode)
+    *stack_ptr = ((uint32_t)thread_shell) | 1;       //-- Entry Point (1 for THUMB mode)
     stack_ptr--;
     *stack_ptr = ((uint32_t)/*exit*/0) | 1;         //-- R14 (LR)    (1 for THUMB mode)
     stack_ptr--;

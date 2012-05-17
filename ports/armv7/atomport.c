@@ -83,6 +83,7 @@ thread_shell (void)
 void
 archThreadContextInit (ATOM_TCB *tcb_ptr, void *stack_top, void (*entry_point)(uint32_t), uint32_t entry_param)
 {
+    static uint32_t context_thread_id = 0 ;
     uint32_t * stack_ptr ;
 
     tcb_ptr->sp_save_ptr = stack_top;
@@ -91,7 +92,7 @@ archThreadContextInit (ATOM_TCB *tcb_ptr, void *stack_top, void (*entry_point)(u
 
     stack_ptr  = (uint32_t *)stack_top;             //-- Load stack pointer
 
-	*stack_ptr = ( uint32_t ) entry ; 	
+	*stack_ptr = ( uint32_t ) thread_shell ; 	
 	stack_ptr--;
 
 	*stack_ptr = ( uint32_t ) 0x00001111;	/* R11 */
@@ -166,5 +167,20 @@ archTickHandler (void)
     atomIntExit(TRUE);
 }
 
+/**
+ * \b archTickInit
+ *
+ * System timer initialization.
+ *
+ */
+void
+archTickInit (void)
+{
+    /* Initialize NVIC PendSV */
+    contextInit () ;
+
+    /* Initializa Timer Hardware */
+    /* ... */
+}
 
 
