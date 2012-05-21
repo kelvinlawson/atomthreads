@@ -1,5 +1,5 @@
-ATOMTHREADS_PORT = $(COLOSSAL)/libraries/atomthreads/ports/armv7
-ATOMTHREADS_KERNEL = $(COLOSSAL)/libraries/atomthreads/kernel
+ATOMTHREADS_PORT = .../libraries/atomthreads/ports/armv7
+ATOMTHREADS_KERNEL = .../libraries/atomthreads/kernel
 
 INCLUDES := $(INCLUDES) \
 			-I$(ATOMTHREADS_KERNEL) \

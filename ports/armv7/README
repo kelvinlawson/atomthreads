@@ -20,12 +20,12 @@ To Use:
    function called "__context_preempt_handler()" to dispatch the interrupt.
     
 2. Implement the function "__context_preempt_handler()"  
-   from where your platforms interrupt cotroller will be serviced and the 
-   interrupt will be dispatched to a specic interrupt service routine. In  
+   from where your platforms interrupt controller will be serviced and the 
+   interrupt will be dispatched to a specific  interrupt service routine. In  
    the case of your platforms timer tick interrupt call the "archTickHandler()" 
    implemented in "atomport.c".
    
-3. Initialize your platforms timer tick hardware to generata an OS timer tick 
+3. Initialize your platforms timer tick hardware to generate  an OS timer tick 
    interrupt.
    
 4. Add code to acknowledge your timer hardware's interrupt in the
@@ -35,4 +35,4 @@ To Use:
 5. After your platforms c-runtime initialization has completed, start 
    Atomthreads from your runtime's "main()" function.
    
-6. Include the port's Maefile in your platform build flow.
+6. Include the port's Makefile in your platform build flow.
