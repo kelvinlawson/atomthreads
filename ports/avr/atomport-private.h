@@ -30,10 +30,18 @@
 #ifndef __ATOM_PORT_PRIVATE_H
 #define __ATOM_PORT_PRIVATE_H
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /* CPU Frequency */
 #define AVR_CPU_HZ          1000000
 
 /* Function prototypes */
 void avrInitSystemTickTimer ( void );
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* __ATOM_PORT_PRIVATE_H */

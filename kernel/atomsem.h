@@ -30,6 +30,10 @@
 #ifndef __ATOM_SEM_H
 #define __ATOM_SEM_H
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 typedef struct atom_sem
 {
     ATOM_TCB *  suspQ;  /* Queue of threads suspended on this semaphore */
@@ -41,5 +45,9 @@ extern uint8_t atomSemDelete (ATOM_SEM *sem);
 extern uint8_t atomSemGet (ATOM_SEM *sem, int32_t timeout);
 extern uint8_t atomSemPut (ATOM_SEM *sem);
 extern uint8_t atomSemResetCount (ATOM_SEM *sem, uint8_t count);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* __ATOM_SEM_H */

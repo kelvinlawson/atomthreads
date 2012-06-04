@@ -33,6 +33,10 @@
 #include "atomtimer.h"
 #include "atomport.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /* Data types */
 
 /* Forward declaration */
@@ -121,6 +125,10 @@ extern void archThreadContextInit (ATOM_TCB *tcb_ptr, void *stack_top, void (*en
 extern void archFirstThreadRestore(ATOM_TCB *new_tcb_ptr);
 
 extern void atomTimerTick (void);
+
+#ifdef __cplusplus
+}
+#endif
 
 
 #endif /* __ATOM_H */
