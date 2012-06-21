@@ -28,6 +28,9 @@ PART=atmega16
 # must disable stack-checking to run all of the automated tests.
 #STACK_CHECK=true
 
+# Test programs: Log stack usage to UART (if STACK_CHECK is enabled)
+#TESTS_LOG_STACK=true
+
 # Directory for built objects
 BUILD_DIR=build
 
@@ -57,9 +60,12 @@ vpath %.hex ./$(BUILD_DIR)
 # GCC flags
 CFLAGS=-g -mmcu=$(PART) -Wall -Werror
 
-# Enable stack-checking (disable if not required)
+# Enable stack-checking options (disable if not required)
 ifeq ($(STACK_CHECK),true)
 CFLAGS += -DATOM_STACK_CHECKING
+endif
+ifeq ($(TESTS_LOG_STACK),true)
+CFLAGS += -DTESTS_LOG_STACK_USAGE
 endif
 
 

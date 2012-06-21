@@ -66,9 +66,10 @@ can easily replace UISP by your own favourite programmer if required.
 BUILDING THE SOURCE
 
 A Makefile is provided for building the kernel, port and automated tests.
-The full build is carried out using simply:
+The full build is carried out using the following (replacing PART by the
+ATmega device you are using):
 
- * make
+ * make PART=atmega128
 
 All objects are built into the 'build' folder under ports/avr. The build
 process builds separate target applications for each automated test, and
@@ -96,11 +97,12 @@ PROGRAMMING TO THE TARGET DEVICE
 Application HEX files which are built into the build folder can be
 downloaded to the target using:
 
- * make program app=<appname>
+ * make PART=<cpu> program app=<appname>
 
-For example to download the 'sem1.hex' test application to the target use:
+For example to download the 'sem1.hex' test application to an ATmega128
+target use:
 
- * make program app=sem1
+ * make PART=atmega128 program app=sem1
 
 This uses UISP which will write the application into flash and reset the
 CPU to start running the program automatically.
@@ -143,11 +145,11 @@ The full set of tests can be found in the top-level 'tests' folder. Each of
 these tests is built as an independent application in the 'build' folder.
 Run them individually using:
 
- * make program app=testname
+ * make PART=<cpu> program app=<testname>
 
-For example to run the 'kern1.c' test use:
+For example to run the 'kern1.c' test on an ATmega128 device use:
 
- * make program app=kern1
+ * make PART=atmega128 program app=kern1
 
 Before running the program and data size for the application is printed
 out on the terminal. You can use this to verify that your platform has
@@ -204,7 +206,10 @@ a call to your own application startup code.
 PORTING TO OTHER HARDWARE PLATFORMS
 
 If you are using a CPU other than the ATmega16, change the PART definition
-in the Makefile to your own CPU.
+in the Makefile to your own CPU, or specify the PART on the make command
+line using:
+
+ * make PART=atmega128
 
 On CPUs with multiple UARTs, the port uses UART0 to output debug 
 information. If you wish to use an alternative UART you may change the
