@@ -37,7 +37,9 @@ A couple of additional source files are also included here:
 Atomthreads includes a suite of automated tests which prove the key OS
 functionality, and can be used with any architecture ports. This port
 provides an easy mechanism for building, downloading and running the test
-suite to prove the OS on your target.
+suite to prove the OS on your target. You may also use the simavr
+simulator to run the entire test suite and prove the OS without real
+hardware.
 
 The port was carried out and tested on both an ATmega16 and ATmega32
 running within an STK500 board, utilising the gcc-avr tools. It is possible
@@ -188,6 +190,35 @@ functionality if you ever need to make a change to the kernel or port.
 The test application main() is contained in tests-main.c. This initialises
 the OS, creates a main thread, and calls out to the test modules. It also
 initialises the UART driver and redirects stdout via the UART.
+
+
+---------------------------------------------------------------------------
+
+RUNNING TESTS WITHIN THE SIMAVR SIMULATOR
+
+It is also possible to run the full automated test suite in a simulator
+without programming the test applications into real hardware. This is very
+useful for quick verification of the entire test suite after making any
+software changes, and is much faster than download each test application to
+a real target.
+
+A single command runs every single test application, and checks the
+(simulated) UART output to verify that each test case passes.
+
+This requires two applications on your development PC: expect and the
+simavr simulator. You can edit the SIMAVR variable in the Makefile to point
+it at the simavr install location on your PC and then run:
+
+ * make PART=atmega128 simtests
+
+This will run every single test application within the simulator and quit
+immediately if any one test fails. You should pick an ATmega device that is
+supported by the simavr simulator: atmega128 is a good choice.
+
+The ability to run these automated tests in one command (and without real
+hardware) allows you to easily include the OS test suite in your nightly
+build or continous integration system and quickly find out if any of your
+local changes have caused any of the operating system tests to fail.
 
 
 ---------------------------------------------------------------------------

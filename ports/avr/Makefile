@@ -15,6 +15,7 @@ CC=/usr/bin/avr-gcc
 OBJCOPY=/usr/bin/avr-objcopy
 SIZE=/usr/bin/avr-size
 UISP=/usr/bin/uisp
+SIMAVR=/tmp/run_avr
 
 # Modify this to the device name of the UART used for UISP
 UISP_DEV=/dev/ttyUSB0
@@ -121,6 +122,14 @@ program : $(BUILD_DIR)/$(app).hex
 	$(SIZE) -C --mcu=$(PART) $(BUILD_DIR)/$(app).elf
 	$(UISP) -dprog=stk500 -dserial=$(UISP_DEV) -dpart=$(PART) --erase --upload --verify if=$(BUILD_DIR)/$(app).hex
 
+# Generate Doxygen documentation
 doxygen:
 	doxygen $(KERNEL_DIR)/Doxyfile
 	doxygen ./Doxyfile
+
+# Run tests within simavr simulator
+phony_sim_elfs = $(addsuffix .sim, $(TEST_ELFS))
+simtests: $(phony_sim_elfs)
+.PHONY: simtests $(phony_sim_elfs)
+$(phony_sim_elfs):
+	./run_test.exp $(SIMAVR) $(PART) $(BUILD_DIR)/$(basename $@)
