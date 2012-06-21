@@ -1,6 +1,14 @@
 #!/usr/bin/env expect
 
-# Start the test (arguments: <path_to_simavr> <cpu_part> <test_elf_file>)
+# Expect script to run an automated test within the AVR simulator (simavr) and
+# check for successful completion.
+#
+# Arguments: <path_to_simavr> <cpu_part> <test_elf_file>
+#
+# Returns 0 on successful test run within AVR simulator, 1 on failure
+
+
+# Start the test
 spawn [lindex $argv 0] -m [lindex $argv 1] [lindex $argv 2]
 
 # Expect to see the test starting within 10 seconds
