@@ -40,6 +40,10 @@
 /* Definition of NULL is available from stddef.h on this platform */
 #include <stddef.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /* Required number of system ticks per second (normally 100 for 10ms tick) */
 #define SYSTEM_TICKS_PER_SEC            100
 
@@ -67,6 +71,10 @@
 
 /* Uncomment to enable stack-checking */
 /* #define ATOM_STACK_CHECKING */
+
+#ifdef __cplusplus
+}
+#endif
 
 
 #endif /* __ATOM_PORT_H */
