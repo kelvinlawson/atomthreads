@@ -30,6 +30,10 @@
 #ifndef __ATOM_H
 #define __ATOM_H
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include "atomtimer.h"
 #include "atomport.h"
 
@@ -122,5 +126,8 @@ extern void archFirstThreadRestore(ATOM_TCB *new_tcb_ptr);
 
 extern void atomTimerTick (void);
 
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* __ATOM_H */
