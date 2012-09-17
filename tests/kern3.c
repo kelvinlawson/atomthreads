@@ -95,7 +95,7 @@ uint32_t test_start (void)
 
     /* Create low priority thread */
     if (atomThreadCreate (&tcb[0], 253, test_thread_func, 0,
-            &test_thread_stack[0][TEST_THREAD_STACK_SIZE - 1],
+            &test_thread_stack[0][TEST_THREAD_STACK_SIZE - sizeof(uint32_t)],
             TEST_THREAD_STACK_SIZE) != ATOM_OK)
     {
         ATOMLOG (_STR("Bad thread create\n"));
@@ -104,7 +104,7 @@ uint32_t test_start (void)
 
     /* Create high priority thread */
     else if (atomThreadCreate (&tcb[1], 252, test_thread_func, 1,
-            &test_thread_stack[1][TEST_THREAD_STACK_SIZE - 1],
+            &test_thread_stack[1][TEST_THREAD_STACK_SIZE - sizeof(uint32_t)],
             TEST_THREAD_STACK_SIZE) != ATOM_OK)
     {
         ATOMLOG (_STR("Bad thread create\n"));

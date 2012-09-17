@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010, Kelvin Lawson. All rights reserved.
+ * Copyright (c) 2012, Natie van Rooyen. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,21 +27,24 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef __ATOM_TESTS_H
-#define __ATOM_TESTS_H
+#ifndef __ATOMPORT_TEST_H__
+#define __ATOMPORT_TEST_H__
 
 /* Include Atomthreads kernel API */
 #include "atom.h"
 
-/* Include port-specific test configuration */
-#include "atomport-tests.h"
+extern void         dbg_format_msg (char *format, ...) ;
 
 
-/* Default thread priority */
-#define TEST_THREAD_PRIO            16
+#define TEST_THREAD_STACK_SIZE      1024
+#define ATOMLOG                     dbg_format_msg
+#define _STR(x)                     x
+
+
+
 
 /* API for starting each test */
 extern uint32_t test_start (void);
 
 
-#endif /* __ATOM_TESTS_H */
+#endif /* __ATOMPORT_TEST_H__ */

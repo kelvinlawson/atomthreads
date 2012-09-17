@@ -33,14 +33,14 @@
 
 /* *
  *
- * Functions defined in atomport_arm.asm
+ * Functions defined in atomport_s.asm
  *
  */
+typedef void * SYSCONTEXT ;
+
 extern void             contextInit (void) ;
 extern void             contextSwitch (SYSCONTEXT* save_context, SYSCONTEXT* new_context) ;
 extern void             contextStart (SYSCONTEXT* context) ;
-extern uint32_t         contextEnterCritical (void) ;
-extern void             contextExitCritical (uint32_t posture) ;
 extern void             contextEnableInterrupts (void) ;
 
 /**
@@ -83,7 +83,6 @@ thread_shell (void)
 void
 archThreadContextInit (ATOM_TCB *tcb_ptr, void *stack_top, void (*entry_point)(uint32_t), uint32_t entry_param)
 {
-    static uint32_t context_thread_id = 0 ;
     uint32_t * stack_ptr ;
 
     tcb_ptr->sp_save_ptr = stack_top;
@@ -111,10 +110,10 @@ archThreadContextInit (ATOM_TCB *tcb_ptr, void *stack_top, void (*entry_point)(u
 	stack_ptr--;	
 	*stack_ptr = ( uint32_t ) 0x00000404;	/* R4 */
 
-// #ifdef CONTEXT_THREAD_ID
+#ifdef CONTEXT_THREAD_ID
 	stack_ptr--;	
 	*stack_ptr = context_thread_id++ ;	/* thread_id */
-// #endif
+#endif
 
     tcb_ptr->sp_save_ptr = stack_ptr ;
 }

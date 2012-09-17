@@ -138,7 +138,7 @@ uint32_t test_start (void)
     }
 
     else if (atomThreadCreate(&tcb[0], TEST_THREAD_PRIO, test1_thread_func, 0,
-              &test_thread_stack[0][TEST_THREAD_STACK_SIZE - 1],
+              &test_thread_stack[0][TEST_THREAD_STACK_SIZE - sizeof(uint32_t)],
               TEST_THREAD_STACK_SIZE) != ATOM_OK)
     {
         /* Fail */
@@ -201,7 +201,7 @@ uint32_t test_start (void)
     }
 
     else if (atomThreadCreate(&tcb[1], TEST_THREAD_PRIO, test2_thread_func, 0,
-              &test_thread_stack[1][TEST_THREAD_STACK_SIZE - 1],
+              &test_thread_stack[1][TEST_THREAD_STACK_SIZE - sizeof(uint32_t)],
               TEST_THREAD_STACK_SIZE) != ATOM_OK)
     {
         /* Fail */

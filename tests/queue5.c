@@ -115,7 +115,7 @@ uint32_t test_start (void)
 
         /* Create Thread 1 (lower priority thread A) */
         if (atomThreadCreate(&tcb[0], TEST_THREAD_PRIO+1, test_thread_func, 1,
-              &test_thread_stack[0][TEST_THREAD_STACK_SIZE - 1],
+              &test_thread_stack[0][TEST_THREAD_STACK_SIZE - sizeof(uint32_t)],
               TEST_THREAD_STACK_SIZE) != ATOM_OK)
         {
             /* Fail */
@@ -128,7 +128,7 @@ uint32_t test_start (void)
 
         /* Create Thread 2 (lower priority thread B) */
         if (atomThreadCreate(&tcb[1], TEST_THREAD_PRIO+1, test_thread_func, 2,
-              &test_thread_stack[1][TEST_THREAD_STACK_SIZE - 1],
+              &test_thread_stack[1][TEST_THREAD_STACK_SIZE - sizeof(uint32_t)],
               TEST_THREAD_STACK_SIZE) != ATOM_OK)
         {
             /* Fail */
@@ -141,7 +141,7 @@ uint32_t test_start (void)
 
         /* Create Thread 3 (higher priority thread A) */
         if (atomThreadCreate(&tcb[2], TEST_THREAD_PRIO, test_thread_func, 3,
-              &test_thread_stack[2][TEST_THREAD_STACK_SIZE - 1],
+              &test_thread_stack[2][TEST_THREAD_STACK_SIZE - sizeof(uint32_t)],
               TEST_THREAD_STACK_SIZE) != ATOM_OK)
         {
             /* Fail */
@@ -154,7 +154,7 @@ uint32_t test_start (void)
 
         /* Create Thread 4 (higher priority thread B) */
         if (atomThreadCreate(&tcb[3], TEST_THREAD_PRIO, test_thread_func, 4,
-              &test_thread_stack[3][TEST_THREAD_STACK_SIZE - 1],
+              &test_thread_stack[3][TEST_THREAD_STACK_SIZE - sizeof(uint32_t)],
               TEST_THREAD_STACK_SIZE) != ATOM_OK)
         {
             /* Fail */

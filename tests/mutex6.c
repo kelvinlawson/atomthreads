@@ -100,7 +100,7 @@ uint32_t test_start (void)
 
         /* Create second thread */
         if (atomThreadCreate(&tcb[0], TEST_THREAD_PRIO, test_thread_func, 1,
-              &test_thread_stack[0][TEST_THREAD_STACK_SIZE - 1],
+              &test_thread_stack[0][TEST_THREAD_STACK_SIZE - sizeof(uint32_t)],
               TEST_THREAD_STACK_SIZE) != ATOM_OK)
         {
             /* Fail */

@@ -107,7 +107,7 @@ uint32_t test_start (void)
 
     /* Create a test thread that will block because the queue is empty */
     else if (atomThreadCreate(&tcb[0], TEST_THREAD_PRIO + 1, test1_thread_func, 0,
-              &test_thread_stack[0][TEST_THREAD_STACK_SIZE - 1],
+              &test_thread_stack[0][TEST_THREAD_STACK_SIZE - sizeof(uint32_t)],
               TEST_THREAD_STACK_SIZE) != ATOM_OK)
     {
         /* Fail */

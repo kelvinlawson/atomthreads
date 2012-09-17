@@ -1,5 +1,5 @@
-ATOMTHREADS_PORT = .../libraries/atomthreads/ports/armv7
-ATOMTHREADS_KERNEL = .../libraries/atomthreads/kernel
+ATOMTHREADS_PORT = $(ATOMTHREADS)/ports/arm
+ATOMTHREADS_KERNEL = $(ATOMTHREADS)/kernel
 
 INCLUDES := $(INCLUDES) \
 			-I$(ATOMTHREADS_KERNEL) \
@@ -14,6 +14,6 @@ SRCS := $(SRCS) \
 		$(ATOMTHREADS_PORT)/atomport.c
 
 ASMS := $(ASMS) \
-		$(ATOMTHREADS_PORT)/atomport_arm.asm
-			
-		
+		$(ATOMTHREADS_PORT)/atomport_s.S
+
+

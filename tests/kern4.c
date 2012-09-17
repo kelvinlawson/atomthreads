@@ -97,28 +97,28 @@ uint32_t test_start (void)
      * a spell in which this thread was run.
      */
     if (atomThreadCreate (&tcb[0], TEST_THREAD_PRIO + 1, test_thread_func, 0,
-            &test_thread_stack[0][TEST_THREAD_STACK_SIZE - 1],
+            &test_thread_stack[0][TEST_THREAD_STACK_SIZE - sizeof(uint32_t)],
             TEST_THREAD_STACK_SIZE) != ATOM_OK)
     {
         ATOMLOG (_STR("Bad thread create\n"));
         failures++;
     }
     else if (atomThreadCreate (&tcb[1], TEST_THREAD_PRIO + 1, test_thread_func, 1,
-            &test_thread_stack[1][TEST_THREAD_STACK_SIZE - 1],
+            &test_thread_stack[1][TEST_THREAD_STACK_SIZE - sizeof(uint32_t)],
             TEST_THREAD_STACK_SIZE) != ATOM_OK)
     {
         ATOMLOG (_STR("Bad thread create\n"));
         failures++;
     }
     else if (atomThreadCreate (&tcb[2], TEST_THREAD_PRIO + 1, test_thread_func, 2,
-            &test_thread_stack[2][TEST_THREAD_STACK_SIZE - 1],
+            &test_thread_stack[2][TEST_THREAD_STACK_SIZE - sizeof(uint32_t)],
             TEST_THREAD_STACK_SIZE) != ATOM_OK)
     {
         ATOMLOG (_STR("Bad thread create\n"));
         failures++;
     }
     else if (atomThreadCreate (&tcb[3], TEST_THREAD_PRIO + 1, test_thread_func, 3,
-            &test_thread_stack[3][TEST_THREAD_STACK_SIZE - 1],
+            &test_thread_stack[3][TEST_THREAD_STACK_SIZE - sizeof(uint32_t)],
             TEST_THREAD_STACK_SIZE) != ATOM_OK)
     {
         ATOMLOG (_STR("Bad thread create\n"));
