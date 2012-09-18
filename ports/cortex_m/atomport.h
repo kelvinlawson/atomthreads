@@ -30,10 +30,9 @@
 #ifndef __ATOM_PORT_H__
 #define __ATOM_PORT_H__
 
-#include "arch/context.h"
 #include "types.h"
 
-#define SYSTEM_TICKS_PER_SEC            1000
+#define SYSTEM_TICKS_PER_SEC            100
 
 
 /**
@@ -43,12 +42,18 @@
  */
 #define POINTER                void *
 
+/* *
+ *
+ * Functions defined in atomport_arm.asm
+ *
+ */
+extern uint32_t         contextEnterCritical (void) ;
+extern void             contextExitCritical (uint32_t posture) ;
+
 
 /* Critical region protection */
-
 #define CRITICAL_STORE          uint32_t __atom_critical
 #define CRITICAL_START()        __atom_critical = contextEnterCritical()
 #define CRITICAL_END()          contextExitCritical(__atom_critical)
-
 
 #endif /* __ATOM_PORT_H__ */

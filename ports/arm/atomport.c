@@ -33,7 +33,7 @@
 
 /* *
  *
- * Functions defined in atomport_s.asm
+ * Functions defined in atomport_s.S
  *
  */
 typedef void * SYSCONTEXT ;

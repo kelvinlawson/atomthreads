@@ -33,15 +33,14 @@
 
 /* *
  *
- * Functions defined in atomport_arm.asm
+ * Functions defined in atomport_s.S
  *
  */
+typedef void * SYSCONTEXT ;
+
 extern void             contextInit (void) ;
 extern void             contextSwitch (SYSCONTEXT* save_context, SYSCONTEXT* new_context) ;
 extern void             contextStart (SYSCONTEXT* context) ;
-extern uint32_t         contextCreate (SYSCONTEXT* context, uint32_t stack_top, uint32_t entry) ;
-extern uint32_t         contextEnterCritical (void) ;
-extern void             contextExitCritical (uint32_t posture) ;
 extern void             contextEnableInterrupts (void) ;
 
 /**
