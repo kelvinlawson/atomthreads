@@ -73,8 +73,6 @@ test_thread (uint32_t param)
 int
 main (void)
 {
-    uint32_t failures ;
-
     printf ("atomthreads starting %s... ", ATOMTHREADS_TEST) ;
 
 	atomOSInit(&idle_stack[0], IDLE_STACK_BYTE_SIZE, TRUE) ;
