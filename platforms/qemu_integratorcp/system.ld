@@ -57,8 +57,12 @@ SECTIONS
 	_end_bss = .;
 	__bss_end__ = . ;
 
-	. = ALIGN(256);
+	. = ALIGN(8);
+	heap_low = .; /* for _sbrk */
+	. = . + 0x10000; /* 64kB of heap memory */
+	heap_top = .; /* for _sbrk */
 
+	. = ALIGN(256);
 	
 	.stack : {
 	__stack_start__ = . ;
@@ -83,12 +87,10 @@ SECTIONS
 	__stack_end__ = .;
 	} >sram	
 
-
 	/*DISCARD : 
 	{
 		*(.eh_*)
 	}*/
 }
-
 _end = .;
 PROVIDE(end = .);
