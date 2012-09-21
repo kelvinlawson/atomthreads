@@ -27,13 +27,17 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef __ATOM_PORT_H__
-#define __ATOM_PORT_H__
+#ifndef __ATOM_PORT_H
+#define __ATOM_PORT_H
 
+#include <stddef.h>
 #include "types.h"
 
+/* Required number of system ticks per second (normally 100 for 10ms tick) */
 #define SYSTEM_TICKS_PER_SEC            100
 
+/* Size of each stack entry / stack alignment size (e.g. 8 bits) */
+#define STACK_ALIGN_SIZE                sizeof(uint32_t)
 
 /**
  * Architecture-specific types.
@@ -44,7 +48,7 @@
 
 /* *
  *
- * Functions defined in atomport_arm.asm
+ * Functions defined in atomport_arm.S
  *
  */
 extern uint32_t         contextEnterCritical (void) ;
@@ -56,4 +60,8 @@ extern void             contextExitCritical (uint32_t posture) ;
 #define CRITICAL_START()        __atom_critical = contextEnterCritical()
 #define CRITICAL_END()          contextExitCritical(__atom_critical)
 
-#endif /* __ATOM_PORT_H__ */
+
+/* Uncomment to enable stack-checking */
+/* #define ATOM_STACK_CHECKING */
+
+#endif /* __ATOM_PORT_H */
