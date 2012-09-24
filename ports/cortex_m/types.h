@@ -40,5 +40,14 @@ typedef int					        int32_t ;
 typedef short				        int16_t ;
 typedef char				        int8_t ;
 
+#ifndef OFFSETOF
+#define OFFSETOF(TYPE, MEMBER) ((int) &((TYPE *)0)->MEMBER)
+#endif
+
+#ifndef INLINE
+#define INLINE  __inline
+#endif
+
+
 #endif /* __TYPES_H__ */
 

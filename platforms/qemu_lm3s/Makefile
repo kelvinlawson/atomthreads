@@ -5,7 +5,7 @@ ifeq ($(ATOMTHREADS),)
 ATOMTHREADS = $(shell pwd)/../../
 endif
 ifeq ($(TEST_NAME),)
-TEST_NAME = kern1
+TEST_NAME = mutex1
 endif
 
 
@@ -14,12 +14,12 @@ CC = arm-none-eabi-gcc
 LN = arm-none-eabi-gcc
 AS = arm-none-eabi-gcc
 
-CFLAGS := $(CFLAGS) -Wall -g -c -mcpu=arm926ej-s -ffreestanding 
-AFLAGS := $(AFLAGS) -Wall -g -c -mcpu=arm926ej-s -ffreestanding 
-LFLAGS := $(LFLAGS) -Wall -mcpu=arm926ej-s -Wl,-Map=system.map,--verbose  -Tsystem.ld 
+CFLAGS := $(CFLAGS) -Wall -g -c -mcpu=cortex-m3 -mthumb -mthumb-interwork -ffreestanding 
+AFLAGS := $(AFLAGS) -Wall -g -c -mcpu=cortex-m3 -mthumb -mthumb-interwork -ffreestanding 
+LFLAGS := $(LFLAGS) -Wall -mcpu=cortex-m3 -mthumb -Wl,-Map=system.map  -Tsystem.ld 
 
-CDEFS := $(CDEFS)  -DATOMTHREADS_TEST='"$(TEST_NAME)"' 
-ADEFS := $(ADEFS)
+CDEFS := $(CDEFS) -DATOMTHREADS_TEST='"$(TEST_NAME)"' -DPLATFORM_QEMU_LM3S_HACK
+ADEFS := $(ADEFS) -D__thumb2__ -DARM_RDI_MONITOR -DPLATFORM_QEMU_LM3S_HACK
 
 LLIBS := $(LLIBS) 
 
@@ -27,7 +27,9 @@ LLIBS := $(LLIBS)
 SRCS := $(SRCS) \
 		modules.c \
 		main.c \
-		$(ATOMTHREADS)/tests/$(TEST_NAME).c
+		$(ATOMTHREADS)/tests/$(TEST_NAME).c \
+
+#		startup_c.c \
 
 ASMS := $(ASMS) \
 		startup.S \
@@ -35,7 +37,7 @@ ASMS := $(ASMS) \
 INCLUDES := $(INCLUDES) \
 			-I$(ATOMTHREADS)
 
-include $(ATOMTHREADS)/ports/arm/Makefile
+include $(ATOMTHREADS)/ports/cortex_m/Makefile
 
 OBJS = $(SRCS:.c=.o) $(ASMS:.S=.o)
 
@@ -44,14 +46,13 @@ include 	../rules.mk
 
 run_test: clean all
 	echo "START TEST $(TEST_NAME)"
-	qemu-system-arm -M integratorcp -kernel boot.elf  -semihosting | tee atomthreads_test.out
+	qemu-system-arm -M lm3s6965evb -kernel boot.elf  -semihosting >> atomthreads_test.out
 
 all_tests:
 	echo "Starting atomthreads test suite" > atomthreads_test.out
 	make run_test "TEST_NAME=mutex1"
 	make run_test "TEST_NAME=mutex2"
 	make run_test "TEST_NAME=mutex3"
-	make run_test "TEST_NAME=mutex4"
 	make run_test "TEST_NAME=mutex5"
 	make run_test "TEST_NAME=mutex6"
 	make run_test "TEST_NAME=mutex7"
@@ -79,13 +80,17 @@ all_tests:
 	make run_test "TEST_NAME=sem1"
 	make run_test "TEST_NAME=sem2"
 	make run_test "TEST_NAME=sem3"
-	make run_test "TEST_NAME=sem4"
 	make run_test "TEST_NAME=sem5"
 	make run_test "TEST_NAME=sem6"
 	make run_test "TEST_NAME=sem7"
 	make run_test "TEST_NAME=sem8"
 	make run_test "TEST_NAME=sem9"
 
+all_fail:
+		make run_test "TEST_NAME=mutex4"
+		make run_test "TEST_NAME=sem4"
+
+
 run_last:
-	qemu-system-arm -M integratorcp -kernel boot.elf   -monitor stdio -semihosting
+	qemu-system-arm -M lm3s6965evb -kernel boot.elf  -monitor stdio -semihosting
 

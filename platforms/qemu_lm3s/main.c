@@ -26,28 +26,64 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
+#include <stdio.h>
+#include "modules.h"
+#include "atom.h"
+#include "tests/atomtests.h"
 
-#ifndef __TYPES_H__
-#define __TYPES_H__
-
-typedef unsigned int		        uintptr_t ;
-typedef int					        intptr_t ;
-typedef unsigned long long		    uint64_t ;
-typedef unsigned int		        uint32_t ;
-typedef unsigned short		        uint16_t ;
-typedef unsigned char		        uint8_t ;
-typedef int					        int32_t ;
-typedef short				        int16_t ;
-typedef char				        int8_t ;
-
-#ifndef OFFSETOF
-#define OFFSETOF(TYPE, MEMBER) ((int) &((TYPE *)0)->MEMBER)
+#ifndef ATOMTHREADS_TEST
+#define ATOMTHREADS_TEST                "kern1"
 #endif
 
-#ifndef INLINE
-#define INLINE  __inline
-#endif
+#define TEST_STACK_BYTE_SIZE            1024
+#define IDLE_STACK_BYTE_SIZE            512
+
+static unsigned char	test_stack[TEST_STACK_BYTE_SIZE] ;
+static unsigned char	idle_stack[IDLE_STACK_BYTE_SIZE] ;
+ATOM_TCB				test_tcb ;
 
 
-#endif /* __TYPES_H__ */
+
+/**
+ * \b test_thread
+ *
+ * Function calling the test function of the Atomthreads test suite.
+ *
+ */
+void
+test_thread (uint32_t param)
+{
+    uint32_t failures ;
+    CRITICAL_STORE ;
+
+    failures = test_start ()  ;
+
+    atomTimerDelay (10) ;
+    CRITICAL_START() ;
+    printf ("%s %s\r\n", ATOMTHREADS_TEST, failures ? "FAIL" : "PASS") ;
+    exit (failures) ;
+    CRITICAL_END() ;
+}
+
+
+/**
+ * \b main
+ *
+ * Initialize atomthreads and start a test_thread to run the Atomthreads test suite. 
+ *
+ */
+int
+main (void)
+{
+    int i = 0 ;
+
+    uint32_t failures ;
+    printf ("atomthreads starting %s... \r\n", ATOMTHREADS_TEST) ;
+
+    atomOSInit(&idle_stack[IDLE_STACK_BYTE_SIZE - sizeof(unsigned int)], IDLE_STACK_BYTE_SIZE - sizeof(unsigned int)) ;
+    atomThreadCreate ((ATOM_TCB *)&test_tcb, TEST_THREAD_PRIO, test_thread, 0, &test_stack[(TEST_STACK_BYTE_SIZE) - sizeof(unsigned int)], TEST_STACK_BYTE_SIZE  - sizeof(unsigned int));
+    atomOSStart() ;
+
+    return 0 ;
+}
 

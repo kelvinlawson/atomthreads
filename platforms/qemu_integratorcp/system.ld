@@ -84,10 +84,6 @@ SECTIONS
 	} >sram	
 
 
-	/*DISCARD : 
-	{
-		*(.eh_*)
-	}*/
 }
 
 _end = .;

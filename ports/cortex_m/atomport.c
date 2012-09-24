@@ -38,7 +38,6 @@
  */
 typedef void * SYSCONTEXT ;
 
-extern void             contextInit (void) ;
 extern void             contextSwitch (SYSCONTEXT* save_context, SYSCONTEXT* new_context) ;
 extern void             contextStart (SYSCONTEXT* context) ;
 extern void             contextEnableInterrupts (void) ;
@@ -93,7 +92,11 @@ archThreadContextInit (ATOM_TCB *tcb_ptr, void *stack_top, void (*entry_point)(u
 
     *stack_ptr = 0x01000000L;                       //-- xPSR
     stack_ptr--;
-    *stack_ptr = ((uint32_t)thread_shell) | 1;       //-- Entry Point (1 for THUMB mode)
+#ifndef PLATFORM_QEMU_LM3S_HACK
+    *stack_ptr = ((uint32_t)thread_shell) | 1 ;       //-- Entry Point (1 for THUMB mode)
+#else
+    *stack_ptr = ((uint32_t)thread_shell) & ~1 ;       //-- Entry Point (1 for THUMB mode)
+#endif
     stack_ptr--;
     *stack_ptr = ((uint32_t)/*exit*/0) | 1;         //-- R14 (LR)    (1 for THUMB mode)
     stack_ptr--;
@@ -159,20 +162,20 @@ archContextSwitch (ATOM_TCB * p_sp_old, ATOM_TCB * p_sp_new)
  * System timer tick interrupt handler.
  *
  */
-void
-archTickHandler (void)
-{
-    atomIntEnter();
-
-    /* Call the OS system tick handler */
-    atomTimerTick();
-
-    /* ack the interrupt if needed */
-    /* ... */
-
-    /* Call the interrupt exit routine */
-    atomIntExit(TRUE);
-}
+//void
+//archTickHandler (void)
+//{
+//    atomIntEnter();
+//
+//    /* Call the OS system tick handler */
+//    atomTimerTick();
+//
+//    /* ack the interrupt if needed */
+//    /* ... */
+//
+//    /* Call the interrupt exit routine */
+//    atomIntExit(TRUE);
+//}
 
 /**
  * \b archTickInit
@@ -180,14 +183,14 @@ archTickHandler (void)
  * System timer initialization.
  *
  */
-void
-archTickInit (void)
-{
-    /* Initialize NVIC PendSV */
-    contextInit () ;
-
-    /* Initializa Timer Hardware */
-    /* ... */
-}
+//void
+//archTickInit (void)
+//{
+//    /* Initialize NVIC PendSV */
+//    contextInit () ;
+//
+//    /* Initializa Timer Hardware */
+//    /* ... */
+//}
 
 
