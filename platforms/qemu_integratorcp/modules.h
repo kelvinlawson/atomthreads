@@ -59,21 +59,21 @@ typedef struct ICP_TIMER_S {
 // -------- ICP_TIMER_LOAD : (LOAD Offset: 0x00) Load value for Timer -------- 
 // -------- ICP_TIMER_VALUE : (LOAD Offset: 0x04) The current value for Timer -------- 
 // -------- ICP_TIMER_CONTROL : (CONTROL Offset: 0x04) Timer control register -------- 
-#define ICP_TIMER_CONTROL_MASK                 ((unsigned int)0x0F << 0)		// Timer control mask
-    #define ICP_TIMER_CONTROL_ENABLE           ((unsigned int)0x01 << 7)		// Timer enable: 0 = disabled 1 = enabled.
-    #define ICP_TIMER_CONTROL_MODE             ((unsigned int)0x01 << 6)		// Timer mode: 0 = free running, counts once and then wraps to 0xFFFF 1 = periodic, reloads from load register at the end of each count..
-    #define ICP_TIMER_CONTROL_IE               ((unsigned int)0x01 << 5)		// Interrupt enable.
-    #define ICP_TIMER_CONTROL_R                ((unsigned int)0x01 << 4)		// Unused, always write as 0s.
-    #define ICP_TIMER_CONTROL_PRESCALE_MASK    ((unsigned int)0x03 << 2)		// Prescale divisor
-    #define ICP_TIMER_CONTROL_PRESCALE_NONE    ((unsigned int)0x00 << 2)		// 
-    #define ICP_TIMER_CONTROL_PRESCALE_16      ((unsigned int)0x01 << 2)		// 
-    #define ICP_TIMER_CONTROL_PRESCALE_256     ((unsigned int)0x02 << 2)		// 
-#define ICP_TIMER_CONTROL_TIMER_SIZE           ((unsigned int)0x01 << 1)		// Selects 16/32 bit counter operation: 0 = 16-bit counter (default) 1 = 32-bit counter For 16-bit mode, write the high 16 bits of the 32-bit value as 0.
-#define ICP_TIMER_CONTROL_ONE_SHOT             ((unsigned int)0x01 << 0)		// Selects one-shot or wrapping counter mode: 0 = wrapping mode (default) 1 = one-shot mode
+#define ICP_TIMER_CONTROL_MASK                 ((unsigned int)0x0F << 0)        // Timer control mask
+    #define ICP_TIMER_CONTROL_ENABLE           ((unsigned int)0x01 << 7)        // Timer enable: 0 = disabled 1 = enabled.
+    #define ICP_TIMER_CONTROL_MODE             ((unsigned int)0x01 << 6)        // Timer mode: 0 = free running, counts once and then wraps to 0xFFFF 1 = periodic, reloads from load register at the end of each count..
+    #define ICP_TIMER_CONTROL_IE               ((unsigned int)0x01 << 5)        // Interrupt enable.
+    #define ICP_TIMER_CONTROL_R                ((unsigned int)0x01 << 4)        // Unused, always write as 0s.
+    #define ICP_TIMER_CONTROL_PRESCALE_MASK    ((unsigned int)0x03 << 2)        // Prescale divisor
+    #define ICP_TIMER_CONTROL_PRESCALE_NONE    ((unsigned int)0x00 << 2)        // 
+    #define ICP_TIMER_CONTROL_PRESCALE_16      ((unsigned int)0x01 << 2)        // 
+    #define ICP_TIMER_CONTROL_PRESCALE_256     ((unsigned int)0x02 << 2)        // 
+#define ICP_TIMER_CONTROL_TIMER_SIZE           ((unsigned int)0x01 << 1)        // Selects 16/32 bit counter operation: 0 = 16-bit counter (default) 1 = 32-bit counter For 16-bit mode, write the high 16 bits of the 32-bit value as 0.
+#define ICP_TIMER_CONTROL_ONE_SHOT             ((unsigned int)0x01 << 0)        // Selects one-shot or wrapping counter mode: 0 = wrapping mode (default) 1 = one-shot mode
 // -------- ICP_TIMER_INTCLR : (INTCLR Offset: 0x0C) Timer interrupt clear -------- 
 // -------- ICP_TIMER_RIS : (RIS Offset: 0x10) Timer raw interrupt status -------- 
 // -------- ICP_TIMER_MIS : (MIS Offset: 0x14) Timer masked interrupt status -------- 
-#define ICP_TIMER_INT                          ((unsigned int)0x01 << 0)		// Interrupt
+#define ICP_TIMER_INT                          ((unsigned int)0x01 << 0)        // Interrupt
 // -------- ICP_TIMER_BGLOAD : (BGLOAD Offset: 0x18) Timer masked interrupt status -------- 
 
 
@@ -100,19 +100,19 @@ typedef struct ICP_PIC_S {
 // -------- ICP_PIC_IRQ_RAWSTAT : (IRQ_RAWSTAT Offset: 0x04) IRQ raw interrupt status -------- 
 // -------- ICP_PIC_IRQ_ENABLESET : (IRQ_ENABLESET Offset: 0x08) IRQ enable set -------- 
 // -------- ICP_PIC_IRQ_ENABLECLR : (IRQ_ENABLECLR Offset: 0x0C) IRQ enable clear -------- 
-#define ICP_PIC_IRQ_MASK                 ((unsigned int)0x3FFFFF << 0)		// IRQ mask
-    #define ICP_PIC_IRQ_TIMERINT2           ((unsigned int)0x01 << 7)		// TIMERINT2 Counter-timer 2 interrupt
-    #define ICP_PIC_IRQ_TIMERINT1           ((unsigned int)0x01 << 6)		// TIMERINT1 Counter-timer 1 interrupt
-    #define ICP_PIC_IRQ_TIMERINT0           ((unsigned int)0x01 << 5)		// TIMERINT0 Counter-timer 0 interrupt
-    #define ICP_PIC_IRQ_SOFTINT             ((unsigned int)0x01 << 0)		// OFTINT Software interrupt
+#define ICP_PIC_IRQ_MASK                       ((unsigned int)0x3FFFFF << 0)    // IRQ mask
+    #define ICP_PIC_IRQ_TIMERINT2              ((unsigned int)0x01 << 7)        // TIMERINT2 Counter-timer 2 interrupt
+    #define ICP_PIC_IRQ_TIMERINT1              ((unsigned int)0x01 << 6)        // TIMERINT1 Counter-timer 1 interrupt
+    #define ICP_PIC_IRQ_TIMERINT0              ((unsigned int)0x01 << 5)        // TIMERINT0 Counter-timer 0 interrupt
+    #define ICP_PIC_IRQ_SOFTINT                ((unsigned int)0x01 << 0)        // OFTINT Software interrupt
 // -------- ICP_PIC_INT_SOFTSET : (INT_SOFTSET Offset: 0x10) Software interrupt set -------- 
 // -------- ICP_PIC_INT_SOFTCLR : (INT_SOFTCLR Offset: 0x14) Software interrupt clear -------- 
 
 
 
 /* module definitions */
-#define BOARD_BASE_ADDRESS_TIMER_0                      0x13000000 
-#define BOARD_BASE_ADDRESS_PIC                          0x14000000 
+#define BOARD_BASE_ADDRESS_TIMER_0             0x13000000 
+#define BOARD_BASE_ADDRESS_PIC                 0x14000000 
 
 extern ICP_TIMER_T*       const                board_timer_0 ;
 extern ICP_PIC_T*         const                board_pic ;

@@ -5,10 +5,6 @@
 .extern __fiq_stack_top__
 .extern __svc_stack_top__
 
-.global bsp_ints_enable
-.global bsp_ints_disable
-.global bsp_ints_restore
-
 
 .equ USR_MODE,            0x10
 .equ FIQ_MODE,            0x11

@@ -49,13 +49,13 @@ GPTM_TIMER_T *            const           board_gptm0          = (GPTM_TIMER_T*)
 void 
 dbg_format_msg (char *format, ...)
 {
-	va_list			args;
-	static char		msg[256] ;
+    va_list			args;
+    static char		msg[256] ;
     CRITICAL_STORE ;
 
     va_start (args, format) ;
     CRITICAL_START() ;
-	vsnprintf ((char*)msg, 256, (char*)format, args) ;
+    vsnprintf ((char*)msg, 256, (char*)format, args) ;
     printf (msg) ;
     CRITICAL_END() ;
 
@@ -92,7 +92,7 @@ low_level_init (void)
 
 
 /**
- * \b __context_preempt_handler
+ * \b __context_tick_handler
  *
  * System timer tic interupt handler.
  *
@@ -113,44 +113,50 @@ __context_tick_handler (void)
 
 }
 
+/**
+ * \b dbg_hard_fault_handler_c
+ *
+ * Dumps the registers pushed on the stack after a fault.
+ *
+ */
 void
 dbg_hard_fault_handler_c (unsigned int * hardfault_args)
 {
-  unsigned int stacked_r0;
-  unsigned int stacked_r1;
-  unsigned int stacked_r2;
-  unsigned int stacked_r3;
-  unsigned int stacked_r12;
-  unsigned int stacked_lr;
-  unsigned int stacked_pc;
-  unsigned int stacked_psr;
- 
-  stacked_r0 = ((unsigned long) hardfault_args[0]);
-  stacked_r1 = ((unsigned long) hardfault_args[1]);
-  stacked_r2 = ((unsigned long) hardfault_args[2]);
-  stacked_r3 = ((unsigned long) hardfault_args[3]);
- 
-  stacked_r12 = ((unsigned long) hardfault_args[4]);
-  stacked_lr = ((unsigned long) hardfault_args[5]);
-  stacked_pc = ((unsigned long) hardfault_args[6]);
-  stacked_psr = ((unsigned long) hardfault_args[7]);
- 
-  printf ("\r\n\r\n[Hard fault handler - all numbers in hex]\r\n");
-  printf ("SP = 0x%x\r\n", hardfault_args);
-  printf ("R0 = 0x%x\r\n", stacked_r0);
-  printf ("R1 = 0x%x\r\n", stacked_r1);
-  printf ("R2 = 0x%x\r\n", stacked_r2);
-  printf ("R3 = 0x%x\r\n", stacked_r3);
-  printf ("R12 = 0x%x\r\n", stacked_r12);
-  printf ("LR [R14] = 0x%x  subroutine call return address\r\n", stacked_lr);
-  printf ("PC [R15] = 0x%x  program counter\r\n", stacked_pc);
-  printf ("PSR = 0x%x\r\n", stacked_psr);
-  //printf ("BFAR = 0x%x\r\n", (*((volatile unsigned long *)(0xE000ED38))));
-  //printf ("CFSR = 0x%x\r\n", (*((volatile unsigned long *)(0xE000ED28))));
-  //printf ("HFSR = 0x%x\r\n", (*((volatile unsigned long *)(0xE000ED2C))));
-  //printf ("DFSR = 0x%x\r\n", (*((volatile unsigned long *)(0xE000ED30))));
-  //printf ("AFSR = 0x%x\r\n", (*((volatile unsigned long *)(0xE000ED3C))));
-  // printf ("SCB_SHCSR = %x\n", SCB->SHCSR);
+    unsigned int stacked_r0;
+    unsigned int stacked_r1;
+    unsigned int stacked_r2;
+    unsigned int stacked_r3;
+    unsigned int stacked_r12;
+    unsigned int stacked_lr;
+    unsigned int stacked_pc;
+    unsigned int stacked_psr;
+    
+    stacked_r0 = ((unsigned long) hardfault_args[0]);
+    stacked_r1 = ((unsigned long) hardfault_args[1]);
+    stacked_r2 = ((unsigned long) hardfault_args[2]);
+    stacked_r3 = ((unsigned long) hardfault_args[3]);
+    
+    stacked_r12 = ((unsigned long) hardfault_args[4]);
+    stacked_lr = ((unsigned long) hardfault_args[5]);
+    stacked_pc = ((unsigned long) hardfault_args[6]);
+    stacked_psr = ((unsigned long) hardfault_args[7]);
+    
+    printf ("\r\n\r\n[Hard fault handler - all numbers in hex]\r\n");
+    printf ("SP = 0x%x\r\n", hardfault_args);
+    printf ("R0 = 0x%x\r\n", stacked_r0);
+    printf ("R1 = 0x%x\r\n", stacked_r1);
+    printf ("R2 = 0x%x\r\n", stacked_r2);
+    printf ("R3 = 0x%x\r\n", stacked_r3);
+    printf ("R12 = 0x%x\r\n", stacked_r12);
+    printf ("LR [R14] = 0x%x  subroutine call return address\r\n", stacked_lr);
+    printf ("PC [R15] = 0x%x  program counter\r\n", stacked_pc);
+    printf ("PSR = 0x%x\r\n", stacked_psr);
+    //printf ("BFAR = 0x%x\r\n", (*((volatile unsigned long *)(0xE000ED38))));
+    //printf ("CFSR = 0x%x\r\n", (*((volatile unsigned long *)(0xE000ED28))));
+    //printf ("HFSR = 0x%x\r\n", (*((volatile unsigned long *)(0xE000ED2C))));
+    //printf ("DFSR = 0x%x\r\n", (*((volatile unsigned long *)(0xE000ED30))));
+    //printf ("AFSR = 0x%x\r\n", (*((volatile unsigned long *)(0xE000ED3C))));
+    // printf ("SCB_SHCSR = %x\n", SCB->SHCSR);
  
   while (1);
 
