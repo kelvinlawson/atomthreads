@@ -15,6 +15,7 @@ CC=/usr/bin/avr-gcc
 OBJCOPY=/usr/bin/avr-objcopy
 SIZE=/usr/bin/avr-size
 UISP=/usr/bin/uisp
+SIMAVR=/tmp/run_avr
 
 # Modify this to the device name of the UART used for UISP
 UISP_DEV=/dev/ttyUSB0
@@ -27,6 +28,9 @@ PART=atmega16
 # using a device with 1KB internal SRAM and no external SRAM then you
 # must disable stack-checking to run all of the automated tests.
 #STACK_CHECK=true
+
+# Test programs: Log stack usage to UART (if STACK_CHECK is enabled)
+#TESTS_LOG_STACK=true
 
 # Directory for built objects
 BUILD_DIR=build
@@ -57,9 +61,12 @@ vpath %.hex ./$(BUILD_DIR)
 # GCC flags
 CFLAGS=-g -mmcu=$(PART) -Wall -Werror
 
-# Enable stack-checking (disable if not required)
+# Enable stack-checking options (disable if not required)
 ifeq ($(STACK_CHECK),true)
 CFLAGS += -DATOM_STACK_CHECKING
+endif
+ifeq ($(TESTS_LOG_STACK),true)
+CFLAGS += -DTESTS_LOG_STACK_USAGE
 endif
 
 
@@ -112,9 +119,17 @@ clean:
 
 # Send to STK500
 program : $(BUILD_DIR)/$(app).hex
-	$(SIZE) -C $(BUILD_DIR)/$(app).elf
+	$(SIZE) -C --mcu=$(PART) $(BUILD_DIR)/$(app).elf
 	$(UISP) -dprog=stk500 -dserial=$(UISP_DEV) -dpart=$(PART) --erase --upload --verify if=$(BUILD_DIR)/$(app).hex
 
+# Generate Doxygen documentation
 doxygen:
 	doxygen $(KERNEL_DIR)/Doxyfile
 	doxygen ./Doxyfile
+
+# Run tests within simavr simulator
+phony_sim_elfs = $(addsuffix .sim, $(TEST_ELFS))
+simtests: $(phony_sim_elfs)
+.PHONY: simtests $(phony_sim_elfs)
+$(phony_sim_elfs):
+	./run_test.exp $(SIMAVR) $(PART) $(BUILD_DIR)/$(basename $@)

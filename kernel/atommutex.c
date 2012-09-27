@@ -101,7 +101,6 @@
  */
 
 
-#include <stdio.h>
 #include "atom.h"
 #include "atommutex.h"
 #include "atomtimer.h"

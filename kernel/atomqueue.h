@@ -29,6 +29,10 @@
 #ifndef __ATOM_QUEUE_H
 #define __ATOM_QUEUE_H
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 typedef struct atom_queue
 {
     ATOM_TCB *  putSuspQ;       /* Queue of threads waiting to send */
@@ -45,5 +49,9 @@ extern uint8_t atomQueueCreate (ATOM_QUEUE *qptr, uint8_t *buff_ptr, uint32_t un
 extern uint8_t atomQueueDelete (ATOM_QUEUE *qptr);
 extern uint8_t atomQueueGet (ATOM_QUEUE *qptr, int32_t timeout, uint8_t *msgptr);
 extern uint8_t atomQueuePut (ATOM_QUEUE *qptr, int32_t timeout, uint8_t *msgptr);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* __ATOM_QUEUE_H */

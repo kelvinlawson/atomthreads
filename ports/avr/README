@@ -1,7 +1,7 @@
 ---------------------------------------------------------------------------
 
 Library:      Atomthreads
-Author:       Kelvin Lawson <kelvinl@users.sf.net>
+Author:       Kelvin Lawson <info@atomthreads.com>
 Website:      http://atomthreads.com
 License:      BSD Revised
 
@@ -37,7 +37,9 @@ A couple of additional source files are also included here:
 Atomthreads includes a suite of automated tests which prove the key OS
 functionality, and can be used with any architecture ports. This port
 provides an easy mechanism for building, downloading and running the test
-suite to prove the OS on your target.
+suite to prove the OS on your target. You may also use the simavr
+simulator to run the entire test suite and prove the OS without real
+hardware.
 
 The port was carried out and tested on both an ATmega16 and ATmega32
 running within an STK500 board, utilising the gcc-avr tools. It is possible
@@ -66,9 +68,10 @@ can easily replace UISP by your own favourite programmer if required.
 BUILDING THE SOURCE
 
 A Makefile is provided for building the kernel, port and automated tests.
-The full build is carried out using simply:
+The full build is carried out using the following (replacing PART by the
+ATmega device you are using):
 
- * make
+ * make PART=atmega128
 
 All objects are built into the 'build' folder under ports/avr. The build
 process builds separate target applications for each automated test, and
@@ -96,11 +99,12 @@ PROGRAMMING TO THE TARGET DEVICE
 Application HEX files which are built into the build folder can be
 downloaded to the target using:
 
- * make program app=<appname>
+ * make PART=<cpu> program app=<appname>
 
-For example to download the 'sem1.hex' test application to the target use:
+For example to download the 'sem1.hex' test application to an ATmega128
+target use:
 
- * make program app=sem1
+ * make PART=atmega128 program app=sem1
 
 This uses UISP which will write the application into flash and reset the
 CPU to start running the program automatically.
@@ -143,11 +147,11 @@ The full set of tests can be found in the top-level 'tests' folder. Each of
 these tests is built as an independent application in the 'build' folder.
 Run them individually using:
 
- * make program app=testname
+ * make PART=<cpu> program app=<testname>
 
-For example to run the 'kern1.c' test use:
+For example to run the 'kern1.c' test on an ATmega128 device use:
 
- * make program app=kern1
+ * make PART=atmega128 program app=kern1
 
 Before running the program and data size for the application is printed
 out on the terminal. You can use this to verify that your platform has
@@ -190,6 +194,35 @@ initialises the UART driver and redirects stdout via the UART.
 
 ---------------------------------------------------------------------------
 
+RUNNING TESTS WITHIN THE SIMAVR SIMULATOR
+
+It is also possible to run the full automated test suite in a simulator
+without programming the test applications into real hardware. This is very
+useful for quick verification of the entire test suite after making any
+software changes, and is much faster than download each test application to
+a real target.
+
+A single command runs every single test application, and checks the
+(simulated) UART output to verify that each test case passes.
+
+This requires two applications on your development PC: expect and the
+simavr simulator. You can edit the SIMAVR variable in the Makefile to point
+it at the simavr install location on your PC and then run:
+
+ * make PART=atmega128 simtests
+
+This will run every single test application within the simulator and quit
+immediately if any one test fails. You should pick an ATmega device that is
+supported by the simavr simulator: atmega128 is a good choice.
+
+The ability to run these automated tests in one command (and without real
+hardware) allows you to easily include the OS test suite in your nightly
+build or continous integration system and quickly find out if any of your
+local changes have caused any of the operating system tests to fail.
+
+
+---------------------------------------------------------------------------
+
 WRITING APPLICATIONS
 
 The easiest way to start a new application which utilises the Atomthreads
@@ -204,7 +237,10 @@ a call to your own application startup code.
 PORTING TO OTHER HARDWARE PLATFORMS
 
 If you are using a CPU other than the ATmega16, change the PART definition
-in the Makefile to your own CPU.
+in the Makefile to your own CPU, or specify the PART on the make command
+line using:
+
+ * make PART=atmega128
 
 On CPUs with multiple UARTs, the port uses UART0 to output debug 
 information. If you wish to use an alternative UART you may change the

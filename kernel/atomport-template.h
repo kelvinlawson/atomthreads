@@ -34,6 +34,15 @@
 /* Required number of system ticks per second (normally 100 for 10ms tick) */
 #define SYSTEM_TICKS_PER_SEC            100
 
+/**
+ * Definition of NULL.
+ * If stddef.h is available on the platform it is simplest to include it
+ * from this header, otherwise define below.
+ */
+#define NULL      ((void *)(0))
+
+/* Size of each stack entry / stack alignment size (e.g. 8 bits) */
+#define STACK_ALIGN_SIZE                sizeof(unsigned char)
 
 /**
  * Architecture-specific types.
@@ -51,7 +60,12 @@
 #define POINTER   void *
 
 
-/* Critical region protection */
+/**
+ * Critical region protection: this should disable interrupts
+ * to protect OS data structures during modification. It must
+ * allow nested calls, which means that interrupts should only
+ * be re-enabled when the outer CRITICAL_END() is reached.
+ */
 #define CRITICAL_STORE      uint8_t sreg
 #define CRITICAL_START()    sreg = SREG; cli();
 #define CRITICAL_END()      SREG = sreg

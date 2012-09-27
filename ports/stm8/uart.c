@@ -1,5 +1,4 @@
 #include <stdio.h>
-#include <stddef.h>
 
 #include "stm8s.h"
 
