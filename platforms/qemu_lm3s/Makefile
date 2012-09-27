@@ -85,11 +85,11 @@ all_tests:
 	make run_test "TEST_NAME=sem8"
 	make run_test "TEST_NAME=sem9"
 
-all_fail:
+fail_tests:
 		make run_test "TEST_NAME=mutex4"
 		make run_test "TEST_NAME=sem4"
 
 
 run_last:
-	qemu-system-arm -M lm3s6965evb -kernel boot.elf  -monitor stdio -semihosting
+	qemu-system-arm -M lm3s6965evb -kernel boot.elf  -semihosting
 

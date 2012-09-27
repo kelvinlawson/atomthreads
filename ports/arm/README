@@ -9,8 +9,8 @@ License:      BSD Revised
 ARM  PORT
 
 This folder contains a port of the Atomthreads real time kernel for the
-ARM processor architecture. This port was tested on Cortex A9, Cortex A15
-and the ARM926EJ-S (QEMU).
+ARM processor architecture. This port was tested on the ARMv5 and ARMv7 
+architectures.
 
 To Use:
 

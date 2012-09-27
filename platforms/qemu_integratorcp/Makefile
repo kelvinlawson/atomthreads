@@ -44,7 +44,7 @@ include 	../rules.mk
 
 run_test: clean all
 	echo "START TEST $(TEST_NAME)"
-	qemu-system-arm -M integratorcp -kernel boot.elf  -semihosting | tee atomthreads_test.out
+	qemu-system-arm -M integratorcp -kernel boot.elf  -semihosting >> atomthreads_test.out
 
 all_tests:
 	echo "Starting atomthreads test suite" > atomthreads_test.out
@@ -60,7 +60,6 @@ all_tests:
 	make run_test "TEST_NAME=kern1"
 	make run_test "TEST_NAME=kern2"
 	make run_test "TEST_NAME=kern3"
-	make run_test "TEST_NAME=kern4"
 	make run_test "TEST_NAME=timer1"
 	make run_test "TEST_NAME=timer2"
 	make run_test "TEST_NAME=timer3"
@@ -86,6 +85,10 @@ all_tests:
 	make run_test "TEST_NAME=sem8"
 	make run_test "TEST_NAME=sem9"
 
+fail_tests:
+	make run_test "TEST_NAME=kern4"
+
+
 run_last:
-	qemu-system-arm -M integratorcp -kernel boot.elf   -monitor stdio -semihosting
+	qemu-system-arm -M integratorcp -kernel boot.elf -semihosting
 

@@ -32,8 +32,17 @@
 
 #include "types.h"
 
-#define SYSTEM_TICKS_PER_SEC            100
+#define SYSTEM_TICKS_PER_SEC    100
 
+/**
+ * Definition of NULL.
+ * If stddef.h is available on the platform it is simplest to include it
+ * from this header, otherwise define below.
+ */
+#define NULL					((void *)(0))
+
+/* Size of each stack entry / stack alignment size (e.g. 32 bits) */
+#define STACK_ALIGN_SIZE        sizeof(unsigned int)
 
 /**
  * Architecture-specific types.
@@ -47,12 +56,17 @@
  * Functions defined in atomport_arm.asm
  *
  */
-extern void             contextInit (void) ;
-extern uint32_t         contextEnterCritical (void) ;
-extern void             contextExitCritical (uint32_t posture) ;
+extern void						contextInit (void) ;
+extern uint32_t					contextEnterCritical (void) ;
+extern void						contextExitCritical (uint32_t posture) ;
 
 
-/* Critical region protection */
+/**
+ * Critical region protection: this should disable interrupts
+ * to protect OS data structures during modification. It must
+ * allow nested calls, which means that interrupts should only
+ * be re-enabled when the outer CRITICAL_END() is reached.
+ */
 #define CRITICAL_STORE          uint32_t __atom_critical
 #define CRITICAL_START()        __atom_critical = contextEnterCritical()
 #define CRITICAL_END()          contextExitCritical(__atom_critical)

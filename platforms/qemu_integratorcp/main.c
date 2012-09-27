@@ -77,8 +77,8 @@ main (void)
 
     printf ("atomthreads starting %s... ", ATOMTHREADS_TEST) ;
 
-	atomOSInit(&idle_stack[IDLE_STACK_BYTE_SIZE - sizeof(unsigned int)], IDLE_STACK_BYTE_SIZE - sizeof(unsigned int)) ;
-    atomThreadCreate ((ATOM_TCB *)&test_tcb, TEST_THREAD_PRIO, test_thread, 0, &test_stack[(TEST_STACK_BYTE_SIZE) - sizeof(unsigned int)], TEST_STACK_BYTE_SIZE  - sizeof(unsigned int));
+    atomOSInit(&idle_stack[0], IDLE_STACK_BYTE_SIZE, TRUE) ;
+    atomThreadCreate ((ATOM_TCB *)&test_tcb, TEST_THREAD_PRIO, test_thread, 0, &test_stack[0], TEST_STACK_BYTE_SIZE, TRUE);
     atomOSStart() ;
 
     return 0 ;

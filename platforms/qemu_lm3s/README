@@ -31,3 +31,7 @@ Fixes implemented for the QEMU 1.2.0 release:
 Because of the problems with the Sys Tick Interrupt the The Stellaris 
 General-Purpose Timer Module (GPTM) was used to generate the system timer 
 tick.
+
+BUGS:
+mutex4 testcase fails.
+sem4 testcase fails.

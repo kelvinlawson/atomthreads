@@ -10,3 +10,5 @@ QEMU ARM Integrator/CP (ARM926EJ-S) Platform
 
 The "qemu_integratorcp" platform contains sources for building a sample 
 Atomthreads application for the ARM Integrator/CP (ARM926EJ-S) platform.
+BUGS:
+kern4 testcase fails (sometimes).
