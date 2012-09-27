@@ -1,0 +1,14 @@
+CROSS_COMPILE=/opt/arm-2009q3/bin/arm-none-eabi-
+export CROSS_COMPILE
+
+qemu-system-arm -M realview-pb-a8 -serial stdio -kernel build/kern2.elf
+
+Following are the steps to add new board <abc> under armv7a port:
+1. Create a directory under ports/armv7a with name <abc>
+2. Add linker.ld in ports/armv7a/<abc> (similar to the one in ports/armv7a/pb-a8)
+3. Add arm_pic.h, arm_timer.h, and arm_uart.h in ports/armv7a/<abc> (similar to the one in ports/armv7a/pb-a8)
+4. Add .c files in ports/armv7a/<abc> to implement the board specific functions expected in arm_pic.h, arm_timer.h, and arm_uart.h
+5. Add Makefile in ports/armv7a/<abc> (similar to the one in ports/armv7a/pb-a8) to build board specific objects corresponding to the .c files added in step 4.
+5. To build atomthreads for <abc> board use following command "make BOARD=<abc>" with ports/armv7a as current directory.
+
+Port contributed by Anup Patel (http://brainfault.blogspot.com).

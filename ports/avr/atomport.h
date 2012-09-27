@@ -37,10 +37,14 @@
 /* Portable uint8_t and friends available from stdint.h on this platform */
 #include <stdint.h>
 
+/* Definition of NULL is available from stddef.h on this platform */
+#include <stddef.h>
 
 /* Required number of system ticks per second (normally 100 for 10ms tick) */
 #define SYSTEM_TICKS_PER_SEC            100
 
+/* Size of each stack entry / stack alignment size (8 bits on AVR) */
+#define STACK_ALIGN_SIZE                sizeof(uint8_t)
 
 /**
  * Architecture-specific types.
@@ -50,7 +54,12 @@
 #define POINTER void *
 
 
-/* Critical region protection */
+/**
+ * Critical region protection: this should disable interrupts
+ * to protect OS data structures during modification. It must
+ * allow nested calls, which means that interrupts should only
+ * be re-enabled when the outer CRITICAL_END() is reached.
+ */
 #define CRITICAL_STORE      uint8_t sreg
 #define CRITICAL_START()    sreg = SREG; cli();
 #define CRITICAL_END()      SREG = sreg

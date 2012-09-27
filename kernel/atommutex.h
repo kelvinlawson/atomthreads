@@ -29,6 +29,10 @@
 #ifndef __ATOM_MUTEX_H
 #define __ATOM_MUTEX_H
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 typedef struct atom_mutex
 {
     ATOM_TCB *  suspQ;  /* Queue of threads suspended on this mutex */
@@ -40,5 +44,9 @@ extern uint8_t atomMutexCreate (ATOM_MUTEX *mutex);
 extern uint8_t atomMutexDelete (ATOM_MUTEX *mutex);
 extern uint8_t atomMutexGet (ATOM_MUTEX *mutex, int32_t timeout);
 extern uint8_t atomMutexPut (ATOM_MUTEX *mutex);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* __ATOM_MUTEX_H */

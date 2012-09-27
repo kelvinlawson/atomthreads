@@ -95,10 +95,6 @@
  */
 
 
-/* Linker-provided startup stack location (usually top of RAM) */
-extern int _stack;
-
-
 /* Local data */
 
 /* Application threads' TCBs */
@@ -143,7 +139,7 @@ NO_REG_SAVE void main ( void )
      */
 
     /* Initialise the OS before creating our threads */
-    status = atomOSInit(&idle_thread_stack[IDLE_STACK_SIZE_BYTES - 1], IDLE_STACK_SIZE_BYTES);
+    status = atomOSInit(&idle_thread_stack[0], IDLE_STACK_SIZE_BYTES, TRUE);
     if (status == ATOM_OK)
     {
         /* Enable the system tick timer */
@@ -152,8 +148,9 @@ NO_REG_SAVE void main ( void )
         /* Create an application thread */
         status = atomThreadCreate(&main_tcb,
                      TEST_THREAD_PRIO, main_thread_func, 0,
-                     &main_thread_stack[MAIN_STACK_SIZE_BYTES - 1],
-                     MAIN_STACK_SIZE_BYTES);
+                     &main_thread_stack[0],
+                     MAIN_STACK_SIZE_BYTES,
+                     TRUE);
         if (status == ATOM_OK)
         {
             /**
@@ -204,7 +201,7 @@ static void main_thread_func (uint32_t param)
     }
 
     /* Put a message out on the UART */
-    printf("Go\n");
+    printf ("Go\n");
 
     /* Start test. All tests use the same start API. */
     test_status = test_start();
@@ -258,7 +255,7 @@ static void main_thread_func (uint32_t param)
         GPIO_WriteReverse(GPIOD, GPIO_PIN_0);
 
         /* Sleep then toggle LED again */
-        atomTimerDelay(sleep_ticks);
+        atomTimerDelay (sleep_ticks);
     }
 }
 

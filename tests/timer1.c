@@ -28,7 +28,6 @@
  */
 
 
-#include <stddef.h>
 #include "atom.h"
 #include "atomsem.h"
 #include "atomtimer.h"

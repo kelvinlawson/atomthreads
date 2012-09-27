@@ -1,7 +1,7 @@
 ---------------------------------------------------------------------------
 
 Library:      Atomthreads
-Author:       Kelvin Lawson <kelvinl@users.sf.net>
+Author:       Kelvin Lawson <info@atomthreads.com>
 Website:      http://atomthreads.com
 License:      BSD Revised
 
@@ -213,8 +213,8 @@ To connect a serial cable to the Discovery you will need to connect to
 the following pins on the external connectors:
  Vcc: CN2 pin 8
  GND: CN2 pin 7
+ UART RX: CN4 pin 11 (connect to TX at the PC end)
  UART TX: CN4 pin 10 (connect to RX at the PC end)
- UART RX: CN4 pin 9 (connect to TX at the PC end)
 Note that the board uses TTL levels so you may need to use a level
 converter. External level converters may need to be powered using
 a Vdd of 5v, which can be achieved by positioning JP1 on the Discovery.
