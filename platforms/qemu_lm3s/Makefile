@@ -5,7 +5,7 @@ ifeq ($(ATOMTHREADS),)
 ATOMTHREADS = $(shell pwd)/../../
 endif
 ifeq ($(TEST_NAME),)
-TEST_NAME = mutex1
+TEST_NAME = kern1
 endif
 
 
@@ -29,7 +29,6 @@ SRCS := $(SRCS) \
 		main.c \
 		$(ATOMTHREADS)/tests/$(TEST_NAME).c \
 
-#		startup_c.c \
 
 ASMS := $(ASMS) \
 		startup.S \

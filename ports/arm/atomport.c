@@ -38,7 +38,6 @@
  */
 typedef void * SYSCONTEXT ;
 
-extern void             contextInit (void) ;
 extern void             contextSwitch (SYSCONTEXT* save_context, SYSCONTEXT* new_context) ;
 extern void             contextStart (SYSCONTEXT* context) ;
 extern void             contextEnableInterrupts (void) ;
@@ -142,44 +141,6 @@ void
 archContextSwitch (ATOM_TCB * p_sp_old, ATOM_TCB * p_sp_new)
 {
     contextSwitch (&p_sp_old->sp_save_ptr, &p_sp_new->sp_save_ptr) ;
-}
-
-
-/**
- * \b archTimerTickIrqHandler
- *
- * System timer tick interrupt handler.
- *
- */
-void
-archTickHandler (void)
-{
-    atomIntEnter();
-
-    /* Call the OS system tick handler */
-    atomTimerTick();
-
-    /* ack the interrupt if needed */
-    /* ... */
-
-    /* Call the interrupt exit routine */
-    atomIntExit(TRUE);
-}
-
-/**
- * \b archTickInit
- *
- * System timer initialization.
- *
- */
-void
-archTickInit (void)
-{
-    /* Initialize NVIC PendSV */
-    contextInit () ;
-
-    /* Initializa Timer Hardware */
-    /* ... */
 }
 
 

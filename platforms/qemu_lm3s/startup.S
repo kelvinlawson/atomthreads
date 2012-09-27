@@ -35,9 +35,9 @@
 
 
 .global    __interrupt_vector_table
-.global    tick_Handler
-.global    pendSV_Handler
-.global    dbg_hard_fault_handler_c
+.extern    archTickHandler
+.extern    archPendSVHandler
+.extern    dbg_hard_fault_handler_c
 
 /**
  *  \b __interrupt_vector_table
@@ -58,7 +58,7 @@ __interrupt_vector_table:
 .long    sys_Handler
 .long    sys_Handler
 .long    0
-.long    pendSV_Handler
+.long    archPendSVHandler
 .long    sys_Handler
 
 /* External interrupts */
@@ -81,7 +81,7 @@ __interrupt_vector_table:
 .long    default_Handler                      // ADC Sequence 2
 .long    default_Handler                      // ADC Sequence 3
 .long    default_Handler                      // Watchdog timer
-.long    tick_Handler                         // Timer 0 subtimer A
+.long    archTickHandler                      // Timer 0 subtimer A
 .long    default_Handler                      // Timer 0 subtimer B
 .long    default_Handler                      // Timer 1 subtimer A
 .long    default_Handler                      // Timer 1 subtimer B
@@ -144,9 +144,9 @@ fault_Handler:
 .thumb
 
 .global reset_Handler
-.global initialise_monitor_handles
-.global low_level_init
-.global main
+.extern initialise_monitor_handles
+.extern low_level_init
+.extern main
 
 
 /**

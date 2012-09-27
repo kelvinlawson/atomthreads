@@ -29,14 +29,14 @@
 #ifndef __MODULES_H__
 #define __MODULES_H__
 
+/*
+ *  Module definitions to use with the ARM Integrator/CP (ARM926EJ-S)
+ */
+
 #include "atomport.h"
 
-extern void			dbg_format_msg (char *format, ...)  ;
 
-#define DBG_MESSAGE(fmt_str)				{  dbg_format_msg fmt_str  ; }
-
-
-typedef volatile unsigned int       REG_DWORD ;// Hardware register definition
+typedef volatile unsigned int       REG_DWORD ;
 typedef volatile unsigned short     REG_WORD ;
 typedef volatile unsigned char      REG_BYTE ;
 
@@ -110,7 +110,7 @@ typedef struct ICP_PIC_S {
 
 
 
-
+/* module definitions */
 #define BOARD_BASE_ADDRESS_TIMER_0                      0x13000000 
 #define BOARD_BASE_ADDRESS_PIC                          0x14000000 
 
@@ -118,7 +118,11 @@ extern ICP_TIMER_T*       const                board_timer_0 ;
 extern ICP_PIC_T*         const                board_pic ;
 
 
-
+/* Function prototypes */
 extern int              low_level_init (void) ;
+extern void             dbg_format_msg (char *format, ...)  ;
+
+#define DBG_MESSAGE(fmt_str)    {  dbg_format_msg fmt_str  ; }
+
 
 #endif /* __MODULES_H__ */

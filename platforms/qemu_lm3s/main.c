@@ -43,7 +43,6 @@ static unsigned char	idle_stack[IDLE_STACK_BYTE_SIZE] ;
 ATOM_TCB				test_tcb ;
 
 
-
 /**
  * \b test_thread
  *
@@ -78,7 +77,7 @@ main (void)
     int i = 0 ;
 
     uint32_t failures ;
-    printf ("atomthreads starting %s... \r\n", ATOMTHREADS_TEST) ;
+    printf ("Atomthreads starting %s... \r\n", ATOMTHREADS_TEST) ;
 
     atomOSInit(&idle_stack[IDLE_STACK_BYTE_SIZE - sizeof(unsigned int)], IDLE_STACK_BYTE_SIZE - sizeof(unsigned int)) ;
     atomThreadCreate ((ATOM_TCB *)&test_tcb, TEST_THREAD_PRIO, test_thread, 0, &test_stack[(TEST_STACK_BYTE_SIZE) - sizeof(unsigned int)], TEST_STACK_BYTE_SIZE  - sizeof(unsigned int));

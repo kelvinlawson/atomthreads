@@ -28,17 +28,17 @@
 */
 
 
+.global    archPendSVHandler
+.global    archTickHandler
 .global    contextInit
 .global    contextSwitch
 .global    contextStart
 .global    contextEnableInterrupts
 .global    contextEnterCritical
 .global    contextExitCritical
-.global    pendSV_Handler
-.global    tick_Handler
 
 
-.global    __context_tick_handler
+.extern    __context_tick_handler
 
 
 /**/
@@ -184,14 +184,14 @@ contextEnterCritical:
         BX             lr
 
 /**
- *  \b PendSV_Handler
+ *  \b archPendSVHandler
  *
- *  CortexM3 PendSV_Handler. Switch context to a new stack.
+ *  CortexM3 archPendSVHandler. Switch context to a new stack.
  *
  *  @return None
  */
  .thumb_func
-pendSV_Handler:
+archPendSVHandler:
 #ifndef PLATFORM_QEMU_LM3S_HACK
         CPSID          i                   //    Disable core int
 #else
@@ -237,14 +237,14 @@ pendsv_handler_exit:
 
 
 /**
- *  \b Tick_Handler
+ *  \b archTickHandler
  *
  *  System timer tick interrupt handler.
  *
  *  @return None
  */
  .thumb_func
-tick_Handler:
+archTickHandler:
         PUSH {r4-r11, lr}
 
 #ifndef PLATFORM_QEMU_LM3S_HACK

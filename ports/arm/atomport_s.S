@@ -34,7 +34,6 @@
 
 
 .global    archIRQHandler
-
 .global    contextEnterCritical
 .global    contextExitCritical
 .global    contextEnableInterrupts
@@ -44,7 +43,7 @@
 .global    contextInit
 
 
-.global __context_preempt_handler 
+.extern __context_preempt_handler 
 
 /**/
 .equ USR_MODE,            0x10

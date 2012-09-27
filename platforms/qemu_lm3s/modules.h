@@ -86,7 +86,7 @@ typedef struct GPTM_TIMER_S {
 #define GPTM_TIMER_CTL_TBEVENT_MASK           ((unsigned int)0x03 << 10)		// GPTM TimerB Event Mode
     #define GPTM_TIMER_CTL_TBEVENT_PE         ((unsigned int)0x00 << 10)		// Positive edge
     #define GPTM_TIMER_CTL_TBEVENT_NE         ((unsigned int)0x01 << 10)		// Negative edge
-    #define GPTM_TIMER_CTL_TBEVENT_NE         ((unsigned int)0x03 << 10)		// Both edges
+    #define GPTM_TIMER_CTL_TBEVENT            ((unsigned int)0x03 << 10)		// Both edges
 #define GPTM_TIMER_CTL_TBSTALL                ((unsigned int)0x01 << 9)		// GPTM Timer B Stall Enable. 0 Timer B continues counting while the processor is halted by the debugger
 #define GPTM_TIMER_CTL_TBEN                   ((unsigned int)0x01 << 8)		// GPTM TimerB Enable
 // --------
@@ -96,7 +96,7 @@ typedef struct GPTM_TIMER_S {
 #define GPTM_TIMER_CTL_TAEVENT_MASK           ((unsigned int)0x03 << 2)		// GPTM TimerA Event Mode
     #define GPTM_TIMER_CTL_TAEVENT_PE         ((unsigned int)0x00 << 2)		// Positive edge
     #define GPTM_TIMER_CTL_TAEVENT_NE         ((unsigned int)0x01 << 2)		// Negative edge
-    #define GPTM_TIMER_CTL_TAEVENT_NE         ((unsigned int)0x03 << 2)		// Both edges
+    #define GPTM_TIMER_CTL_TAEVENT            ((unsigned int)0x03 << 2)		// Both edges
 #define GPTM_TIMER_CTL_TASTALL                ((unsigned int)0x01 << 1)		// GPTM Timer A Stall Enable. 0 Timer B continues counting while the processor is halted by the debugger
 #define GPTM_TIMER_CTL_TAEN                   ((unsigned int)0x01 << 0)		// GPTM TimerA Enable
 // -------- GPTM_TIMER_IMR : (IMR Offset: 0x18) This register allows software to enable/disable GPTM controller-level interrupts. -------- 
@@ -191,7 +191,7 @@ typedef struct SCB_S {
 } SCB_T, *PSCB_T ;
 
 
-
+/* module definitions */
 #define BOARD_BASE_ADDRESS_SYSTICK                      0xE000E000 
 #define BOARD_BASE_ADDRESS_NVIC                         0xE000E100 
 #define BOARD_BASE_ADDRESS_SCB                          0xE000ED00 
@@ -203,11 +203,11 @@ extern SCB_T*           const                           board_scb ;
 extern GPTM_TIMER_T*    const                           board_gptm0 ;
 
 
-
+/* Function prototypes */
 extern int              low_level_init (void) ;
 extern void             dbg_format_msg (char *format, ...)  ;
 extern void             dbg_hard_fault_handler_c (unsigned int * hardfault_args) ;
 
-#define DBG_MESSAGE(fmt_str)				{  dbg_format_msg fmt_str  ; }
+#define DBG_MESSAGE(fmt_str)        {  dbg_format_msg fmt_str  ; }
 
 #endif /* __MODULES_H__ */

@@ -101,18 +101,15 @@ void
 __context_tick_handler (void) 
 {
 
-    if (1) {
-        atomIntEnter();
+    atomIntEnter();
 
-        /* Call the OS system tick handler */
-        atomTimerTick();
+    /* Call the OS system tick handler */
+    atomTimerTick();
 
-        board_gptm0->ICR |= GPTM_TIMER_INT_TATOIM ;
+    board_gptm0->ICR |= GPTM_TIMER_INT_TATOIM ;
 
-        /* Call the interrupt exit routine */
-        atomIntExit(TRUE);
-
-    }
+    /* Call the interrupt exit routine */
+    atomIntExit(TRUE);
 
 }
 

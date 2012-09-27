@@ -1,31 +1,17 @@
 ---------------------------------------------------------------------------
 
-Library:      Atomthreads CortexM3 Port
+Library:      Atomthreads ARM Cortex M Port
 Author:       Natie van Rooyen <natie@navaro.nl>
 License:      BSD Revised
 
 ---------------------------------------------------------------------------
 
-ARM CortexM3 PORT
+ARM Cortex M PORT
 
 This folder contains a port of the Atomthreads real time kernel for the
-ARM CortexM3 processor architecture.
+ARM CortexM type processor architecture. This port was tested on the 
+Cortex M3 and the Cortex M4.
 
 To Use:
 
-1. Install the "pendSV_Handler" and "tick_Handler" implemented in the file
-   "atomport_arm.asm" in your platforms interrupt vectors.
-  
-2. Complete the function "archTickInit()" implemented in "atomport.c" to 
-   initialize your platforms timer tick interrupt. If you use the build in 
-   SysTick of the CortexM3 you also have to add code here to start it.
-   
-3. If required, add code to acknowledge your timer hardware's interrupt in 
-   the function "archTickHandler()" also implemented in "atomport.c".
-   
-4. During your platform initialization call the function "archTickInit()"
-   exported from "atomport_private.h" to initialize the CortexM3 
-   "PendSV_Handler".
-   
-5. After your platforms c-runtime initialization has completed, start 
-   Atomthreads from your runtime's "main()" function.
+See the example project in the "platforms/qemu_lm3s" directory.

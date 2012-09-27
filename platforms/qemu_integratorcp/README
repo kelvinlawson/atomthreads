@@ -1,0 +1,12 @@
+---------------------------------------------------------------------------
+
+Library:      Atomthreads QEMU ARM Integrator/CP (ARM926EJ-S) Platform.
+Author:       Natie van Rooyen <natie@navaro.nl>
+License:      BSD Revised
+
+---------------------------------------------------------------------------
+
+QEMU ARM Integrator/CP (ARM926EJ-S) Platform
+
+The "qemu_integratorcp" platform contains sources for building a sample 
+Atomthreads application for the ARM Integrator/CP (ARM926EJ-S) platform.
