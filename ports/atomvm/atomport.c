@@ -53,7 +53,7 @@ static HANDLE cntrl_thread ;
 void 
 atomvmRun ()
 {
-	atomvmCtrlInit (&the_atomvm) ;
+	atomvmCtrlCreate (&the_atomvm) ;
 	cntrl_thread = CreateThread (NULL, 0, cntrl_thread_proc, (uint32_t*)the_atomvm, CREATE_SUSPENDED, NULL) ;
 	ResumeThread (cntrl_thread) ;
 }
@@ -85,7 +85,8 @@ thread_shell (void)
      * is first restored.
      */
     // sei();
-	atomvmExitCritical () ;
+	//atomvmExitCritical () ;
+    atomvmInterruptMask (0) ;
 
     /* Call the thread entry point */
     if (curr_tcb && curr_tcb->entry_point)
@@ -155,18 +156,4 @@ void archTimerTickIrqHandler ()
 
 	/* Call the interrupt exit routine */
     atomIntExit(TRUE);
-}
-
-
-unsigned int 
-__enter_critical () 
-{
-	return atomvmEnterCritical () ;
-}
-
-
-void  
-__exit_critical (unsigned int isr) 
-{
-	atomvmExitCritical () ;
 }

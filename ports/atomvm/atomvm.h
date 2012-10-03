@@ -35,32 +35,26 @@
 * @authors Natie van Rooyen
 *
 * @section intro Introduction
-* Atomvm is a tiny virtual machine that can run on Windows inside an IDE with a 
-* debugger like Microsoft Visual C++ Express. The primary purpose of this virtual 
-* machine is for the evaluation of Real Time Operating Systems (like atomthreads) 
-* and the development and testing of modules for this Real Time Operating System
-* in a user friendly environment.:
+* Atomvm is a tiny virtual machine that runs on Windows and can be debugged 
+* from an IDE like Microsoft Visual C++ Express. The primary purpose of this 
+* virtual machine is for the evaluation of Real Time Operating Systems (like 
+* Atomthreads) and the development and testing of modules for this Real Time 
+* Operating System on a Windows machine.
 * 
-* @section build Building The Source
-* To test this project, just add all the files from the "atomthreads/kernel" 
-* directory and the "atomthreads/ports/atomvm" directory as well as the test 
-* program main.c to your project. Add both the 
-* before mentioned directories to the include paths of your project and compile. \n
-* Atomvm was designed for multi core systems but also runs fine on any single 
-* core system.
-*
-* @section test Running The Test
-* The test, main.c, is intentioned to stress the virtual  machine as opposed to 
-* testing the Real Time Operating System. However, this test can also run the 
-* unit tests of atomthreads by using the preprocessor directive "UNIT_TESTS" and 
-* linking in the desired unit test into the project.
+* Atomvm makes use of the Windows API functions GetThreadContext() and 
+* SetThreadContext() to create multiple virtual contexts or threads inside a 
+* single Windows thread. Atomvm also simulates interrupts with an interrupt 
+* mask accessible from the Atomvm threads. External events can be queued as 
+* interrupts to Atomvm, for example a timer loop generating system timer tick 
+* interrupts for a Real Time Operating System ported to Atomvm.
+* 
 * */
 
 #ifndef __ATOMVM_H__
 #define __ATOMVM_H__
 
 #include <crtdbg.h>
-#include "atomuser.h"
+#include "types.h"
 
 
 #if defined _DEBUG || defined DEBUG
@@ -75,7 +69,7 @@
 /* Forward declarations */
 
 /* This is an opaque handle to an instance of an atomvm created
-   by a call to atomvmCtrlInit() */
+   by a call to atomvmCtrlCreate() */
 typedef struct ATOMVM*                  HATOMVM ; 
 
 /* This is an opaque handle to an atomvm context created
@@ -84,40 +78,33 @@ typedef struct ATOMVM_CONTEXT*          HATOMVM_CONTEXT ;
 
 
 /* Function prototypes used for controlling the atom virtual machine */
-extern uint32_t         atomvmCtrlInit (HATOMVM* atomvm) ;
+extern uint32_t         atomvmCtrlCreate (HATOMVM* atomvm) ;
 extern void             atomvmCtrlRun (HATOMVM atomvm, uint32_t flags) ;
 extern void             atomvmCtrlIntRequest (HATOMVM atomvm, uintptr_t isr) ;
 extern void             atomvmCtrlClose (HATOMVM atomvm) ;
 
-/* Function prototypes for use by the atom virtual machine */
-extern int32_t          atomvmExitCritical () ;
-extern int32_t          atomvmEnterCritical () ;
-extern int32_t          atomvmCriticalCount () ;
+/* Function prototypes for use by the atom virtual machine from within the
+   call to __atomvmReset(). */
+extern int32_t          atomvmInterruptMask (uint32_t mask) ;
 extern uint32_t         atomvmContextCreate (HATOMVM_CONTEXT* context, uint32_t stack, uint32_t entry) ;
 extern uint32_t         atomvmContextSwitch (HATOMVM_CONTEXT old_context, HATOMVM_CONTEXT new_context) ;
 extern void             atomvmContextDesrtroy (HATOMVM_CONTEXT context) ;
 extern void             atomvmWriteThreadId (uint32_t thread_id) ;
-extern uint32_t         atomvmReadThreadId () ;
-/* Function prototypes for use by the atom virtual machine 
-    for synchronization with other running atom virtual machines */
-extern uint32_t         atomvmGetVmId () ;
-extern void             atomvmInterruptWait () ;
-extern void             atomvmEventWait () ;
-extern void             atomvmEventSend () ;
-extern uint32_t         atomvmScheduleIpi (uint32_t target, uintptr_t isr) ;
-
-
+extern uint32_t         atomvmReadThreadId (void) ;
+extern void             atomvmInterruptWait (void) ;
+extern uint32_t         atomvmGetVmId (void) ;
 
 
 /**
 * \ingroup atomvm
 * \b __atomvmReset
 *
-* Function prototype to be implemted in the atom virtual machine
+* Function prototype to be implemted as entry point for the atom virtual machine.
 *
 * @return void.
 */
 extern  void            __atomvmReset (void) ;
+
 /**
 * \ingroup atomvm
 * \b __atomvmClose

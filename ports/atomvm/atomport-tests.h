@@ -27,8 +27,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef __ATOM_PORT_TESTS_H
-#define __ATOM_PORT_TESTS_H
+#ifndef __ATOMPORT_TEST_H__
+#define __ATOMPORT_TEST_H__
 
 /* Include Atomthreads kernel API */
 #include "atom.h"
@@ -56,3 +56,4 @@
 
 #endif /* __ATOM_PORT_TESTS_H */
 
+#endif /* __ATOMPORT_TEST_H__ */
