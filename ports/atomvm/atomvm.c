@@ -182,12 +182,11 @@ static DWORD WINAPI                 vm_thread (LPVOID lpParameter) ;
 * \ingroup atomvm
 * \b atomvmCtrlCreate
 *
-* This is an atomvm controll function used by a controlling thread
-* and must not be called from the atom virtual machine.
+* This is an atomvm controll function used by a controlling thread.
 *
 * Initializes the virtual machine.
 *
-* @param[out] atomvm Handle to the virtual machine created.
+* @param[out] atomvm Handle to the virtual machine to create.
 *
 * @return Zero on failure.
 */
@@ -282,7 +281,8 @@ atomvmCtrlRun (HATOMVM atomvm, uint32_t flags)
 #if (_WIN32_WINNT >= 0x0600)
             /*
                 This is used for multi processor machines to ensure the thread
-                is stopped before executing the next instruction. */
+                is stopped before executing the next instruction. Set
+                _WIN32_WINNT < 0x0600 if you are running Windows XP */
             FlushProcessWriteBuffers ();
 #endif
             InterlockedExchange (&service_call->result, service_call->callback (patomvm, service_call)) ;
@@ -358,7 +358,7 @@ atomvmCtrlRun (HATOMVM atomvm, uint32_t flags)
 * Closes the virtual machine and release all memory and handles created
 * in atomvmCtrlCreate.
 *
-* ToDo: this function was never tested.
+* ToDo: more testing.
 *
 * @param[in] atomvm Handle to the virtual machine created by atomvmCtrlCreate.
 *
@@ -447,7 +447,6 @@ getAtomvm (void)
     ATOMVM_ASSERT(patomvm , _T("TlsGetValue failed")) ;
 
     return patomvm ;
-
 }
 
 /**
@@ -504,7 +503,6 @@ atomvmCtrlIntRequest (HATOMVM atomvm, uint32_t isr)
 		SwitchToThread() ;
 	}
     SetEvent (patomvm->atomvm_int) ;
-
 }
 
 
@@ -558,7 +556,6 @@ atomvmContextCreate (HATOMVM_CONTEXT* atomvm_context, uint32_t stack, uint32_t e
     ATOMVM_CALLBACK_CONTEXT     context_init ;
 
     context_init.pcontext = new_context ;
-
     new_context->interrupt_mask = 1 ;
 
     res = invokeCallback (patomvm, callbackContextCreate, (PATOMVM_CALLBACK)&context_init) ;
@@ -592,16 +589,14 @@ callbackContextSwitch (PATOMVM patomvm, PATOMVM_CALLBACK callback)
     uint32_t                    res1 = 1 ;
     uint32_t                    res2 ;
     PATOMVM_CALLBACK_CONTEXT_SWITCH    context_switch = (PATOMVM_CALLBACK_CONTEXT_SWITCH)callback ;
-    CONTEXT*                    p_old_context = &context_switch->p_old_context->context ;
-    CONTEXT*                    p_new_context = &context_switch->p_new_context->context ;
 
-    if (p_old_context) {
-        res1 = GetThreadContext (patomvm->vm_thread, p_old_context) ;
+    if (context_switch->p_old_context) {
+        res1 = GetThreadContext (patomvm->vm_thread, &context_switch->p_old_context->context) ;
         ATOMVM_ASSERT(res1 , _T("GetThreadContext failed")) ;
     }
 
-    InterlockedExchange ((volatile uint32_t*)&patomvm->current_context, (uint32_t)p_new_context) ;
-    res2 = SetThreadContext (patomvm->vm_thread, &patomvm->current_context->context) ;
+    patomvm->current_context = context_switch->p_new_context ;
+    res2 = SetThreadContext (patomvm->vm_thread, &context_switch->p_new_context->context) ;
     ATOMVM_ASSERT(res2 , _T("SetThreadContext failed")) ;
 
     return res1 & res2 ;
