@@ -80,7 +80,7 @@ typedef struct ATOMVM_CONTEXT*          HATOMVM_CONTEXT ;
 /* Function prototypes used for controlling the atom virtual machine */
 extern uint32_t         atomvmCtrlCreate (HATOMVM* atomvm) ;
 extern void             atomvmCtrlRun (HATOMVM atomvm, uint32_t flags) ;
-extern void             atomvmCtrlIntRequest (HATOMVM atomvm, uintptr_t isr) ;
+extern void             atomvmCtrlIntRequest (HATOMVM atomvm, void (*isr) (void)) ;
 extern void             atomvmCtrlClose (HATOMVM atomvm) ;
 
 /* Function prototypes for use by the atom virtual machine from within the
@@ -91,7 +91,8 @@ extern uint32_t         atomvmContextSwitch (HATOMVM_CONTEXT old_context, HATOMV
 extern void             atomvmContextDesrtroy (HATOMVM_CONTEXT context) ;
 extern void             atomvmWriteThreadId (uint32_t thread_id) ;
 extern uint32_t         atomvmReadThreadId (void) ;
-extern void             atomvmInterruptWait (void) ;
+extern void             atomvmIntWait (void) ;
+extern void             atomvmIntRequest (void (*isr) (void)) ;
 extern uint32_t         atomvmGetVmId (void) ;
 
 

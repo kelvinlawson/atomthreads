@@ -53,8 +53,8 @@
 #define ATOM_TLS			HATOMVM_CONTEXT	context ;
 
 /* Function prototypes */
-extern void					atomvmRun () ;
-extern void					archTimerTickIrqHandler () ;
+extern void					atomvmRun (void) ;
+extern void					archTimerTickIrqHandler (void) ;
 
 /* The instance of the atomvm for this port */
 extern HATOMVM				the_atomvm  ;

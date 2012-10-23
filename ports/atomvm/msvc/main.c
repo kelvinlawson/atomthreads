@@ -213,7 +213,7 @@ __atomvmClose ()
 
 
 void
-test_isr ()
+test_isr (void)
 {
 	static int i = 0 ;
 	test_isr_count++ ;
@@ -232,7 +232,7 @@ isr_thread_proc (LPVOID lpParameter)
      int x ;
      int y = rand() % 100 ;
 	 while (1) {
-		atomvmCtrlIntRequest (the_atomvm, (uintptr_t)test_isr) ;
+		atomvmCtrlIntRequest (the_atomvm, test_isr) ;
 		if (i++==y) {
             x = rand()  % 50 ;
 			Sleep (x) ;
@@ -264,7 +264,7 @@ main ()
 
 	while (1)  {
 		Sleep(1) ;
-		atomvmCtrlIntRequest (the_atomvm, (uintptr_t)archTimerTickIrqHandler) ;
+		atomvmCtrlIntRequest (the_atomvm, archTimerTickIrqHandler) ;
 	}
 
 }

@@ -119,6 +119,18 @@ typedef struct ATOMVM_CALLBACK_CONTEXT_SWITCH_S {
 
 } ATOMVM_CALLBACK_CONTEXT_SWITCH, *PATOMVM_CALLBACK_CONTEXT_SWITCH ;
 
+/* ATOMVM_CALLBACK_INT_REQUEST is the parameter for a ATOMVM_CALLBACK_F call
+that take as parameter a pointer to to the function that will be called in
+an interrupt context */
+typedef struct ATOMVM_CALLBACK_INT_REQUEST_S {
+
+    ATOMVM_CALLBACK                 callback ;
+
+    /* Function pointer the callback will call */
+    void (*isr) (void) ;
+
+} ATOMVM_CALLBACK_INT_REQUEST, *PATOMVM_CALLBACK_INT_REQUEST ;
+
 /* ATOMVM_CONTEXT saves the state of a context created by
 atomvmContextCreate() and sheduled by atomvmContextSwitch(). */
 typedef struct ATOMVM_CONTEXT_S {
@@ -194,7 +206,6 @@ uint32_t
 atomvmCtrlCreate (HATOMVM *atomvm)
 {
     PATOMVM patomvm = 0 ;
-    int32_t i ;
 
     patomvm = (PATOMVM) malloc (sizeof(struct ATOMVM_S)) ;
 
@@ -494,12 +505,12 @@ atomvmInterruptMask (uint32_t mask)
 * @return None
 */
 void
-atomvmCtrlIntRequest (HATOMVM atomvm, uint32_t isr)
+atomvmCtrlIntRequest (HATOMVM atomvm, void (*isr) (void))
 {
     PATOMVM         patomvm = (PATOMVM) atomvm ;
 
     WaitForSingleObject (patomvm->atomvm_int_complete, INFINITE) ;
-    while (InterlockedCompareExchange ((volatile uint32_t *)&patomvm->isr, isr, 0) != 0) {
+    while (InterlockedCompareExchange ((volatile uint32_t *)&patomvm->isr, (uint32_t)isr, 0) != 0) {
 		SwitchToThread() ;
 	}
     SetEvent (patomvm->atomvm_int) ;
@@ -720,7 +731,7 @@ atomvmGetVmId (void)
 * @return Zero on failure, try to call GetLastError().
 */
 uint32_t
-callbackInterruptWait (PATOMVM patomvm, PATOMVM_CALLBACK callback)
+callbackIntWait (PATOMVM patomvm, PATOMVM_CALLBACK callback)
 {
     WaitForSingleObject (patomvm->atomvm_int_complete, INFINITE) ;
     return WaitForSingleObject (patomvm->atomvm_int, INFINITE) == WAIT_OBJECT_0 ;
@@ -739,12 +750,53 @@ callbackInterruptWait (PATOMVM patomvm, PATOMVM_CALLBACK callback)
 * @return void.
 */
 void
-atomvmInterruptWait  (void)
+atomvmIntWait  (void)
 {
     PATOMVM                     patomvm = getAtomvm () ;
     ATOMVM_CALLBACK             callback ;
 
-    invokeCallback (patomvm, callbackInterruptWait, (PATOMVM_CALLBACK)&callback) ;
+    invokeCallback (patomvm, callbackIntWait, (PATOMVM_CALLBACK)&callback) ;
+}
+
+/**
+* \b callbackIntRequest
+*
+* This function is invoked from the controll thread after a call to atomvmIntRequest().
+*
+* The atom virtual machine is suspended while this function is called.
+*
+* @param[in] patomvm Pointer to the virtual machine created by atomvmCtrlCreate.
+* @param[in] callback Callback parameter.
+*
+* @return Zero on failure, try to call GetLastError().
+*/
+uint32_t
+callbackIntRequest (PATOMVM patomvm, PATOMVM_CALLBACK callback)
+{
+    PATOMVM_CALLBACK_INT_REQUEST    int_request = (PATOMVM_CALLBACK_INT_REQUEST)callback ;
+
+    int_request->isr () ;
+    return 1 ;
+}
+
+/**
+* \ingroup atomvm
+* \b atomvmIntRequest
+*
+* This function is to be used by the atom virtual machine.
+*
+* @param[in] isr Function that will be called from the controll thread.
+*
+* @return void.
+*/
+void
+atomvmIntRequest  (void (*isr) (void))
+{
+    PATOMVM                         patomvm = getAtomvm () ;
+    ATOMVM_CALLBACK_INT_REQUEST     callback ;
+    
+    callback.isr = isr ;
+    invokeCallback (patomvm, callbackIntRequest, (PATOMVM_CALLBACK)&callback) ;
 }
 
 

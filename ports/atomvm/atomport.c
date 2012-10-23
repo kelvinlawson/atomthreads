@@ -51,7 +51,7 @@ static HANDLE cntrl_thread ;
  *
  */
 void 
-atomvmRun ()
+atomvmRun (void)
 {
 	atomvmCtrlCreate (&the_atomvm) ;
 	cntrl_thread = CreateThread (NULL, 0, cntrl_thread_proc, (uint32_t*)the_atomvm, CREATE_SUSPENDED, NULL) ;
@@ -147,7 +147,7 @@ archContextSwitch (ATOM_TCB * p_sp_old, ATOM_TCB * p_sp_new)
  * System timer tick interrupt handler.
  *
  */
-void archTimerTickIrqHandler ()
+void archTimerTickIrqHandler (void)
 {
     atomIntEnter();
 
