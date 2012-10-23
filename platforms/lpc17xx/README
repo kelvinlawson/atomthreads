@@ -8,9 +8,10 @@ License:      BSD Revised
 
 NXP LPC17xx Platform
 
-The "lpc17xx" platform contains sources for building a sample Atomthreads 
-application for the NXP LPC17xx platform.
+The "lpc17xx" platform contains sources for building the Atomthreads test 
+suite for the NXP LPC17xx microcontroller.
 
-The platform was tested on the mbed NXP LPC1768 (http://www.mbed.org).
-
+The build was tested on the "mbed NXP LPC1768" board (http://www.mbed.org) 
+and the sources were compiled on Ubuntu 12.0.4 with the GNU ARM tool chain 
+using Newlib.
 
