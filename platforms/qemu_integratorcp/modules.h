@@ -36,23 +36,19 @@
 #include "atomport.h"
 
 
-typedef volatile unsigned int       REG_DWORD ;
-typedef volatile unsigned short     REG_WORD ;
-typedef volatile unsigned char      REG_BYTE ;
-
 
 // *****************************************************************************
 // INTEGRATORCP TIMER
 // *****************************************************************************
 typedef struct ICP_TIMER_S {
                                                     // offset  read/write   word size  reset           Description
-        REG_DWORD       LOAD      ;                 // 0x0000  Read/write   32         0x00000000      Load value for Timer
-        REG_DWORD       VALUE     ;                 // 0x0004  Read         32         0xFFFFFFFF      The current value for Timer
-        REG_BYTE        CONTROL   ;                 // 0x0008  Read/write   8          0x20            Timer control register
-        REG_DWORD       INTCLR    ;                 // 0x000C  Write        - -                        Timer interrupt clear
-        REG_DWORD       RIS       ;                 // 0x0010  Read         1          0x0             Timer raw interrupt status
-        REG_DWORD       MIS       ;                 // 0x0014  Read         1          0x0             Timer masked interrupt status
-        REG_DWORD       BGLOAD    ;                 // 0x0018  Read/write   32         0x00000000      Background load value for Timer
+        __IO uint32_t       LOAD      ;                 // 0x0000  Read/write   32         0x00000000      Load value for Timer
+        __I  uint32_t       VALUE     ;                 // 0x0004  Read         32         0xFFFFFFFF      The current value for Timer
+        __IO uint8_t        CONTROL   ;                 // 0x0008  Read/write   8          0x20            Timer control register
+        __O  uint32_t       INTCLR    ;                 // 0x000C  Write        - -                        Timer interrupt clear
+        __I  uint32_t       RIS       ;                 // 0x0010  Read         1          0x0             Timer raw interrupt status
+        __I  uint32_t       MIS       ;                 // 0x0014  Read         1          0x0             Timer masked interrupt status
+        __IO uint32_t       BGLOAD    ;                 // 0x0018  Read/write   32         0x00000000      Background load value for Timer
 
 } ICP_TIMER_T, *PICP_TIMER_T ;
 
@@ -82,17 +78,17 @@ typedef struct ICP_TIMER_S {
 // *****************************************************************************
 typedef struct ICP_PIC_S {
                                                     // offset  read/write   word size  reset           Description
-        REG_DWORD       IRQ_STATUS      ;           // 0x0000  Read         22                         IRQ gated interrupt status
-        REG_DWORD       IRQ_RAWSTAT     ;           // 0x0004  Read         22                         IRQ raw interrupt status
-        REG_DWORD       IRQ_ENABLESET   ;           // 0x0008  Read/write   22                         IRQ enable set
-        REG_DWORD       IRQ_ENABLECLR   ;           // 0x000C  Write        22                         IRQ enable clear
-        REG_DWORD       INT_SOFTSET     ;           // 0x0010  Read/write   16                         Software interrupt set
-        REG_DWORD       INT_SOFTCLR     ;           // 0x0014  Write        16                         Software interrupt clear
-        REG_DWORD       RESERVED[2]     ;           // 0x0018  
-        REG_DWORD       FIQ_STATUS      ;           // 0x0020  Read         22                         FIQ gated interrupt status
-        REG_DWORD       FIQ_RAWSTAT     ;           // 0x0024  Read         22                         FIQ raw interrupt status
-        REG_DWORD       FIQ_ENABLESET   ;           // 0x0028  Read/write   22                         FIQ enable set
-        REG_DWORD       FIQ_ENABLECLR   ;           // 0x002C  Write-only   22                         FIQ enable clear
+        __I  uint32_t       IRQ_STATUS      ;           // 0x0000  Read         22                         IRQ gated interrupt status
+        __I  uint32_t       IRQ_RAWSTAT     ;           // 0x0004  Read         22                         IRQ raw interrupt status
+        __IO uint32_t       IRQ_ENABLESET   ;           // 0x0008  Read/write   22                         IRQ enable set
+        __O  uint32_t       IRQ_ENABLECLR   ;           // 0x000C  Write        22                         IRQ enable clear
+        __IO uint32_t       INT_SOFTSET     ;           // 0x0010  Read/write   16                         Software interrupt set
+        __O  uint32_t       INT_SOFTCLR     ;           // 0x0014  Write        16                         Software interrupt clear
+             uint32_t       RESERVED[2]     ;           // 0x0018  
+        __I  uint32_t       FIQ_STATUS      ;           // 0x0020  Read         22                         FIQ gated interrupt status
+        __I  uint32_t       FIQ_RAWSTAT     ;           // 0x0024  Read         22                         FIQ raw interrupt status
+        __IO uint32_t       FIQ_ENABLESET   ;           // 0x0028  Read/write   22                         FIQ enable set
+        __O  uint32_t       FIQ_ENABLECLR   ;           // 0x002C  Write-only   22                         FIQ enable clear
 
 } ICP_PIC_T, *PICP_PIC_T ;
 

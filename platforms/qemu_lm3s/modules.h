@@ -36,36 +36,31 @@
 #include "atomport.h"
 
 
-typedef volatile unsigned int       REG_DWORD ;
-typedef volatile unsigned short     REG_WORD ;
-typedef volatile unsigned char      REG_BYTE ;
-
-
 // *****************************************************************************
 // The Stellaris General-Purpose Timer Module (GPTM)
 // *****************************************************************************
 typedef struct GPTM_TIMER_S {
 
                                                     // offset  read/write       reset           Description
-        REG_DWORD       CFG       ;                 // 0x000   R/W              0x00000000     GPTM Configuration 345
-        REG_DWORD       TAMR      ;                 // 0x004   R/W              0x00000000     GPTM TimerA Mode 346
-        REG_DWORD       TBMR      ;                 // 0x008   R/W              0x00000000     GPTM TimerB Mode 348
-        REG_DWORD       CTL       ;                 // 0x00C   R/W              0x00000000     GPTM Control 350
-        REG_DWORD       Reserved[2] ;               // 0x010
-        REG_DWORD       IMR       ;                 // 0x018   R/W              0x00000000     GPTM Interrupt Mask 353
-        REG_DWORD       RIS       ;                 // 0x01C   RO               0x00000000     GPTM Raw Interrupt Status 355
-        REG_DWORD       MIS       ;                 // 0x020   RO               0x00000000     GPTM Masked Interrupt Status 356
-        REG_DWORD       ICR       ;                 // 0x024   W1C              0x00000000     GPTM Interrupt Clear 357
-        REG_DWORD       TAILR     ;                 // 0x028   R/W              0xFFFFFFFF     GPTM TimerA Interval Load 359
-        REG_DWORD       TBILR     ;                 // 0x02C   R/W              0x0000FFFF     GPTM TimerB Interval Load 360
-        REG_DWORD       TAMATCHR  ;                 // 0x030   R/W              0xFFFFFFFF     GPTM TimerA Match 361
-        REG_DWORD       TBMATCHR  ;                 // 0x034   R/W              0x0000FFFF     GPTM TimerB Match 362
-        REG_DWORD       TAPR      ;                 // 0x038   R/W              0x00000000     GPTM TimerA Prescale 363
-        REG_DWORD       TBPR      ;                 // 0x03C   R/W              0x00000000     GPTM TimerB Prescale 364
-        REG_DWORD       TAPMR     ;                 // 0x040   R/W              0x00000000     GPTM TimerA Prescale Match 365
-        REG_DWORD       TBPMR     ;                 // 0x044   R/W              0x00000000     GPTM TimerB Prescale Match 366
-        REG_DWORD       TAR       ;                 // 0x048   RO               0xFFFFFFFF     GPTM TimerA 367
-        REG_DWORD       TBR       ;                 // 0x04C   RO               0x0000FFFF     GPTM TimerB 368
+        __IO uint32_t       CFG       ;         // 0x000   R/W              0x00000000     GPTM Configuration 345
+        __IO uint32_t       TAMR      ;         // 0x004   R/W              0x00000000     GPTM TimerA Mode 346
+        __IO uint32_t       TBMR      ;         // 0x008   R/W              0x00000000     GPTM TimerB Mode 348
+        __IO uint32_t       CTL       ;         // 0x00C   R/W              0x00000000     GPTM Control 350
+             uint32_t       Reserved[2] ;       // 0x010
+        __IO uint32_t       IMR       ;         // 0x018   R/W              0x00000000     GPTM Interrupt Mask 353
+        __I  uint32_t       RIS       ;         // 0x01C   RO               0x00000000     GPTM Raw Interrupt Status 355
+        __I  uint32_t       MIS       ;         // 0x020   RO               0x00000000     GPTM Masked Interrupt Status 356
+        __O  uint32_t       ICR       ;         // 0x024   W1C              0x00000000     GPTM Interrupt Clear 357
+        __IO uint32_t       TAILR     ;         // 0x028   R/W              0xFFFFFFFF     GPTM TimerA Interval Load 359
+        __IO uint32_t       TBILR     ;         // 0x02C   R/W              0x0000FFFF     GPTM TimerB Interval Load 360
+        __IO uint32_t       TAMATCHR  ;         // 0x030   R/W              0xFFFFFFFF     GPTM TimerA Match 361
+        __IO uint32_t       TBMATCHR  ;         // 0x034   R/W              0x0000FFFF     GPTM TimerB Match 362
+        __IO uint32_t       TAPR      ;         // 0x038   R/W              0x00000000     GPTM TimerA Prescale 363
+        __IO uint32_t       TBPR      ;         // 0x03C   R/W              0x00000000     GPTM TimerB Prescale 364
+        __IO uint32_t       TAPMR     ;         // 0x040   R/W              0x00000000     GPTM TimerA Prescale Match 365
+        __IO uint32_t       TBPMR     ;         // 0x044   R/W              0x00000000     GPTM TimerB Prescale Match 366
+        __I  uint32_t       TAR       ;         // 0x048   RO               0xFFFFFFFF     GPTM TimerA 367
+        __I  uint32_t       TBR       ;         // 0x04C   RO               0x0000FFFF     GPTM TimerB 368
 
 } GPTM_TIMER_T, *PGPTM_TIMER_T ;
 
@@ -89,7 +84,7 @@ typedef struct GPTM_TIMER_S {
     #define GPTM_TIMER_CTL_TBEVENT          ((unsigned int)0x03 << 10)		// Both edges
 #define GPTM_TIMER_CTL_TBSTALL              ((unsigned int)0x01 << 9)		// GPTM Timer B Stall Enable. 0 Timer B continues counting while the processor is halted by the debugger
 #define GPTM_TIMER_CTL_TBEN                 ((unsigned int)0x01 << 8)		// GPTM TimerB Enable
-// --------                                                                 //
+// --------
 #define GPTM_TIMER_CTL_TAPWML               ((unsigned int)0x01 << 6)		// GPTM TimerA PWM Output Level. 0 Output is unaffected. 1 Output is inverted.
 #define GPTM_TIMER_CTL_TAOTE                ((unsigned int)0x01 << 5)		// GPTM TimerA Output Trigger Enable. 0 The output TimerB ADC trigger is disabled. 1 The output TimerB ADC trigger is enabled.
 #define GPTM_TIMER_CTL_RTCEN                ((unsigned int)0x01 << 4)		// GPTM RTC Enable
@@ -106,7 +101,7 @@ typedef struct GPTM_TIMER_S {
 #define GPTM_TIMER_INT_CBEIM                ((unsigned int)0x01 << 10)		// GPTM CaptureB Event Interrupt Mask
 #define GPTM_TIMER_INT_CBMIM                ((unsigned int)0x01 << 9)		// GPTM CaptureB Match Interrupt Mask
 #define GPTM_TIMER_INT_TBTOIM               ((unsigned int)0x01 << 8)		// GPTM TimerB Time-Out Interrupt Mask
-// --------                                                                 //
+// --------
 #define GPTM_TIMER_INT_RTCIM                ((unsigned int)0x01 << 3)		// GPTM RTC Interrupt Mask
 #define GPTM_TIMER_INT_CAEIM                ((unsigned int)0x01 << 2)		// GPTM CaptureA Event Interrupt Mask
 #define GPTM_TIMER_INT_CAMIM                ((unsigned int)0x01 << 1)		// GPTM CaptureA Match Interrupt Mask
@@ -119,14 +114,14 @@ typedef struct GPTM_TIMER_S {
 // *****************************************************************************
 typedef struct SYSTICK_S {
 
-			REG_DWORD		Res0[1]  ;              // 0xE000E000
-			REG_DWORD		ICT   ;                 // 0xE000E004
-			REG_DWORD		Res1[2]  ;              // 0xE000E008
-			REG_DWORD		STCTRL   ;              // 0xE000E010
-			REG_DWORD		STRELOAD ;              // 0xE000E014
-			REG_DWORD		STCURRENT;              // 0xE000E018
-			REG_DWORD		STCALIB ;               // 0xE000E01C
-			REG_DWORD		Res2[56] ;              // 0xE000E020
+			     uint32_t		Res0[1]  ;              // 0xE000E000
+			__IO uint32_t		ICT   ;                 // 0xE000E004
+			     uint32_t		Res1[2]  ;              // 0xE000E008
+			__IO uint32_t		STCTRL   ;              // 0xE000E010
+			__IO uint32_t		STRELOAD ;              // 0xE000E014
+			__IO uint32_t		STCURRENT;              // 0xE000E018
+			__IO uint32_t		STCALIB ;               // 0xE000E01C
+			     uint32_t		Res2[56] ;              // 0xE000E020
 
 } SYSTICK_T, *PSYSTICK_T ;
 
@@ -145,18 +140,18 @@ typedef struct SYSTICK_S {
 // *****************************************************************************
 typedef struct NVIC_S {
 
-            REG_DWORD		ISER[2]  ;              // 0xE000E100
-			REG_DWORD		Res3[30] ;              // 0xE000E120
-			REG_DWORD		ICER[2]  ;              // 0xE000E180
-			REG_DWORD		Res4[30] ;              // 0xE000E1A0
-			REG_DWORD		ISPR[2]  ;              // 0xE000E200
-			REG_DWORD		Res5[30] ;              // 0xE000E220
-			REG_DWORD		ICPR[2]  ;              // 0xE000E280
-			REG_DWORD		Res6[30] ;              // 0xE000E2A0
-			REG_DWORD		IABR[2]  ;              // 0xE000E300
-			REG_DWORD		Res7[64] ;              // 0xE000E320
-			REG_DWORD		IPR[2]  ;               // 0xE000E400
-			// REG_DWORD		Res7[515]  ;            // 0xE000E4F4
+            __IO uint32_t		ISER[2]  ;              // 0xE000E100
+			     uint32_t		Res3[30] ;              // 0xE000E120
+			__IO uint32_t		ICER[2]  ;              // 0xE000E180
+			     uint32_t		Res4[30] ;              // 0xE000E1A0
+			__IO uint32_t		ISPR[2]  ;              // 0xE000E200
+			     uint32_t		Res5[30] ;              // 0xE000E220
+			__IO uint32_t		ICPR[2]  ;              // 0xE000E280
+			     uint32_t		Res6[30] ;              // 0xE000E2A0
+			__IO uint32_t		IABR[2]  ;              // 0xE000E300
+			     uint32_t		Res7[64] ;              // 0xE000E320
+			__IO uint32_t		IPR[2]  ;              // 0xE000E400
+			//      uint32_t		Res7[515]  ;            // 0xE000E4F4
 
 } NVIC_T, *PNVIC_T ;
 
@@ -176,17 +171,17 @@ typedef struct NVIC_S {
 // *****************************************************************************
 typedef struct SCB_S {
 
-            REG_DWORD       CPUID ;                 // 0xE000ED00
-            REG_DWORD       ICSR ;                  // 0xE000ED04
-            REG_DWORD       VTOR ;                  // 0xE000ED08
-            REG_DWORD       AIRCR ;                 // 0xE000ED0C
-            REG_DWORD       SCR ;                   // 0xE000ED10
-            REG_DWORD       CCR ;                   // 0xE000ED14
+            __IO uint32_t       CPUID ;                 // 0xE000ED00
+            __IO uint32_t       ICSR ;                  // 0xE000ED04
+            __IO uint32_t       VTOR ;                  // 0xE000ED08
+            __IO uint32_t       AIRCR ;                 // 0xE000ED0C
+            __IO uint32_t       SCR ;                   // 0xE000ED10
+            __IO uint32_t       CCR ;                   // 0xE000ED14
 
-            REG_DWORD       SYS_PRIO[3] ;           // 0xE000ED18
-            REG_DWORD       SYSHNDCTRL ;            // 0xE000ED24
-            //REG_DWORD       FAULTSTAT ;           // 0xE000ED28
-            //REG_DWORD       HFAULTSTAT ;          // 0xE000ED2C
+            __IO uint32_t       SYS_PRIO[3] ;           // 0xE000ED18
+            __IO uint32_t       SYSHNDCTRL ;            // 0xE000ED24
+            //__IO uint32_t       FAULTSTAT ;           // 0xE000ED28
+            //__IO uint32_t       HFAULTSTAT ;          // 0xE000ED2C
 
 } SCB_T, *PSCB_T ;
 

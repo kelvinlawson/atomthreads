@@ -30,6 +30,7 @@
 #ifndef __TYPES_H__
 #define __TYPES_H__
 
+#ifndef _STDINT_H
 typedef unsigned int		        uintptr_t ;
 typedef int					        intptr_t ;
 typedef unsigned long long		    uint64_t ;
@@ -39,6 +40,7 @@ typedef unsigned char		        uint8_t ;
 typedef int					        int32_t ;
 typedef short				        int16_t ;
 typedef char				        int8_t ;
+#endif
 
 #ifndef OFFSETOF
 #define OFFSETOF(TYPE, MEMBER) ((int) &((TYPE *)0)->MEMBER)
@@ -48,6 +50,10 @@ typedef char				        int8_t ;
 #define INLINE  __inline
 #endif
 
+/* IO definitions (access restrictions to peripheral registers) */
+#define     __I     volatile           /*!< defines 'read only' permissions                 */
+#define     __O     volatile             /*!< defines 'write only' permissions                */
+#define     __IO    volatile             /*!< defines 'read / write' permissions              */
 
 #endif /* __TYPES_H__ */
 

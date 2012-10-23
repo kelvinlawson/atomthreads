@@ -87,6 +87,7 @@ all_tests:
 
 fail_tests:
 		make run_test "TEST_NAME=mutex4"
+		make run_test "TEST_NAME=timer4"
 		make run_test "TEST_NAME=sem4"
 
 

@@ -20,6 +20,8 @@ all:  target
 target: $(OBJS)
 		$(LN) $(LFLAGS)  $(LIBFLAGS) $(OBJS) $(LLIBS) -o $(TARGET_NAME).elf
 		@echo $(TARGET_NAME).elf was compiled
+		arm-none-eabi-objcopy -O binary $(TARGET_NAME).elf $(TARGET_NAME).bin
+		arm-none-eabi-objdump -dxS $(TARGET_NAME).elf > $(TARGET_NAME).out
 
 clean:
 		rm -f $(OBJS)

@@ -1,0 +1,16 @@
+---------------------------------------------------------------------------
+
+Library:      Atomthreads NXP LPC17xx Platform.
+Author:       Natie van Rooyen <natie@navaro.nl>
+License:      BSD Revised
+
+---------------------------------------------------------------------------
+
+NXP LPC17xx Platform
+
+The "lpc17xx" platform contains sources for building a sample Atomthreads 
+application for the NXP LPC17xx platform.
+
+The platform was tested on the mbed NXP LPC1768 (http://www.mbed.org).
+
+

@@ -48,6 +48,10 @@ typedef char				        int8_t ;
 #define INLINE  __inline
 #endif
 
+/* IO definitions (access restrictions to peripheral registers) */
+#define     __I     volatile           /*!< defines 'read only' permissions                 */
+#define     __O     volatile             /*!< defines 'write only' permissions                */
+#define     __IO    volatile             /*!< defines 'read / write' permissions              */
 
 #endif /* __TYPES_H__ */
 

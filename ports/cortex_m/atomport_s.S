@@ -45,7 +45,11 @@
 .equ NVIC_INT_CTRL,                     0xE000ED04        //    Interrupt control state register
 .equ NVIC_PENDSVSET,                    0x10000000        //    Value to trigger PendSV exception
 .equ NVIC_PR_12_15_ADDR,                0xE000ED20        //    System Handlers 12-15 Priority Register Address
+#ifdef PLATFORM_QEMU_LM3S_HACK
 .equ NVIC_PENDS_VPRIORITY,              0x00F00000        //    PendSV priority is minimal (0xFF -- 0x00FF0000)
+#else
+.equ NVIC_PENDS_VPRIORITY,              0x00FF0000        //    PendSV priority is minimal (0xFF -- 0x00FF0000)
+#endif
 
 #ifdef PLATFORM_QEMU_LM3S_HACK
 .equ NVIC_ISER,							0xE000E100
