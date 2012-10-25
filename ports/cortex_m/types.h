@@ -51,9 +51,15 @@ typedef char				        int8_t ;
 #endif
 
 /* IO definitions (access restrictions to peripheral registers) */
+#ifndef __I
 #define     __I     volatile           /*!< defines 'read only' permissions                 */
+#endif
+#ifndef __O
 #define     __O     volatile             /*!< defines 'write only' permissions                */
+#endif
+#ifndef __IO
 #define     __IO    volatile             /*!< defines 'read / write' permissions              */
+#endif
 
 #endif /* __TYPES_H__ */
 

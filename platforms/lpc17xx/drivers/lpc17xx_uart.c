@@ -144,6 +144,19 @@ void LPC17xx_UART_PutString (uint8_t *str)
 }
 
 /**
+  * @brief  Write a buffer to UART0.
+  *
+  * @param  buffer: buffer to be written
+  * @retval None 
+  */
+void LPC17xx_UART_WriteBuffer (uint8_t *buffer, uint32_t len)
+{
+	while (len-- != 0) {
+		LPC17xx_UART_PutChar(*buffer++);
+	}
+
+}
+/**
   * @brief  Print formatted string. This function takes variable length arguments.
   *
   * @param  format

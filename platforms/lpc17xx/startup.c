@@ -51,6 +51,8 @@ WEAK void IntDefault_Handler(void);
 //*****************************************************************************
 
 extern int main(void);
+extern void low_level_init(void);
+
 //*****************************************************************************
 //
 // External declaration for the pointer to the stack top from the Linker Script

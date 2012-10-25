@@ -27,31 +27,34 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-
+#include <stdio.h>
 #include "LPC17xx.h"
 #include "drivers/lpc17xx_uart.h"
-#include <stdio.h>
 #include "modules.h"
 #include "atom.h"
 #include "tests/atomtests.h"
 
-// for mbed  board
-#define LED1_GPIO                       (1 << 18)
-#define LED2_GPIO                       (1 << 20)
-#define LED3_GPIO                       (1 << 21)
-#define LED4_GPIO                       (1 << 23)
-
-#define LED_GET(led)                    (LPC_GPIO1->FIOSET & led)
-#define LED_SET(led, on)                { if (on) LPC_GPIO1->FIOSET = led ; else LPC_GPIO1->FIOCLR = led ; }
-#define LED_TOGGLE(led)                 LED_SET(led, !LED_GET(led))
 
 
 #ifndef ATOMTHREADS_TEST
 #define ATOMTHREADS_TEST                "kern1"
 #endif
 
-#define TEST_STACK_BYTE_SIZE            1024
-#define IDLE_STACK_BYTE_SIZE            512
+// for mbed  board
+#define MBED_LED1_GPIO                      (1 << 18)
+#define MBED_LED2_GPIO                      (1 << 20)
+#define MBED_LED3_GPIO                      (1 << 21)
+#define MBED_LED4_GPIO                      (1 << 23)
+
+#define MBED_LED_GET(led)                   (LPC_GPIO1->FIOSET & led)
+#define MBED_LED_SET(led, on)               { if (on) LPC_GPIO1->FIOSET = led ; else LPC_GPIO1->FIOCLR = led ; }
+#define MBED_LED_TOGGLE(led)                MBED_LED_SET(led, !MBED_LED_GET(led))
+#define MBED_LED_COUNT(count)               MBED_LED_SET(MBED_LED1_GPIO, count & 1) ; MBED_LED_SET(MBED_LED2_GPIO, count & 2) ; \
+                                            MBED_LED_SET(MBED_LED3_GPIO, count & 4) ; MBED_LED_SET(MBED_LED4_GPIO, count & 8) ;
+
+
+#define TEST_STACK_BYTE_SIZE                512
+#define IDLE_STACK_BYTE_SIZE                128
 
 static unsigned char	test_stack[TEST_STACK_BYTE_SIZE] ;
 static unsigned char	idle_stack[IDLE_STACK_BYTE_SIZE] ;
@@ -68,7 +71,6 @@ void
 test_thread (uint32_t param)
 {
     uint32_t failures ;
-    static volatile unsigned int i ;
     CRITICAL_STORE ;
 
     failures = test_start ()  ;
@@ -79,18 +81,28 @@ test_thread (uint32_t param)
     CRITICAL_END() ;
 
 	while(1) {
-        LED_TOGGLE(LED1_GPIO) ;
-        for (i=0; i<1000000; i++) ;
+#ifdef BOARD_MBED_LP1768
+        MBED_LED_TOGGLE(MBED_LED1_GPIO) ;
+#endif
+        atomTimerDelay (65) ;
 	}
 
 }
 
-int main(void) {
+/**
+ * \b main
+ *
+ * Initialize atomthreads and start a test_thread to run the Atomthreads test suite. 
+ *
+ */
+int 
+main(void)
+{
 	
-    static volatile unsigned int i ;
-
-    // mbed board
-    LPC_GPIO1->FIODIR |= LED1_GPIO | LED2_GPIO | LED3_GPIO | LED4_GPIO ;
+#ifdef BOARD_MBED_LP1768
+    LPC_GPIO1->FIODIR |= MBED_LED1_GPIO | MBED_LED2_GPIO | MBED_LED3_GPIO | MBED_LED4_GPIO ;
+    MBED_LED_SET(MBED_LED1_GPIO | MBED_LED2_GPIO | MBED_LED3_GPIO | MBED_LED4_GPIO, 1);
+#endif
 
     dbg_format_msg ("\r\nLPC17xx SystemCoreClock =  %d\r\n",SystemCoreClock) ;
 
@@ -99,18 +111,12 @@ int main(void) {
     dbg_format_msg ("Atomthreads starting %s... \r\n", ATOMTHREADS_TEST) ;
 
     atomOSInit(&idle_stack[0], IDLE_STACK_BYTE_SIZE, TRUE) ;
-    atomThreadCreate ((ATOM_TCB *)&test_tcb, TEST_THREAD_PRIO, test_thread, 0, &test_stack[0], TEST_STACK_BYTE_SIZE, TRUE);
+    atomThreadCreate ((ATOM_TCB *)&test_tcb, TEST_THREAD_PRIO, test_thread, 0, 
+            &test_stack[0], TEST_STACK_BYTE_SIZE, TRUE);
     atomOSStart() ;
 
+    while(1) ;
 
-
-	while(1) {
-
-        LED_TOGGLE(LED1_GPIO) ;
-        for (i=0; i<1000000; i++) ;
-
-
-	}
 	return 0 ;
 }
 

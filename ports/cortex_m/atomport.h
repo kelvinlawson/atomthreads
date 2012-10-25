@@ -39,7 +39,9 @@
  * If stddef.h is available on the platform it is simplest to include it
  * from this header, otherwise define below.
  */
+#ifndef NULL
 #define NULL					((void *)(0))
+#endif
 
 /* Size of each stack entry / stack alignment size (e.g. 32 bits) */
 #define STACK_ALIGN_SIZE        sizeof(unsigned int)
@@ -56,7 +58,9 @@
  * Most of these are available from types.h on this platform, which is
  * included above.
  */
+#ifndef POINTER
 #define POINTER                void *
+#endif
 
 /* *
  *

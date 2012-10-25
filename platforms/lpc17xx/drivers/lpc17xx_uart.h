@@ -29,8 +29,8 @@
 void    LPC17xx_UART_PutChar (uint8_t);
 uint8_t LPC17xx_UART_GetChar (void);
 void  	LPC17xx_UART_Init(uint32_t baudrate);
-//void  	LPC17xx_UART_Printf (const uint8_t *format, ...);
 void LPC17xx_UART_PutString (uint8_t *str) ;
+void LPC17xx_UART_WriteBuffer (uint8_t *buffer, uint32_t len) ;
 
 #endif // __LPC17xx_UART_H_
 

@@ -50,7 +50,8 @@ dbg_format_msg (char *format, ...)
 
     va_start (args, format) ;
     //CRITICAL_START() ;
-	vsnprintf ((char*)msg, 256, (char*)format, args) ;
+    
+	vsniprintf ((char*)msg, 256, (char*)format, args) ;
     LPC17xx_UART_PutString (msg) ;
     //CRITICAL_END() ;
 

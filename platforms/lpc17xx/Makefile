@@ -8,8 +8,6 @@ ifeq ($(TEST_NAME),)
 TEST_NAME = kern1
 endif
 
-
-
 CC = arm-none-eabi-gcc
 LN = arm-none-eabi-gcc
 AS = arm-none-eabi-gcc
@@ -18,7 +16,7 @@ CFLAGS := $(CFLAGS) -O3 -Os -g3 -Wall -c -mcpu=cortex-m3 -mthumb
 AFLAGS := $(AFLAGS) -O3 -Os -g3 -Wall -c -fmessage-length=0 -fno-builtin -ffunction-sections -fdata-sections -mcpu=cortex-m3 -mthumb
 LFLAGS := $(LFLAGS) -O3 -Os -Wall -mcpu=cortex-m3 -mthumb -Wl,-Map=system.map  -Tsystem.ld 
 
-CDEFS := $(CDEFS) -DATOMTHREADS_TEST='"$(TEST_NAME)"'
+CDEFS := $(CDEFS) -DATOMTHREADS_TEST='"$(TEST_NAME)"' -DBOARD_MBED_LP1768
 ADEFS := $(ADEFS) -D__thumb2__ -DARM_RDI_MONITOR 
 
 LLIBS := $(LLIBS) 
@@ -39,7 +37,8 @@ ASMS := $(ASMS) \
 
 
 INCLUDES := $(INCLUDES) \
-			-I./CMSISv2p00_LPC17xx/inc \
+			-I$(ATOMTHREADS)/platforms/lpc17xx/CMSISv2p00_LPC17xx/inc \
+			-I$(ATOMTHREADS)/platforms/lpc17xx \
 			-I$(ATOMTHREADS)
 
 include $(ATOMTHREADS)/ports/cortex_m/Makefile
