@@ -550,15 +550,12 @@ callbackContextCreate (PATOMVM patomvm, PATOMVM_CALLBACK callback)
 * This function creates a atomvm thread context that can be scheduled
 * by atomvmContextSwitch.
 *
-* @param[out] context Handle to the context of the thread that are allocated
-* by the caller.
-* @param[in] stack Stack top.
-* @param[in] entry Entry point using the default caling convention of the compiler.
+* @param[in] interrupt_mask  initial interrupt mask of the thread.
 *
-* @return Zero on failure, try to call GetLastError().
+* @return Handle to the context of the thread created.
 */
-uint32_t
-atomvmContextCreate (HATOMVM_CONTEXT* atomvm_context, uint32_t stack, uint32_t entry)
+HATOMVM_CONTEXT
+atomvmContextCreate (uint32_t interrupt_mask)
 {
     uint32_t            res ;
     PATOMVM             patomvm = getAtomvm () ;
@@ -567,20 +564,54 @@ atomvmContextCreate (HATOMVM_CONTEXT* atomvm_context, uint32_t stack, uint32_t e
     ATOMVM_CALLBACK_CONTEXT     context_init ;
 
     context_init.pcontext = new_context ;
-    new_context->interrupt_mask = 1 ;
-
+    new_context->interrupt_mask = interrupt_mask ;
+    new_context->thread_id = (uint32_t) -1 ;
     res = invokeCallback (patomvm, callbackContextCreate, (PATOMVM_CALLBACK)&context_init) ;
 
     if (res) {
-        pcontext->Ebp = stack ;
-        pcontext->Esp = stack ;
-        pcontext->Eip = entry ;
-        *atomvm_context = (HATOMVM_CONTEXT)new_context ;
+        return (HATOMVM_CONTEXT)new_context ;
+    } else {
+        free (new_context) ;
     }
+
+    return 0 ;
+}
+
+/**
+* \ingroup atomvm
+* \b atomvmContextInit
+*
+* This function is to be used by the atom virtual machine.
+*
+* This function initialize a atomvm thread context that can be scheduled
+* by atomvmContextSwitch.
+*
+* @param[out] context Handle to the context of the thread that are allocated
+* by the caller.
+* @param[in] stack Stack top.
+* @param[in] entry Entry point of the thread.
+* @param[in] arg argument passed on the stack as first parameter.
+* @param[in] exit exit function to return to.
+* @param[in] status status for exit function.
+*
+* @return Zero on failure, try to call GetLastError().
+*/
+uint32_t
+atomvmContextInit (HATOMVM_CONTEXT context, uint32_t* stack, void (*entry)(uint32_t), uint32_t arg, void (*exit)(uint32_t))
+{
+    uint32_t            res = 0 ;
+    PATOMVM_CONTEXT     new_context = (PATOMVM_CONTEXT)context ;
+    CONTEXT*            pcontext = &new_context->context ;
+
+    *stack-- = arg;
+    *stack = (uint32_t)exit ;
+
+        pcontext->Ebp = (uint32_t)stack ;
+        pcontext->Esp = (uint32_t)stack ;
+        pcontext->Eip = (uint32_t)entry ;
 
     return res ;
 }
-
 
 /**
 * \b callbackContextSwitch

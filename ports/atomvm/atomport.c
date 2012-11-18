@@ -32,7 +32,6 @@
 #include "windows.h"
 
 /** Forward declarations */
-static void thread_shell (void);
 DWORD WINAPI cntrl_thread_proc (LPVOID lpParameter) ;
 
 /* Global data */
@@ -73,7 +72,7 @@ cntrl_thread_proc (LPVOID lpParameter)
  *
  */
 void 
-thread_shell (void)
+thread_shell (uint32_t arg)
 {
     ATOM_TCB *curr_tcb;
 
@@ -111,7 +110,8 @@ archThreadContextInit (ATOM_TCB *tcb_ptr, void *stack_top, void (*entry_point)(u
 	tcb_ptr->entry_param = entry_param ;
 	tcb_ptr->entry_point = entry_point ;
 
-	atomvmContextCreate (&tcb_ptr->context, (unsigned int )stack_top, (unsigned int )thread_shell) ;
+	tcb_ptr->context = atomvmContextCreate (1) ;
+	atomvmContextInit (tcb_ptr->context, (unsigned int *)stack_top, thread_shell, entry_param, 0) ;
 }
 
 
