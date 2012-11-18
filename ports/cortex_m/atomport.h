@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010, Kelvin Lawson. All rights reserved.
+ * Copyright (c) 2012, Natie van Rooyen. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,21 +27,55 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef __ATOM_TESTS_H
-#define __ATOM_TESTS_H
+#ifndef __ATOM_PORT_H__
+#define __ATOM_PORT_H__
 
-/* Include Atomthreads kernel API */
-#include "atom.h"
+#include "types.h"
 
-/* Include port-specific test configuration */
-#include "atomport-tests.h"
+#define SYSTEM_TICKS_PER_SEC    100
+
+/**
+ * Definition of NULL.
+ * If stddef.h is available on the platform it is simplest to include it
+ * from this header, otherwise define below.
+ */
+#ifndef NULL
+#define NULL					((void *)(0))
+#endif
+
+/* Size of each stack entry / stack alignment size (e.g. 32 bits) */
+#define STACK_ALIGN_SIZE        sizeof(unsigned int)
+
+/**
+ * Architecture-specific types.
+ * Most of these are available from types.h on this platform, which is
+ * included above.
+ */
 
 
-/* Default thread priority */
-#define TEST_THREAD_PRIO            16
+/**
+ * Architecture-specific types.
+ * Most of these are available from types.h on this platform, which is
+ * included above.
+ */
+#ifndef POINTER
+#define POINTER                void *
+#endif
 
-/* API for starting each test */
-extern uint32_t test_start (void);
+/* *
+ *
+ * Functions defined in atomport_arm.asm
+ *
+ */
+extern void						contextInit (void) ;
+extern uint32_t					contextEnterCritical (void) ;
+extern void						contextExitCritical (uint32_t posture) ;
 
 
-#endif /* __ATOM_TESTS_H */
+/* Critical region protection */
+#define CRITICAL_STORE          uint32_t __atom_critical
+#define CRITICAL_START()        __atom_critical = contextEnterCritical()
+#define CRITICAL_END()          contextExitCritical(__atom_critical)
+
+#endif /* __ATOM_PORT_H__ */
+

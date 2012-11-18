@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010, Kelvin Lawson. All rights reserved.
+ * Copyright (c) 2010,Kelvin Lawson. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,22 +26,36 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-
-#ifndef __ATOM_TESTS_H
-#define __ATOM_TESTS_H
-
-/* Include Atomthreads kernel API */
-#include "atom.h"
-
-/* Include port-specific test configuration */
-#include "atomport-tests.h"
+#ifndef __ATOM_USER_H__
+#define __ATOM_USER_H__
 
 
-/* Default thread priority */
-#define TEST_THREAD_PRIO            16
+/* Portable uint8_t and friends not available from stdint.h on this platform */
+#include <windows.h>
 
-/* API for starting each test */
-extern uint32_t test_start (void);
+ 
+#define SYSTEM_MEMALIGN			sizeof (unsigned int)
 
 
-#endif /* __ATOM_TESTS_H */
+typedef unsigned int			uintptr_t ;
+typedef int						intptr_t ;
+typedef unsigned int			uint32_t ;
+typedef unsigned short			uint16_t ;
+typedef unsigned char			uint8_t ;
+typedef int						int32_t ;
+typedef short					int16_t ;
+typedef char					int8_t ;
+
+
+/**
+ * Architecture-specific types.
+ * Most of these are available from stdint.h on this platform, which is
+ * included above.
+ */
+#define POINTER					void *
+
+ 
+#define ATOM_TLS				HATOMVM_CONTEXT	context ;
+
+
+#endif /* __ATOM_USER_H__ */

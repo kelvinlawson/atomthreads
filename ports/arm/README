@@ -1,0 +1,17 @@
+---------------------------------------------------------------------------
+
+Library:      Atomthreads ARM Port
+Author:       Natie van Rooyen <natie@navaro.nl>
+License:      BSD Revised
+
+---------------------------------------------------------------------------
+
+ARM  PORT
+
+This folder contains a port of the Atomthreads real time kernel for the
+ARM processor architecture. This port was tested on the ARMv5 and ARMv7 
+architectures.
+
+To Use:
+
+See the example project in the "platforms/qemu_integratorcp" directory.

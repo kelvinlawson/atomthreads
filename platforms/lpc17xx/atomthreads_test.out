@@ -1,0 +1,153 @@
+
+LPC17xx SystemCoreClock =  100000000
+Atomthreads starting mutex1...
+mutex1 PASS
+
+LPC17xx SystemCoreClock =  100000000
+Atomthreads starting mutex2...
+mutex2 PASS
+
+LPC17xx SystemCoreClock =  100000000
+Atomthreads starting mutex3...
+mutex3 PASS
+
+LPC17xx SystemCoreClock =  100000000
+Atomthreads starting mutex5...
+mutex5 PASS
+
+LPC17xx SystemCoreClock =  100000000
+Atomthreads starting mutex6...
+mutex6 PASS
+
+LPC17xx SystemCoreClock =  100000000
+Atomthreads starting mutex7...
+mutex7 PASS
+
+LPC17xx SystemCoreClock =  100000000
+Atomthreads starting mutex8...
+mutex8 PASS
+
+LPC17xx SystemCoreClock =  100000000
+Atomthreads starting mutex9...
+mutex9 PASS
+
+LPC17xx SystemCoreClock =  100000000
+Atomthreads starting kern1...
+kern1 PASS
+
+LPC17xx SystemCoreClock =  100000000
+Atomthreads starting kern2...
+kern2 PASS
+
+LPC17xx SystemCoreClock =  100000000
+Atomthreads starting kern3...
+kern3 PASS
+
+LPC17xx SystemCoreClock =  100000000
+Atomthreads starting kern4...
+kern4 PASS
+
+LPC17xx SystemCoreClock =  100000000
+Atomthreads starting timer1...
+timer1 PASS
+
+LPC17xx SystemCoreClock =  100000000
+Atomthreads starting timer2...
+timer2 PASS
+
+LPC17xx SystemCoreClock =  100000000
+Atomthreads starting timer3...
+timer3 PASS
+
+LPC17xx SystemCoreClock =  100000000
+Atomthreads starting timer5...
+timer5 PASS
+
+LPC17xx SystemCoreClock =  100000000
+Atomthreads starting timer6...
+timer6 PASS
+
+LPC17xx SystemCoreClock =  100000000
+Atomthreads starting timer7...
+timer7 PASS
+
+LPC17xx SystemCoreClock =  100000000
+Atomthreads starting queue1...
+queue1 PASS
+
+LPC17xx SystemCoreClock =  100000000
+Atomthreads starting queue2...
+queue2 PASS
+
+LPC17xx SystemCoreClock =  100000000
+Atomthreads starting queue3...
+queue3 PASS
+
+LPC17xx SystemCoreClock =  100000000
+Atomthreads starting queue4...
+queue4 PASS
+
+LPC17xx SystemCoreClock =  100000000
+Atomthreads starting queue5...
+queue5 PASS
+
+LPC17xx SystemCoreClock =  100000000
+Atomthreads starting queue6...
+queue6 PASS
+
+LPC17xx SystemCoreClock =  100000000
+Atomthreads starting queue7...
+queue7 PASS
+
+LPC17xx SystemCoreClock =  100000000
+Atomthreads starting queue8...
+queue8 PASS
+
+LPC17xx SystemCoreClock =  100000000
+Atomthreads starting queue9...
+queue9 PASS
+
+LPC17xx SystemCoreClock =  100000000
+Atomthreads starting sem1...
+sem1 PASS
+
+LPC17xx SystemCoreClock =  100000000
+Atomthreads starting sem2...
+sem2 PASS
+
+LPC17xx SystemCoreClock =  100000000
+Atomthreads starting sem3...
+sem3 PASS
+
+LPC17xx SystemCoreClock =  100000000
+Atomthreads starting sem5...
+sem5 PASS
+
+LPC17xx SystemCoreClock =  100000000
+Atomthreads starting sem6...
+sem6 PASS
+
+LPC17xx SystemCoreClock =  100000000
+Atomthreads starting sem7...
+sem7 PASS
+
+LPC17xx SystemCoreClock =  100000000
+Atomthreads starting sem8...
+sem8 PASS
+
+LPC17xx SystemCoreClock =  100000000
+Atomthreads starting sem9...
+sem9 PASS
+
+LPC17xx SystemCoreClock =  100000000
+Atomthreads starting mutex4...
+mutex4 PASS
+
+LPC17xx SystemCoreClock =  100000000
+Atomthreads starting sem4...
+sem4 PASS
+
+LPC17xx SystemCoreClock =  100000000
+Atomthreads starting timer4...
+timer4 PASS
+

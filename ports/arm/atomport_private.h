@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010, Kelvin Lawson. All rights reserved.
+ * Copyright (c) 2012, Natie van Rooyen. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,21 +27,14 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef __ATOM_TESTS_H
-#define __ATOM_TESTS_H
-
-/* Include Atomthreads kernel API */
-#include "atom.h"
-
-/* Include port-specific test configuration */
-#include "atomport-tests.h"
+#ifndef __ATOM_PORT_PRIVATE_H__
+#define __ATOM_PORT_PRIVATE_H__
 
 
-/* Default thread priority */
-#define TEST_THREAD_PRIO            16
+/* Function prototypes */
+extern void        archIRQHandler (void) ;
 
-/* API for starting each test */
-extern uint32_t test_start (void);
+/* required interface */
+extern void     __context_preempt_handler (void) ;
 
-
-#endif /* __ATOM_TESTS_H */
+#endif /* __ATOM_PORT_PRIVATE_H__ */

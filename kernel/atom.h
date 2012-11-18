@@ -70,6 +70,10 @@ typedef struct atom_tcb
     uint32_t stack_size;          /* Size of stack allocation in bytes */
 #endif
 
+#ifdef ATOM_TLS
+	ATOM_TLS                    /* Thread Local Storage */
+#endif
+
 } ATOM_TCB;
 
 

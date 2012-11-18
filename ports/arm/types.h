@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010, Kelvin Lawson. All rights reserved.
+ * Copyright (c) 2012, Natie van Rooyen. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,21 +27,31 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef __ATOM_TESTS_H
-#define __ATOM_TESTS_H
+#ifndef __TYPES_H__
+#define __TYPES_H__
 
-/* Include Atomthreads kernel API */
-#include "atom.h"
+typedef unsigned int		        uintptr_t ;
+typedef int					        intptr_t ;
+typedef unsigned long long		    uint64_t ;
+typedef unsigned int		        uint32_t ;
+typedef unsigned short		        uint16_t ;
+typedef unsigned char		        uint8_t ;
+typedef int					        int32_t ;
+typedef short				        int16_t ;
+typedef char				        int8_t ;
 
-/* Include port-specific test configuration */
-#include "atomport-tests.h"
+#ifndef OFFSETOF
+#define OFFSETOF(TYPE, MEMBER) ((int) &((TYPE *)0)->MEMBER)
+#endif
 
+#ifndef INLINE
+#define INLINE  __inline
+#endif
 
-/* Default thread priority */
-#define TEST_THREAD_PRIO            16
+/* IO definitions (access restrictions to peripheral registers) */
+#define     __I     volatile           /*!< defines 'read only' permissions                 */
+#define     __O     volatile             /*!< defines 'write only' permissions                */
+#define     __IO    volatile             /*!< defines 'read / write' permissions              */
 
-/* API for starting each test */
-extern uint32_t test_start (void);
+#endif /* __TYPES_H__ */
 
-
-#endif /* __ATOM_TESTS_H */

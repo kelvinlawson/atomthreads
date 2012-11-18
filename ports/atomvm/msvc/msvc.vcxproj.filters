@@ -1,0 +1,67 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="atomthreads">
+      <UniqueIdentifier>{d05cbb5a-256f-4127-bd5b-c3bd69b3672c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="port">
+      <UniqueIdentifier>{f30700d8-652d-477c-a4f2-d23e7784de50}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="atomvm">
+      <UniqueIdentifier>{a4f641bc-296d-4546-a831-2e1d0d7e9242}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\..\kernel\atom.h">
+      <Filter>atomthreads</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\kernel\atommutex.h">
+      <Filter>atomthreads</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\kernel\atomqueue.h">
+      <Filter>atomthreads</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\kernel\atomsem.h">
+      <Filter>atomthreads</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\kernel\atomtimer.h">
+      <Filter>atomthreads</Filter>
+    </ClInclude>
+    <ClInclude Include="..\atomport.h">
+      <Filter>port</Filter>
+    </ClInclude>
+    <ClInclude Include="..\atomport-tests.h">
+      <Filter>port</Filter>
+    </ClInclude>
+    <ClInclude Include="..\atomuser.h">
+      <Filter>port</Filter>
+    </ClInclude>
+    <ClInclude Include="..\atomvm.h">
+      <Filter>atomvm</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\..\kernel\atomkernel.c">
+      <Filter>atomthreads</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\kernel\atommutex.c">
+      <Filter>atomthreads</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\kernel\atomqueue.c">
+      <Filter>atomthreads</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\kernel\atomsem.c">
+      <Filter>atomthreads</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\kernel\atomtimer.c">
+      <Filter>atomthreads</Filter>
+    </ClCompile>
+    <ClCompile Include="..\atomport.c">
+      <Filter>port</Filter>
+    </ClCompile>
+    <ClCompile Include="main.c" />
+    <ClCompile Include="..\atomvm.c">
+      <Filter>atomvm</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>

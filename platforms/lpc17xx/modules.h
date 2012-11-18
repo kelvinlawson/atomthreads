@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010, Kelvin Lawson. All rights reserved.
+ * Copyright (c) 2012, Natie van Rooyen. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,22 +26,21 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
+#ifndef __MODULES_H__
+#define __MODULES_H__
 
-#ifndef __ATOM_TESTS_H
-#define __ATOM_TESTS_H
-
-/* Include Atomthreads kernel API */
-#include "atom.h"
-
-/* Include port-specific test configuration */
-#include "atomport-tests.h"
+/*
+ *  Module definitions to use with the Stellaris LM3S6965 Microcontroller
+ */
 
 
-/* Default thread priority */
-#define TEST_THREAD_PRIO            16
-
-/* API for starting each test */
-extern uint32_t test_start (void);
+#include "LPC17xx.h"
+#include "drivers/lpc17xx_uart.h"
 
 
-#endif /* __ATOM_TESTS_H */
+/* Function prototypes */
+extern int              low_level_init (void) ;
+extern void             dbg_format_msg (char *format, ...)  ;
+extern void             dbg_fault_handler (unsigned int * hardfault_args) ;
+
+#endif /* __MODULES_H__ */

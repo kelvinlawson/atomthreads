@@ -1,0 +1,17 @@
+---------------------------------------------------------------------------
+
+Library:      Atomthreads ARM Cortex M Port
+Author:       Natie van Rooyen <natie@navaro.nl>
+License:      BSD Revised
+
+---------------------------------------------------------------------------
+
+ARM Cortex M PORT
+
+This folder contains a port of the Atomthreads real time kernel for the
+ARM CortexM type processor architecture. This port was tested on the 
+Cortex M3 and the Cortex M4.
+
+To Use:
+
+See the example project in the "platforms/qemu_lm3s" directory.
