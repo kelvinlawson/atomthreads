@@ -29,6 +29,7 @@
 #include "modules.h"
 #include <stdio.h>
 #include <stdarg.h>
+#include "atomport.h"
 #include "atomport_private.h"
 #include "atom.h"
 #include "atomport.h"
@@ -41,6 +42,10 @@ extern int main(void);
 /** Board-specific registers */
 ICP_TIMER_T*                   const           board_timer_0           = (ICP_TIMER_T*)               BOARD_BASE_ADDRESS_TIMER_0 ;
 ICP_PIC_T  *                   const           board_pic               = (ICP_PIC_T*)                 BOARD_BASE_ADDRESS_PIC ;
+
+/** TIMER0 clock speed (Hz) */
+#define TIMER0_CLOCK_SPEED 		40000000
+
 
 /**
  * \b dbg_format_msg
@@ -110,8 +115,9 @@ low_level_init (void)
     board_timer_0->INTCLR = 1 ;
     board_pic->IRQ_ENABLESET |= ICP_PIC_IRQ_TIMERINT0 ;
 
-    board_timer_0->LOAD = 0x2000 ;
-    board_timer_0->BGLOAD = 0x2000 ;
+	/* Set the timer to go off 100 times per second (input clock speed is 40MHz) */
+    board_timer_0->LOAD = TIMER0_CLOCK_SPEED / SYSTEM_TICKS_PER_SEC ;
+    board_timer_0->BGLOAD = TIMER0_CLOCK_SPEED / SYSTEM_TICKS_PER_SEC ;
     board_timer_0->CONTROL = ICP_TIMER_CONTROL_ENABLE |
                             ICP_TIMER_CONTROL_MODE |
                             ICP_TIMER_CONTROL_IE |
