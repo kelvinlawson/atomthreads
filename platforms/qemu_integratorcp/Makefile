@@ -16,7 +16,7 @@ AS = arm-none-eabi-gcc
 
 CFLAGS := $(CFLAGS) -Wall -g -c -mcpu=arm926ej-s -ffreestanding 
 AFLAGS := $(CFLAGS) -Wall -g -c -mcpu=arm926ej-s -ffreestanding 
-LFLAGS := $(LFLAGS) -Wall -mcpu=arm926ej-s -Wl,-Map=system.map,--verbose  -Tsystem.ld 
+LFLAGS := $(LFLAGS) -Wall -mcpu=arm926ej-s -Wl,-Map=system.map -Tsystem.ld 
 
 CDEFS := $(CDEFS)  -DATOMTHREADS_TEST='"$(TEST_NAME)"' 
 ADEFS := $(ADEFS)
@@ -26,6 +26,7 @@ LLIBS := $(LLIBS)
 
 SRCS := $(SRCS) \
 		modules.c \
+		syscalls.c \
 		main.c \
 		$(ATOMTHREADS)/tests/$(TEST_NAME).c
 
@@ -64,6 +65,7 @@ all_tests:
 	make run_test "TEST_NAME=timer1"
 	make run_test "TEST_NAME=timer2"
 	make run_test "TEST_NAME=timer3"
+	make run_test "TEST_NAME=timer4"
 	make run_test "TEST_NAME=timer5"
 	make run_test "TEST_NAME=timer6"
 	make run_test "TEST_NAME=timer7"
@@ -76,6 +78,7 @@ all_tests:
 	make run_test "TEST_NAME=queue7"
 	make run_test "TEST_NAME=queue8"
 	make run_test "TEST_NAME=queue9"
+	make run_test "TEST_NAME=queue10"
 	make run_test "TEST_NAME=sem1"
 	make run_test "TEST_NAME=sem2"
 	make run_test "TEST_NAME=sem3"

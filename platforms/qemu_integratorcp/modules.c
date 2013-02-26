@@ -76,6 +76,7 @@ dbg_format_msg (char *format, ...)
  * May be provided by the compiler toolchain in some cases.
  *
  */
+extern void _mainCRTStartup (void) __attribute__((weak));
 void _mainCRTStartup(void)
 {
     unsigned long *src;
