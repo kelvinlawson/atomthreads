@@ -70,22 +70,3 @@ int _write(int file, char *ptr, int len) {
  }
  return len;
  }
-
-/* C Startup code */
-extern unsigned long _end_text, _start_data, _end_data, _start_bss, _end_bss;
-extern int main(void);
-void c_startup(void)
-{
-        unsigned long *src, *dst;
-
-        src = &_end_text;
-        dst = &_start_data;
-        while(dst < &_end_data)
-                *(dst++) = *(src++);
-
-        src = &_start_bss;
-        while(src < &_end_bss)
-                *(src++) = 0;
-
-        main();
-}

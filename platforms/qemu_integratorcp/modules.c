@@ -34,6 +34,11 @@
 #include "atomport.h"
 #include "types.h"
 
+/** Imports required by C startup code */
+extern unsigned long _end_text, _start_data, _end_data, _start_bss, _end_bss;
+extern int main(void);
+
+/** Board-specific registers */
 ICP_TIMER_T*                   const           board_timer_0           = (ICP_TIMER_T*)               BOARD_BASE_ADDRESS_TIMER_0 ;
 ICP_PIC_T  *                   const           board_pic               = (ICP_PIC_T*)                 BOARD_BASE_ADDRESS_PIC ;
 
@@ -57,6 +62,39 @@ dbg_format_msg (char *format, ...)
 
     printf (msg) ;
 }
+
+
+/**
+ * \b _mainCRTStartup
+ *
+ * C startup code for environments without a suitable built-in one.
+ * May be provided by the compiler toolchain in some cases.
+ *
+ */
+void _mainCRTStartup(void)
+{
+    unsigned long *src;
+#ifdef ROM
+    unsigned long *dst;
+#endif
+
+#ifdef ROM
+    // Running from ROM: copy data section to RAM
+    src = &_end_text;
+    dst = &_start_data;
+    while(dst < &_end_data)
+        *(dst++) = *(src++);
+#endif
+
+    // Clear BSS
+    src = &_start_bss;
+    while(src < &_end_bss)
+        *(src++) = 0;
+
+    // Jump to main application entry point
+    main();
+}
+
 
 /**
  * \b low_level_init
