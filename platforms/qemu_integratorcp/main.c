@@ -53,15 +53,11 @@ void
 test_thread (uint32_t param)
 {
     uint32_t failures ;
-    CRITICAL_STORE ;
 
     failures = test_start ()  ;
-
-    atomTimerDelay (10) ;
-    CRITICAL_START() ;
     printf ("%s %s\r\n", ATOMTHREADS_TEST, failures ? "FAIL" : "PASS") ;
-    exit (failures) ;
-    CRITICAL_END() ;
+
+    return;
 }
 
 /**

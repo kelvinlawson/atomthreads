@@ -61,8 +61,7 @@ thread_shell (void)
      * Enable interrupts - these will not be enabled when a thread
      * is first restored.
      */
-    // sei();
-     contextEnableInterrupts () ;
+    contextEnableInterrupts () ;
 
     /* Call the thread entry point */
     if (curr_tcb && curr_tcb->entry_point)
@@ -70,7 +69,10 @@ thread_shell (void)
         curr_tcb->entry_point(curr_tcb->entry_param);
     }
 
-    /* Not reached - threads should never return from the entry point */
+    /* Thread has run to completion: remove it from the ready list */
+	curr_tcb->suspended = TRUE;
+	atomSched (FALSE);
+
 }
 
 
