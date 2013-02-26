@@ -15,7 +15,7 @@ LN = arm-none-eabi-gcc
 AS = arm-none-eabi-gcc
 
 CFLAGS := $(CFLAGS) -Wall -g -c -mcpu=arm926ej-s -ffreestanding 
-AFLAGS := $(CFLAGS) -Wall -g -c -mcpu=arm926ej-s -ffreestanding 
+AFLAGS := $(AFLAGS) -Wall -g -c -mcpu=arm926ej-s -ffreestanding 
 LFLAGS := $(LFLAGS) -Wall -mcpu=arm926ej-s -Wl,-Map=system.map -Tsystem.ld 
 
 CDEFS := $(CDEFS)  -DATOMTHREADS_TEST='"$(TEST_NAME)"' 
@@ -45,7 +45,7 @@ include 	../rules.mk
 
 run_test: clean all
 	echo "START TEST $(TEST_NAME)"
-	qemu-system-arm -M integratorcp -kernel boot.elf  -semihosting | tee atomthreads_test.out
+	qemu-system-arm -M integratorcp -kernel boot.elf -semihosting -nographic | tee atomthreads_test.out
 
 all_tests:
 	echo "Starting atomthreads test suite" > atomthreads_test.out
