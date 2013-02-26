@@ -92,5 +92,6 @@ SECTIONS
 		*(.eh_*)
 	}*/
 }
+__end__ = .;
 _end = .;
 PROVIDE(end = .);
