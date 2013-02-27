@@ -15,7 +15,7 @@ LN = arm-none-eabi-gcc
 AS = arm-none-eabi-gcc
 
 CFLAGS := $(CFLAGS) -Wall -g -c -mcpu=arm926ej-s -ffreestanding 
-AFLAGS := $(AFLAGS) -Wall -g -c -mcpu=arm926ej-s -ffreestanding 
+AFLAGS := $(AFLAGS) -Wall -g -c -mcpu=arm926ej-s -ffreestanding -x assembler-with-cpp
 LFLAGS := $(LFLAGS) -Wall -mcpu=arm926ej-s -Wl,-Map=system.map -Tsystem.ld 
 
 CDEFS := $(CDEFS)  -DATOMTHREADS_TEST='"$(TEST_NAME)"' 
