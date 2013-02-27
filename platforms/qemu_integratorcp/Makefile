@@ -31,14 +31,14 @@ SRCS := $(SRCS) \
 		$(ATOMTHREADS)/tests/$(TEST_NAME).c
 
 ASMS := $(ASMS) \
-		startup.S \
+		startup.s \
 
 INCLUDES := $(INCLUDES) \
 			-I$(ATOMTHREADS)
 
 include $(ATOMTHREADS)/ports/arm/Makefile
 
-OBJS = $(SRCS:.c=.o) $(ASMS:.S=.o)
+OBJS = $(SRCS:.c=.o) $(ASMS:.s=.o)
 
 include 	../rules.mk
 
