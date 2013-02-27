@@ -27,14 +27,14 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef __ATOM_PORT_PRIVATE_H__
-#define __ATOM_PORT_PRIVATE_H__
+#ifndef __ATOM_PORT_PRIVATE_H
+#define __ATOM_PORT_PRIVATE_H
 
 
 /* Function prototypes */
-extern void        archIRQHandler (void) ;
+extern void archIRQHandler (void) ;
 
-/* required interface */
-extern void     __context_preempt_handler (void) ;
+/* Required interface */
+extern void __context_preempt_handler (void) ;
 
-#endif /* __ATOM_PORT_PRIVATE_H__ */
+#endif /* __ATOM_PORT_PRIVATE_H */
