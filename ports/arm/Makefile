@@ -14,6 +14,4 @@ SRCS := $(SRCS) \
 		$(ATOMTHREADS_PORT)/atomport.c
 
 ASMS := $(ASMS) \
-		$(ATOMTHREADS_PORT)/atomport-asm.S
-
-
+		$(ATOMTHREADS_PORT)/atomport-asm.s
