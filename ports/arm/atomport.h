@@ -27,29 +27,28 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef __ATOM_PORT_H__
-#define __ATOM_PORT_H__
+#ifndef __ATOM_PORT_H
+#define __ATOM_PORT_H
 
-#include "types.h"
+/* Portable uint8_t and friends available from stdint.h on this platform */
+#include <stdint.h>
 
-#define SYSTEM_TICKS_PER_SEC    100
+/* Definition of NULL is available from stddef.h on this platform */
+#include <stddef.h>
 
-/**
- * Definition of NULL.
- * If stddef.h is available on the platform it is simplest to include it
- * from this header, otherwise define below.
- */
-#define NULL					((void *)(0))
+/* Required number of system ticks per second (normally 100 for 10ms tick) */
+#define SYSTEM_TICKS_PER_SEC            100
 
-/* Size of each stack entry / stack alignment size (e.g. 32 bits) */
-#define STACK_ALIGN_SIZE        sizeof(unsigned int)
+
+/* Size of each stack entry / stack alignment size (32 bits on this platform) */
+#define STACK_ALIGN_SIZE                sizeof(uint32_t)
 
 /**
  * Architecture-specific types.
- * Most of these are available from types.h on this platform, which is
+ * Most of these are available from stdint.h on this platform, which is
  * included above.
  */
-#define POINTER                void *
+#define POINTER void *
 
 /* *
  *
@@ -71,4 +70,8 @@ extern void						contextExitCritical (uint32_t posture) ;
 #define CRITICAL_START()        __atom_critical = contextEnterCritical()
 #define CRITICAL_END()          contextExitCritical(__atom_critical)
 
-#endif /* __ATOM_PORT_H__ */
+/* Uncomment to enable stack-checking */
+/* #define ATOM_STACK_CHECKING */
+
+
+#endif /* __ATOM_PORT_H */

@@ -27,24 +27,33 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef __ATOMPORT_TEST_H__
-#define __ATOMPORT_TEST_H__
+#ifndef __ATOM_PORT_TESTS_H
+#define __ATOM_PORT_TESTS_H
 
 /* Include Atomthreads kernel API */
 #include "atom.h"
 
-extern void         dbg_format_msg (char *format, ...) ;
+/* Prerequisite for ATOMLOG() macro (via dbg_format_msg) */
+extern void dbg_format_msg (char *format, ...) ;
 
 
+/* Logger macro for viewing test results */
+#define ATOMLOG     dbg_format_msg
+
+/*
+ * String location macro: for platforms which need to place strings in
+ * alternative locations, e.g. on avr-gcc strings can be placed in
+ * program space, saving SRAM. On most platforms this can expand to
+ * empty.
+ */
+#define _STR(x)     x
+
+/* Default thread stack size (in bytes) */
 #define TEST_THREAD_STACK_SIZE      1024
-#define ATOMLOG                     dbg_format_msg
-#define _STR(x)                     x
+
+/* Uncomment to enable logging of stack usage to UART */
+/* #define TESTS_LOG_STACK_USAGE */
 
 
+#endif /* __ATOM_PORT_TESTS_H */
 
-
-/* API for starting each test */
-extern uint32_t test_start (void);
-
-
-#endif /* __ATOMPORT_TEST_H__ */

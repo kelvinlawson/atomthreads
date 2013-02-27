@@ -27,31 +27,13 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef __TYPES_H__
-#define __TYPES_H__
-
-typedef unsigned int		        uintptr_t ;
-typedef int					        intptr_t ;
-typedef unsigned long long		    uint64_t ;
-typedef unsigned int		        uint32_t ;
-typedef unsigned short		        uint16_t ;
-typedef unsigned char		        uint8_t ;
-typedef int					        int32_t ;
-typedef short				        int16_t ;
-typedef char				        int8_t ;
-
-#ifndef OFFSETOF
-#define OFFSETOF(TYPE, MEMBER) ((int) &((TYPE *)0)->MEMBER)
-#endif
-
-#ifndef INLINE
-#define INLINE  __inline
-#endif
+#ifndef __TYPES_H
+#define __TYPES_H
 
 /* IO definitions (access restrictions to peripheral registers) */
 #define     __I     volatile           /*!< defines 'read only' permissions                 */
-#define     __O     volatile             /*!< defines 'write only' permissions                */
-#define     __IO    volatile             /*!< defines 'read / write' permissions              */
+#define     __O     volatile           /*!< defines 'write only' permissions                */
+#define     __IO    volatile           /*!< defines 'read / write' permissions              */
 
-#endif /* __TYPES_H__ */
+#endif /* __TYPES_H */
 

@@ -30,7 +30,7 @@
 #include <stdio.h>
 #include <stdarg.h>
 #include "atomport.h"
-#include "atomport_private.h"
+#include "atomport-private.h"
 #include "atom.h"
 #include "atomport.h"
 #include "types.h"
@@ -40,8 +40,8 @@ extern unsigned long _end_text, _start_data, _end_data, _start_bss, _end_bss;
 extern int main(void);
 
 /** Board-specific registers */
-ICP_TIMER_T*                   const           board_timer_0           = (ICP_TIMER_T*)               BOARD_BASE_ADDRESS_TIMER_0 ;
-ICP_PIC_T  *                   const           board_pic               = (ICP_PIC_T*)                 BOARD_BASE_ADDRESS_PIC ;
+ICP_TIMER_T * const board_timer_0 = (ICP_TIMER_T*)BOARD_BASE_ADDRESS_TIMER_0;
+ICP_PIC_T *   const board_pic     = (ICP_PIC_T*)BOARD_BASE_ADDRESS_PIC;
 
 /** TIMER0 clock speed (Hz) */
 #define TIMER0_CLOCK_SPEED 		40000000
