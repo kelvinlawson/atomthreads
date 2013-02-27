@@ -82,10 +82,6 @@ SECTIONS
 	__stack_end__ = .;
 	} >sram	
 
-	/*DISCARD : 
-	{
-		*(.eh_*)
-	}*/
 }
 __end__ = .;
 _end = .;

@@ -32,7 +32,25 @@
 
 #include "types.h"
 
-#define SYSTEM_TICKS_PER_SEC            100
+#define SYSTEM_TICKS_PER_SEC    100
+
+/**
+ * Definition of NULL.
+ * If stddef.h is available on the platform it is simplest to include it
+ * from this header, otherwise define below.
+ */
+#ifndef NULL
+#define NULL					((void *)(0))
+#endif
+
+/* Size of each stack entry / stack alignment size (e.g. 32 bits) */
+#define STACK_ALIGN_SIZE        sizeof(unsigned int)
+
+/**
+ * Architecture-specific types.
+ * Most of these are available from types.h on this platform, which is
+ * included above.
+ */
 
 
 /**
@@ -40,15 +58,18 @@
  * Most of these are available from types.h on this platform, which is
  * included above.
  */
+#ifndef POINTER
 #define POINTER                void *
+#endif
 
 /* *
  *
  * Functions defined in atomport_arm.asm
  *
  */
-extern uint32_t         contextEnterCritical (void) ;
-extern void             contextExitCritical (uint32_t posture) ;
+extern void						contextInit (void) ;
+extern uint32_t					contextEnterCritical (void) ;
+extern void						contextExitCritical (uint32_t posture) ;
 
 
 /* Critical region protection */
@@ -57,3 +78,4 @@ extern void             contextExitCritical (uint32_t posture) ;
 #define CRITICAL_END()          contextExitCritical(__atom_critical)
 
 #endif /* __ATOM_PORT_H__ */
+

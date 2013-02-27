@@ -1,38 +1,17 @@
 ---------------------------------------------------------------------------
 
-Library:      Atomthreads ARMv7 Port
+Library:      Atomthreads ARM Port
 Author:       Natie van Rooyen <natie@navaro.nl>
 License:      BSD Revised
 
 ---------------------------------------------------------------------------
 
-ARM ARMv7 PORT
+ARM  PORT
 
 This folder contains a port of the Atomthreads real time kernel for the
-ARMv7 processor architecture. This port was only tested on a ARMv7 but 
-should work on other versions of the ARM processor as well.
+ARM processor architecture. This port was tested on the ARMv5 and ARMv7 
+architectures.
 
 To Use:
 
-1. From your platforms IRQ vector branch to the "__irq_context_handler()". 
-   All interrupts from where calls to Atomthreads will be made should do 
-   this. The "__irq_context_handler()" will call a platform specific 
-   function called "__context_preempt_handler()" to dispatch the interrupt.
-    
-2. Implement the function "__context_preempt_handler()"  
-   from where your platforms interrupt controller will be serviced and the 
-   interrupt will be dispatched to a specific  interrupt service routine. In  
-   the case of your platforms timer tick interrupt call the "archTickHandler()" 
-   implemented in "atomport.c".
-   
-3. Initialize your platforms timer tick hardware to generate  an OS timer tick 
-   interrupt.
-   
-4. Add code to acknowledge your timer hardware's interrupt in the
-   function "archTickHandler()" implemented in "atomport.c". This must
-   be done here because "atomIntExit()" might switch the context.
-
-5. After your platforms c-runtime initialization has completed, start 
-   Atomthreads from your runtime's "main()" function.
-   
-6. Include the port's Makefile in your platform build flow.
+See the example project in the "platforms/qemu_integratorcp" directory.

@@ -40,16 +40,6 @@ typedef int					        int32_t ;
 typedef short				        int16_t ;
 typedef char				        int8_t ;
 
-// typedef volatile unsigned int       REG_DWORD ;// Hardware register definition
-
-#define UWORD64 unsigned long long           
-#define UWORD32 unsigned int                 
-#define UWORD16 unsigned short               
-#define UWORD8 unsigned char                
-#define WORD32 int                          
-#define WORD16 short                        
-#define WORD8 char                         
-
 #ifndef OFFSETOF
 #define OFFSETOF(TYPE, MEMBER) ((int) &((TYPE *)0)->MEMBER)
 #endif
@@ -58,6 +48,10 @@ typedef char				        int8_t ;
 #define INLINE  __inline
 #endif
 
+/* IO definitions (access restrictions to peripheral registers) */
+#define     __I     volatile           /*!< defines 'read only' permissions                 */
+#define     __O     volatile             /*!< defines 'write only' permissions                */
+#define     __IO    volatile             /*!< defines 'read / write' permissions              */
 
 #endif /* __TYPES_H__ */
 

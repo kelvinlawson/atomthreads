@@ -1,0 +1,40 @@
+---------------------------------------------------------------------------
+
+Library:      Atomvn
+Author:       Natie van Rooyen <natie@navaro.nl>
+License:      BSD Revised
+
+---------------------------------------------------------------------------
+
+Atomvm is a tiny virtual machine that runs on Windows and can be debugged 
+from an IDE like Microsoft Visual C++ Express. The primary purpose of this 
+virtual machine is for the evaluation of Real Time Operating Systems like 
+Atomthreads and the development and testing of programs for it on a Windows 
+machine.
+
+Atomvm makes use of the Windows API functions GetThreadContext() and 
+SetThreadContext() to create multiple virtual contexts or threads inside a 
+single Windows thread. Atomvm also simulates interrupts with an interrupt 
+mask accessible from the Atomvm threads. External events can be queued as 
+interrupts to Atomvm, for example a timer loop generating system timer tick 
+interrupts for a Real Time Operating System ported to Atomvm.
+
+---------------------------------------------------------------------------
+
+BUILDING THE SOURCE
+
+To test this project, just add all the files from the "atomthreads/kernel" 
+directory and the "atomthreads/ports/atomvm" directory as well as the test 
+program "atomthreads/ports/atomvm/test/main.c" to your project. Add both the 
+before mentioned directories to the include paths of your project and compile.
+
+Atomvm was designed for multi core systems but also runs fine on any single 
+core system.
+
+---------------------------------------------------------------------------
+
+RUNNING THE TESTS
+
+The test, main.c, is intentioned to stress the virtual  machine.
+
+

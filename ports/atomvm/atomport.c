@@ -32,7 +32,6 @@
 #include "windows.h"
 
 /** Forward declarations */
-static void thread_shell (void);
 DWORD WINAPI cntrl_thread_proc (LPVOID lpParameter) ;
 
 /* Global data */
@@ -51,9 +50,9 @@ static HANDLE cntrl_thread ;
  *
  */
 void 
-atomvmRun ()
+atomvmRun (void)
 {
-	atomvmCtrlInit (&the_atomvm) ;
+	atomvmCtrlCreate (&the_atomvm) ;
 	cntrl_thread = CreateThread (NULL, 0, cntrl_thread_proc, (uint32_t*)the_atomvm, CREATE_SUSPENDED, NULL) ;
 	ResumeThread (cntrl_thread) ;
 }
@@ -73,7 +72,7 @@ cntrl_thread_proc (LPVOID lpParameter)
  *
  */
 void 
-thread_shell (void)
+thread_shell (uint32_t arg)
 {
     ATOM_TCB *curr_tcb;
 
@@ -85,7 +84,8 @@ thread_shell (void)
      * is first restored.
      */
     // sei();
-	atomvmExitCritical () ;
+	//atomvmExitCritical () ;
+    atomvmInterruptMask (0) ;
 
     /* Call the thread entry point */
     if (curr_tcb && curr_tcb->entry_point)
@@ -110,7 +110,8 @@ archThreadContextInit (ATOM_TCB *tcb_ptr, void *stack_top, void (*entry_point)(u
 	tcb_ptr->entry_param = entry_param ;
 	tcb_ptr->entry_point = entry_point ;
 
-	atomvmContextCreate (&tcb_ptr->context, (unsigned int )stack_top, (unsigned int )thread_shell) ;
+	tcb_ptr->context = atomvmContextCreate (1) ;
+	atomvmContextInit (tcb_ptr->context, (unsigned int *)stack_top, thread_shell, entry_param, 0) ;
 }
 
 
@@ -146,7 +147,7 @@ archContextSwitch (ATOM_TCB * p_sp_old, ATOM_TCB * p_sp_new)
  * System timer tick interrupt handler.
  *
  */
-void archTimerTickIrqHandler ()
+void archTimerTickIrqHandler (void)
 {
     atomIntEnter();
 
@@ -155,18 +156,4 @@ void archTimerTickIrqHandler ()
 
 	/* Call the interrupt exit routine */
     atomIntExit(TRUE);
-}
-
-
-unsigned int 
-__enter_critical () 
-{
-	return atomvmEnterCritical () ;
-}
-
-
-void  
-__exit_critical (unsigned int isr) 
-{
-	atomvmExitCritical () ;
 }
