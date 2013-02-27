@@ -28,28 +28,40 @@
 */
 
 
+.global    archPendSVHandler
+.global    archTickHandler
 .global    contextInit
 .global    contextSwitch
 .global    contextStart
 .global    contextEnableInterrupts
 .global    contextEnterCritical
 .global    contextExitCritical
-.global    pendSV_Handler
-.global    tick_Handler
 
-.global    archTickHandler
 
+.extern    __context_tick_handler
 
 
 /**/
 .equ NVIC_INT_CTRL,                     0xE000ED04        //    Interrupt control state register
 .equ NVIC_PENDSVSET,                    0x10000000        //    Value to trigger PendSV exception
 .equ NVIC_PR_12_15_ADDR,                0xE000ED20        //    System Handlers 12-15 Priority Register Address
-.equ NVIC_PENDS_VPRIORITY,              0x00FF0000        //    PendSV priority is minimal (0xFF)
+#ifdef PLATFORM_QEMU_LM3S_HACK
+.equ NVIC_PENDS_VPRIORITY,              0x00F00000        //    PendSV priority is minimal (0xFF -- 0x00FF0000)
+#else
+.equ NVIC_PENDS_VPRIORITY,              0x00FF0000        //    PendSV priority is minimal (0xFF -- 0x00FF0000)
+#endif
+
+#ifdef PLATFORM_QEMU_LM3S_HACK
+.equ NVIC_ISER,							0xE000E100
+.equ NVIC_ICER,							0xE000E180
+.equ NVIC_I_TIMER0,						0x80000
+#endif
+
 
 .syntax unified
 .text
 .thumb
+
 
 /**
  *  \b contextInit
@@ -128,7 +140,13 @@ contextStart:
  *  @return None
  */
 contextEnableInterrupts:
+#ifndef PLATFORM_QEMU_LM3S_HACK
         CPSIE          i
+#else
+        LDR            r1, =NVIC_ISER
+        LDR            r0, =NVIC_I_TIMER0			   
+		STR            r0, [r1]
+#endif
         BX             lr
 
 
@@ -142,9 +160,13 @@ contextEnableInterrupts:
  *  @return None
  */
 contextExitCritical:
+#ifndef PLATFORM_QEMU_LM3S_HACK
         MSR            PRIMASK, r0
+#else
+        LDR            r1, =NVIC_ISER
+        STR            r0, [r1]			   
+#endif
         BX             lr
-
 
 /**
  *  \b contextEnterCritical
@@ -154,19 +176,33 @@ contextExitCritical:
  *  @return Current interrupt posture
  */
 contextEnterCritical:
+#ifndef PLATFORM_QEMU_LM3S_HACK
         MRS            r0, PRIMASK
         CPSID          i
+#else
+        LDR            r1, =NVIC_ISER
+        LDR            r0, [r1]			   
+        LDR            r1, =NVIC_ICER
+ 		STR            r0, [r1]
+#endif
         BX             lr
 
 /**
- *  \b PendSV_Handler
+ *  \b archPendSVHandler
  *
- *  CortexM3 PendSV_Handler. Switch context to a new stack.
+ *  CortexM3 archPendSVHandler. Switch context to a new stack.
  *
  *  @return None
  */
-pendSV_Handler:
+ .thumb_func
+archPendSVHandler:
+#ifndef PLATFORM_QEMU_LM3S_HACK
         CPSID          i                   //    Disable core int
+#else
+        LDR            r0, =NVIC_ICER
+        LDR            r1, =NVIC_I_TIMER0			   
+		STR            r1, [r0]
+#endif
 
         LDR            r1, =context_save_stack_ptr
         LDR            r0, [r1]			   //    Load old (current) stack pointer address
@@ -192,28 +228,52 @@ pendsv_handler_new_stack:
         MSR            PSP, r2             //    Mov new stack point to PSP
 
 pendsv_handler_exit:
+#ifndef PLATFORM_QEMU_LM3S_HACK
         CPSIE         i                    //    Enable core int
+#else
+        LDR            r0, =NVIC_ISER
+        LDR            r1, =NVIC_I_TIMER0			   
+		STR            r1, [r0]
+#endif
 
         ORR           lr, lr, #0x04        //    Ensure exception return uses process stack
         BX            lr                   //    Exit interrupt
 
 
 /**
- *  \b Tick_Handler
+ *  \b archTickHandler
  *
  *  System timer tick interrupt handler.
  *
  *  @return None
  */
-tick_Handler:
+ .thumb_func
+archTickHandler:
         PUSH {r4-r11, lr}
+
+#ifndef PLATFORM_QEMU_LM3S_HACK
         cpsid  I                           //   Disable core int
-        BL  archTickHandler
+#else
+        LDR            r0, =NVIC_ICER
+        LDR            r1, =NVIC_I_TIMER0		   
+		STR            r1, [r0]
+#endif
+
+        BL  __context_tick_handler
+
+#ifndef PLATFORM_QEMU_LM3S_HACK
         cpsie  I                           //   Enable core int
+#else
+        LDR            r0, =NVIC_ISER
+        LDR            r1, =NVIC_I_TIMER0			   
+		STR            r1, [r0]
+#endif
+
         POP {r4-r11, pc}
 
 
 /**/
+.data
 context_new_stack_ptr:         .long    0x00000000
 context_save_stack_ptr:        .long    0x00000000
 

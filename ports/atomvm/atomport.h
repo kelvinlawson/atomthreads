@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010, Kelvin Lawson. All rights reserved.
+ * Copyright (c) 2012, Natie van Rooyen. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,19 +32,9 @@
 
 #include "atomvm.h"
 
-#define SYSTEM_MEMALIGN		sizeof (unsigned int)
 #define SYSTEM_TICKS_PER_SEC            100
-
-
-typedef unsigned int		uintptr_t ;
-typedef int					intptr_t ;
-typedef unsigned int		uint32_t ;
-typedef unsigned short		uint16_t ;
-typedef unsigned char		uint8_t ;
-typedef int					int32_t ;
-typedef short				int16_t ;
-typedef char				int8_t ;
-
+/* Size of each stack entry / stack alignment size (e.g. 32 bits) */
+#define STACK_ALIGN_SIZE        sizeof(unsigned int)
 
 /**
  * Architecture-specific types.
@@ -52,23 +42,21 @@ typedef char				int8_t ;
  * included above.
  */
 #define POINTER				void *
+#define ATOM_TLS			HATOMVM_CONTEXT	context ;
 
  
 /* Critical region protection */
-extern  unsigned int		__enter_critical() ;
-extern void					__exit_critical(unsigned int) ;
-
-#define CRITICAL_STORE		unsigned int __atom   
-#define CRITICAL_START()	 __atom = __enter_critical()
-#define CRITICAL_END()		 __exit_critical(__atom)
+#define CRITICAL_STORE		unsigned int __atom_int_mask
+#define CRITICAL_START()	 __atom_int_mask = atomvmInterruptMask(1)
+#define CRITICAL_END()		 atomvmInterruptMask(__atom_int_mask)
 
 #define ATOM_TLS			HATOMVM_CONTEXT	context ;
 
 /* Function prototypes */
-extern void					atomvmRun () ;
-extern void					archTimerTickIrqHandler () ;
+extern void					atomvmRun (void) ;
+extern void					archTimerTickIrqHandler (void) ;
 
 /* The instance of the atomvm for this port */
 extern HATOMVM				the_atomvm  ;
 
-#endif /* __ATOM_PORT_H */
+#endif /* __ATOM_PORT_H__ */

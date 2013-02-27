@@ -32,7 +32,10 @@
 
 
 /* Function prototypes */
-extern void        archTickHandler (void) ;
-extern void        archTickInit (void) ;
+extern void    archPendSVHandler (void) ;
+extern void    archTickHandler (void) ;
+
+/* required interface */
+extern void     __context_tick_handler (void) ;
 
 #endif /* __ATOM_PORT_PRIVATE_H__ */

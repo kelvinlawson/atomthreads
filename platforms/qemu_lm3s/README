@@ -1,0 +1,37 @@
+---------------------------------------------------------------------------
+
+Library:      Atomthreads QEMU Stellaris LM3S6965 Platform.
+Author:       Natie van Rooyen <natie@navaro.nl>
+License:      BSD Revised
+
+---------------------------------------------------------------------------
+
+QEMU Stellaris LM3S6965 Platform
+
+The "qemu_lm3s" platform contains sources for building a sample Atomthreads 
+application for the Stellaris LM3S6965 platform.
+
+
+ISSUES:
+
+There seems to be several problems for the QEMU Cortex M3 processor. The 
+platform and port contains specific hacks to make it work on the QEMU 1.2.0 
+release it was tested on. Also see the latest patches for QEMU.
+
+Fixes implemented for the QEMU 1.2.0 release:
+
+1.  Install the patch http://patchwork.ozlabs.org/patch/180315/ 
+2.  Use the PLATFORM_QEMU_LM3S_HACK define in the Makefile:
+
+       - Disabling interrupts on the processor does not work (verified).
+       - Disabling interrupts of the Cortex M Sys Tick Interrupt does not 
+         work (verified).
+       - NVIC Interrupt priorities not implemented correctly (not verified).
+
+Because of the problems with the Sys Tick Interrupt the The Stellaris 
+General-Purpose Timer Module (GPTM) was used to generate the system timer 
+tick.
+
+BUGS:
+mutex4 testcase fails.
+sem4 testcase fails.

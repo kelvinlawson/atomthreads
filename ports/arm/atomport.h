@@ -27,17 +27,22 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef __ATOM_PORT_H
-#define __ATOM_PORT_H
+#ifndef __ATOM_PORT_H__
+#define __ATOM_PORT_H__
 
-#include <stddef.h>
 #include "types.h"
 
-/* Required number of system ticks per second (normally 100 for 10ms tick) */
-#define SYSTEM_TICKS_PER_SEC            100
+#define SYSTEM_TICKS_PER_SEC    100
 
-/* Size of each stack entry / stack alignment size (e.g. 8 bits) */
-#define STACK_ALIGN_SIZE                sizeof(uint32_t)
+/**
+ * Definition of NULL.
+ * If stddef.h is available on the platform it is simplest to include it
+ * from this header, otherwise define below.
+ */
+#define NULL					((void *)(0))
+
+/* Size of each stack entry / stack alignment size (e.g. 32 bits) */
+#define STACK_ALIGN_SIZE        sizeof(unsigned int)
 
 /**
  * Architecture-specific types.
@@ -48,20 +53,22 @@
 
 /* *
  *
- * Functions defined in atomport_arm.S
+ * Functions defined in atomport_arm.asm
  *
  */
-extern uint32_t         contextEnterCritical (void) ;
-extern void             contextExitCritical (uint32_t posture) ;
+extern void						contextInit (void) ;
+extern uint32_t					contextEnterCritical (void) ;
+extern void						contextExitCritical (uint32_t posture) ;
 
 
-/* Critical region protection */
+/**
+ * Critical region protection: this should disable interrupts
+ * to protect OS data structures during modification. It must
+ * allow nested calls, which means that interrupts should only
+ * be re-enabled when the outer CRITICAL_END() is reached.
+ */
 #define CRITICAL_STORE          uint32_t __atom_critical
 #define CRITICAL_START()        __atom_critical = contextEnterCritical()
 #define CRITICAL_END()          contextExitCritical(__atom_critical)
 
-
-/* Uncomment to enable stack-checking */
-/* #define ATOM_STACK_CHECKING */
-
-#endif /* __ATOM_PORT_H */
+#endif /* __ATOM_PORT_H__ */

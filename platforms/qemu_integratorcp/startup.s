@@ -1,13 +1,9 @@
 .section .vectors, "x"
 
 .global __interrupt_vector_table
-.global __irq_stack_top__
-.global __fiq_stack_top__
-.global __svc_stack_top__
-
-.global bsp_ints_enable
-.global bsp_ints_disable
-.global bsp_ints_restore
+.extern __irq_stack_top__
+.extern __fiq_stack_top__
+.extern __svc_stack_top__
 
 
 .equ USR_MODE,            0x10

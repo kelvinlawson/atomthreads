@@ -90,5 +90,5 @@ all_tests:
 	make run_test "TEST_NAME=sem9"
 
 run_last:
-	qemu-system-arm -M integratorcp -kernel boot.elf   -monitor stdio -semihosting
+	qemu-system-arm -M integratorcp -kernel boot.elf -semihosting
 
