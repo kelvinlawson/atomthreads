@@ -50,7 +50,6 @@ SECTIONS
 		_start_bss = .;
 		__bss_start__ = . ;
 		*(.bss)
-		*(.eh_*)
 	} >sram
 
 	. = ALIGN(4);
