@@ -23,11 +23,11 @@ QEMU=qemu-system-arm
 BUILD_DIR=build
 
 # Platform-specific object files
-PLATFORM_OBJECTS = modules.o syscalls.o
+PLATFORM_OBJECTS = modules.o
 PLATFORM_ASM_OBJECTS = startup.o
 
 # Port-specific object files
-PORT_OBJECTS = atomport.o tests-main.o
+PORT_OBJECTS = atomport.o tests-main.o syscalls.o
 PORT_ASM_OBJECTS = atomport-asm.o
 
 # Kernel object files
