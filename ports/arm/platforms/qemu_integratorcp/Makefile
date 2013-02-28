@@ -22,11 +22,11 @@ OBJCOPY=arm-none-eabi-objcopy
 BUILD_DIR=build
 
 # Platform-specific object files
-PLATFORM_OBJECTS = main.o modules.o syscalls.o
+PLATFORM_OBJECTS = modules.o syscalls.o
 PLATFORM_ASM_OBJECTS = startup.o
 
 # Port-specific object files
-PORT_OBJECTS = atomport.o
+PORT_OBJECTS = atomport.o tests-main.o
 PORT_ASM_OBJECTS = atomport-asm.o
 
 # Kernel object files
