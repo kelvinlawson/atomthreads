@@ -29,11 +29,8 @@
 #include <stdio.h>
 #include "modules.h"
 #include "atom.h"
-#include "tests/atomtests.h"
+#include "atomtests.h"
 
-#ifndef ATOMTHREADS_TEST
-#define ATOMTHREADS_TEST                "kern1"
-#endif
 
 #define TEST_STACK_BYTE_SIZE            1024
 #define IDLE_STACK_BYTE_SIZE            512
@@ -55,7 +52,7 @@ test_thread (uint32_t param)
     uint32_t failures ;
 
     failures = test_start ()  ;
-    printf ("%s %s\r\n", ATOMTHREADS_TEST, failures ? "FAIL" : "PASS") ;
+    printf ("%s\r\n", failures ? "FAIL" : "PASS") ;
 
     return;
 }
@@ -69,7 +66,7 @@ test_thread (uint32_t param)
 int
 main (void)
 {
-    printf ("atomthreads starting %s... ", ATOMTHREADS_TEST) ;
+    printf ("atomthreads starting... ") ;
 
     atomOSInit(&idle_stack[0], IDLE_STACK_BYTE_SIZE, TRUE) ;
     atomThreadCreate ((ATOM_TCB *)&test_tcb, TEST_THREAD_PRIO, test_thread, 0, &test_stack[0], TEST_STACK_BYTE_SIZE, TRUE);

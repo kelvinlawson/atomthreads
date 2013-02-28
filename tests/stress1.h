@@ -1,7 +1,7 @@
 #ifndef __STRESS1_H__
 #define __STRESS1_H__
 
-#include "types.h"
+#include "atomport.h"
 
 #define TEST_STACK_BYTE_SIZE		0x200
 #define IDLE_STACK_BYTE_SIZE		0x200
