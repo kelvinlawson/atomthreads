@@ -11,6 +11,7 @@ TESTS_DIR=../../../../tests
 PORT_DIR=../..
 CC=arm-none-eabi-gcc
 OBJCOPY=arm-none-eabi-objcopy
+QEMU=qemu-system-arm
 
 # Enable stack-checking.
 #STACK_CHECK=true
@@ -114,3 +115,10 @@ clean:
 doxygen:
 	doxygen $(KERNEL_DIR)/Doxyfile
 	doxygen ./Doxyfile
+
+# Run tests within simavr simulator
+phony_qemu_elfs = $(addsuffix .sim, $(TEST_ELFS))
+qemutests: $(phony_qemu_elfs)
+.PHONY: qemutests $(phony_qemu_elfs)
+$(phony_qemu_elfs):
+	./run_test.exp $(QEMU) $(BUILD_DIR)/$(basename $@)
