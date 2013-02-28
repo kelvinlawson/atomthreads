@@ -178,7 +178,7 @@ static void main_thread_func (uint32_t data)
 
             /* Log the stack usage */
 #ifdef TESTS_LOG_STACK_USAGE
-            printf ("MainUse:%d\n", used_bytes);
+            printf ("MainUse:%d\n", (int)used_bytes);
 #endif
         }
 
