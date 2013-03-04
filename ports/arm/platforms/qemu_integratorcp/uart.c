@@ -30,11 +30,11 @@
 
 /** 
  * \file
- * UART implementation for non-hosted compiler toolchains.
+ * Simple polled UART implementation for non-hosted compiler toolchains.
  *
  *
- * Some toolchains may be semi-hosted and implement these automatically
- * for use within QEMU.
+ * This is only required for non-hosted toolchains which don't implement
+ * stdout automatically for use within QEMU.
  */
 
 #include "atom.h"
