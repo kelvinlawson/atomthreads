@@ -111,11 +111,6 @@ archThreadContextInit (ATOM_TCB *tcb_ptr, void *stack_top, void (*entry_point)(u
 	stack_ptr--;	
 	*stack_ptr = ( uint32_t ) 0x00000404;	/* R4 */
 
-#ifdef CONTEXT_THREAD_ID
-	stack_ptr--;	
-	*stack_ptr = context_thread_id++ ;	/* thread_id */
-#endif
-
     tcb_ptr->sp_save_ptr = stack_ptr ;
 }
 

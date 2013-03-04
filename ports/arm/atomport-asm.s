@@ -90,20 +90,10 @@ contextInit:
 contextSwitch:
     STMFD       sp!, {r4 - r11, lr}             /* Save registers */
 
-#ifdef CONTEXT_THREAD_ID
-    MRC         p15, 0, r3, c13, c0, 2
-    STMFD       sp!, {r3}
-#endif
-
     STR         sp, [r0]                        /* Save old stack pointer */
     LDR         r1, [r1]                        /* Load new stack pointer */
     MOV         sp, r1                           
 
-#ifdef CONTEXT_THREAD_ID
-    LDMFD       sp!, {r3}
-    MCR         p15, 0, r3, c13, c0, 2
-#endif
-	
     LDMFD       sp!, {r4 - r11, pc}             /* Load new registers */
 
 /**
@@ -118,12 +108,6 @@ contextSwitch:
 contextStart:
     LDR         r0, [r0]
     MOV         sp, r0                          /* Load new stack pointer */
-
-#ifdef CONTEXT_THREAD_ID
-    LDMFD       sp!, {r3}
-    MCR         p15, 0, r3, c13, c0, 2
-#endif
-	
     LDMFD       sp!, {r4 - r11, pc}             /* Load new registers */
 
 /**
@@ -134,11 +118,7 @@ contextStart:
  *  @return ID
  */
 contextId:
-#ifdef CONTEXT_THREAD_ID
-    MRC         p15, 0, r0, c13, c0, 2
-#else
     MOV         r0, #0
-#endif
     BX          lr
 
 /**
