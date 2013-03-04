@@ -4,6 +4,9 @@
 
 # Build all test applications:
 #   make
+#
+# Run all tests within QEMU
+#   make qemutests
 
 # Location of build tools and atomthreads sources
 KERNEL_DIR=../../../../kernel
