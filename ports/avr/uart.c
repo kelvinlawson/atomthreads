@@ -45,6 +45,8 @@
 #endif
 
 
+/* Local data */
+
 /*
  * Semaphore for single-threaded access to UART device
  */

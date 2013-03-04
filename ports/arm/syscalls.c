@@ -37,20 +37,20 @@
  * without newlib. Allows usage of printf() and friends as well as heap
  * allocation.
  *
+ * NOTE: Platform/BSP must implement uart_read() and uart_write().
+ *
+ * NOTE: Platform/BSP linker script must define "end" and "heap_top" which are
+ * the heap base and top respectively.
+ *
+ * No file table is implemented. All file read/write operations are carried
+ * out on the UART driver, regardless of file descriptor.
+ *
  * Mostly based on code from http://balau82.wordpress.com
  *
  */
 
 #include <sys/stat.h>
-
-enum {
- UART_FR_RXFE = 0x10,
- UART_FR_TXFF = 0x20,
- UART0_ADDR = 0x16000000,
-};
-
-#define UART_DR(baseaddr) (*(unsigned int *)(baseaddr))
-#define UART_FR(baseaddr) (*(((unsigned int *)(baseaddr))+6))
+#include "uart.h"
 
 
 /** 
@@ -70,7 +70,7 @@ extern int _write(int file, char *ptr, int len) __attribute__((weak));
 /**
  * \b _close
  *
- * Simple stub implementation.
+ * Simple stub implementation with no file table. All parameters ignored.
  *
  */
 int _close(int file)
@@ -82,11 +82,12 @@ int _close(int file)
 /**
  * \b _fstat
  *
- * Simple stub implementation.
+ * Simple stub implementation. Always return character device.
  *
  */
 int _fstat(int file, struct stat *st)
 {
+    /* Only UART supported, always return character-oriented device file */
     st->st_mode = S_IFCHR;
     return 0;
 }
@@ -95,7 +96,7 @@ int _fstat(int file, struct stat *st)
 /**
  * \b _isatty
  *
- * Simple stub implementation.
+ * Simple stub implementation. Only UART supported so TTY always true.
  *
  */
 int _isatty(int file)
@@ -107,7 +108,7 @@ int _isatty(int file)
 /**
  * \b _lseek
  *
- * Simple stub implementation.
+ * Simple stub implementation. All parameters ignored.
  *
  */
 int _lseek(int file, int ptr, int dir)
@@ -119,7 +120,7 @@ int _lseek(int file, int ptr, int dir)
 /**
  * \b _open
  *
- * Simple stub implementation.
+ * Simple stub implementation with no file table. All parameters ignored.
  *
  */
 int _open(const char *name, int flags, int mode)
@@ -131,58 +132,52 @@ int _open(const char *name, int flags, int mode)
 /**
  * \b _read
  *
- * Simple stub implementation.
+ * Simple read file implementation. Ignores file descriptor parameter
+ * and always reads from the UART driver.
  *
+ * @param[in] file File descriptor (parameter ignored)
+ * @param[in] ptr Pointer to receive buffer
+ * @param[in] len Max bytes to read
+ *
+ * @retval Number of bytes read
  */
 int _read(int file, char *ptr, int len)
 {
-    int todo;
-
-    if(len == 0)
-        return 0;
-
-    while(UART_FR(UART0_ADDR) & UART_FR_RXFE)
-        ;
-
-    *ptr++ = UART_DR(UART0_ADDR);
-    for (todo = 1; todo < len; todo++)
-    {
-        if(UART_FR(UART0_ADDR) & UART_FR_RXFE)
-        {
-            break;
-        }
-        *ptr++ = UART_DR(UART0_ADDR);
-    }
-    return todo;
+    /* Read from the UART driver, regardless of file descriptor */
+	return (uart_read (ptr, len));
 }
 
 
 /**
  * \b _write
  *
- * Simple stub implementation.
+ * Simple write file implementation. Ignores file descriptor parameter
+ * and always writes to the UART driver.
  *
+ * @param[in] file File descriptor (parameter ignored)
+ * @param[in] ptr Pointer to write buffer
+ * @param[in] len Number of bytes to write
+ *
+ * @retval Number of bytes written
  */
 int _write(int file, char *ptr, int len)
 {
-    int todo;
-
-    for (todo = 0; todo < len; todo++)
-    {
-        while(UART_FR(UART0_ADDR) & UART_FR_TXFF)
-            ;
-        UART_DR(UART0_ADDR) = *ptr++;
-    }
-
-    return len;
+    /* Write to the UART driver, regardless of file descriptor */
+    return (uart_write (ptr, len));
 }
 
 
 /**
  * \b _sbrk
  *
- * Simple stub implementation.
+ * Simple heap implementation.
  *
+ * The platform/BSP must define "end" and "heap_top" which are the heap
+ * base and top respectively.
+ *
+ * @param[in] incr Chunk size
+ *
+ * @retval Pointer to allocated chunk start
  */
 caddr_t _sbrk(int incr)
 {
@@ -191,19 +186,26 @@ caddr_t _sbrk(int incr)
  static char *heap_end = 0;
  char *prev_heap_end;
 
+    /* First time in, initialise heap base using definition from linker script */
     if (heap_end == 0)
     {
         heap_end = &end;
     }
+
+    /* Save the previous heap base */
     prev_heap_end = heap_end;
 
+    /* Check we have not passed the heap top */
     if (heap_end + incr > &heap_top)
     {
-        /* Heap and stack collision */
+        /* Heap top reached, failed to allocate */
         return (caddr_t)0;
     }
 
+    /* New heap base */
     heap_end += incr;
+
+    /* Return pointer to previous base (where our allocation starts) */
     return (caddr_t)prev_heap_end;
 }
 

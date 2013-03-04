@@ -23,7 +23,7 @@ QEMU=qemu-system-arm
 BUILD_DIR=build
 
 # Platform-specific object files
-PLATFORM_OBJECTS = modules.o
+PLATFORM_OBJECTS = modules.o uart.o
 PLATFORM_ASM_OBJECTS = startup.o
 
 # Port-specific object files
