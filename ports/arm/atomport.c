@@ -28,7 +28,6 @@
  */
 #include "atom.h"
 #include "atomport.h"
-#include "types.h"
 
 
 /* *

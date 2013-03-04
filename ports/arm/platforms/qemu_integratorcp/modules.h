@@ -34,8 +34,12 @@
  */
 
 #include "atomport.h"
-#include "types.h"
 
+
+/* IO definitions (access restrictions to peripheral registers) */
+#define     __I     volatile           /*!< defines 'read only' permissions                 */
+#define     __O     volatile           /*!< defines 'write only' permissions                */
+#define     __IO    volatile           /*!< defines 'read / write' permissions              */
 
 
 // *****************************************************************************

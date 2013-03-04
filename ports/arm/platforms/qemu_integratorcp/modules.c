@@ -33,7 +33,7 @@
 #include "atomport-private.h"
 #include "atom.h"
 #include "atomport.h"
-#include "types.h"
+ 
 
 /** Imports required by C startup code */
 extern unsigned long _end_text, _start_data, _end_data, _start_bss, _end_bss;
