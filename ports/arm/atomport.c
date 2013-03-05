@@ -32,9 +32,6 @@
 
 
 /** Functions defined in atomport_s.s */
-typedef void * SYSCONTEXT;
-extern void contextSwitch (SYSCONTEXT* save_context, SYSCONTEXT* new_context);
-extern void contextStart (SYSCONTEXT* context);
 extern void contextEnableInterrupts (void);
 
 
@@ -156,31 +153,5 @@ void archThreadContextInit (ATOM_TCB *tcb_ptr, void *stack_top, void (*entry_poi
      */
     tcb_ptr->sp_save_ptr = stack_ptr;
 
-}
-
-
-/**
- * \b archFirstThreadRestore
- *
- * Documented in Atomthreads.
- *
- */
-void
-archFirstThreadRestore(ATOM_TCB * p_sp_new)
-{
-    contextStart (&p_sp_new->sp_save_ptr) ;
-}
-
-
-/**
- * \b archContextSwitch
- *
- * Documented in Atomthreads.
- *
- */
-void
-archContextSwitch (ATOM_TCB * p_sp_old, ATOM_TCB * p_sp_new)
-{
-    contextSwitch (&p_sp_old->sp_save_ptr, &p_sp_new->sp_save_ptr) ;
 }
 

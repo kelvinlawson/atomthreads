@@ -44,8 +44,10 @@ struct atom_tcb;
 
 typedef struct atom_tcb
 {
-    /* Thread's current stack pointer. When a thread is scheduled
-     * out the architecture port can save*/
+    /*
+     * Thread's current stack pointer. When a thread is scheduled
+     * out the architecture port can save its stack pointer here.
+     */
     POINTER sp_save_ptr;
 
     /* Thread priority (0-255) */
