@@ -105,7 +105,7 @@ void _mainCRTStartup(void)
 /**
  * \b low_level_init
  *
- * Initializes the PIC and start the system timer tick intrerupt.
+ * Initializes the PIC and starts the system timer tick interrupt.
  *
  */
 int
@@ -122,7 +122,6 @@ low_level_init (void)
     board_timer_0->CONTROL = ICP_TIMER_CONTROL_ENABLE |
                             ICP_TIMER_CONTROL_MODE |
                             ICP_TIMER_CONTROL_IE |
-                            /*ICP_TIMER_CONTROL_PRESCALE_256 |*/
                             ICP_TIMER_CONTROL_TIMER_SIZE ;
 
     return 0 ;
@@ -130,31 +129,44 @@ low_level_init (void)
 
 
 /**
- * \b __context_preempt_handler
+ * \b __interrupt_dispatcher
  *
- * System timer tic interupt handler.
+ * Interrupt dispatcher: determines the source of the IRQ and calls
+ * the appropriate ISR.
+ *
+ * Currently only the OS system tick ISR is implemented.
+ *
+ * Note that any ISRs which call Atomthreads OS routines that can
+ * cause rescheduling of threads must be surrounded by calls to
+ * atomIntEnter() and atomIntExit().
  *
  */
 void
-__context_preempt_handler (void) 
+__interrupt_dispatcher (void) 
 {
-    unsigned int status = board_pic->IRQ_STATUS ;
+    unsigned int status;
 
-    if (status | ICP_PIC_IRQ_TIMERINT0) {
-        
+    /* Read STATUS register to determine the source of the interrupt */
+    status = board_pic->IRQ_STATUS;
+
+    /* Timer tick interrupt (call Atomthreads timer tick ISR) */
+    if (status | ICP_PIC_IRQ_TIMERINT0)
+    {
+        /*
+         * Let the Atomthreads kernel know we're about to enter an OS-aware
+         * interrupt handler which could cause scheduling of threads.
+         */
         atomIntEnter();
 
         /* Call the OS system tick handler */
         atomTimerTick();
 
-        /* ack the interrupt */
-        board_timer_0->INTCLR = 0x1 ;
+        /* Ack the interrupt */
+        board_timer_0->INTCLR = 0x1;
 
         /* Call the interrupt exit routine */
         atomIntExit(TRUE);
-
     }
-
 
 }
 

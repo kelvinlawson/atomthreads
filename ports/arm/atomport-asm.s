@@ -37,13 +37,11 @@
 .global    contextEnterCritical
 .global    contextExitCritical
 .global    contextEnableInterrupts
-.global    contextId
 .global    contextStart
 .global    contextSwitch
-.global    contextInit
 
 
-.extern __context_preempt_handler 
+.extern __interrupt_dispatcher 
 
 /**/
 .equ USR_MODE,            0x10
@@ -61,16 +59,6 @@
 .text
 .code 32
 
-/**
- *  \b contextInit
- *
- *  Architecture-specific one time initialization.
- *
- *  @return None
- */
-contextInit:
-
-        BX      lr
 
 /**
  *  \b contextSwitch
@@ -79,8 +67,8 @@ contextInit:
  *
  *  Note that interrupts are always locked out when this routine is
  *  called. For cooperative switches, the scheduler will have entered
- *  a critical region. For preemptions (called from an ISR), the
- *  interrupts will have disabled in the tick_Handler.
+ *  a critical region. For preemptions (called from an ISR), interrupts
+ *  will have been disabled in the IRQ wrapper.
  *
  *  @param[in] [r0] -> Address to save old stack pointer
  *  @param[in] [r1] -> Address where new stack pointer is stored
@@ -96,12 +84,13 @@ contextSwitch:
 
     LDMFD       sp!, {r4 - r11, pc}             /* Load new registers */
 
+
 /**
  *  \b contextStart
  *
  *  Architecture-specific context start routine.
  *
- *  @param[in] [r0] -> Address where stack pointer is stored
+ *  @param[in] [r0] -> Address where new stack pointer is stored
  *
  *  @return Does not return
  */
@@ -110,16 +99,6 @@ contextStart:
     MOV         sp, r0                          /* Load new stack pointer */
     LDMFD       sp!, {r4 - r11, pc}             /* Load new registers */
 
-/**
- *  \b contextId
- *
- *  Returns a unique ID for the context
- *
- *  @return ID
- */
-contextId:
-    MOV         r0, #0
-    BX          lr
 
 /**
  *  \b contextEnableInterrupts
@@ -135,6 +114,7 @@ contextEnableInterrupts:
     MSR         CPSR_c, r0
     BX          lr
 
+
 /**
  *  \b contextExitCritical
  *
@@ -147,6 +127,7 @@ contextEnableInterrupts:
 contextExitCritical:
     MSR         CPSR_cxsf, r0
     BX          lr
+
 
 /**
  *  \b contextEnterCritical
@@ -162,15 +143,14 @@ contextEnterCritical:
     BX          lr
 
 
-
 /**
  *  \b archIRQHandler
  *
  *  IRQ entry point.
  *
- *  Save the process/thread context onto its own stackm before calling __context_preempt_handler ().
- *  __context_preempt_handler() might switch stacks. On return the same context is poped from the 
- *  stack and  control is returned to the process.
+ *  Save the process/thread context onto its own stack before calling __interrupt_dispatcher().
+ *  __interrupt_dispatcher() might switch stacks. On return the same context is popped from the 
+ *  stack and control is returned to the process.
  *
  *  @return None
  */
@@ -186,10 +166,11 @@ archIRQHandler:
     MSR         cpsr_c, #(SVC_MODE | I_BIT)     
     STMFD       sp!, {r1, r2}                   
                                                 
-    BL          __context_preempt_handler       /* Dispatch the interrupt to archTickHandler for
+    BL          __interrupt_dispatcher          /* Dispatch the interrupt to platform folder for
                                                    the timer tick interrupt or a simular function
-                                                   for other interrupts which might call atomthread
-                                                   functions. */
+                                                   for other interrupts. Some of those IRQs may
+                                                   call Atomthreads kernel routines and cause a
+                                                   thread switch. */
 
     LDMFD       sp!, {r1, r2}                   /* Restore lr_irq and spsr_irq from process stack */
     MSR         cpsr_c, #(IRQ_MODE | I_BIT)     
@@ -201,6 +182,4 @@ archIRQHandler:
                                                 
     MSR         cpsr_c, #(IRQ_MODE | I_BIT)     /* Exit from IRQ */
     LDMFD       sp!, {pc}^
-
-
 

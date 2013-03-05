@@ -32,9 +32,9 @@
 
 
 /* Function prototypes */
-extern void archIRQHandler (void) ;
+extern void archIRQHandler (void);
 
-/* Required interface */
-extern void __context_preempt_handler (void) ;
+/* Platform-specific interrupt dispatcher called on receipt of IRQ */
+extern void __interrupt_dispatcher (void);
 
 #endif /* __ATOM_PORT_PRIVATE_H */

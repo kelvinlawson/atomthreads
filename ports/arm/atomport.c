@@ -26,25 +26,24 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
+
 #include "atom.h"
 #include "atomport.h"
 
 
-/* *
- *
- * Functions defined in atomport_s.S
- *
+/**
+ * Functions defined in atomport_s.s
  */
 typedef void * SYSCONTEXT ;
-
 extern void             contextSwitch (SYSCONTEXT* save_context, SYSCONTEXT* new_context) ;
 extern void             contextStart (SYSCONTEXT* context) ;
 extern void             contextEnableInterrupts (void) ;
 
+
 /**
  * \b thread_shell
  *
- * Documented in atomThreads.
+ * Documented in Atomthreads.
  *
  */
 void
@@ -77,7 +76,7 @@ thread_shell (void)
 /**
  * \b archThreadContextInit
  *
- * Documented in atomThreads.
+ * Documented in Atomthreads.
  *
  */
 void
@@ -117,7 +116,7 @@ archThreadContextInit (ATOM_TCB *tcb_ptr, void *stack_top, void (*entry_point)(u
 /**
  * \b archFirstThreadRestore
  *
- * Documented in atomThreads.
+ * Documented in Atomthreads.
  *
  */
 void
@@ -130,7 +129,7 @@ archFirstThreadRestore(ATOM_TCB * p_sp_new)
 /**
  * \b archContextSwitch
  *
- * Documented in atomThreads.
+ * Documented in Atomthreads.
  *
  */
 void
@@ -138,3 +137,4 @@ archContextSwitch (ATOM_TCB * p_sp_old, ATOM_TCB * p_sp_new)
 {
     contextSwitch (&p_sp_old->sp_save_ptr, &p_sp_new->sp_save_ptr) ;
 }
+
