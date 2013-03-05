@@ -27,7 +27,7 @@ architecture-specific details such as appropriate types for 8-bit, 16-bit
 etc variables, the port's system tick frequency, and macros for performing
 interrupt lockouts / critical sections:
 
- * atomuser.h: Port-specific header required by the kernel for each port
+ * atomport.h: Port-specific header required by the kernel for each port
 
 A couple of additional source files are also included here:
 
