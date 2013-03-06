@@ -112,11 +112,13 @@ clean:
 	rm -f *.o *.elf *.map *.lst
 	rm -rf doxygen-kernel
 	rm -rf doxygen-arm
+	rm -rf doxygen-platform
 	rm -rf build
 
 # Generate Doxygen documentation
 doxygen:
 	doxygen $(KERNEL_DIR)/Doxyfile
+	doxygen ../../Doxyfile
 	doxygen ./Doxyfile
 
 # Run tests within simavr simulator
