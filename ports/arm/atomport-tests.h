@@ -48,8 +48,8 @@ extern void dbg_format_msg (char *format, ...) ;
  */
 #define _STR(x)     x
 
-/* Default thread stack size (in bytes) */
-#define TEST_THREAD_STACK_SIZE      1024
+/* Default thread stack size (in bytes). Allow plenty for printf(). */
+#define TEST_THREAD_STACK_SIZE      4096
 
 /* Uncomment to enable logging of stack usage to UART */
 /* #define TESTS_LOG_STACK_USAGE */

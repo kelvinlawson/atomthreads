@@ -63,8 +63,13 @@
  * stack saves and context switch saves, but the application main thread
  * will generally be carrying out more nested function calls and require
  * stack for application code local variables etc.
+ *
+ * 1KB might be adequate but if using printf() then at least 2KB would be
+ * prudent otherwise the stdio functions otherwise stack overruns are
+ * likely. Nearly 2KB was seen to be used on the toolchain used for
+ * development.
  */
-#define MAIN_STACK_SIZE_BYTES       1024
+#define MAIN_STACK_SIZE_BYTES       4096
 
 
 /* Local data */
