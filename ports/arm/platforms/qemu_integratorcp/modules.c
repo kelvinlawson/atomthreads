@@ -33,6 +33,7 @@
 #include "atomport-private.h"
 #include "atom.h"
 #include "atomport.h"
+#include "uart.h"
  
 
 /** Imports required by C startup code */
@@ -168,5 +169,17 @@ __interrupt_dispatcher (void)
         atomIntExit(TRUE);
     }
 
+}
+
+
+/**
+ * \b null_handler
+ *
+ * Handler to catch interrupts at uninitialised vectors.
+ *
+ */
+void null_handler (void) 
+{
+	uart_write_halt ("Unhandled interrupt\n");
 }
 

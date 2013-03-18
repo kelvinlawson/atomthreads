@@ -218,3 +218,38 @@ int uart_write (const char *ptr, int len)
     return len;
 }
 
+
+/**
+ * \b uart_write_halt
+ *
+ * Simple polled UART write for handling critical failures
+ * by printing out a message on the UART and looping forever.
+ * Can be called from interrupt (unlike the standard
+ * uart_write()) but is not thread-safe because it cannot
+ * take the thread-safety mutex, and hence is only useful for
+ * a last-resort catastrophic debug message.
+ *
+ * @param[in] ptr Pointer to write string
+ */
+void uart_write_halt (const char *ptr)
+{
+    /* Check parameters */
+    if (ptr != NULL)
+    {
+        /* Loop through all bytes until NULL terminator encountered */
+        while (*ptr != '\0')
+        {
+            /* Wait for empty */
+            while(UART_FR(UART0_ADDR) & UART_FR_TXFF)
+                ;
+
+            /* Write byte to UART */
+            UART_DR(UART0_ADDR) = *ptr++;
+        }
+    }
+
+    /* Loop forever */
+    while (1)
+        ;
+
+}

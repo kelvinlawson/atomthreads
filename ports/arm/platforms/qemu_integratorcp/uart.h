@@ -33,5 +33,6 @@
 /* UART driver APIs */
 extern int uart_read (char *ptr, int len);
 extern int uart_write (const char *ptr, int len);
+extern void uart_write_halt (const char *ptr);
 
 #endif /* __ATOM_UART_H */

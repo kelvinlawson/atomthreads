@@ -20,13 +20,13 @@
 __interrupt_vector_table:
 
   B Reset_Handler /* Reset */
-  B . /* Undefined */
-  B . /* SWI */
-  B . /* Prefetch Abort */
-  B . /* Data Abort */
-  B . /* reserved */
-  B IRQ_Handler /* IRQ */
-  B . /* FIQ */
+  B Null_Handler  /* Undefined */
+  B Null_Handler  /* SWI */
+  B Null_Handler  /* Prefetch Abort */
+  B Null_Handler  /* Data Abort */
+  B Null_Handler  /* reserved */
+  B IRQ_Handler   /* IRQ */
+  B Null_Handler  /* FIQ */
 
  
 
@@ -49,3 +49,5 @@ Reset_Handler:
 IRQ_Handler:
 	B archIRQHandler
 	
+Null_Handler:
+	B null_handler
