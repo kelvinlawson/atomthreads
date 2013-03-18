@@ -16,10 +16,11 @@ platform running under QEMU.
 All of the cross-platform kernel code is contained in the top-level 
 'kernel' folder, while ports to specific CPU architectures are contained in
 the 'ports' folder tree. To support multiple ARM boards/platforms using a
-single common ARM architecture port, the ARM port contains platform
+single common ARM architecture port, the ARM port contains 'platform'
 sub-folders in which the board/platform-specific code is situated. This
-allows many different ARM boards with different interrupt controllers, UARTs
-etc but which all reuse the same common core ARM context-switching code.
+allows the sharing of common ARM port code between many different ARM
+boards with different interrupt controllers, UARTs etc but which all reuse
+the same common core ARM context-switching code.
 
 This platform contains a few key platform-specific files:
 
@@ -63,7 +64,7 @@ The port works out-of-the-box with the GCC tools (for building) and QEMU
 was tested using the CodeSourcery toolchain (2009q3 non-Linux but others
 should be supported) and self-built toolchains such as hosted toolchains
 built by build_arm_toolchain.sh (see http://navaro.nl for details). Note
-that the Makefile for this platform assumes your GCC binary is named
+that the Makefile for this platform assumes that your GCC binary is named
 "arm-none-eabi-gcc".
 
 Currently we assume that the toolchain will provide some header files like
@@ -91,8 +92,8 @@ OTHER PREREQUISITES
 QEMU is used for simulation of the target and versions 0.14.1, 1.2.0 &
 1.4.0 were tested.
 
-Running the entire automated test suite via "make qemutests" also requires
-the "expect" program.
+Running the entire automated test suite in one command via "make qemutests"
+also requires the "expect" program.
 
 
 ---------------------------------------------------------------------------
@@ -108,9 +109,9 @@ carry out the full build using the following:
 
 All objects are built into the 'build' folder under 
 ports/arm/platforms/qemu_integrator_cp. The build process builds separate
-target applications for each automated test, and appropriate ELF files can be
-found in the build folder ready for running on the target or within QEMU.
-Each test is built and run as a separate application.
+target applications for each automated test, and appropriate ELF files can
+be found in the build folder ready for running on the target or within
+QEMU. Each test is built and run as a separate application.
 
 
 All built objects etc can be cleaned using:
@@ -126,7 +127,7 @@ both the kernel and port documentation from this folder using:
 
 ---------------------------------------------------------------------------
 
-IntegratorCP SPECIFICS
+Integrator/CP SPECIFICS
 
 The test applications make use of the Integrator's UART to print out
 pass/fail indications and other information. For this you should connect a
@@ -147,9 +148,10 @@ these tests is built as an independent application in the 'build' folder.
 These can be run on the target or within QEMU using the instructions below.
 
 To view the test results, connect a serial debug cable to your target
-platform or view the console if using QEMU. On starting, the test applications
-print out "Go" on the UART. Once the test is complete they will print
-out "Pass" or "Fail", along with other information if the test failed.
+platform or view the console if using QEMU. On starting, the test
+applications print out "Go" on the UART. Once the test is complete they
+will print out "Pass" or "Fail", along with other information if the test
+failed.
 
 Most of the tests complete within a few seconds, but some (particularly
 the stress tests) can take longer, so be patient. 
@@ -169,11 +171,11 @@ RUNNING TESTS WITHIN THE QEMU SIMULATOR
 It is possible to run the full automated test suite in a simulator without
 programming the test applications into real hardware. This is very useful
 for quick verification of the entire test suite after making any software
-changes, and is much faster than download each test application to a real
-target.
+changes, and is much faster than downloading each test application to a
+real target.
 
-A single command runs every single test application, and checks the
-(simulated) UART output to verify that each test case passes.
+A single command runs every single test application, and automatically
+parses the (simulated) UART output to verify that each test case passes.
 
 This requires two applications on your development PC: expect and QEMU.
 
