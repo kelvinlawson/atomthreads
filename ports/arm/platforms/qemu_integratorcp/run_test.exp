@@ -16,7 +16,7 @@ set timeout 10
 
 # Wait for the test to start ("Go")
 expect {
-	"Go" {
+	"Go\r\n" {
 		puts "Test started"
 
 		# The test could take up to 3 minutes to complete once started
@@ -24,8 +24,8 @@ expect {
 
 		# Now expect to see "Pass" or "Fail" within 3 minutes
 		expect {
-			"Pass" { puts "Test passed"; exit 0 }
-			"Fail" { puts "Test failed"; exit 1 }
+			"Pass\r\n" { puts "Test passed"; exit 0 }
+			"Fail\r\n" { puts "Test failed"; exit 1 }
 			timeout { puts "Test timed out without completing"; exit 1 }
 		}
 	}
