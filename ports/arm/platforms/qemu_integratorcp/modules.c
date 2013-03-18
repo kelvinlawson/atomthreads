@@ -45,7 +45,7 @@ ICP_TIMER_T * const board_timer_0 = (ICP_TIMER_T*)BOARD_BASE_ADDRESS_TIMER_0;
 ICP_PIC_T *   const board_pic     = (ICP_PIC_T*)BOARD_BASE_ADDRESS_PIC;
 
 /** TIMER0 clock speed (Hz) */
-#define TIMER0_CLOCK_SPEED 		40000000
+#define TIMER0_CLOCK_SPEED     40000000
 
 
 /**
@@ -117,7 +117,7 @@ low_level_init (void)
     board_timer_0->INTCLR = 1 ;
     board_pic->IRQ_ENABLESET |= ICP_PIC_IRQ_TIMERINT0 ;
 
-	/* Set the timer to go off 100 times per second (input clock speed is 40MHz) */
+    /* Set the timer to go off 100 times per second (input clock speed is 40MHz) */
     board_timer_0->LOAD = TIMER0_CLOCK_SPEED / SYSTEM_TICKS_PER_SEC ;
     board_timer_0->BGLOAD = TIMER0_CLOCK_SPEED / SYSTEM_TICKS_PER_SEC ;
     board_timer_0->CONTROL = ICP_TIMER_CONTROL_ENABLE |
@@ -180,6 +180,6 @@ __interrupt_dispatcher (void)
  */
 void null_handler (void) 
 {
-	uart_write_halt ("Unhandled interrupt\n");
+    uart_write_halt ("Unhandled interrupt\n");
 }
 

@@ -81,8 +81,8 @@ static void thread_shell (void)
     }
 
     /* Thread has run to completion: remove it from the ready list */
-	curr_tcb->suspended = TRUE;
-	atomSched (FALSE);
+    curr_tcb->suspended = TRUE;
+    atomSched (FALSE);
 }
 
 
@@ -132,19 +132,19 @@ void archThreadContextInit (ATOM_TCB *tcb_ptr, void *stack_top, void (*entry_poi
      * Because we are filling the stack from top to bottom, this goes
      * on the stack first (at the top).
      */
-	*stack_ptr-- = (uint32_t)thread_shell; 	
+    *stack_ptr-- = (uint32_t)thread_shell;
 
     /**
      * Store starting register values for R4-R11
      */
-	*stack_ptr-- = (uint32_t) 0x00001111;   /* R11 */
-	*stack_ptr-- = (uint32_t) 0x00001010;   /* R10 */
-	*stack_ptr-- = (uint32_t) 0x00000909;   /* R9 */
-	*stack_ptr-- = (uint32_t) 0x00000808;   /* R8 */
-	*stack_ptr-- = (uint32_t) 0x00000707;   /* R7 */
-	*stack_ptr-- = (uint32_t) 0x00000606;   /* R6 */
-	*stack_ptr-- = (uint32_t) 0x00000505;   /* R5 */
-	*stack_ptr   = (uint32_t) 0x00000404;   /* R4 */
+    *stack_ptr-- = (uint32_t) 0x00001111;   /* R11 */
+    *stack_ptr-- = (uint32_t) 0x00001010;   /* R10 */
+    *stack_ptr-- = (uint32_t) 0x00000909;   /* R9 */
+    *stack_ptr-- = (uint32_t) 0x00000808;   /* R8 */
+    *stack_ptr-- = (uint32_t) 0x00000707;   /* R7 */
+    *stack_ptr-- = (uint32_t) 0x00000606;   /* R6 */
+    *stack_ptr-- = (uint32_t) 0x00000505;   /* R5 */
+    *stack_ptr   = (uint32_t) 0x00000404;   /* R4 */
 
     /**
      * All thread context has now been initialised. Save the current

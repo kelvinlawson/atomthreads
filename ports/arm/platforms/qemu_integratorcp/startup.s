@@ -33,21 +33,21 @@ __interrupt_vector_table:
 Reset_Handler:
 
 
-	MSR CPSR_c,#(IRQ_MODE | I_BIT | F_BIT)
-	LDR sp,=__irq_stack_top__ /* set the IRQ stack pointer */
-	MSR CPSR_c,#(FIQ_MODE | I_BIT | F_BIT)
-	LDR sp,=__fiq_stack_top__ /* set the FIQ stack pointer */
-	MSR CPSR_c,#(SVC_MODE | I_BIT | F_BIT)
-	LDR sp,=__svc_stack_top__ /* set the SVC stack pointer */
+    MSR CPSR_c,#(IRQ_MODE | I_BIT | F_BIT)
+    LDR sp,=__irq_stack_top__ /* set the IRQ stack pointer */
+    MSR CPSR_c,#(FIQ_MODE | I_BIT | F_BIT)
+    LDR sp,=__fiq_stack_top__ /* set the FIQ stack pointer */
+    MSR CPSR_c,#(SVC_MODE | I_BIT | F_BIT)
+    LDR sp,=__svc_stack_top__ /* set the SVC stack pointer */
 
-	BL low_level_init
-	BL _mainCRTStartup
+    BL low_level_init
+    BL _mainCRTStartup
 
 
   B .
 
 IRQ_Handler:
-	B archIRQHandler
-	
+    B archIRQHandler
+
 Null_Handler:
-	B null_handler
+    B null_handler

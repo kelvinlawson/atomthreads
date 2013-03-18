@@ -144,7 +144,7 @@ int _open(const char *name, int flags, int mode)
 int _read(int file, char *ptr, int len)
 {
     /* Read from the UART driver, regardless of file descriptor */
-	return (uart_read (ptr, len));
+    return (uart_read (ptr, len));
 }
 
 

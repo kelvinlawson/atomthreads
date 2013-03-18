@@ -55,8 +55,8 @@
  * Functions defined in atomport_arm.asm
  *
  */
-extern uint32_t					contextEnterCritical (void) ;
-extern void						contextExitCritical (uint32_t posture) ;
+extern uint32_t  contextEnterCritical (void) ;
+extern void      contextExitCritical (uint32_t posture) ;
 
 
 /**
