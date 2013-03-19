@@ -49,28 +49,6 @@ ICP_PIC_T *   const board_pic     = (ICP_PIC_T*)BOARD_BASE_ADDRESS_PIC;
 
 
 /**
- * \b dbg_format_msg
- *
- * Same as printf. 
- *
- */
-void 
-dbg_format_msg (char *format, ...)
-{
-    va_list         args;
-    static char     msg[256] ;
-    CRITICAL_STORE ;
-
-    va_start (args, format) ;
-    CRITICAL_START() ;
-    vsnprintf ((char*)msg, 256, (char*)format, args) ;
-    printf (msg) ;
-    CRITICAL_END() ;
-
-}
-
-
-/**
  * \b _mainCRTStartup
  *
  * C startup code for environments without a suitable built-in one.

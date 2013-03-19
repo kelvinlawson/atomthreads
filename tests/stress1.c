@@ -75,13 +75,13 @@ monitor_thread (uint32_t parm)
         uint32_t time = atomTimeGet() ;
 		
 		CRITICAL_START();
-		ATOMLOG (_STR("\r\nMonitor %d threads # %d (%08d)\r\n"), parm,  counter, (unsigned int)time) ;
+		ATOMLOG (_STR("\r\nMonitor %d threads # %d (%08d)\r\n"), (int)parm, counter, (unsigned int)time) ;
 		ATOMLOG (_STR("------------------------------\r\n")) ;
         //CRITICAL_END();
 
 		for (i=0; i<print_lines_count; i++) {
             //CRITICAL_START();
-            ATOMLOG (_STR("Thr %.2d cnt %08d\tThr %.2d cnt %08d\tThr %.2d cnt %08d\tThr %.2d cnt %08d\r\n"),
+            ATOMLOG (_STR("Thr %.2d cnt %08d\tThr %.2lu cnt %08d\tThr %.2lu cnt %08d\tThr %.2lu cnt %08d\r\n"),
                         i,test_counter[i],
                         i+print_lines_count,test_counter[i+print_lines_count],
                         i+print_lines_count*2,test_counter[i+print_lines_count*2],
@@ -127,7 +127,7 @@ uint32_t test_start (void)
 
 	for (i=0; i< TEST_THREADS;i++) {
         CRITICAL_START();
-        ATOMLOG (_STR("stress_test_thread %.3d creating...\r\n"), i) ;
+        ATOMLOG (_STR("stress_test_thread %.3d creating...\r\n"), (int)i) ;
         CRITICAL_END();
 		if (atomThreadCreate ((ATOM_TCB *)&test_tcb[i], test_prio[i], stress_test_thread, i, 
                     &stress_test_stack[i][0], TEST_STACK_BYTE_SIZE, TRUE) != ATOM_OK) {
@@ -159,7 +159,7 @@ atomthreads_stress_test (uint32_t thread_count)
         thread_count = MAX_TEST_THREADS ;
     }
 
-	ATOMLOG (_STR("\r\natomthreads_stress_test %.3d threads\r\n"), thread_count) ;
+	ATOMLOG (_STR("\r\natomthreads_stress_test %.3d threads\r\n"), (int)thread_count) ;
 	ATOMLOG (_STR("-----------------------------------\r\n")) ;
 
 

@@ -33,12 +33,12 @@
 /* Include Atomthreads kernel API */
 #include "atom.h"
 
-/* Prerequisite for ATOMLOG() macro (via dbg_format_msg) */
-extern void dbg_format_msg (char *format, ...) ;
+/* Include printf for ATOMLOG() */
+#include <stdio.h>
 
 
 /* Logger macro for viewing test results */
-#define ATOMLOG     dbg_format_msg
+#define ATOMLOG     printf
 
 /*
  * String location macro: for platforms which need to place strings in

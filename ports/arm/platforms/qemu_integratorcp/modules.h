@@ -121,9 +121,6 @@ extern ICP_PIC_T*         const                board_pic ;
 
 /* Function prototypes */
 extern int              low_level_init (void) ;
-extern void             dbg_format_msg (char *format, ...)  ;
-
-#define DBG_MESSAGE(fmt_str)    {  dbg_format_msg fmt_str  ; }
 
 
 #endif /* __MODULES_H__ */
