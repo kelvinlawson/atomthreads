@@ -17,6 +17,7 @@
 .equ I_BIT,               0x80            /* when I bit is set, IRQ is disabled */
 .equ F_BIT,               0x40            /* when F bit is set, FIQ is disabled */
 
+
 __interrupt_vector_table:
 
   B Reset_Handler /* Reset */
@@ -27,11 +28,9 @@ __interrupt_vector_table:
   B Null_Handler  /* reserved */
   B IRQ_Handler   /* IRQ */
   B Null_Handler  /* FIQ */
-
  
 
 Reset_Handler:
-
 
     MSR CPSR_c,#(IRQ_MODE | I_BIT | F_BIT)
     LDR sp,=__irq_stack_top__ /* set the IRQ stack pointer */
@@ -46,8 +45,10 @@ Reset_Handler:
 
   B .
 
+
 IRQ_Handler:
     B archIRQHandler
+
 
 Null_Handler:
     B null_handler
