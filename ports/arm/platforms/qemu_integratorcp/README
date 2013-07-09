@@ -1,0 +1,223 @@
+---------------------------------------------------------------------------
+
+Library:      Atomthreads QEMU ARM Integrator/CP (ARM926EJ-S) Platform.
+Author:       Natie van Rooyen <natie@navaro.nl>
+Website:      http://atomthreads.com
+License:      BSD Revised
+
+---------------------------------------------------------------------------
+
+QEMU ARM Integrator/CP (ARM926EJ-S) Platform
+
+The "qemu_integratorcp" platform folder contains sources for building a
+sample Atomthreads application for the ARM Integrator/CP (ARM926EJ-S)
+platform running under QEMU.
+
+All of the cross-platform kernel code is contained in the top-level 
+'kernel' folder, while ports to specific CPU architectures are contained in
+the 'ports' folder tree. To support multiple ARM boards/platforms using a
+single common ARM architecture port, the ARM port contains 'platform'
+sub-folders in which the board/platform-specific code is situated. This
+allows the sharing of common ARM port code between many different ARM
+boards with different interrupt controllers, UARTs etc but which all reuse
+the same common core ARM context-switching code.
+
+This platform contains a few key platform-specific files:
+
+ * startup.s: Interrupt vector table and basic startup assembly code
+ * modules.c: Low level initialisation for this platform
+ * uart.c: Simple UART implementation for debug purposes
+
+The common ARM architecture port that is used across all platforms contains
+the basic code for thread-switching on all ARM platforms:
+
+ * atomport.c: Those functions which can be written in C
+ * atomport-asm.s: The main register save/restore assembler routines
+
+Each Atomthreads port requires also a header file which describes various
+architecture-specific details such as appropriate types for 8-bit, 16-bit
+etc variables, the port's system tick frequency, and macros for performing
+interrupt lockouts / critical sections:
+
+ * atomport.h: Port-specific header required by the kernel for each port
+
+A couple of additional source files are also included in the common ARM port:
+
+ * tests-main.c: Main application file (used for launching automated tests)
+ * syscalls.c: Simple implementation of open/close/read/write for stdio
+
+Atomthreads includes a suite of automated tests which prove the key OS
+functionality, and can be used with any architecture ports. This port
+provides an easy mechanism for building and quickly running the test suite
+using QEMU to prove the OS without requiring any target hardware.
+
+This platform folder has been tested on a variety of GCC ARM toolchains,
+including hosted and non-hosted.
+
+
+---------------------------------------------------------------------------
+
+GCC TOOLCHAIN
+
+The port works out-of-the-box with the GCC tools (for building) and QEMU 
+(for simulation). It can be built on any OS for which GCC is available, and
+was tested using the CodeSourcery toolchain (2009q3 non-Linux but others
+should be supported) and self-built toolchains such as hosted toolchains
+built by build_arm_toolchain.sh (see http://navaro.nl for details). Note
+that the Makefile for this platform assumes that your GCC binary is named
+"arm-none-eabi-gcc".
+
+Currently we assume that the toolchain will provide some header files like
+stdint.h. Not all toolchains will include this, in which case you simply
+need to add definitions for int32_t and friends in atomport.h, in place of
+the include declaration for stdint.h.
+
+Some toolchains provide newlib syscalls.c which implement stdio
+functionality via open, close, read, write. Hosted toolchains will
+automatically provide versions of these which work with QEMU, and no UART
+driver will be needed to view the stdio printf()s etc. If these are not
+provided by by the compiler toolchain then backup implementations are
+implemented within the common ARM port folder (see ports/arm/syscalls.c)
+and a UART driver is implemented here in uart.c.
+
+Similarly some toolchains provide startup assembly code via
+_mainCRTStartup(). If this is not provided by the toolchain then a backup
+version is used within modules.c.
+
+
+---------------------------------------------------------------------------
+
+OTHER PREREQUISITES
+
+QEMU is used for simulation of the target and versions 0.14.1, 1.2.0 &
+1.4.0 were tested.
+
+Running the entire automated test suite in one command via "make qemutests"
+also requires the "expect" program.
+
+
+---------------------------------------------------------------------------
+
+BUILDING THE SOURCE
+
+A Makefile is provided for building the kernel, port, platform and
+automated tests. Make sure the ARM GCC toolchain is in the path
+(e.g. "PATH=$PATH:/opt/arm-2009q3/bin && export path") as well as QEMU and
+carry out the full build using the following:
+
+ * make all
+
+All objects are built into the 'build' folder under 
+ports/arm/platforms/qemu_integrator_cp. The build process builds separate
+target applications for each automated test, and appropriate ELF files can
+be found in the build folder ready for running on the target or within
+QEMU. Each test is built and run as a separate application.
+
+
+All built objects etc can be cleaned using:
+
+ * make clean
+
+
+The Atomthreads sources are documented using Doxygen markup. You can build
+both the kernel and port documentation from this folder using:
+
+ * make doxygen
+
+
+---------------------------------------------------------------------------
+
+Integrator/CP SPECIFICS
+
+The test applications make use of the Integrator's UART to print out
+pass/fail indications and other information. For this you should connect a
+serial debug cable to the board or when running in QEMU you will see the
+UART messages on the console when running the test applications.
+
+
+---------------------------------------------------------------------------
+
+AUTOMATED TESTS
+
+Atomthreads contains a set of generic kernel tests which can be run on any
+port to prove that all core functionality is working on your target.
+
+The full set of tests can be found in the top-level 'tests' folder. Each of
+these tests is built as an independent application in the 'build' folder.
+
+These can be run on the target or within QEMU using the instructions below.
+
+To view the test results, connect a serial debug cable to your target
+platform or view the console if using QEMU. On starting, the test
+applications print out "Go" on the UART. Once the test is complete they
+will print out "Pass" or "Fail", along with other information if the test
+failed.
+
+Most of the tests complete within a few seconds, but some (particularly
+the stress tests) can take longer, so be patient. 
+
+The full suite of tests endeavours to exercise as much of the kernel code
+as possible, and can be used for quick confirmation of core OS
+functionality if you ever need to make a change to the kernel or port.
+
+The test application main() is contained in tests-main.c. This initialises
+the OS, creates a main thread, and calls out to the test modules.
+
+
+---------------------------------------------------------------------------
+
+RUNNING TESTS WITHIN THE QEMU SIMULATOR
+
+It is possible to run the full automated test suite in a simulator without
+programming the test applications into real hardware. This is very useful
+for quick verification of the entire test suite after making any software
+changes, and is much faster than downloading each test application to a
+real target.
+
+A single command runs every single test application, and automatically
+parses the (simulated) UART output to verify that each test case passes.
+
+This requires two applications on your development PC: expect and QEMU.
+
+To run all tests in one command, type:
+
+ * make qemutests
+
+This will run every single test application within the simulator and quit
+immediately if any one test fails.
+
+The ability to run these automated tests in one command (and without real
+hardware) allows you to easily include the OS test suite in your nightly
+build or continous integration system and quickly find out if any of your
+local changes have caused any of the operating system tests to fail.
+
+
+---------------------------------------------------------------------------
+
+DEBUGGING WITH QEMU
+
+You may also use QEMU in combination with GDB to debug your built
+applications. To do this you should start QEMU with "-S -s" options e.g.:
+
+ * qemu-system-arm -M integratorcp -semihosting -nographic -kernel app.elf
+
+You can now start GDB and attach to the target:
+
+ * arm-none-eabi-gdb
+ * file app.elf
+ * target remote localhost:1234
+
+
+---------------------------------------------------------------------------
+
+WRITING APPLICATIONS
+
+The easiest way to start a new application which utilises the Atomthreads
+scheduler is to base your main application startup on tests-main.c. This
+initialises the OS and calls out to the test module entry functions. You
+can generally simply replace the call to the test modules by a call to your
+own application startup code.
+
+
+---------------------------------------------------------------------------
+

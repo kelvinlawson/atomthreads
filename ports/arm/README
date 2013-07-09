@@ -1,0 +1,107 @@
+---------------------------------------------------------------------------
+
+Library:      Atomthreads ARM Port
+Author:       Natie van Rooyen <natie@navaro.nl>
+License:      BSD Revised
+
+---------------------------------------------------------------------------
+
+ARM PORT
+
+This folder contains a port of the Atomthreads real time kernel for the
+ARM processor architecture. This port was tested on the ARMv5 and ARMv7 
+architectures.
+
+The same common/core port can be used on a wide variety of ARM devices
+but platform-specific code has been separated out into multiple "platform"
+(BSP) folders. This allows the common ARM code to be shared among several
+different ARM platforms and boards. For example, different ARM devices and
+platforms might use different interrupt controllers, timer subsystems and
+UARTs but share the same core OS context-switching routines etc.
+
+An example platform is in the "platforms/qemu_integratorcp" folder. The
+platform-specific folders such as this contain the Makefile to build the
+project for that platform, so you may wish to head straight there if you
+wish to quickly get started building and running Atomthreads on ARM. The
+qemu_integratorcp platform is designed for the Integrator/CP platform with
+ARM926EJ-S processor, and can be run within QEMU for quick evaluation of
+Atomthreads without real hardware.
+
+
+---------------------------------------------------------------------------
+
+FILES IN THE COMMON ARM PORT FOLDER
+
+ * tests-main.c: Contains a sample Atomthreads application starting at
+   main() that initialises the operating system and runs the automated test
+   suite applications. You will normally make your own main() function
+   suitable for your application, possibly using this as a basis.
+ * atomport-asm.s: Contains the main assembler code that forms the portion
+   of the core ARM architecture port that must be implemented in assembler
+   (e.g. register save/restore for thread context-switching).
+ * atomport.c: Contains the main C code that forms the portion of the core
+   ARM architecture port that can be implemented in C (e.g. prefilling the
+   stack context for new threads).
+ * syscalls.c: Contains the open/close/read/write/heap-management
+   functions typically required if you want to do anything with stdio
+   (e.g. printf() calls etc). This is a very simple implementation that
+   always writes to the UART regardless of which file is "opened". Use of
+   printf() and friends with GCC toolchains typically requires a heap, and
+   thus a heap is supported in this file via the _sbrk() function. Your
+   linker script should specify where the heap starts and stops using "end"
+   and "heap_top" definitions respectively. Note that in QEMU environments
+   this may not be required as some "semi-hosted" toolchains implement
+   these functions and the UART driver for you. In that case these
+   functions will be left out of the build because they are defined with
+   weak linkage.
+
+
+---------------------------------------------------------------------------
+
+PORTING TO NEW ARM PLATFORMS
+
+To port Atomthreads to your ARM platform you must provide the following
+functionality in your platform folder (in all cases example filenames are
+from the qemu_integratorcp sample platform):
+
+ * Startup code: see Reset_Handler in startup.s. Typically this will be (at
+   least in the first few instructions) some assembly code, and will set up
+   the initial stack pointer, perform any copying of segments from flash to
+   RAM, zero the BSS section etc, before branching to the main application
+   function (e.g. main()). At some point during initialisation the timer
+   tick interrupt required by the OS should be started (100 ticks per
+   second) and this might be done here in the very early startup code. Note
+   that some compiler toolchains will provide a portion of the C startup
+   code e.g. the function _mainCRTStartup() provided by some GCC
+   toolchains.
+ * Interrupt vector table: see __interrupt_vector_table in startup.s.
+   Typically this will contain at least an entry for the startup/reset
+   code, and an entry for the hardware IRQ handler. In order to share
+   common code amongst all platforms, the hardware IRQ handler
+   (archIRQHandler()) is actually implemented in the common ARM port
+   folder but calls back out to a dispatcher function in your platform
+   folder to determine the source of the interrupt and handle it
+   appropriately. Your platform folder should contain this dispatcher
+   function (__interrupt_dispatcher). It must support at least the timer
+   interrupt service routine (atomTimerTick()) required by the OS. The
+   dispatcher also handles other hardware interrupt sources; it determines
+   the source of the IRQ and calls out to the appropriate ISR for that 
+   interrupt.
+ * Linker script: Here you should specify the location of the interrupt
+   vector table within RAM, location of code/text segment etc. The
+   Atomthreads ARM port does not dictate particular section names or
+   layout unless your toolchain does not provide a suitable syscalls.c and
+   you wish to use heap. In that case you will (at least initially) be
+   using the heap implementation _sbrk() in syscalls.c in the common ARM
+   port which expects "heap_top" and "end" (heap_base) to be defined by the
+   linker script. These names can be easily changed in ports/arm/syscalls.c
+   if necessary.
+ * UART driver: You should provide at least a UART write routine If you
+   would like to see debug statements, for example to see the results of
+   running the automated test suite. See uart.c for a simple example. Note
+   that for QEMU targets some semihosted toolchains will implement this for
+   you, in which case you won't need either ports/arm/syscalls.c or a UART
+   driver.
+
+
+---------------------------------------------------------------------------

@@ -1,0 +1,39 @@
+#!/usr/bin/env expect
+
+# Expect script to run an automated test within QEMU and check for successful
+# completion.
+#
+# Arguments: <path_to_qemu> <test_elf_file>
+#
+# Returns 0 on successful test run within QEMU, 1 on failure
+
+
+# Start the test
+spawn [lindex $argv 0] -M integratorcp -semihosting -nographic -kernel [lindex $argv 1]
+
+# Expect to see the test starting within 10 seconds
+set timeout 10
+
+# Wait for the test to start ("Go")
+expect {
+	"Go\r\n" {
+		puts "Test started"
+
+		# The test could take up to 3 minutes to complete once started
+		set timeout 180
+
+		# Now expect to see "Pass" or "Fail" within 3 minutes
+		expect {
+			"Pass\r\n" { puts "Test passed"; exit 0 }
+			"Fail\r\n" { puts "Test failed"; exit 1 }
+			timeout { puts "Test timed out without completing"; exit 1 }
+		}
+	}
+
+	timeout {
+		# Didn't receive "Go" within 10 seconds
+		puts "Test failed to start ('Go' not seen)"
+		exit 1
+	}
+}
+

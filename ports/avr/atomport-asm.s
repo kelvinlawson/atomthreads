@@ -148,7 +148,7 @@ archContextSwitch:
     mov r28,r24         /* Move old_tcb_ptr param into the Y-regs so we */
     mov r29,r25         /* can access the TCB via a pointer. */
 
-    st  Y,r16           /* Store SPH/SPL to old_tcb_ptr->tcb_save_ptr which */
+    st  Y,r16           /* Store SPH/SPL to old_tcb_ptr->sp_save_ptr which */
     std Y+1,r17         /* is conveniently the first member of the TCB. */
 
 
