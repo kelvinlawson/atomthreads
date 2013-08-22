@@ -40,6 +40,8 @@ BUILT_OBJECTS = $(patsubst %,$(BUILD_DIR)/%,$(ALL_OBJECTS))
 TEST_OBJECTS = $(notdir $(patsubst %.c,%.o,$(wildcard $(TESTS_DIR)/*.c)))
 
 # Target application filenames for each test object
+TEST_UIMAGES = $(patsubst %.o,%.uImage,$(TEST_OBJECTS))
+TEST_BINS = $(patsubst %.o,%.bin,$(TEST_OBJECTS))
 TEST_ELFS = $(patsubst %.o,%.elf,$(TEST_OBJECTS))
 
 # Search build/output directory for dependencies
@@ -65,7 +67,7 @@ endif
 #################
 
 # All tests
-all: $(BUILD_DIR) $(TEST_ELFS) Makefile
+all: $(BUILD_DIR) $(TEST_ELFS) $(TEST_BINS) $(TEST_UIMAGES) Makefile
 
 # Make build/output directory
 $(BUILD_DIR):
@@ -74,6 +76,15 @@ $(BUILD_DIR):
 # Test ELF files (one application build for each test)
 $(TEST_ELFS): %.elf: %.o $(ALL_OBJECTS)
 	$(CC) $(LFLAGS) $(BUILD_DIR)/$(notdir $<) $(BUILT_OBJECTS) --output $(BUILD_DIR)/$@ -Wl,-Map,$(BUILD_DIR)/$(basename $@).map
+
+# Test BIN files (one application build for each test)
+$(TEST_BINS): %.bin: %.elf $(TEST_ELFS)
+	$(OBJCOPY) -O binary $(BUILD_DIR)/$(basename $@).elf $(BUILD_DIR)/$(basename $@).bin
+
+# Test uImage files (one application build for each test)
+$(TEST_UIMAGES): %.uImage: %.bin $(TEST_BINS)
+	gzip -9 -c $(BUILD_DIR)/$(basename $@).bin > $(BUILD_DIR)/$(basename $@).bin.gz
+	mkimage -A arm -T kernel -C gzip -a 0x80008000 -e 0x80008040 -n "Atomthreads application" -d $(BUILD_DIR)/$(basename $@).bin.gz $(BUILD_DIR)/$(basename $@).uImage
 
 # Kernel objects builder
 $(KERNEL_OBJECTS): %.o: $(KERNEL_DIR)/%.c
