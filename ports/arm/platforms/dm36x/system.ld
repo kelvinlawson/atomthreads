@@ -4,7 +4,6 @@ ENTRY(__interrupt_vector_table)
 
 MEMORY
 {
-    flash (rx) : ORIGIN = 0x00000000, LENGTH = 0x00020000
     sram (rwx) : ORIGIN = 0x80000000, LENGTH = 0x10000000
 }
 
@@ -36,10 +35,7 @@ SECTIONS
         *(.rodata*)
 
         _end_text = .;
-    } >flash
 
-    .data :
-    {
         _start_data = .;
         *(.data)
         _end_data = .;
