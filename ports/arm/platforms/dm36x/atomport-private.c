@@ -92,25 +92,25 @@ void _mainCRTStartup(void)
 int
 low_level_init (void)
 {
-	/* Initialise TIMER0 registers for interrupt 100 times per second */
+    /* Initialise TIMER0 registers for interrupt 100 times per second */
 
-	/* Reset & disable all TIMER0 timers */
-	TIMER0_REG(DM36X_TIMER_INTCTL_STAT) = 0;	/* Disable interrupts */
-	TIMER0_REG(DM36X_TIMER_TCR) = 0;			/* Disable all TIMER0 timers */
-	TIMER0_REG(DM36X_TIMER_TGCR) = 0; 			/* Put all TIMER0 timers in reset */
-	TIMER0_REG(DM36X_TIMER_TIM12) = 0;			/* Clear Timer 1:2 */
+    /* Reset & disable all TIMER0 timers */
+    TIMER0_REG(DM36X_TIMER_INTCTL_STAT) = 0;	/* Disable interrupts */
+    TIMER0_REG(DM36X_TIMER_TCR) = 0;			/* Disable all TIMER0 timers */
+    TIMER0_REG(DM36X_TIMER_TGCR) = 0;			/* Put all TIMER0 timers in reset */
+    TIMER0_REG(DM36X_TIMER_TIM12) = 0;			/* Clear Timer 1:2 */
 
-	/* Set up Timer 1:2 in 32-bit unchained mode */
-	TIMER0_REG(DM36X_TIMER_TGCR) = (1 << 2); 	/* Select 32-bit unchained mode (TIMMODE) */
-	TIMER0_REG(DM36X_TIMER_TGCR) |= (1 << 0); 	/* Remove Timer 1:2 from reset (TIM12RS) */
-	TIMER0_REG(DM36X_TIMER_PRD12) = (TIMER_CLK / SYSTEM_TICKS_PER_SEC) - 1; 	/* Set period to 100 ticks per second (PRD12) */
-	TIMER0_REG(DM36X_TIMER_TCR) |= (0 << 8);	/* Select external clock source for Timer 1:2 (CLKSRC12) */
+    /* Set up Timer 1:2 in 32-bit unchained mode */
+    TIMER0_REG(DM36X_TIMER_TGCR) = (1 << 2);	/* Select 32-bit unchained mode (TIMMODE) */
+    TIMER0_REG(DM36X_TIMER_TGCR) |= (1 << 0);	/* Remove Timer 1:2 from reset (TIM12RS) */
+    TIMER0_REG(DM36X_TIMER_PRD12) = (TIMER_CLK / SYSTEM_TICKS_PER_SEC) - 1;		/* Set period to 100 ticks per second (PRD12) */
+    TIMER0_REG(DM36X_TIMER_TCR) |= (0 << 8);	/* Select external clock source for Timer 1:2 (CLKSRC12) */
 
-	/* Enable interrupts */
-	TIMER0_REG(DM36X_TIMER_INTCTL_STAT) = (1 << 1) | (1 << 0);	/* Enable/ack Compare/Match interrupt for Timer 1:2 */
+    /* Enable interrupts */
+    TIMER0_REG(DM36X_TIMER_INTCTL_STAT) = (1 << 1) | (1 << 0);	/* Enable/ack Compare/Match interrupt for Timer 1:2 */
 
-	/* Enable timer */
-	TIMER0_REG(DM36X_TIMER_TCR) |= (2 << 6);	/* Enable Timer 1:2 continuous (ENAMODE12) */
+    /* Enable timer */
+    TIMER0_REG(DM36X_TIMER_TCR) |= (2 << 6);	/* Enable Timer 1:2 continuous (ENAMODE12) */
 
     return 0 ;
 }
@@ -150,7 +150,7 @@ __interrupt_dispatcher (void)
         atomTimerTick();
 
         /* Ack the interrupt */
-		INTC_REG((vector >= 32) ? DM36X_INTC_IRQ1 : DM36X_INTC_IRQ0) = (1 << (vector >= 32) ? (vector - 32) : vector);
+        INTC_REG((vector >= 32) ? DM36X_INTC_IRQ1 : DM36X_INTC_IRQ0) = (1 << (vector >= 32) ? (vector - 32) : vector);
 
         /* Call the interrupt exit routine */
         atomIntExit(TRUE);
