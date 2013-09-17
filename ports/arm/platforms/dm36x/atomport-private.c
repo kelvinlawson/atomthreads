@@ -176,9 +176,8 @@ __interrupt_dispatcher (void)
         /* TIMER0:12 tick interrupt (call Atomthreads timer tick ISR) */
         if (vector == DM36X_INTC_VEC_TINT0)
         {
-            /* Reload timer and enable interupts */
-            TIMER0_REG(DM36X_TIMER_PRD12) = (TIMER_CLK / SYSTEM_TICKS_PER_SEC) - 1;     /* Set period to 100 ticks per second (PRD12) */
-            TIMER0_REG(DM36X_TIMER_INTCTL_STAT) |= (1 << 1) | (1 << 0);  /* Enable/ack Compare/Match interrupt for Timer 1:2 */
+            /* Ack the interrupt immediately, could get scheduled out below */
+            INTC_REG(((vector >= 32) ? DM36X_INTC_IRQ1 : DM36X_INTC_IRQ0)) = (1 << ((vector >= 32) ? (vector - 32) : vector));
 
             /*
              * Let the Atomthreads kernel know we're about to enter an OS-aware
@@ -198,8 +197,6 @@ __interrupt_dispatcher (void)
             uart_write_halt ("Unexpected IRQ vector\n");
         }
 
-        /* Ack the interrupt */
-        INTC_REG(((vector >= 32) ? DM36X_INTC_IRQ1 : DM36X_INTC_IRQ0)) = (1 << ((vector >= 32) ? (vector - 32) : vector));
 	}
 
 }
