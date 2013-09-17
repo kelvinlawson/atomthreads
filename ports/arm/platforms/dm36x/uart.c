@@ -46,6 +46,9 @@
 
 /* Constants */
 
+/** Select relevant UART for this platform */
+#define UART_BASE 		DM36X_UART1_BASE
+
 /** FR Register bits */
 #define UART_FR_RXFE     0x10
 #define UART_LSR_TEMT    0x40
@@ -141,23 +144,23 @@ int uart_read (char *ptr, int len)
     {
 #if 0
         /* Wait for not-empty */
-        while(UART_FR(DM36X_UART0_BASE) & UART_FR_RXFE)
+        while(UART_FR(UART_BASE) & UART_FR_RXFE)
             ;
 
         /* Read first byte */
-        *ptr++ = UART_DR(DM36X_UART0_BASE);
+        *ptr++ = UART_DR(UART_BASE);
 
         /* Loop over remaining bytes until empty */
         for (todo = 1; todo < len; todo++)
         {
             /* Quit if receive FIFO empty */
-            if(UART_FR(DM36X_UART0_BASE) & UART_FR_RXFE)
+            if(UART_FR(UART_BASE) & UART_FR_RXFE)
             {
                 break;
             }
 
             /* Read next byte */
-            *ptr++ = UART_DR(DM36X_UART0_BASE);
+            *ptr++ = UART_DR(UART_BASE);
         }
 #endif
 
@@ -206,11 +209,11 @@ int uart_write (const char *ptr, int len)
         for (todo = 0; todo < len; todo++)
         {
             /* Wait for empty */
-            while(UART_LSR(DM36X_UART0_BASE) & UART_LSR_TEMT)
+            while(UART_LSR(UART_BASE) & UART_LSR_TEMT)
                 ;
 
             /* Write byte to UART */
-            UART_DR(DM36X_UART0_BASE) = *ptr++;
+            UART_DR(UART_BASE) = *ptr++;
         }
 
         /* Return mutex access */
@@ -246,11 +249,11 @@ void uart_write_halt (const char *ptr)
         while (*ptr != '\0')
         {
             /* Wait for empty */
-            while(UART_LSR(DM36X_UART0_BASE) & UART_LSR_TEMT)
+            while(UART_LSR(UART_BASE) & UART_LSR_TEMT)
                 ;
 
             /* Write byte to UART */
-            UART_DR(DM36X_UART0_BASE) = *ptr++;
+            UART_DR(UART_BASE) = *ptr++;
         }
     }
 
