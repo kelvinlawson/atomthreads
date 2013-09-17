@@ -42,12 +42,12 @@ extern int main(void);
 
 
 /** Timer input clock speed: 24MHz */
-#define TIMER_CLK		24000000
+#define TIMER_CLK       24000000
 
 
 /** Register access macros */
-#define TIMER0_REG(offset)		*(uint32_t *)(DM36X_TIMER0_BASE + offset)
-#define INTC_REG(offset)		*(uint32_t *)(DM36X_INTC_BASE + offset)
+#define TIMER0_REG(offset)      *(volatile uint32_t *)(DM36X_TIMER0_BASE + offset)
+#define INTC_REG(offset)        *(volatile uint32_t *)(DM36X_INTC_BASE + offset)
 
 
 /**
@@ -95,22 +95,32 @@ low_level_init (void)
     /* Initialise TIMER0 registers for interrupt 100 times per second */
 
     /* Reset & disable all TIMER0 timers */
-    TIMER0_REG(DM36X_TIMER_INTCTL_STAT) = 0;	/* Disable interrupts */
-    TIMER0_REG(DM36X_TIMER_TCR) = 0;			/* Disable all TIMER0 timers */
-    TIMER0_REG(DM36X_TIMER_TGCR) = 0;			/* Put all TIMER0 timers in reset */
-    TIMER0_REG(DM36X_TIMER_TIM12) = 0;			/* Clear Timer 1:2 */
+    TIMER0_REG(DM36X_TIMER_INTCTL_STAT) = 0;    /* Disable interrupts */
+    TIMER0_REG(DM36X_TIMER_TCR) = 0;            /* Disable all TIMER0 timers */
+    TIMER0_REG(DM36X_TIMER_TGCR) = 0;           /* Put all TIMER0 timers in reset */
+    TIMER0_REG(DM36X_TIMER_TIM12) = 0;          /* Clear Timer 1:2 */
 
     /* Set up Timer 1:2 in 32-bit unchained mode */
-    TIMER0_REG(DM36X_TIMER_TGCR) = (1 << 2);	/* Select 32-bit unchained mode (TIMMODE) */
-    TIMER0_REG(DM36X_TIMER_TGCR) |= (1 << 0);	/* Remove Timer 1:2 from reset (TIM12RS) */
-    TIMER0_REG(DM36X_TIMER_PRD12) = (TIMER_CLK / SYSTEM_TICKS_PER_SEC) - 1;		/* Set period to 100 ticks per second (PRD12) */
-    TIMER0_REG(DM36X_TIMER_TCR) |= (0 << 8);	/* Select external clock source for Timer 1:2 (CLKSRC12) */
+    TIMER0_REG(DM36X_TIMER_TGCR) = (1 << 2);    /* Select 32-bit unchained mode (TIMMODE) */
+    TIMER0_REG(DM36X_TIMER_TGCR) |= (1 << 0);   /* Remove Timer 1:2 from reset (TIM12RS) */
+    TIMER0_REG(DM36X_TIMER_PRD12) = (TIMER_CLK / SYSTEM_TICKS_PER_SEC) - 1;     /* Set period to 100 ticks per second (PRD12) */
+    TIMER0_REG(DM36X_TIMER_TCR) |= (0 << 8);    /* Select external clock source for Timer 1:2 (CLKSRC12) */
 
     /* Enable interrupts */
-    TIMER0_REG(DM36X_TIMER_INTCTL_STAT) = (1 << 1) | (1 << 0);	/* Enable/ack Compare/Match interrupt for Timer 1:2 */
+    TIMER0_REG(DM36X_TIMER_INTCTL_STAT) = (1 << 1) | (1 << 0);  /* Enable/ack Compare/Match interrupt for Timer 1:2 */
 
     /* Enable timer */
-    TIMER0_REG(DM36X_TIMER_TCR) |= (2 << 6);	/* Enable Timer 1:2 continuous (ENAMODE12) */
+    TIMER0_REG(DM36X_TIMER_TCR) |= (2 << 6);    /* Enable Timer 1:2 continuous (ENAMODE12) */
+
+    /* Initialise INTC interrupt controller */
+    INTC_REG(DM36X_INTC_INTCTL) = 0;
+    INTC_REG(DM36X_INTC_EABASE) = 0;
+
+    /* Ack TINT0 IRQ in INTC interrupt controller */
+    INTC_REG(DM36X_INTC_IRQ1) = (1 << (DM36X_INTC_VEC_TINT0 - 32));
+
+    /* Enable TINT0 IRQ in INTC interrupt controller */
+    INTC_REG(DM36X_INTC_EINT1) |= (1 << (DM36X_INTC_VEC_TINT0 - 32));
 
     return 0 ;
 }
