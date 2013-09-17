@@ -116,9 +116,19 @@ low_level_init (void)
     /* Enable timer */
     TIMER0_REG(DM36X_TIMER_TCR) |= (2 << 6);    /* Enable Timer 1:2 continuous (ENAMODE12) */
 
-    /* Initialise INTC interrupt controller */
+    /* Initialise INTC interrupt controller (all at lowest priority 7) */
+    INTC_REG(DM36X_INTC_PRI0) = 0x77777777;
+    INTC_REG(DM36X_INTC_PRI1) = 0x77777777;
+    INTC_REG(DM36X_INTC_PRI2) = 0x77777777;
+    INTC_REG(DM36X_INTC_PRI3) = 0x77777777;
+    INTC_REG(DM36X_INTC_PRI4) = 0x77777777;
+    INTC_REG(DM36X_INTC_PRI5) = 0x77777777;
+    INTC_REG(DM36X_INTC_PRI6) = 0x77777777;
+    INTC_REG(DM36X_INTC_PRI7) = 0x77777777;
     INTC_REG(DM36X_INTC_INTCTL) = 0;
     INTC_REG(DM36X_INTC_EABASE) = 0;
+    INTC_REG(DM36X_INTC_EINT0) = 0;
+    INTC_REG(DM36X_INTC_EINT1) = 0;
 
     /* Ack TINT0 IRQ in INTC interrupt controller */
     INTC_REG(DM36X_INTC_IRQ1) = (1 << (DM36X_INTC_VEC_TINT0 - 32));
@@ -147,32 +157,45 @@ void
 __interrupt_dispatcher (void) 
 {
     uint32_t vector;
+    uint32_t irqentry;
 
     /* Read IRQENTRY register to determine the source of the interrupt */
-    vector = (INTC_REG(DM36X_INTC_IRQENTRY) / 4) - 1;
+    irqentry = INTC_REG(DM36X_INTC_IRQENTRY);
 
-    /* TIMER0:12 tick interrupt (call Atomthreads timer tick ISR) */
-    if (vector == DM36X_INTC_VEC_TINT0)
+    /* Check for spurious interrupt */
+    if (irqentry == 0)
     {
-        /* Reload timer and enable interupts */
-        TIMER0_REG(DM36X_TIMER_PRD12) = (TIMER_CLK / SYSTEM_TICKS_PER_SEC) - 1;     /* Set period to 100 ticks per second (PRD12) */
-        TIMER0_REG(DM36X_TIMER_INTCTL_STAT) = (1 << 1) | (1 << 0);  /* Enable/ack Compare/Match interrupt for Timer 1:2 */
+        /* Spurious interrupt */
+        uart_write_halt ("Spurious IRQ\n");
+	}
+	else
+	{
+        /* Translate from vector address to vector number */
+        vector = (INTC_REG(DM36X_INTC_IRQENTRY) / 4) - 1;
 
-        /*
-         * Let the Atomthreads kernel know we're about to enter an OS-aware
-         * interrupt handler which could cause scheduling of threads.
-         */
-        atomIntEnter();
+        /* TIMER0:12 tick interrupt (call Atomthreads timer tick ISR) */
+        if (vector == DM36X_INTC_VEC_TINT0)
+        {
+            /* Reload timer and enable interupts */
+            TIMER0_REG(DM36X_TIMER_PRD12) = (TIMER_CLK / SYSTEM_TICKS_PER_SEC) - 1;     /* Set period to 100 ticks per second (PRD12) */
+            TIMER0_REG(DM36X_TIMER_INTCTL_STAT) = (1 << 1) | (1 << 0);  /* Enable/ack Compare/Match interrupt for Timer 1:2 */
 
-        /* Call the OS system tick handler */
-        atomTimerTick();
+            /*
+             * Let the Atomthreads kernel know we're about to enter an OS-aware
+             * interrupt handler which could cause scheduling of threads.
+             */
+            atomIntEnter();
 
-        /* Call the interrupt exit routine */
-        atomIntExit(TRUE);
+            /* Call the OS system tick handler */
+            atomTimerTick();
 
-        /* Ack the interrupt */
-        INTC_REG((vector >= 32) ? DM36X_INTC_IRQ1 : DM36X_INTC_IRQ0) = (1 << (vector >= 32) ? (vector - 32) : vector);
-    }
+            /* Call the interrupt exit routine */
+            atomIntExit(TRUE);
+
+            /* Ack the interrupt */
+            INTC_REG((vector >= 32) ? DM36X_INTC_IRQ1 : DM36X_INTC_IRQ0) = (1 << (vector >= 32) ? (vector - 32) : vector);
+        }
+	}
 
 }
 

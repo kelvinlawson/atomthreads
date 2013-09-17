@@ -56,10 +56,20 @@
 #define DM36X_INTC_BASE         0x01C48000 /* Interrupt controller */
 #define DM36X_INTC_IRQ0         0x08
 #define DM36X_INTC_IRQ1         0x0C
-#define DM36X_INTC_IRQENTRY     0x10
+#define DM36X_INTC_FIQENTRY     0x10
+#define DM36X_INTC_IRQENTRY     0x14
+#define DM36X_INTC_EINT0        0x18
 #define DM36X_INTC_EINT1        0x1C
 #define DM36X_INTC_INTCTL       0x20
 #define DM36X_INTC_EABASE       0x24
+#define DM36X_INTC_PRI0         0x30
+#define DM36X_INTC_PRI1         0x34
+#define DM36X_INTC_PRI2         0x38
+#define DM36X_INTC_PRI3         0x3C
+#define DM36X_INTC_PRI4         0x40
+#define DM36X_INTC_PRI5         0x44
+#define DM36X_INTC_PRI6         0x48
+#define DM36X_INTC_PRI7         0x4C
 #define DM36X_INTC_VEC_TINT0    32
 
 #define DM36X_UART0_BASE        0x01C20000 /* UART0 */
