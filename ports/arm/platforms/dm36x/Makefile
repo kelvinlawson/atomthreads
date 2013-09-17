@@ -84,7 +84,7 @@ $(TEST_BINS): %.bin: %.elf $(TEST_ELFS)
 # Test uImage files (one application build for each test)
 $(TEST_UIMAGES): %.uImage: %.bin $(TEST_BINS)
 	gzip -9 -c $(BUILD_DIR)/$(basename $@).bin > $(BUILD_DIR)/$(basename $@).bin.gz
-	mkimage -A arm -T kernel -C gzip -a 0x80008000 -e 0x80008040 -n "Atomthreads application" -d $(BUILD_DIR)/$(basename $@).bin.gz $(BUILD_DIR)/$(basename $@).uImage
+	mkimage -A arm -T kernel -C gzip -a 0x80000000 -e 0x80000000 -n "Atomthreads application" -d $(BUILD_DIR)/$(basename $@).bin.gz $(BUILD_DIR)/$(basename $@).uImage
 
 # Kernel objects builder
 $(KERNEL_OBJECTS): %.o: $(KERNEL_DIR)/%.c
