@@ -24,7 +24,9 @@ SECTIONS
     
     .text :
     {
+        _start_vectors = .;
         *(.vectors)
+        _end_vectors = .;
         /* Startup assembly */
         *(.startup)
         *(.init)

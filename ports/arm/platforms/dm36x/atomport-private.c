@@ -37,7 +37,7 @@
  
 
 /** Imports required by C startup code */
-extern unsigned long _end_text, _start_data, _end_data, _start_bss, _end_bss;
+extern unsigned long _start_vectors, _end_vectors, _end_text, _start_data, _end_data, _start_bss, _end_bss;
 extern int main(void);
 
 
@@ -61,9 +61,13 @@ extern void _mainCRTStartup (void) __attribute__((weak));
 void _mainCRTStartup(void)
 {
     unsigned long *src;
-#ifdef ROM
     unsigned long *dst;
-#endif
+
+    // Copy vector table from SRAM to IRAM0 (ARM vector table must be at 0x00000000)
+    src = &_start_vectors;
+    dst = (unsigned long *)0x00000000;
+    while(src < &_end_vectors)
+        *(dst++) = *(src++);
 
 #ifdef ROM
     // Running from ROM: copy data section to RAM
