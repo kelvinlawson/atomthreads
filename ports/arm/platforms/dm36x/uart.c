@@ -47,7 +47,7 @@
 /* Constants */
 
 /** Select relevant UART for this platform */
-#define UART_BASE       DM36X_UART1_BASE
+#define UART_BASE       DM36X_UART0_BASE
 
 /** FR Register bits */
 #define UART_FR_RXFE     0x10
@@ -73,6 +73,7 @@ static int initialised = FALSE;
 
 /* Forward declarations */
 static int uart_init (void);
+static void uart_write_char (const char c);
 
 
 /**
@@ -208,12 +209,12 @@ int uart_write (const char *ptr, int len)
         /* Loop through all bytes to write */
         for (todo = 0; todo < len; todo++)
         {
-            /* Wait for empty */
-            while(UART_LSR(UART_BASE) & UART_LSR_TEMT)
-                ;
+            /* Convert \n to \r\n */
+            if (*ptr == '\n')
+                uart_write_char('\r');
 
             /* Write byte to UART */
-            UART_DR(UART_BASE) = *ptr++;
+            uart_write_char(*ptr++);
         }
 
         /* Return mutex access */
@@ -248,12 +249,12 @@ void uart_write_halt (const char *ptr)
         /* Loop through all bytes until NULL terminator encountered */
         while (*ptr != '\0')
         {
-            /* Wait for empty */
-            while(UART_LSR(UART_BASE) & UART_LSR_TEMT)
-                ;
+            /* Convert \n to \r\n */
+            if (*ptr == '\n')
+                uart_write_char('\r');
 
             /* Write byte to UART */
-            UART_DR(UART_BASE) = *ptr++;
+            uart_write_char(*ptr++);
         }
     }
 
@@ -261,4 +262,25 @@ void uart_write_halt (const char *ptr)
     while (1)
         ;
 
+}
+
+
+/**
+ * \b uart_putchar
+ *
+ * Simple polled UART write char.
+ *
+ * Assumes that the mutex has already been taken, or
+ * is not expected to be taken (e.g. on interrupt).
+ *
+ * @param[in] c Char to write
+ */
+static void uart_write_char (const char c)
+{
+    /* Wait for empty */
+    while(UART_LSR(UART_BASE) & UART_LSR_TEMT)
+        ;
+
+    /* Write byte to UART */
+    UART_DR(UART_BASE) = c;
 }
