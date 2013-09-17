@@ -47,7 +47,7 @@
 /* Constants */
 
 /** Select relevant UART for this platform */
-#define UART_BASE 		DM36X_UART1_BASE
+#define UART_BASE       DM36X_UART1_BASE
 
 /** FR Register bits */
 #define UART_FR_RXFE     0x10
@@ -165,10 +165,10 @@ int uart_read (char *ptr, int len)
 #endif
 
         /* Return mutex access */
-		if (atomOSStarted)
-		{
-        	atomMutexPut(&uart_mutex);
-		}
+        if (atomOSStarted)
+        {
+            atomMutexPut(&uart_mutex);
+        }
     }
 
     /* Return number of bytes read */
@@ -217,10 +217,10 @@ int uart_write (const char *ptr, int len)
         }
 
         /* Return mutex access */
-		if (atomOSStarted)
-		{
-	        atomMutexPut(&uart_mutex);
-		}
+        if (atomOSStarted)
+        {
+            atomMutexPut(&uart_mutex);
+        }
     }
 
     /* Return bytes-written count */

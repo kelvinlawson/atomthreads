@@ -37,33 +37,33 @@
  * IO Addresses for use with DM36x
  */
 
-#define DM36X_TIMER0_BASE		0x01C21400 /* TIMER0 */
-#define DM36X_TIMER_PID12		0x00
-#define DM36X_TIMER_EMUMGT		0x04
-#define DM36X_TIMER_TIM12		0x10
-#define DM36X_TIMER_TIM34		0x14
-#define DM36X_TIMER_PRD12		0x18
-#define DM36X_TIMER_PRD34		0x1C
-#define DM36X_TIMER_TCR			0x20
-#define DM36X_TIMER_TGCR		0x24
-#define DM36X_TIMER_WDTCR		0x28
-#define DM36X_TIMER_REL12		0x34
-#define DM36X_TIMER_REL34		0x38
-#define DM36X_TIMER_CAP12		0x3C
-#define DM36X_TIMER_CAP34		0x40
-#define DM36X_TIMER_INTCTL_STAT	0x44
+#define DM36X_TIMER0_BASE       0x01C21400 /* TIMER0 */
+#define DM36X_TIMER_PID12       0x00
+#define DM36X_TIMER_EMUMGT      0x04
+#define DM36X_TIMER_TIM12       0x10
+#define DM36X_TIMER_TIM34       0x14
+#define DM36X_TIMER_PRD12       0x18
+#define DM36X_TIMER_PRD34       0x1C
+#define DM36X_TIMER_TCR         0x20
+#define DM36X_TIMER_TGCR        0x24
+#define DM36X_TIMER_WDTCR       0x28
+#define DM36X_TIMER_REL12       0x34
+#define DM36X_TIMER_REL34       0x38
+#define DM36X_TIMER_CAP12       0x3C
+#define DM36X_TIMER_CAP34       0x40
+#define DM36X_TIMER_INTCTL_STAT 0x44
 
-#define DM36X_INTC_BASE			0x01C48000 /* Interrupt controller */
-#define DM36X_INTC_IRQ0			0x08
-#define DM36X_INTC_IRQ1			0x0C
-#define DM36X_INTC_IRQENTRY		0x10
-#define DM36X_INTC_EINT1		0x1C
-#define DM36X_INTC_INTCTL		0x20
-#define DM36X_INTC_EABASE		0x24
-#define DM36X_INTC_VEC_TINT0	32
+#define DM36X_INTC_BASE         0x01C48000 /* Interrupt controller */
+#define DM36X_INTC_IRQ0         0x08
+#define DM36X_INTC_IRQ1         0x0C
+#define DM36X_INTC_IRQENTRY     0x10
+#define DM36X_INTC_EINT1        0x1C
+#define DM36X_INTC_INTCTL       0x20
+#define DM36X_INTC_EABASE       0x24
+#define DM36X_INTC_VEC_TINT0    32
 
-#define DM36X_UART0_BASE		0x01C20000 /* UART0 */
-#define DM36X_UART1_BASE		0x01D06000 /* UART1 */
+#define DM36X_UART0_BASE        0x01C20000 /* UART0 */
+#define DM36X_UART1_BASE        0x01D06000 /* UART1 */
 
 
 
