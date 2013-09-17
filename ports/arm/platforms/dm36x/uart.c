@@ -48,11 +48,11 @@
 
 /** FR Register bits */
 #define UART_FR_RXFE     0x10
-#define UART_FR_TXFF     0x20
+#define UART_LSR_TEMT    0x40
 
 /** UART register access macros */
 #define UART_DR(baseaddr) (*(unsigned int *)(baseaddr))
-#define UART_FR(baseaddr) (*(((unsigned int *)(baseaddr))+6))
+#define UART_LSR(baseaddr) (*(((unsigned int *)(baseaddr))+0x14))
 
 
 /* Local data */
@@ -139,25 +139,27 @@ int uart_read (char *ptr, int len)
     /* Block thread on private access to the UART */
     if (atomOSStarted && atomMutexGet(&uart_mutex, 0) == ATOM_OK)
     {
+#if 0
         /* Wait for not-empty */
-        while(UART_FR(DM36X_UART1_BASE) & UART_FR_RXFE)
+        while(UART_FR(DM36X_UART0_BASE) & UART_FR_RXFE)
             ;
 
         /* Read first byte */
-        *ptr++ = UART_DR(DM36X_UART1_BASE);
+        *ptr++ = UART_DR(DM36X_UART0_BASE);
 
         /* Loop over remaining bytes until empty */
         for (todo = 1; todo < len; todo++)
         {
             /* Quit if receive FIFO empty */
-            if(UART_FR(DM36X_UART1_BASE) & UART_FR_RXFE)
+            if(UART_FR(DM36X_UART0_BASE) & UART_FR_RXFE)
             {
                 break;
             }
 
             /* Read next byte */
-            *ptr++ = UART_DR(DM36X_UART1_BASE);
+            *ptr++ = UART_DR(DM36X_UART0_BASE);
         }
+#endif
 
         /* Return mutex access */
 		if (atomOSStarted)
@@ -204,11 +206,11 @@ int uart_write (const char *ptr, int len)
         for (todo = 0; todo < len; todo++)
         {
             /* Wait for empty */
-            while(UART_FR(DM36X_UART1_BASE) & UART_FR_TXFF)
+            while(UART_LSR(DM36X_UART0_BASE) & UART_LSR_TEMT)
                 ;
 
             /* Write byte to UART */
-            UART_DR(DM36X_UART1_BASE) = *ptr++;
+            UART_DR(DM36X_UART0_BASE) = *ptr++;
         }
 
         /* Return mutex access */
@@ -244,11 +246,11 @@ void uart_write_halt (const char *ptr)
         while (*ptr != '\0')
         {
             /* Wait for empty */
-            while(UART_FR(DM36X_UART1_BASE) & UART_FR_TXFF)
+            while(UART_LSR(DM36X_UART0_BASE) & UART_LSR_TEMT)
                 ;
 
             /* Write byte to UART */
-            UART_DR(DM36X_UART1_BASE) = *ptr++;
+            UART_DR(DM36X_UART0_BASE) = *ptr++;
         }
     }
 
