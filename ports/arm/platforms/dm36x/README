@@ -1,17 +1,25 @@
 ---------------------------------------------------------------------------
 
-Library:      Atomthreads QEMU ARM Integrator/CP (ARM926EJ-S) Platform.
-Author:       Natie van Rooyen <natie@navaro.nl>
+Library:      Atomthreads DaVinci DM365/DM368 Platform.
+Author:       Kelvin Lawson <info@atomthreads.com>
 Website:      http://atomthreads.com
 License:      BSD Revised
 
 ---------------------------------------------------------------------------
 
-QEMU ARM Integrator/CP (ARM926EJ-S) Platform
+DaVinci DM36x (ARM926EJ-S) Platform
 
-The "qemu_integratorcp" platform folder contains sources for building a
-sample Atomthreads application for the ARM Integrator/CP (ARM926EJ-S)
-platform running under QEMU.
+The "dm36x" platform folder contains sources for building a sample
+Atomthreads RTOS application for DaVinci DM365 and DM368 (ARM926EJ-S)
+platforms.
+
+This has been tested on a DM368 Leopardboard platform, but will work on any
+DM36x-based platform.
+
+
+---------------------------------------------------------------------------
+
+SOURCE LAYOUT
 
 All of the cross-platform kernel code is contained in the top-level 
 'kernel' folder, while ports to specific CPU architectures are contained in
@@ -25,7 +33,7 @@ the same common core ARM context-switching code.
 This platform contains a few key platform-specific files:
 
  * startup.s: Interrupt vector table and basic startup assembly code
- * modules.c: Low level initialisation for this platform
+ * atomport-private.c: Low level initialisation for this platform
  * uart.c: Simple UART implementation for debug purposes
 
 The common ARM architecture port that is used across all platforms contains
@@ -47,53 +55,37 @@ A couple of additional source files are also included in the common ARM port:
  * syscalls.c: Simple implementation of open/close/read/write for stdio
 
 Atomthreads includes a suite of automated tests which prove the key OS
-functionality, and can be used with any architecture ports. This port
+functionality, and can be used with any architecture ports. This platform
 provides an easy mechanism for building and quickly running the test suite
-using QEMU to prove the OS without requiring any target hardware.
-
-This platform folder has been tested on a variety of GCC ARM toolchains,
-including hosted and non-hosted.
+using a serial port connected to real hardware to prove the OS.
 
 
 ---------------------------------------------------------------------------
 
 GCC TOOLCHAIN
 
-The port works out-of-the-box with the GCC tools (for building) and QEMU 
-(for simulation). It can be built on any OS for which GCC is available, and
-was tested using the CodeSourcery toolchain (2009q3 non-Linux but others
-should be supported) and self-built toolchains such as hosted toolchains
-built by build_arm_toolchain.sh (see http://navaro.nl for details). Note
-that the Makefile for this platform assumes that your GCC binary is named
-"arm-none-eabi-gcc".
+The port works out-of-the-box with the GCC tools (for building). It can be
+built on any OS for which GCC is available, and was tested using the
+CodeSourcery toolchain (2009q3 non-Linux but others should be supported).
+Note that the Makefile for this platform assumes that your GCC binary is
+named "arm-none-eabi-gcc".
 
 Currently we assume that the toolchain will provide some header files like
 stdint.h. Not all toolchains will include this, in which case you simply
 need to add definitions for int32_t and friends in atomport.h, in place of
 the include declaration for stdint.h.
 
-Some toolchains provide newlib syscalls.c which implement stdio
-functionality via open, close, read, write. Hosted toolchains will
-automatically provide versions of these which work with QEMU, and no UART
-driver will be needed to view the stdio printf()s etc. If these are not
-provided by by the compiler toolchain then backup implementations are
-implemented within the common ARM port folder (see ports/arm/syscalls.c)
-and a UART driver is implemented here in uart.c.
-
-Similarly some toolchains provide startup assembly code via
-_mainCRTStartup(). If this is not provided by the toolchain then a backup
-version is used within modules.c.
-
 
 ---------------------------------------------------------------------------
 
 OTHER PREREQUISITES
 
-QEMU is used for simulation of the target and versions 0.14.1, 1.2.0 &
-1.4.0 were tested.
+Running the entire automated test suite in one command via "make tests"
+requires the "expect" program.
 
-Running the entire automated test suite in one command via "make qemutests"
-also requires the "expect" program.
+".bin" images bootable via U-boot are created as part of the build but if
+uImage format is preferred then the "mkimage" application is also
+required.
 
 
 ---------------------------------------------------------------------------
@@ -102,16 +94,16 @@ BUILDING THE SOURCE
 
 A Makefile is provided for building the kernel, port, platform and
 automated tests. Make sure the ARM GCC toolchain is in the path
-(e.g. "PATH=$PATH:/opt/arm-2009q3/bin && export path") as well as QEMU and
-carry out the full build using the following:
+(e.g. "PATH=$PATH:/opt/arm-2009q3/bin && export path") and carry out the
+full build using the following:
 
  * make all
 
 All objects are built into the 'build' folder under 
-ports/arm/platforms/qemu_integrator_cp. The build process builds separate
-target applications for each automated test, and appropriate ELF files can
-be found in the build folder ready for running on the target or within
-QEMU. Each test is built and run as a separate application.
+ports/arm/platforms/dm36x. The build process builds separate target
+applications for each automated test, and appropriate ELF/BIN files can be
+found in the build folder ready for running on the target. Each test is
+built and run as a separate application.
 
 
 All built objects etc can be cleaned using:
@@ -127,12 +119,14 @@ both the kernel and port documentation from this folder using:
 
 ---------------------------------------------------------------------------
 
-Integrator/CP SPECIFICS
+PLATFORM SPECIFICS
 
-The test applications make use of the Integrator's UART to print out
-pass/fail indications and other information. For this you should connect a
-serial debug cable to the board or when running in QEMU you will see the
-UART messages on the console when running the test applications.
+This RTOS port was developed on the DM368 Leopardboard, but there is
+currently very little board-specific code present, other than the choice of
+UART (the Leopardboard uses UART0 but many boards use UART1). The UART is
+used to print out pass/fail indications and other information via a serial
+debug cable connected to the board. For other boards using UART1 you may
+simply change the UART_BASE definition in uart.c.
 
 
 ---------------------------------------------------------------------------
@@ -145,13 +139,12 @@ port to prove that all core functionality is working on your target.
 The full set of tests can be found in the top-level 'tests' folder. Each of
 these tests is built as an independent application in the 'build' folder.
 
-These can be run on the target or within QEMU using the instructions below.
+These can be run on the target using the instructions below.
 
 To view the test results, connect a serial debug cable to your target
-platform or view the console if using QEMU. On starting, the test
-applications print out "Go" on the UART. Once the test is complete they
-will print out "Pass" or "Fail", along with other information if the test
-failed.
+platform. On starting, the test applications print out "Go" on the UART.
+Once the test is complete they will print out "Pass" or "Fail", along with
+other information if the test failed.
 
 Most of the tests complete within a few seconds, but some (particularly
 the stress tests) can take longer, so be patient. 
@@ -166,46 +159,43 @@ the OS, creates a main thread, and calls out to the test modules.
 
 ---------------------------------------------------------------------------
 
-RUNNING TESTS WITHIN THE QEMU SIMULATOR
+RUNNING THE FULL TEST SUITE
 
-It is possible to run the full automated test suite in a simulator without
-programming the test applications into real hardware. This is very useful
-for quick verification of the entire test suite after making any software
-changes, and is much faster than downloading each test application to a
-real target.
+It is possible to run the full automated test suite on the target board.
+This is very useful for quick verification of the entire test suite after
+making any software changes.
 
-A single command runs every single test application, and automatically
-parses the (simulated) UART output to verify that each test case passes.
+A single command runs every single test application on the target, and
+automatically parses the UART output to verify that each test case passes.
 
-This requires two applications on your development PC: expect and QEMU.
+This requires the "expect" application on your development PC.
 
 To run all tests in one command, type:
 
- * make qemutests
+ * make tests
 
-This will run every single test application within the simulator and quit
-immediately if any one test fails.
+This will download every single test application to your TFTP folder one at
+a time, ready for the target to load via U-Boot, and quit immediately if
+any one test fails.
 
-The ability to run these automated tests in one command (and without real
-hardware) allows you to easily include the OS test suite in your nightly
-build or continous integration system and quickly find out if any of your
-local changes have caused any of the operating system tests to fail.
+You should set your target board to load the file "test.bin" via TFTP and
+hit the reset button after each test has completed (when prompted).
+The U-boot "bootcmd" variable should be set as follows:
 
+ * setenv 'tftpboot 0x80000000 test.bin; go 0x80000000'
+ * saveenv
 
----------------------------------------------------------------------------
+Now when you run "make tests" it will copy each test application binary
+into your TFTP root folder one-by-one, and request that you reset the board
+to start the next test running. Passes or failures are reported, and the
+test suite quits if any test suite failures are encountered.
 
-DEBUGGING WITH QEMU
-
-You may also use QEMU in combination with GDB to debug your built
-applications. To do this you should start QEMU with "-S -s" options e.g.:
-
- * qemu-system-arm -M integratorcp -semihosting -nographic -kernel app.elf
-
-You can now start GDB and attach to the target:
-
- * arm-none-eabi-gdb
- * file app.elf
- * target remote localhost:1234
+The ability to run these automated tests in one command allows you to
+easily include the OS test suite in your nightly build or continous
+integration system and quickly find out if any of your local changes have
+caused any of the operating system tests to fail. In order to include them
+in a nightly test run you will need to set the test applications to
+automatically reset after running each test.
 
 
 ---------------------------------------------------------------------------

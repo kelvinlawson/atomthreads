@@ -13,6 +13,11 @@ The "qemu_integratorcp" platform folder contains sources for building a
 sample Atomthreads application for the ARM Integrator/CP (ARM926EJ-S)
 platform running under QEMU.
 
+
+---------------------------------------------------------------------------
+
+SOURCE LAYOUT
+
 All of the cross-platform kernel code is contained in the top-level 
 'kernel' folder, while ports to specific CPU architectures are contained in
 the 'ports' folder tree. To support multiple ARM boards/platforms using a
