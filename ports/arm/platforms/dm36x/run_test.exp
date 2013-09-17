@@ -1,0 +1,50 @@
+#!/usr/bin/env expect
+
+# Expect script to check an automated test's results via a serial port
+# and check for successful completion.
+#
+# You are expected to set the target's U-boot up to automatically load
+# the app on your TFTP server called "test.bin". Before this script is
+# started the Makefile should have copied the next test binary to the
+# file "test.bin" in your TFTP root folder. The user must sit and
+# hit the reset button after every test completion in order to make
+# the board load and run the next test.bin file.
+#
+# Arguments: <serial_port_device> <baudrate> <test_bin_file>
+#
+# Returns 0 on successful test run, 1 on failure
+
+# Set the serial port baudrate
+stty [lindex $argv 1] < [lindex $argv 0]
+
+# Start the test
+spawn cat [lindex $argv 0]
+puts "Ready: reset the target!"
+
+# Expect to see the test starting within 60 seconds (give long enough
+# for user to reset the board after running the last test).
+set timeout 60
+
+# Wait for the test to start ("Go")
+expect {
+	"Go\r" {
+		puts "Test started"
+
+		# The test could take up to 3 minutes to complete once started
+		set timeout 180
+
+		# Now expect to see "Pass" or "Fail" within 3 minutes
+		expect {
+			"Pass\r" { puts "Test passed"; exit 0 }
+			"Fail\r" { puts "Test failed"; exit 1 }
+			timeout { puts "Test timed out without completing"; exit 1 }
+		}
+	}
+
+	timeout {
+		# Didn't receive "Go" within 10 seconds
+		puts "Test failed to start ('Go' not seen)"
+		exit 1
+	}
+}
+

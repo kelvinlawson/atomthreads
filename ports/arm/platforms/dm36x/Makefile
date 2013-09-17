@@ -4,6 +4,9 @@
 
 # Build all test applications:
 #   make
+#
+# Run all tests communicating via UART
+#   make tests
 
 # Location of build tools and atomthreads sources
 KERNEL_DIR=../../../../kernel
@@ -11,6 +14,15 @@ TESTS_DIR=../../../../tests
 PORT_DIR=../..
 CC=arm-none-eabi-gcc
 OBJCOPY=arm-none-eabi-objcopy
+
+# Location of TFTP root folder for running tests via U-Boot/TFTP.
+# Note, you may need to run the Makefile as root in order to write
+# to this folder.
+TESTS_TFTPROOT=/var/lib/tftpboot
+
+# TTY device and baudrate for automated tests.
+TESTS_TTYDEV=/dev/ttyUSB0
+TESTS_TTYBAUD=115200
 
 # Enable stack-checking.
 #STACK_CHECK=true
@@ -128,3 +140,11 @@ doxygen:
 	doxygen ../../Doxyfile
 	doxygen ./Doxyfile
 
+# Run tests on target with expect and serial output
+phony_test_bins = $(addsuffix .sim, $(TEST_BINS))
+tests: $(phony_test_bins)
+.PHONY: tests $(phony_test_bins)
+$(phony_test_bins):
+	cp $(BUILD_DIR)/$(basename $@) $(TESTS_TFTPROOT)/test.bin
+	@echo Running test $(basename $@)
+	./run_test.exp $(TESTS_TTYDEV) $(TESTS_TTYBAUD)
