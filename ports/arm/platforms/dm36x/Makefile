@@ -14,6 +14,7 @@ TESTS_DIR=../../../../tests
 PORT_DIR=../..
 CC=arm-none-eabi-gcc
 OBJCOPY=arm-none-eabi-objcopy
+ARCHIVE=arm-none-eabi-ar
 
 # Location of TFTP root folder for running tests via U-Boot/TFTP.
 # Note, you may need to run the Makefile as root in order to write
@@ -80,6 +81,10 @@ endif
 
 # All tests
 all: $(BUILD_DIR) $(TEST_ELFS) $(TEST_BINS) $(TEST_UIMAGES) Makefile
+
+# Build archive for linking with external application
+libatomthreads.a: $(BUILD_DIR) $(ALL_OBJECTS) Makefile
+	$(ARCHIVE) cr $(BUILD_DIR)/$@ $(BUILT_OBJECTS)
 
 # Make build/output directory
 $(BUILD_DIR):

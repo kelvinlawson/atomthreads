@@ -14,6 +14,7 @@ TESTS_DIR=../../../../tests
 PORT_DIR=../..
 CC=arm-none-eabi-gcc
 OBJCOPY=arm-none-eabi-objcopy
+ARCHIVE=arm-none-eabi-ar
 QEMU=qemu-system-arm
 
 # Enable stack-checking.
@@ -70,6 +71,10 @@ endif
 
 # All tests
 all: $(BUILD_DIR) $(TEST_ELFS) Makefile
+
+# Build archive for linking with external application
+libatomthreads.a: $(BUILD_DIR) $(ALL_OBJECTS) Makefile
+	$(ARCHIVE) cr $(BUILD_DIR)/$@ $(BUILT_OBJECTS)
 
 # Make build/output directory
 $(BUILD_DIR):
