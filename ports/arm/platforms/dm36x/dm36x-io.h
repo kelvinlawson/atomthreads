@@ -37,6 +37,7 @@
  * IO Addresses for use with DM36x
  */
 
+/** Timer registers */
 #define DM36X_TIMER0_BASE       0x01C21400 /* TIMER0 */
 #define DM36X_TIMER_PID12       0x00
 #define DM36X_TIMER_EMUMGT      0x04
@@ -53,6 +54,7 @@
 #define DM36X_TIMER_CAP34       0x40
 #define DM36X_TIMER_INTCTL_STAT 0x44
 
+/** Interrupt controller registers */
 #define DM36X_INTC_BASE         0x01C48000 /* Interrupt controller */
 #define DM36X_INTC_IRQ0         0x08
 #define DM36X_INTC_IRQ1         0x0C
@@ -70,11 +72,35 @@
 #define DM36X_INTC_PRI5         0x44
 #define DM36X_INTC_PRI6         0x48
 #define DM36X_INTC_PRI7         0x4C
+/** Interrupt controller vector offsets */
 #define DM36X_INTC_VEC_TINT0    32
 
+/** UART registers */
 #define DM36X_UART0_BASE        0x01C20000 /* UART0 */
 #define DM36X_UART1_BASE        0x01D06000 /* UART1 */
 
+/** GPIO registers */
+#define DM36X_GPIO_BASE         0x01C67000
+#define DM36X_GPIO_DIR01        0x10
+#define DM36X_GPIO_OUT01        0x14
+#define DM36X_GPIO_SET01        0x18
+#define DM36X_GPIO_CLR01        0x1C
+#define DM36X_GPIO_IN01         0x20
+#define DM36X_GPIO_DIR23        0x38
+#define DM36X_GPIO_OUT23        0x3C
+#define DM36X_GPIO_SET23        0x40
+#define DM36X_GPIO_CLR23        0x44
+#define DM36X_GPIO_IN23         0x48
+#define DM36X_GPIO_DIR45        0x60
+#define DM36X_GPIO_OUT45        0x64
+#define DM36X_GPIO_SET45        0x68
+#define DM36X_GPIO_CLR45        0x6C
+#define DM36X_GPIO_IN45         0x70
+#define DM36X_GPIO_DIR6         0x88
+#define DM36X_GPIO_OUT6         0x8C
+#define DM36X_GPIO_SET6         0x90
+#define DM36X_GPIO_CLR6         0x94
+#define DM36X_GPIO_IN6          0x98
 
 
 /* Function prototypes */
