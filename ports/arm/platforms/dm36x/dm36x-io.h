@@ -37,6 +37,104 @@
  * IO Addresses for use with DM36x
  */
 
+/** System registers */
+#define DM36X_SYSTEM_BASE       0x01C40000 /* System base registers */
+#define DM36X_SYSTEM_PINMUX0    0x00
+#define DM36X_SYSTEM_PINMUX1    0x04
+#define DM36X_SYSTEM_PINMUX2    0x08
+#define DM36X_SYSTEM_PINMUX3    0x0C
+#define DM36X_SYSTEM_PINMUX4    0x10
+/* PINMUX0 register bitfields */
+#define DM36X_PINMUX0_MMCSD0     24
+#define DM36X_PINMUX0_GIO49      23
+#define DM36X_PINMUX0_GIO48      22
+#define DM36X_PINMUX0_GIO47      21
+#define DM36X_PINMUX0_GIO46      20
+#define DM36X_PINMUX0_GIO45      19
+#define DM36X_PINMUX0_GIO44      18
+#define DM36X_PINMUX0_GIO43      16
+#define DM36X_PINMUX0_C_WE_FIELD 14
+#define DM36X_PINMUX0_VD         13
+#define DM36X_PINMUX0_HD         12
+#define DM36X_PINMUX0_YIN0       11
+#define DM36X_PINMUX0_YIN1       10
+#define DM36X_PINMUX0_YIN2       9
+#define DM36X_PINMUX0_YIN3       8
+#define DM36X_PINMUX0_YIN4       6
+#define DM36X_PINMUX0_YIN5       4
+#define DM36X_PINMUX0_YIN6       2
+#define DM36X_PINMUX0_YIN7       0
+/* PINMUX1 register bitfields */
+#define DM36X_PINMUX1_VCLK       22
+#define DM36X_PINMUX1_EXTCLK     20
+#define DM36X_PINMUX1_FIELD      18
+#define DM36X_PINMUX1_LCD_OE     17
+#define DM36X_PINMUX1_HVSYNC     16
+#define DM36X_PINMUX1_COUT0      14
+#define DM36X_PINMUX1_COUT1      12
+#define DM36X_PINMUX1_COUT2      10
+#define DM36X_PINMUX1_COUT3      8
+#define DM36X_PINMUX1_COUT4      6
+#define DM36X_PINMUX1_COUT5      4
+#define DM36X_PINMUX1_COUT6      2
+#define DM36X_PINMUX1_COUT7      0
+/* PINMUX2 register bitfields */
+#define DM36X_PINMUX2_EM_CLK     12
+#define DM36X_PINMUX2_EM_ADV     11
+#define DM36X_PINMUX2_EM_WAIT    10
+#define DM36X_PINMUX2_EM_WE_OE   9
+#define DM36X_PINMUX2_EM_CE1     8
+#define DM36X_PINMUX2_EM_CE0     7
+#define DM36X_PINMUX2_EM_D15_8   6
+#define DM36X_PINMUX2_EM_A7      4
+#define DM36X_PINMUX2_EM_A3      2
+#define DM36X_PINMUX2_EM_AR      0
+/* PINMUX3 register bitfields */
+#define DM36X_PINMUX3_GIO26      31
+#define DM36X_PINMUX3_GIO25      29
+#define DM36X_PINMUX3_GIO24      28
+#define DM36X_PINMUX3_GIO23      26
+#define DM36X_PINMUX3_GIO22      25
+#define DM36X_PINMUX3_GIO21      23
+#define DM36X_PINMUX3_GIO20      21
+#define DM36X_PINMUX3_GIO19      20
+#define DM36X_PINMUX3_GIO18      19
+#define DM36X_PINMUX3_GIO17      17
+#define DM36X_PINMUX3_GIO16      15
+#define DM36X_PINMUX3_GIO15      14
+#define DM36X_PINMUX3_GIO14      13
+#define DM36X_PINMUX3_GIO13      12
+#define DM36X_PINMUX3_GIO12      11
+#define DM36X_PINMUX3_GIO11      10
+#define DM36X_PINMUX3_GIO10      9
+#define DM36X_PINMUX3_GIO9       8
+#define DM36X_PINMUX3_GIO8       7
+#define DM36X_PINMUX3_GIO7       6
+#define DM36X_PINMUX3_GIO6       5
+#define DM36X_PINMUX3_GIO5       4
+#define DM36X_PINMUX3_GIO4       3
+#define DM36X_PINMUX3_GIO3       2
+#define DM36X_PINMUX3_GIO2       1
+#define DM36X_PINMUX3_GIO1       0
+/* PINMUX4 register bitfields */
+#define DM36X_PINMUX4_GIO42      30
+#define DM36X_PINMUX4_GIO41      28
+#define DM36X_PINMUX4_GIO40      26
+#define DM36X_PINMUX4_GIO39      24
+#define DM36X_PINMUX4_GIO38      22
+#define DM36X_PINMUX4_GIO37      20
+#define DM36X_PINMUX4_GIO36      18
+#define DM36X_PINMUX4_GIO35      16
+#define DM36X_PINMUX4_GIO34      14
+#define DM36X_PINMUX4_GIO33      12
+#define DM36X_PINMUX4_GIO32      10
+#define DM36X_PINMUX4_GIO31      8
+#define DM36X_PINMUX4_GIO30      6
+#define DM36X_PINMUX4_GIO29      4
+#define DM36X_PINMUX4_GIO28      2
+#define DM36X_PINMUX4_GIO27      0
+
+
 /** Timer registers */
 #define DM36X_TIMER0_BASE       0x01C21400 /* TIMER0 */
 #define DM36X_TIMER_PID12       0x00
