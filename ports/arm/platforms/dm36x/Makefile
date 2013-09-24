@@ -16,6 +16,13 @@ CC=arm-none-eabi-gcc
 OBJCOPY=arm-none-eabi-objcopy
 ARCHIVE=arm-none-eabi-ar
 
+# Folder delete command (OS-specific)
+ifeq ($(OS),Windows_NT)
+	RMDIR=rd /s /q
+else
+	RMDIR=rm -rf
+endif
+
 # Location of TFTP root folder for running tests via U-Boot/TFTP.
 # Note, you may need to run the Makefile as root in order to write
 # to this folder.
@@ -133,11 +140,10 @@ $(PORT_ASM_OBJECTS): %.o: $(PORT_DIR)/%.s
 
 # Clean
 clean:
-	rm -f *.o *.elf *.map *.lst
-	rm -rf doxygen-kernel
-	rm -rf doxygen-arm
-	rm -rf doxygen-platform
-	rm -rf build
+	$(RMDIR) build
+	$(RMDIR) doxygen-kernel
+	$(RMDIR) doxygen-arm
+	$(RMDIR) doxygen-platform
 
 # Generate Doxygen documentation
 doxygen:
