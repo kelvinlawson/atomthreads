@@ -4,7 +4,7 @@ ENTRY(__interrupt_vector_table)
 
 MEMORY
 {
-    sram (rwx) : ORIGIN = 0x80000000, LENGTH = 0x10000000
+    sram (rwx) : ORIGIN = 0x80000000, LENGTH = 0x08000000
 }
 
 
