@@ -135,6 +135,31 @@
 #define DM36X_PINMUX4_GIO27      0
 
 
+/** I2C registers */
+#define DM36X_I2C_BASE          0x01C21000 /* I2C */
+#define DM36X_I2C_ICOAR         0x00
+#define DM36X_I2C_ICIMR         0x04
+#define DM36X_I2C_ICSTR         0x08
+#define DM36X_I2C_ICCLKL        0x0C
+#define DM36X_I2C_ICCLKH        0x10
+#define DM36X_I2C_ICCNT         0x14
+#define DM36X_I2C_ICDRR         0x18
+#define DM36X_I2C_ICSAR         0x1C
+#define DM36X_I2C_ICDXR         0x20
+#define DM36X_I2C_ICMDR         0x24
+#define DM36X_I2C_ICIVR         0x28
+#define DM36X_I2C_ICEMDR        0x2C
+#define DM36X_I2C_ICPSC         0x30
+#define DM36X_I2C_REVID1        0x34
+#define DM36X_I2C_REVID2        0x38
+#define DM36X_I2C_ICPFUNC       0x48
+#define DM36X_I2C_ICPDIR        0x4C
+#define DM36X_I2C_ICPDIN        0x50
+#define DM36X_I2C_ICPDOUT       0x54
+#define DM36X_I2C_ICPDSET       0x58
+#define DM36X_I2C_ICPDCLR       0x5C
+
+
 /** Timer registers */
 #define DM36X_TIMER0_BASE       0x01C21400 /* TIMER0 */
 #define DM36X_TIMER_PID12       0x00
