@@ -158,6 +158,20 @@
 #define DM36X_I2C_ICPDOUT       0x54
 #define DM36X_I2C_ICPDSET       0x58
 #define DM36X_I2C_ICPDCLR       0x5C
+/** Register bitfields */
+#define DM36X_I2C_ICMDR_NACKMOD   	(1 << 15)
+#define DM36X_I2C_ICMDR_FREE  	    (1 << 14)
+#define DM36X_I2C_ICMDR_STT  	    (1 << 13)
+#define DM36X_I2C_ICMDR_STP  	    (1 << 11)
+#define DM36X_I2C_ICMDR_MST  	    (1 << 10)
+#define DM36X_I2C_ICMDR_TRX  	    (1 << 9)
+#define DM36X_I2C_ICMDR_XA  	    (1 << 8)
+#define DM36X_I2C_ICMDR_RM  	    (1 << 7)
+#define DM36X_I2C_ICMDR_DLB  	    (1 << 6)
+#define DM36X_I2C_ICMDR_IRS  	    (1 << 5)
+#define DM36X_I2C_ICMDR_STB  	    (1 << 4)
+#define DM36X_I2C_ICMDR_FDF  	    (1 << 3)
+#define DM36X_I2C_ICMDR_BC  	    (1 << 0)
 
 
 /** Timer registers */
