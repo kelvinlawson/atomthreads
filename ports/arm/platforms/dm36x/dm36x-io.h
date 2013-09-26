@@ -158,20 +158,34 @@
 #define DM36X_I2C_ICPDOUT       0x54
 #define DM36X_I2C_ICPDSET       0x58
 #define DM36X_I2C_ICPDCLR       0x5C
-/** Register bitfields */
-#define DM36X_I2C_ICMDR_NACKMOD   	(1 << 15)
-#define DM36X_I2C_ICMDR_FREE  	    (1 << 14)
-#define DM36X_I2C_ICMDR_STT  	    (1 << 13)
-#define DM36X_I2C_ICMDR_STP  	    (1 << 11)
-#define DM36X_I2C_ICMDR_MST  	    (1 << 10)
-#define DM36X_I2C_ICMDR_TRX  	    (1 << 9)
-#define DM36X_I2C_ICMDR_XA  	    (1 << 8)
-#define DM36X_I2C_ICMDR_RM  	    (1 << 7)
-#define DM36X_I2C_ICMDR_DLB  	    (1 << 6)
-#define DM36X_I2C_ICMDR_IRS  	    (1 << 5)
-#define DM36X_I2C_ICMDR_STB  	    (1 << 4)
-#define DM36X_I2C_ICMDR_FDF  	    (1 << 3)
-#define DM36X_I2C_ICMDR_BC  	    (1 << 0)
+/** Register bitfields: ICMDR */
+#define DM36X_I2C_ICMDR_NACKMOD     (1 << 15)
+#define DM36X_I2C_ICMDR_FREE        (1 << 14)
+#define DM36X_I2C_ICMDR_STT         (1 << 13)
+#define DM36X_I2C_ICMDR_STP         (1 << 11)
+#define DM36X_I2C_ICMDR_MST         (1 << 10)
+#define DM36X_I2C_ICMDR_TRX         (1 << 9)
+#define DM36X_I2C_ICMDR_XA          (1 << 8)
+#define DM36X_I2C_ICMDR_RM          (1 << 7)
+#define DM36X_I2C_ICMDR_DLB         (1 << 6)
+#define DM36X_I2C_ICMDR_IRS         (1 << 5)
+#define DM36X_I2C_ICMDR_STB         (1 << 4)
+#define DM36X_I2C_ICMDR_FDF         (1 << 3)
+#define DM36X_I2C_ICMDR_BC          (1 << 0)
+/** Register bitfields: ICSTR */
+#define DM36X_I2C_ICSTR_SDIR        (1 << 14)
+#define DM36X_I2C_ICSTR_NACKSNT     (1 << 13)
+#define DM36X_I2C_ICSTR_BB          (1 << 12)
+#define DM36X_I2C_ICSTR_RSFULL      (1 << 11)
+#define DM36X_I2C_ICSTR_XSMT        (1 << 10)
+#define DM36X_I2C_ICSTR_AAS         (1 << 9)
+#define DM36X_I2C_ICSTR_AD0         (1 << 8)
+#define DM36X_I2C_ICSTR_SCD         (1 << 5)
+#define DM36X_I2C_ICSTR_ICXRDY      (1 << 4)
+#define DM36X_I2C_ICSTR_ICRRDY      (1 << 3)
+#define DM36X_I2C_ICSTR_ARDY        (1 << 2)
+#define DM36X_I2C_ICSTR_NACK        (1 << 1)
+#define DM36X_I2C_ICSTR_AL          (1 << 0)
 
 
 /** Timer registers */
