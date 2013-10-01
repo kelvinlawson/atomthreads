@@ -117,6 +117,12 @@ static void atomTimerDelayCallback (POINTER cb_data);
  * through the time list, so the potential execution cycles cannot be
  * determined in advance.
  *
+ * Note that although the function can be called from interrupt context,
+ * it should not be called in the context of a timer callback interrupt.
+ * It modifies the internal timer list, and timer callbacks happen while
+ * walking the timer list, so you should not register a new timer in
+ * another timer's callback routine.
+ *
  * @param[in] timer_ptr Pointer to timer descriptor
  *
  * @retval ATOM_OK Success
