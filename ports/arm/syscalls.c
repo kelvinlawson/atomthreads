@@ -65,6 +65,7 @@ extern int _open(const char *name, int flags, int mode) __attribute__((weak));
 extern int _read(int file, char *ptr, int len) __attribute__((weak));
 extern caddr_t _sbrk(int incr) __attribute__((weak));
 extern int _write(int file, char *ptr, int len) __attribute__((weak));
+extern int _exit(int val) __attribute__((weak));
 
 
 /**
@@ -207,5 +208,16 @@ caddr_t _sbrk(int incr)
 
     /* Return pointer to previous base (where our allocation starts) */
     return (caddr_t)prev_heap_end;
+}
+
+/**
+ * \b _exit
+ *
+ * Simple stub implementation, exit() not needed or implemented.
+ *
+ */
+int _exit(int val)
+{
+	return -1;
 }
 
