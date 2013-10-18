@@ -73,26 +73,26 @@ static int timer_init (void)
     /* Check we are not already initialised */
     if (initialised == FALSE)
     {
-		/* Initialise TIMER1 registers for microsecond accuracy timer */
+        /* Initialise TIMER1 registers for free-running high-speed 24MHz timer */
 
-		/* Reset & disable all TIMER1 timers */
-		TIMER_REG(DM36X_TIMER_INTCTL_STAT) = 0;    /* Disable interrupts */
-		TIMER_REG(DM36X_TIMER_TCR) = 0;            /* Disable all TIMER1 timers */
-		TIMER_REG(DM36X_TIMER_TGCR) = 0;           /* Put all TIMER1 timers in reset */
-		TIMER_REG(DM36X_TIMER_TIM12) = 0;          /* Clear Timer 1:2 */
+        /* Reset & disable all TIMER1 timers */
+        TIMER_REG(DM36X_TIMER_INTCTL_STAT) = 0;    /* Disable interrupts */
+        TIMER_REG(DM36X_TIMER_TCR) = 0;            /* Disable all TIMER1 timers */
+        TIMER_REG(DM36X_TIMER_TGCR) = 0;           /* Put all TIMER1 timers in reset */
+        TIMER_REG(DM36X_TIMER_TIM12) = 0;          /* Clear Timer 1:2 */
 
-		/* Set up Timer 1:2 in 32-bit unchained mode */
-		TIMER_REG(DM36X_TIMER_TGCR) = (1 << 2);    /* Select 32-bit unchained mode (TIMMODE) */
-		TIMER_REG(DM36X_TIMER_TGCR) |= (1 << 0);   /* Remove Timer 1:2 from reset (TIM12RS) */
-		TIMER_REG(DM36X_TIMER_PRD12) = ~0;         /* Set period to free-running 24MHz clock (PRD12) */
-		TIMER_REG(DM36X_TIMER_TCR) |= (0 << 8);    /* Select external clock source for Timer 1:2 (CLKSRC12) */
+        /* Set up Timer 1:2 in 32-bit unchained mode */
+        TIMER_REG(DM36X_TIMER_TGCR) = (1 << 2);    /* Select 32-bit unchained mode (TIMMODE) */
+        TIMER_REG(DM36X_TIMER_TGCR) |= (1 << 0);   /* Remove Timer 1:2 from reset (TIM12RS) */
+        TIMER_REG(DM36X_TIMER_PRD12) = ~0;         /* Set period to free-running 24MHz clock (PRD12) */
+        TIMER_REG(DM36X_TIMER_TCR) |= (0 << 8);    /* Select external clock source for Timer 1:2 (CLKSRC12) */
 
-		/* Enable timer */
-		TIMER_REG(DM36X_TIMER_TCR) |= (2 << 6);    /* Enable Timer 1:2 continuous (ENAMODE12) */
+        /* Enable timer */
+        TIMER_REG(DM36X_TIMER_TCR) |= (2 << 6);    /* Enable Timer 1:2 continuous (ENAMODE12) */
 
-		/* Success */
-		initialised = TRUE;
-		status = ATOM_OK;
+        /* Success */
+        initialised = TRUE;
+        status = ATOM_OK;
     }
 
     /* Finished */
@@ -101,21 +101,33 @@ static int timer_init (void)
 
 
 /**
- * \b archNanosleep
+ * \b archUsleep
  *
- * Simple spin loop of at least the specified nanoseconds.
+ * Simple spin loop of at least the specified microseconds.
  *
- * @param[in] nanosecs Number of nanoseconds to sleep
+ * @param[in] microsecs Number of microseconds to sleep
  *
  * @return None
  *
  */
-void archNanosleep (int32_t nanosecs)
+void archUsleep (int32_t microsecs)
 {
+    int32_t start_time, delay_timer_ticks;
+
     /* Check we are initialised */
     if (initialised == FALSE)
     {
         timer_init();
     }
+
+    /* Get the current 24MHz count */
+    start_time = TIMER_REG(DM36X_TIMER_TIM12);
+
+    /* Translate delay in usecs to delay in 24MHz ticks */
+    delay_timer_ticks = ((TIMER_CLK / 1000000) * microsecs);
+
+    /* Wait in a spin-loop for timer to expire */
+    while (((int32_t)TIMER_REG(DM36X_TIMER_TIM12) - start_time) < delay_timer_ticks)
+        ;
 
 }
