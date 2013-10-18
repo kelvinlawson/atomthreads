@@ -52,7 +52,7 @@
 /**
  * Hardware timer functions (optional, not available on all ports)
  */
-void archNanosleep (int32_t nanosecs);
+void archUsleep (int32_t microsecs);
 
 /**
  *
