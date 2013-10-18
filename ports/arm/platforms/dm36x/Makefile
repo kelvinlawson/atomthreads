@@ -42,7 +42,7 @@ TESTS_TTYBAUD=115200
 BUILD_DIR=build
 
 # Platform-specific object files
-PLATFORM_OBJECTS = atomport-private.o uart.o
+PLATFORM_OBJECTS = atomport-private.o uart.o timer.o
 PLATFORM_ASM_OBJECTS = startup.o
 
 # Port-specific object files

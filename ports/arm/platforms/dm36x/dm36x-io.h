@@ -33,6 +33,10 @@
 #include "atomport.h"
 
 
+/** Timer input clock speed: 24MHz */
+#define TIMER_CLK       24000000
+
+
 /*
  * IO Addresses for use with DM36x
  */
@@ -190,6 +194,7 @@
 
 /** Timer registers */
 #define DM36X_TIMER0_BASE       0x01C21400 /* TIMER0 */
+#define DM36X_TIMER1_BASE       0x01C21800 /* TIMER1 */
 #define DM36X_TIMER_PID12       0x00
 #define DM36X_TIMER_EMUMGT      0x04
 #define DM36X_TIMER_TIM12       0x10

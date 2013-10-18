@@ -39,7 +39,6 @@
 /* Required number of system ticks per second (normally 100 for 10ms tick) */
 #define SYSTEM_TICKS_PER_SEC            100
 
-
 /* Size of each stack entry / stack alignment size (32 bits on this platform) */
 #define STACK_ALIGN_SIZE                sizeof(uint32_t)
 
@@ -50,14 +49,18 @@
  */
 #define POINTER void *
 
-/* *
+/**
+ * Hardware timer functions (optional, not available on all ports)
+ */
+void archNanosleep (int32_t nanosecs);
+
+/**
  *
  * Functions defined in atomport_arm.asm
  *
  */
 extern uint32_t  contextEnterCritical (void) ;
 extern void      contextExitCritical (uint32_t posture) ;
-
 
 /**
  * Critical region protection: this should disable interrupts

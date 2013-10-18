@@ -41,10 +41,6 @@ extern unsigned long _start_vectors, _end_vectors, _end_text, _start_data, _end_
 extern int main(void);
 
 
-/** Timer input clock speed: 24MHz */
-#define TIMER_CLK       24000000
-
-
 /** Register access macros */
 #define TIMER0_REG(offset)      *(volatile uint32_t *)(DM36X_TIMER0_BASE + offset)
 #define INTC_REG(offset)        *(volatile uint32_t *)(DM36X_INTC_BASE + offset)
