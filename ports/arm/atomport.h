@@ -52,7 +52,9 @@
 /**
  * Hardware timer functions (optional, not available on all ports)
  */
-void archUsleep (int32_t microsecs);
+extern void archUsleep (int32_t microsecs);
+extern int32_t archUsleepStart (void);
+extern int archUsleepCheckExpired (int32_t start_time, int32_t delay_usecs);
 
 /**
  *

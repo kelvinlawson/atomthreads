@@ -129,5 +129,50 @@ void archUsleep (int32_t microsecs)
     /* Wait in a spin-loop for timer to expire */
     while (((int32_t)TIMER_REG(DM36X_TIMER_TIM12) - start_time) < delay_timer_ticks)
         ;
+}
 
+
+/**
+ * \b archUsleepStart
+ *
+ * Start a usec timer session.
+ *
+ * @retval Start time for use in subsequent archUsleepCheckExpired() calls
+ *
+ */
+int32_t archUsleepStart (void)
+{
+    /* Check we are initialised */
+    if (initialised == FALSE)
+    {
+        timer_init();
+    }
+
+    /* Return the current 24MHz count */
+    return (TIMER_REG(DM36X_TIMER_TIM12));
+}
+
+
+/**
+ * \b archUsleepCheckExpired
+ *
+ * Test whether a usec timer session has expired.
+ *
+ * @param[in] start_time Beginning of timer expiry check session (returned by archUsleepStart())
+ * @param[in] delay_usecs Number of microsecs to check have expired after start_timE
+ *
+ * @retval 1=Timer expired, 0=Not expired
+ *
+ */
+int archUsleepCheckExpired (int32_t start_time, int32_t delay_usecs)
+{
+    int32_t delay_timer_ticks;
+	int status;
+
+    /* Translate delay in usecs to delay in 24MHz ticks */
+    delay_timer_ticks = ((TIMER_CLK / 1000000) * delay_usecs);
+
+    /* Check if timer has expired */
+	status = (((int32_t)TIMER_REG(DM36X_TIMER_TIM12) - start_time) < delay_timer_ticks);
+	return (status);
 }
