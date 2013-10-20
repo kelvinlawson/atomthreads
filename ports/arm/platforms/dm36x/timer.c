@@ -173,6 +173,6 @@ int archUsleepCheckExpired (int32_t start_time, int32_t delay_usecs)
     delay_timer_ticks = ((TIMER_CLK / 1000000) * delay_usecs);
 
     /* Check if timer has expired */
-	status = (((int32_t)TIMER_REG(DM36X_TIMER_TIM12) - start_time) < delay_timer_ticks);
+	status = (((int32_t)TIMER_REG(DM36X_TIMER_TIM12) - start_time) < delay_timer_ticks) ? 0 : 1;
 	return (status);
 }
