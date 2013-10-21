@@ -210,6 +210,7 @@
 #define DM36X_TIMER_CAP34       0x40
 #define DM36X_TIMER_INTCTL_STAT 0x44
 
+
 /** Interrupt controller registers */
 #define DM36X_INTC_BASE         0x01C48000 /* Interrupt controller */
 #define DM36X_INTC_IRQ0         0x08
@@ -231,9 +232,11 @@
 /** Interrupt controller vector offsets */
 #define DM36X_INTC_VEC_TINT0    32
 
+
 /** UART registers */
 #define DM36X_UART0_BASE        0x01C20000 /* UART0 */
 #define DM36X_UART1_BASE        0x01D06000 /* UART1 */
+
 
 /** GPIO registers */
 #define DM36X_GPIO_BASE         0x01C67000
@@ -257,6 +260,32 @@
 #define DM36X_GPIO_SET6         0x90
 #define DM36X_GPIO_CLR6         0x94
 #define DM36X_GPIO_IN6          0x98
+
+
+/** SD/MMC registers */
+#define DM36X_SD1_BASE      0x01D00000 /* MMC/SD1 */
+#define DM36X_SD0_BASE      0x01D11000 /* MMC/SD0 */
+#define DM36X_SD_MMCCTL     0x00
+#define DM36X_SD_MMCCLK     0x04
+#define DM36X_SD_MMCST0     0x08
+#define DM36X_SD_MMCST1     0x0C
+#define DM36X_SD_MMCIM      0x10
+#define DM36X_SD_MMCTOR     0x14
+#define DM36X_SD_MMCTOD     0x18
+#define DM36X_SD_MMCBLEN    0x1C
+#define DM36X_SD_MMCNBLK    0x20
+#define DM36X_SD_MMCNBLC    0x24
+#define DM36X_SD_MMCDRR     0x28
+#define DM36X_SD_MMCDXR     0x2C
+#define DM36X_SD_MMCCMD     0x30
+#define DM36X_SD_MMCARGHL   0x34
+#define DM36X_SD_MMCRSP01   0x38
+#define DM36X_SD_MMCRSP23   0x3C
+#define DM36X_SD_MMCRSP45   0x40
+#define DM36X_SD_MMCRSP67   0x44
+#define DM36X_SD_MMCDRSP    0x48
+#define DM36X_SD_MMCCIDX    0X50
+#define DM36X_SD_MMCFIFOCTL 0x74
 
 
 /* Function prototypes */
