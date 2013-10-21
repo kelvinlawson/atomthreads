@@ -69,7 +69,7 @@ vpath %.o ./$(BUILD_DIR)
 vpath %.elf ./$(BUILD_DIR)
 
 # GCC flags
-CFLAGS=-g -c -mcpu=arm926ej-s -ffreestanding -Wall -Werror
+CFLAGS=-g -c -mcpu=arm926ej-s -ffreestanding -Wall -Werror -Wno-unused-but-set-variable
 AFLAGS=$(CFLAGS) -x assembler-with-cpp
 LFLAGS=-mcpu=arm926ej-s -Tsystem.ld -Wall
 

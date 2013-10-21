@@ -46,16 +46,27 @@
 
 /* Constants */
 
+/** Baudrate */
+#define BAUDRATE         115200
+ 
 /** Select relevant UART for this platform */
-#define UART_BASE       DM36X_UART0_BASE
+#define UART_BASE        DM36X_UART0_BASE
 
 /** FR Register bits */
 #define UART_FR_RXFE     0x10
 #define UART_LSR_TEMT    0x40
 
 /** UART register access macros */
-#define UART_DR(baseaddr) (*(unsigned int *)(baseaddr))
-#define UART_LSR(baseaddr) (*(((unsigned int *)(baseaddr))+0x14))
+#define UART_RBR(baseaddr) (*(unsigned int *)(baseaddr))
+#define UART_THR(baseaddr) (*(unsigned int *)(baseaddr))
+#define UART_IER(baseaddr) (*(((unsigned int *)(baseaddr + 0x04))))
+#define UART_FCR(baseaddr) (*(((unsigned int *)(baseaddr + 0x08))))
+#define UART_LCR(baseaddr) (*(((unsigned int *)(baseaddr + 0x0C))))
+#define UART_MCR(baseaddr) (*(((unsigned int *)(baseaddr + 0x10))))
+#define UART_LSR(baseaddr) (*(((unsigned int *)(baseaddr + 0x14))))
+#define UART_DLL(baseaddr) (*(((unsigned int *)(baseaddr + 0x20))))
+#define UART_DLH(baseaddr) (*(((unsigned int *)(baseaddr + 0x24))))
+#define UART_PWR(baseaddr) (*(((unsigned int *)(baseaddr + 0x30))))
 
 
 /* Local data */
@@ -90,6 +101,8 @@ static void uart_write_char (const char c);
 static int uart_init (void)
 {
     int status;
+    uint32_t dummy;
+    uint32_t divisor;
 
     /* Check we are not already initialised */
     if (initialised == FALSE)
@@ -102,6 +115,33 @@ static int uart_init (void)
         }
         else
         {
+            /* Reset Tx/Rx in PWREMU_MGMT */
+            UART_PWR(UART_BASE) = 0x0;
+
+            /* Set baudrate */
+            divisor = (TIMER_CLK / BAUDRATE) / 16;
+            UART_DLL(UART_BASE) = (divisor & 0xFF);
+            UART_DLH(UART_BASE) = (divisor >> 8);
+
+            /* Clear Tx/Rx FIFOs and enter non-FIFO mode */
+            UART_FCR(UART_BASE) = 0x7;
+            UART_FCR(UART_BASE) = 0x0;
+
+            /* Set 8N1 */
+            UART_LCR(UART_BASE) = 0x3;
+
+            /* Disable loopback, flow-control, RTS/CTS */
+            UART_MCR(UART_BASE) = 0x0;
+
+            /* Disable interrupts */
+            UART_IER(UART_BASE) = 0x0;
+
+            /* Take Tx/Rx out of reset in PWREMU_MGMT */
+            UART_PWR(UART_BASE) = 0xE001;
+
+            /* Clear any receive characters */
+            dummy = UART_RBR(UART_BASE);
+
             /* Success */
             initialised = TRUE;
             status = ATOM_OK;
@@ -149,7 +189,7 @@ int uart_read (char *ptr, int len)
             ;
 
         /* Read first byte */
-        *ptr++ = UART_DR(UART_BASE);
+        *ptr++ = UART_RBR(UART_BASE);
 
         /* Loop over remaining bytes until empty */
         for (todo = 1; todo < len; todo++)
@@ -161,7 +201,7 @@ int uart_read (char *ptr, int len)
             }
 
             /* Read next byte */
-            *ptr++ = UART_DR(UART_BASE);
+            *ptr++ = UART_RBR(UART_BASE);
         }
 #endif
 
@@ -278,9 +318,9 @@ void uart_write_halt (const char *ptr)
 static void uart_write_char (const char c)
 {
     /* Wait for empty */
-    while(UART_LSR(UART_BASE) & UART_LSR_TEMT)
+    while ((UART_LSR(UART_BASE) & UART_LSR_TEMT) != UART_LSR_TEMT)
         ;
 
     /* Write byte to UART */
-    UART_DR(UART_BASE) = c;
+    UART_THR(UART_BASE) = (c & 0xFF);
 }
