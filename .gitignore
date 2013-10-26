@@ -215,8 +215,6 @@ pip-log.txt
 .mr.developer.cfg
 .o
 *.eww
-*.ewd
-*.ewp
 *.dep
 *.dbgdt
 *.dni
