@@ -26,7 +26,11 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-
+/*
+ * Copyright (c) 2013 Wei Shuai <cpuwolf@gmail.com> 
+ * Modify to adapt STM8L
+ */
+ 
 #ifndef __ATOM_PORT_PRIVATE_H
 #define __ATOM_PORT_PRIVATE_H
 
@@ -44,33 +48,8 @@
 #endif
 
 
-/**
- * Compiler-specific modifiers for interrupt handler functions.
- *
- * COSMIC: Uses @interrupt modifier for interrupt handlers. We
- * also force all interrupts to save c_lreg, a separate memory
- * area which Cosmic uses for longs and floats. This memory
- * area must be saved by interrupt handlers for context
- * switch purposes, and to avoid making it impossible to use
- * longs in any OS kernel code accessed by interrupt handlers.
- *
- * IAR: Uses __interrupt modifier for interrupt handlers.
- *
- * RAISONANCE: Uses no prefix modifier, but specifies
- * interrupt vector after (see TIM1_SystemTickISR() for an
- * example).
- */
-#if defined(__CSMC__)
-#define INTERRUPT @far @interrupt @svlreg
-#elif defined (__IAR_SYSTEMS_ICC__)
-#define INTERRUPT __interrupt
-#elif defined(__RCSTM8__)
-#define INTERRUPT
-#endif
-
-
 /* Function prototypes */
 void archInitSystemTickTimer (void);
-INTERRUPT void TIM1_SystemTickISR (void);
+
 
 #endif /* __ATOM_PORT_PRIVATE_H */

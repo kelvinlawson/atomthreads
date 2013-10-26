@@ -138,7 +138,7 @@
         </option>
         <option>
           <name>IccOptLevel</name>
-          <state>3</state>
+          <state>1</state>
         </option>
         <option>
           <name>IccOptStrategy</name>
@@ -147,12 +147,12 @@
         </option>
         <option>
           <name>IccOptLevelSlave</name>
-          <state>3</state>
+          <state>1</state>
         </option>
         <option>
           <name>IccOptAllowList</name>
           <version>0</version>
-          <state>111111</state>
+          <state>000000</state>
         </option>
         <option>
           <name>IccGenerateDebugInfo</name>
@@ -1520,9 +1520,9 @@
       <data/>
     </settings>
   </configuration>
-  <mfc_discard>
+  <mfc>
     <configuration>Debug</configuration>
-  </mfc_discard>
+  </mfc>
   <group>
     <name>kernel</name>
     <file>
