@@ -26,11 +26,14 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
+/*
+ * Copyright (c) 2013 Wei Shuai <cpuwolf@gmail.com> 
+ * Modify to adapt STM8L
+ */
 
-
-#include "atom.h"
+#include <atom.h>
 #include "atomport-private.h"
-#include "stm8s_tim1.h"
+#include "stm8l15x_tim1.h"
 #if defined(__RCSTM8__)
 #include <intrins.h>
 #endif
@@ -240,10 +243,10 @@ void archInitSystemTickTimer ( void )
     TIM1_DeInit();
 
     /* Configure a 10ms tick */
-    TIM1_TimeBaseInit(10000, TIM1_COUNTERMODE_UP, 1, 0);
+    TIM1_TimeBaseInit(10000, TIM1_CounterMode_Up, 1, 0);
 
     /* Generate an interrupt on timer count overflow */
-    TIM1_ITConfig(TIM1_IT_UPDATE, ENABLE);
+    TIM1_ITConfig(TIM1_IT_Update, ENABLE);
 
     /* Enable TIM1 */
     TIM1_Cmd(ENABLE);
@@ -251,59 +254,3 @@ void archInitSystemTickTimer ( void )
 }
 
 
-/**
- *
- * System tick ISR.
- *
- * This is responsible for regularly calling the OS system tick handler.
- * The system tick handler checks if any timer callbacks are necessary,
- * and runs the scheduler.
- *
- * The CPU automatically saves all registers before calling out to an
- * interrupt handler like this.
- *
- * The system may decide to schedule in a new thread during the call to
- * atomTimerTick(), in which case the program counter will be redirected
- * to the new thread's running location during atomIntExit(). This ISR
- * function will not actually complete until the thread we interrupted is
- * scheduled back in, at which point the end of this function will be
- * reached (after atomIntExit()) and the IRET call by the compiler will
- * return us to the interrupted thread as if we hadn't run any other
- * thread in the meantime. In other words the interrupted thread can be
- * scheduled out by atomIntExit() and several threads could run before we
- * actually reach the end of this function. When this function does
- * finally complete, the return address (the PC of the thread which was
- * interrupted) will be on the interrupted thread's stack because it was
- * saved on there by the CPU when the interrupt triggered.
- *
- * As with all interrupts, the ISR should call atomIntEnter() and
- * atomIntExit() on entry and exit. This serves two purposes:
- *
- * a) To notify the OS that it is running in interrupt context
- * b) To defer the scheduler until after the ISR is completed
- *
- * We defer all scheduling decisions until after the ISR has completed
- * in case the interrupt handler makes more than one thread ready.
- *
- * @return None
- */
-#if defined(__IAR_SYSTEMS_ICC__)
-#pragma vector = 13
-#endif
-INTERRUPT void TIM1_SystemTickISR (void)
-#if defined(__RCSTM8__)
-interrupt 11
-#endif
-{
-    /* Call the interrupt entry routine */
-    atomIntEnter();
-
-    /* Call the OS system tick handler */
-    atomTimerTick();
-
-    /* Ack the interrupt (Clear TIM1:SR1 register bit 0) */
-    TIM1->SR1 = (uint8_t)(~(uint8_t)TIM1_IT_UPDATE);
-
-    /* Call the interrupt exit routine */
-    atomIntExit(TRUE);
-}
