@@ -1,13 +1,27 @@
+/*
+ * Copyright (c) 2013, Wei Shuai <cpuwolf@gmail.com>. All rights reserved.
+ *
+ * STM8L151K4T6 only supports UART1
+ */
 #include <stdio.h>
 #include <stddef.h>
 
-#include "stm8s.h"
+#include <stm8l15x.h>
 
-#include "atom.h"
-#include "atommutex.h"
+#include <atom.h>
+#include <atommutex.h>
 #include "uart.h"
 
-
+#ifdef _RAISONANCE_
+#define PUTCHAR_PROTOTYPE int putchar (char c)
+#define GETCHAR_PROTOTYPE int getchar (void)
+#elif defined (_COSMIC_)
+#define PUTCHAR_PROTOTYPE char putchar (char c)
+#define GETCHAR_PROTOTYPE char getchar (void)
+#else /* _IAR_ */
+#define PUTCHAR_PROTOTYPE int putchar (int c)
+#define GETCHAR_PROTOTYPE int getchar (void)
+#endif /* _RAISONANCE_ */
 /*
  * Semaphore for single-threaded access to UART device
  */
@@ -22,12 +36,16 @@ int uart_init(uint32_t baudrate)
   int status;
   
   /**
-   * Set up UART2 for putting out debug messages.
-   * This the UART used on STM8S Discovery, change if required.
+   * Set up UART1 for putting out debug messages.
    */
-  UART2_DeInit();
-  UART2_Init (baudrate, UART2_WORDLENGTH_8D, UART2_STOPBITS_1, UART2_PARITY_NO,
-              UART2_SYNCMODE_CLOCK_DISABLE, UART2_MODE_TXRX_ENABLE);
+  USART_DeInit(USART1);
+
+    /* USART configuration */
+  USART_Init(USART1, baudrate,
+             USART_WordLength_8b,
+             USART_StopBits_1,
+             USART_Parity_No,
+             (USART_Mode_TypeDef)(USART_Mode_Tx | USART_Mode_Rx));
 
   /* Create a mutex for single-threaded putchar() access */
   if (atomMutexCreate (&uart_mutex) != ATOM_OK)
@@ -47,7 +65,7 @@ int uart_init(uint32_t baudrate)
 /**
  * \b uart_putchar
  *
- * Write a char out via UART2
+ * Write a char out via UART1
  *
  * @param[in] c Character to send
  *
@@ -62,12 +80,11 @@ char uart_putchar (char c)
         if (c == '\n')
             putchar('\r');
 
-        /* Write a character to the UART2 */
-        UART2_SendData8(c);
-      
+        /* Write a character to the USART1 */
+         USART_SendData8(USART1, c);
         /* Loop until the end of transmission */
-        while (UART2_GetFlagStatus(UART2_FLAG_TXE) == RESET)
-            ;
+        while (USART_GetFlagStatus(USART1, USART_FLAG_TC) == RESET);
+
 
         /* Return mutex access */
         atomMutexPut(&uart_mutex);
@@ -83,7 +100,7 @@ char uart_putchar (char c)
 /**
  * \b putchar
  *
- * Retarget putchar() to use UART2
+ * Retarget putchar() to use UART1
  *
  * @param[in] c Character to send
  *
@@ -101,7 +118,7 @@ char putchar (char c)
 /**
  * \b putchar
  *
- * Retarget putchar() to use UART2
+ * Retarget putchar() to use UART1
  *
  * @param[in] c Character to send
  *
