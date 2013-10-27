@@ -1,0 +1,521 @@
+---------------------------------------------------------------------------
+
+Library:      Atomthreads
+Author:       Kelvin Lawson <kelvinl@users.sf.net>
+Website:      http://atomthreads.com
+License:      BSD Revised
+
+---------------------------------------------------------------------------
+
+STM8 PORT - COSMIC COMPILER
+
+This folder contains a port of the Atomthreads real time kernel for the
+STM8 processor architecture. These instructions cover usage of Atomthreads
+with the Cosmic compiler (CXSTM8).
+
+All of the cross-platform kernel code is contained in the top-level 
+'kernel' folder, while ports to specific CPU architectures are contained in
+the 'ports' folder tree. A port to a CPU architecture can comprise just one
+or two modules which provide the architecture-specific functionality, such
+as the context-switch routine which saves and restores processor registers
+on a thread switch. In this case, the kernel port is split into two files:
+
+ * atomport.c: Those functions which can be written in C
+ * atomport-asm-cosmic.s: The main register save/restore assembler routines
+
+Each Atomthreads port requires also a header file which describes various
+architecture-specific details such as appropriate types for 8-bit, 16-bit
+etc variables, the port's system tick frequency, and macros for performing
+interrupt lockouts / critical sections:
+
+ * atomuser.h: Port-specific header required by the kernel for each port
+
+A few additional source files are also included here:
+
+ * tests-main.c: Main application file (used for launching automated tests)
+ * stm8_interrupt_vector.c: List of interrupt handlers for vector table
+ * uart.c: UART wrapper to allow use of stdio/printf()
+ * stm8s-periphs/*.*: Peripheral drivers as delivered by ST (no changes
+     to distributed code).
+
+Atomthreads includes a suite of automated tests which prove the key OS
+functionality, and can be used with any architecture ports. This port
+provides an easy mechanism for building, downloading and running the test
+suite to prove the OS on your target.
+
+The port was carried out and tested on an STM8S105C6 running within an
+STM8S-Discovery board, and supports the Cosmic, Raisonance and IAR compiler
+tools. It is possible to use it with other processors in the STM8 range, as
+well as other hardware platforms and compilers, with minimal changes.
+Platform and compiler specific code has been kept to an absolute minimum.
+This README covers usage of Atomthreads with the Cosmic compiler.
+Instructions for users of the other compilers are available in README-IAR
+and README-RAISONANCE.
+
+
+---------------------------------------------------------------------------
+
+PREREQUISITES
+
+The port works out-of-the-box with the Cosmic compiler tools for building.
+Applications are generated in .s19 form and can be programmed with any
+supporting programming software, including the free STVP (visual
+programmer tool). At this time there does not appear to be a command-line
+programmer application suitable for use with STM8.
+
+The Cosmic compiler and STVP are currently Windows-only applications. For
+users of other operating systems the Cosmic compiler may work in 
+environments like Wine, but the USB programming tools are less likely to
+be supported. Both the compiler and the USB programming tool for
+STM8S-Discovery (STVP) can, however, be run successfully within a VM such
+as VirtualBox.
+
+The core software prerequisites are therefore:
+ * Cosmic STM8 compiler
+ * Programming software (e.g. ST's STVP tool)
+
+Optionally, application build, program and debug can be carried out
+using ST's visual debug tool, STVD.
+
+Use with alternative compiler tools may require some modification, but you
+can easily replace STVP by your own favourite programmer if required.
+
+
+---------------------------------------------------------------------------
+
+MEMORY MODEL
+
+The sample build configurations use the Cosmic modsl0 memory model. This
+places all data outside of the short 0x0-0x255 page0 area, which allows
+large data blocks such as thread stacks to fit. You could instead use the
+more efficient mods0 memory model which places data in the short page0
+area, and force large data areas like thread stacks outside of page0 by
+adding @near modifiers or specifying data areas by the linker file etc.
+
+The default configuration is modsl0 (place outside of page0) to allow for
+the most portable application compilation, with the option of optimising
+this by placing data in page0 if desired. There is no requirement that you
+compile your applications using the modsl0 memory model.
+
+
+---------------------------------------------------------------------------
+
+BUILDING THE SOURCE
+
+You may build Atomthreads using whichever build environment you desire. For
+your convenience we provide both a ready-rolled Makefile-based build system
+and an STVD visual debugger project. The STVD project permits easy
+building, programming and debugging, but does not easily support building
+a wide range of application builds within the same project, which is
+useful for building the numerous automated tests. For the automated tests
+you may find it easier to use the Makefile which automatically builds all
+automated tests.
+
+
+---------------------------------------------------------------------------
+
+BUILD VIA STVD PROJECT
+
+For building applications using STVD you can use the sample workspace
+atomthreads-sample-stvd.stw which contains both Cosmic compiler and
+Raisonance compiler based projects. You can also import the Cosmic-only
+project file atomthreads-sample-cosmic.stp directly. This builds a sample
+full application which runs the "sem1" automated test. Applications can be
+downloaded directly to the target hardware (e.g. STM8S-Discovery) and run
+via the integrated debugger. Press the exclamation button to run, and
+confirm that the LED flashes once per second (if running on an
+STM8S-Discovery) to ensure that the test has passed. 
+
+This is also a good starting point for building your own applications:
+simply modify the file tests-main.c which starts the test application.
+You can run any of the other automated tests by replacing the file sem1.c
+within the project by another of the tests within the atomthreads tests
+folder. This is rather painful using a GUI interface due to the large
+number of test files, and you may prefer to use the Makefile-based system
+instead which builds all automated tests in one command.
+
+
+---------------------------------------------------------------------------
+
+BUILD VIA MAKEFILE
+
+A Makefile is also provided for building the kernel, port and automated
+tests. This is particularly useful for building the automated tests
+because many different independent applications need to be built which is
+not easily achieved within the STVD environment.
+
+For a Windows system you can obtain a Make application suitable for use
+with the Cosmic compiler from:
+
+ * http://www.cosmic-software.com/comp_utils/GNU_Make.zip
+
+Assuming you install the above into C:\Program Files\GNU_MAKE, you
+should set up your environment variables as follows:
+
+ * set PATH=%PATH%;C:\Program Files\GNU_MAKE;C:\Program Files\COSMIC\CXSTM8_16K
+ * set MAKE_MODE=DOS
+
+
+The full build is carried out using simply:
+
+ * make -f cosmic.mak
+
+All objects are built into the 'build-cosmic' folder under ports/stm8. The
+build process builds separate target applications for each automated test,
+and appropriate .stm8 or .s19 files can be found in the build folder ready
+for downloading to and running on the target. Because of the limited
+resources on the STM8, and the large amount of automated tests, each test
+is built and run as a separate application.
+
+
+All built objects etc can be cleaned using:
+
+ * make -f cosmic.mak clean
+
+
+The Atomthreads sources are documented using Doxygen markup. You can build
+both the kernel and STM8 port documentation from this folder using:
+
+ * make -f cosmic.mak doxygen
+
+
+---------------------------------------------------------------------------
+
+PROGRAMMING MAKEFILE-BUILT APPLICATIONS TO THE TARGET DEVICE
+
+When developing within STVD, programs can be downloaded directly to the
+target. If, however, you are building applications separately using a
+Makefile or similar, then you are not able to program the application
+using STVD. None of the tools delivered by ST appear to be designed to
+cater for those who build applications externally, but it is possible using
+STVP.
+
+The following development workflow can be used (note that these settings
+apply to the STM8S-Discovery):
+
+ * Build app using Makefile.
+ * Open STVP and configure to use Swim ST-Link for CPU STM8105C6.
+ * Open application .s19 file and program using "Program All Tabs".
+
+Unfortunately STVP does not have a command to reset and start the CPU
+running, but it can be forced into doing so by reconfiguring the
+programmer:
+
+ * Select "Configure ST Visual Programmer" from the Configure menu.
+
+Your application should now be programmed and running.
+
+If you wish to program and run another application then you can open and
+program it in STVP, then use the Configure menu again to reset the
+device and start it running.
+
+Other programming tools may exist but are not apparent in the toolset
+delivered for use the STM8S Discovery platform.
+
+
+---------------------------------------------------------------------------
+
+STM8S-DISCOVERY SPECIFICS
+
+There are very minimal board-specific aspects to the STM8 port so it is
+trivial to run Atomthreads on other STM8 platforms.
+
+The test applications make use of a LED to indicate test pass/fail status.
+This is currently configured to use a bit in GPIOD, which on the Discovery
+board maps to the board's only LED. You may change the port and register
+bit in tests-main.c to utilise a different pin on other hardware platforms.
+You may also completely omit the LED flashing in the test application if
+you prefer to use the UART for monitoring test status.
+
+The test applications also make use of the UART to print out pass/fail
+indications and other information. For this you should connect a serial
+cable to the Discovery board via the external pin connectors. Use of
+a UART is not required if you prefer to use the LED or some other method
+of notifying test pass/fail status.
+
+To connect a serial cable to the Discovery you will need to connect to
+the following pins on the external connectors:
+ Vcc: CN2 pin 8
+ GND: CN2 pin 7
+ UART TX: CN4 pin 10 (connect to RX at the PC end)
+ UART RX: CN4 pin 9 (connect to TX at the PC end)
+Note that the board uses TTL levels so you may need to use a level
+converter. External level converters may need to be powered using
+a Vdd of 5v, which can be achieved by positioning JP1 on the Discovery.
+
+The STM8 device on the Discovery only offers UART2. If you are using a
+different device or wish to use an alternative UART then you must change
+the stm8s_conf.h file.
+
+If you are using a CPU other than the STM8S105C6 you should change the
+PART macro from "STM8S105" to your target CPU. This can be changed in the
+cosmic.mak Makefile. If you are using the STVD project it should be
+changed in the project preprocessor settings for both Debug and Release
+builds. You may also wish to enable any CPU peripherals which you wish to
+use in the stm8s_conf.h file.
+
+
+---------------------------------------------------------------------------
+
+RUNNING THE AUTOMATED TESTS
+
+Atomthreads contains a set of generic kernel tests which can be run on any
+port to prove that all core functionality is working on your target.
+
+The full set of tests can be found in the top-level 'tests' folder. The
+Makefile builds each of these tests as independent applications in the
+'build' folder. Run them individually using the STVP process described
+above. For example to run the 'kern1.c' test use STVP to program and run
+it.
+
+You may also build the tests using the STVD project, but to run each
+different test you must manually remove the previous test module (e.g.
+kern1.c) and replace it with one of other tests, which can be quite time
+consuming compared to building all tests in one command via the Makefile.
+
+To view the test results, watch the LED on the STM8S-Discovery. This will
+flash once per second if the test passed, and once every 1/8 second if the
+test failed.
+
+If you wish to use the UART, connect a serial debug cable to your target
+platform (defaults to 9600bps 8N1). On starting, the test applications
+print out "Go" on the UART. Once the test is complete they will print
+out "Pass" or "Fail", along with other information if the test failed.
+
+Most of the tests complete within a few seconds, but some (particularly
+the stress tests) can take several seconds, so be patient. 
+
+The full suite of tests endeavours to exercise as much of the kernel code
+as possible, and can be used for quick confirmation of core OS
+functionality if you ever need to make a change to the kernel or port.
+
+The test application main() is contained in tests-main.c. This initialises
+the OS, creates a main thread, and calls out to the test modules. It also
+initialises the UART driver for use by stdout.
+
+
+---------------------------------------------------------------------------
+
+WRITING APPLICATIONS
+
+The easiest way to start a new application which utilises the Atomthreads
+scheduler is to base your main application startup on tests-main.c. This
+initialises the OS, sets up a UART and calls out to the test module entry
+functions. You can generally simply replace the call to the test modules by
+a call to your own application startup code.
+
+Projects developed within STVD can be started using the sample project
+atomthreads-sample-cosmic.stp. If you wish to create your own STVD project
+from scratch, then you should ensure you change the project settings for
+both Debug and Release builds as follows:
+
+* Toolset: "STM8 Cosmic"
+* MCU Selection: Appropriate for your platform (STM8S10C56 for Discovery)
+* C Compiler Memory Model: "+modsl0"
+* C Compiler Preprocessor Definitions: CPU part (e.g. "STM8S105")
+* C Compiler Preprocessor Definitions: Enable thread stack checking if
+  desired by adding "ATOM_STACK_CHECKING", for example the full
+  preprocessor line for Discovery might be: "STM8S105 ATOM_STACK_CHECKING"
+* Linker Input: Zero Page from 0x2 to 0xFF (allows NULL-pointer checks by
+  preventing the linker from using address 0x0.
+* Linker Input: Ram from 0x100 to 0x7BF (if you wish to allow 0x100 to
+  0x7BF for application usage, and 0x7C0 to 0x7FF for startup stack.
+
+
+---------------------------------------------------------------------------
+
+RAM FOOTPRINT & STACK USAGE
+
+The Atomthreads kernel is written in well-structured pure C which is highly
+portable and not targeted at any particular compiler or CPU architecture.
+For this reason it is not highly optimised for the STM8 architecture, and
+by its nature will likely have a higher text and data footprint than an
+RTOS targeted at the STM8 architecture only. The emphasis here is on
+C-based portable, readable and maintainable code which can run on any CPU
+architecture, from the 8-bitters up.
+
+A good rule of thumb when using Atomthreads on the STM8 architecture is
+that a minimum of 1KB RAM is required in order to support an application
+with 4 or 5 threads and the idle thread. If a minimum of approximately
+128 bytes per thread stack is acceptable then you will benefit from the
+easy-to-read, portable implementation of an RTOS herein.
+
+The major consumer of RAM when using Atomthreads is your thread stacks.
+Functionality that is shared between several kernel modules is farmed out
+to separate functions, resulting in readable and maintainable code but
+with some associated stack cost of calling out to subroutines. Further,
+each thread stack is used for saving its own registers on a context
+switch, and there is no separate interrupt stack which means that each
+thread stack has to be able to cope with the maximum stack usage of the
+kernel (and application) interrupt handlers.
+
+Clearly the stack requirement for each thread depends on what your
+application code does, and what memory model is used etc, but generally
+you should find that 128 bytes is enough to allow for the thread to be
+switched out (and thus save its registers) while deep within a kernel
+or application call stack, and similarly enough to provide stack for
+interrupt handlers interrupting while the thread is deep within a kernel
+or application call stack. You will need to increase this depending on
+what level of stack the application code in question requires.
+
+At this time the maximum stack consumed by the test threads within the
+automated test modules is 95 bytes of stack, and the main test thread has
+been seen to consume 163 bytes of stack. At this time the timer2 test is
+the largest consumer of test thread stack (95 bytes) and the sem3 test
+consumes the largest main thread stack (163 bytes). If your applications
+have large amounts of local data or call several subroutines then you may
+find that you need larger than 128 bytes.
+
+You may monitor the stack usage of your application threads during runtime
+by defining the macro ATOM_STACK_CHECKING and calling
+atomThreadStackCheck(). This macro is defined by default in the Makefile
+so that the automated test modules can check for stack overflows, but you
+may wish to undefine this in your application Makefiles when you are happy
+that the stack usage is acceptable. Enabling ATOM_STACK_CHECKING will
+increase the size of your threads' TCBs slightly, and will incur a minor
+CPU cycles overhead whenever threads are created due to prefilling the
+thread stack with a known value.
+
+With careful consideration and few threads it would be possible to use
+a platform with 512 bytes RAM, but not all of the automated test suite
+would run on such a platform (some of the test modules use 6 threads: a
+main thread together with 4 test threads and the idle thread).
+
+The RAM layout used for the automated test applications is as follows:
+
+RAM Top:
+* Startup Stack (64 bytes)
+* Data & BSS area (thread stacks, other application data)
+RAM Bottom.
+
+This is not prescribed, you may use whichever layout you wish for your
+applications.
+
+The startup stack area starts at the top of RAM and is only used for first
+initialisation of the OS and main thread. This uses 64 bytes and could be
+reused once the OS is started, but for the purposes of the automated test
+applications it is not reused. Generally you would ensure that this is
+reused in your own application code.
+
+The application's data starts at the bottom of RAM, and this includes all
+of the thread stacks which are statically allocated arrays. The idle
+thread, main thread, and automated test thread stacks are allocated here.
+
+The default layout provided with Atomthreads matches the STM8S-Discovery
+with 2KB RAM. The linker file reserves the first 0x7C0 bytes for data
+areas. The region from here up to the end of RAM (0x800) is used for the
+the 64 byte startup stack.
+
+As mentioned previously, this RAM layout is only the one utilised by the
+test applications. You may choose whatever layout you like.
+
+Note that on this platform data can be placed at address 0x0, but the
+Atomthreads kernel performs validity checks on pointers to ensure they
+are not NULL pointers (point to address 0x0). For this reason the
+example projects (STVD and Makefile) force the linker to not use address
+0x0 and instead start the page0 space at 0x2. This ensures that the
+linker does not place any data at address 0x0, and hence all NULL-ptr
+checks are still suitable checks for valid pointers. This does, however,
+waste 2 bytes. For your own projects you can force this within STVD by
+editing the project linker settings (Input -> Zero Page start at 0x2)
+or by editing the linker .LKF file as can be seen in atomthreads.lkf.
+
+
+---------------------------------------------------------------------------
+
+INTERRUPT HANDLING
+
+Interrupt handlers use the stack of the thread which was running when the
+interrupt occurred. If no thread rescheduling occurs during the ISR then
+on exit from the ISR any data stacked by the ISR on the thread's stack is
+popped off the stack and execution of the thread resumes. If a reschedule
+during the ISR causes a context switch to a new thread, then the ISR's
+data will remain on the thread's stack until the thread is scheduled back
+in.
+
+Interrupt priorities (via the ITC_SPRx registers) are left in their
+default power-on state, which disables interrupt nesting. Kernel changes
+may be required to support interrupt nesting.
+
+Note that the STM8 programming manual currently describes the following
+feature:
+
+ "Fast interrupt handling through alternate register files (up to 4
+  contexts) with standard stack compatible mode (for real time OS
+  kernels)"
+
+This feature was implemented by ST in the core but has to date never been
+included in any STM8 products. If it is included in future products then
+you will need to put the device in the stack compatible mode described.
+
+
+---------------------------------------------------------------------------
+
+WRITING NEW INTERRUPT HANDLERS
+
+All interrupt handlers which will call out to the OS kernel and potentially
+cause a thread switch must call atomIntEnter() and atomIntExit(). An
+example of this can be seen in the timer tick ISR in atomport.c.
+
+With the Cosmic compiler port it is also necessary to add the @svlreg
+modifier to any interrupt handlers which call out to the OS kernel.
+Alternatively you may use the INTERRUPT macro from atomport-private.h which
+always adds the @svlreg modifier. This modifier ensures that the c_lreg
+virtual register is saved on the interrupted thread's stack for any
+preemptive context switches. It also ensures that longs are available for
+use within any OS kernel code called as part of the interrupt handling. 
+
+You may also implement fast interrupt handlers in the system which do not
+call atomIntEnter()/atomIntExit() and which do not need the @svlreg
+modifier, however these ISRs cannot perform OS functions such as posting
+semaphores or effecting a thread switch.
+
+
+---------------------------------------------------------------------------
+
+COSMIC COMPILER VIRTUAL REGISTERS
+
+The STM8 has only very few CPU registers, so the Cosmic compiler augments
+them with three "virtual" registers, which are simply locations in fast
+memory. These registers are called c_x, c_y and c_lreg.
+
+The Atomthreads context switch for Cosmic/STM8 takes advantage of the fact
+that all CPU and virtual registers are automatically saved on the stack by
+the compiler when calling out to C functions (and even then only if
+necessary).
+
+For cooperative context switches (where a thread calls an OS kernel
+function to schedule itself out), any of these registers which should be
+preserved across the function call are automatically saved on the stack by
+the compiler before the context switch is even called. This means that no
+CPU or virtual registers actually have to be saved in the context switch
+routine, making cooperative switches potentially very cheap if few
+registers must be preserved.
+
+For preemptive switches (where an ISR has interrupted a thread and wishes
+to switch to a new thread), the interrupt handler prologue automatically
+saves all CPU registers (actually done automatically by the CPU) and all
+of the virtual registers. In this case all registers must always be saved
+because the ISR has no knowledge of what registers the interrupted thread
+was using, so we cannot take advantage of the potential for saving fewer
+than the full set of registers that we achieve with cooperative switches.
+With the Cosmic compiler, interrupt handlers that call out to C functions
+(as would happen on a thread switch) always save the CPU registers (done by
+the CPU in fact) and the virtual registers c_x and c_y. For the Atomthreads
+port we force interrupt handlers to also save the virtual register c_lreg.
+This is to ensure that the interrupted thread's c_lreg value is preserved
+across a thread switch, but also ensures that longs can be used within the
+OS kernel code called by interrupt handlers (c_lreg is used by the compiler
+for handling longs and floats).
+
+An alternative scheme would be to not save c_lreg in all interrupt
+handlers and instead save it in the context-switch function. This would
+allow interrupt handlers to avoid saving the 4-byte c_lreg on the stack,
+but it would mean that any OS kernel code called by interrupt handlers
+could not deal with longs, which would be an unfortunate burden on the
+core portable OS code just for the benefit of this one architecture and
+compiler. It would also mean that c_lreg is always saved unnecessarily
+for every cooperative context switch. 
+
+
+---------------------------------------------------------------------------
