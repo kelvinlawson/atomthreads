@@ -26,7 +26,12 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-
+/*
+ * Copyright (c) 2013 Wei Shuai <cpuwolf@gmail.com> 
+ * Modify to adapt STM8L
+ *
+ * 2013-10-27: add arch idle function
+ */
 
 /**
  * \file
@@ -750,6 +755,7 @@ static void atomIdleThread (uint32_t param)
     while (1)
     {
         /** \todo Provide user idle hooks*/
+        archIdleHandler(param);
     }
 }
 

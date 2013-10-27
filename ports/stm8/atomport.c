@@ -252,5 +252,18 @@ void archInitSystemTickTimer ( void )
     TIM1_Cmd(ENABLE);
 
 }
-
+/**
+ * \b archIdleHandler
+ *
+ * handle idle when system has nothing to schedule
+ * @param[in] idle ticks left to idle
+ * @return None
+ */
+void archIdleHandler ( uint32_t param )
+{
+#if defined(__IAR_SYSTEMS_ICC__)
+    /* wait for interrupt */
+    __wait_for_interrupt();
+#endif
+}
 
