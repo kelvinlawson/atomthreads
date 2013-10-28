@@ -63,18 +63,21 @@
 #define CRITICAL_STORE      uint8_t ccr
 #define CRITICAL_START()    _asm ("push CC\npop a\nld (X),A\nsim", &ccr)
 #define CRITICAL_END()      _asm ("ld A,(X)\npush A\npop CC", &ccr)
+#define FORCE_USED
 
 /* IAR: Use intrinsics */
 #elif defined(__IAR_SYSTEMS_ICC__)
 #define CRITICAL_STORE      __istate_t _istate
 #define CRITICAL_START()    _istate = __get_interrupt_state(); __disable_interrupt()
 #define CRITICAL_END()      __set_interrupt_state(_istate)
+#define FORCE_USED  __root
 
 /* Raisonance: Use intrinsics */
 #elif defined(__RCSTM8__)
 #define CRITICAL_STORE      unsigned char ccr
 #define CRITICAL_START()    ccr = _getCC_(); _sim_()
 #define CRITICAL_END()      _setCC_(ccr)
+#define FORCE_USED
 #endif
 
 /* Uncomment to enable stack-checking */

@@ -10,6 +10,7 @@
 
 #include <atom.h>
 #include <atommutex.h>
+#include <atomport.h>
 #include "uart.h"
 
 #ifdef _RAISONANCE_
@@ -71,7 +72,7 @@ int uart_init(uint32_t baudrate)
  *
  * @return Character sent
  */
-char uart_putchar (char c)
+FORCE_USED char uart_putchar (char c)
 {
     /* Block on private access to the UART */
     if (atomMutexGet(&uart_mutex, 0) == ATOM_OK)
@@ -145,7 +146,7 @@ int putchar (char c)
  *
  * @return Number of characters sent
  */
-size_t __write(int handle, const unsigned char *buf, size_t bufSize)
+FORCE_USED size_t __write(int handle, const unsigned char *buf, size_t bufSize)
 {
     size_t chars_written = 0;
     
