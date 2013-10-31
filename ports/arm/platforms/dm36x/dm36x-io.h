@@ -262,6 +262,15 @@
 #define DM36X_GPIO_IN6          0x98
 
 
+/** VPFE registers */
+#define DM36X_ISP_BASE          0x01C70000
+#define DM36X_RSZ_BASE          0x01C70400
+#define DM36X_IPIPE_BASE        0x01C70800
+#define DM36X_ISIF_BASE         0x01C71000
+#define DM36X_IPIPEIF_BASE      0x01C71200
+#define DM36X_H3A_BASE          0x01C71400
+
+
 /** SD/MMC registers */
 #define DM36X_SD1_BASE      0x01D00000 /* MMC/SD1 */
 #define DM36X_SD0_BASE      0x01D11000 /* MMC/SD0 */
