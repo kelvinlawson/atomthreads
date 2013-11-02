@@ -166,7 +166,7 @@ low_level_init (void)
  * @retval ATOM_OK Success
  * @retval ATOM_ERROR Error
  */
-int archInstallISR (int int_vector, ISR_FUNC isr_func)
+int archIntInstallISR (int int_vector, ISR_FUNC isr_func)
 {
     int status;
 
