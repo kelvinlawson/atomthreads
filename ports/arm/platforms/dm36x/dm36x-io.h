@@ -230,7 +230,17 @@
 #define DM36X_INTC_PRI6         0x48
 #define DM36X_INTC_PRI7         0x4C
 /** Interrupt controller vector offsets */
-#define DM36X_INTC_VEC_TINT0    32
+#define DM36X_INTC_VEC_VPSSINT0     0
+#define DM36X_INTC_VEC_VPSSINT1     1
+#define DM36X_INTC_VEC_VPSSINT2     2
+#define DM36X_INTC_VEC_VPSSINT3     3
+#define DM36X_INTC_VEC_VPSSINT4     4
+#define DM36X_INTC_VEC_VPSSINT5     5
+#define DM36X_INTC_VEC_VPSSINT6     6
+#define DM36X_INTC_VEC_VPSSINT7     7
+#define DM36X_INTC_VEC_VPSSINT8     8
+#define DM36X_INTC_VEC_TINT0        32
+#define DM36X_INTC_MAX_VEC          63
 
 
 /** UART registers */

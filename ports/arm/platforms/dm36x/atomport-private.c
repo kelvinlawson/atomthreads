@@ -45,6 +45,20 @@ extern int main(void);
 #define TIMER0_REG(offset)      *(volatile uint32_t *)(DM36X_TIMER0_BASE + offset)
 #define INTC_REG(offset)        *(volatile uint32_t *)(DM36X_INTC_BASE + offset)
 
+/**
+ * Table of registered ISR handlers: pre-initialised
+ * with all disabled except the Atomthreads timer tick ISR.
+ */
+static ISR_FUNC isr_handlers[DM36X_INTC_MAX_VEC + 1] =
+{ NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
+  NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 
+  NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 
+  NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 
+  atomTimerTick, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 
+  NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 
+  NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 
+  NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL };
+
 
 /**
  * \b _mainCRTStartup
@@ -137,12 +151,47 @@ low_level_init (void)
 
 
 /**
+ * \b archISRInstall
+ *
+ * Register an interrupt handler to be called if a particular
+ * interrupt vector occurs.
+ *
+ * Note that all registered ISRs are called within atomIntEnter()
+ * and atomIntExit() calls, which means they can use OS services
+ * that do not block (e.g. atomSemPut()).
+ *
+ * @param[in] int_vector Interrupt vector to install handler for
+ * @param[in] isr_func Handler to call when specified int occurs
+ *
+ * @retval ATOM_OK Success
+ * @retval ATOM_ERROR Error
+ */
+int archISRInstall (int int_vector, ISR_FUNC isr_func)
+{
+    int status;
+
+    /* Check vector is valid */
+    if ((int_vector < 0) || (int_vector > DM36X_INTC_MAX_VEC))
+    {
+        /* Invalid vector number */
+        status = ATOM_ERROR;
+    }
+    else
+    {
+        /* Valid vector, install it in the ISR table */
+        isr_handlers[int_vector] = isr_func;
+        status = ATOM_OK;
+    }
+
+    return (status);
+}
+
+
+/**
  * \b __interrupt_dispatcher
  *
  * Interrupt dispatcher: determines the source of the IRQ and calls
  * the appropriate ISR.
- *
- * Currently only the OS system tick ISR is implemented.
  *
  * Note that any ISRs which call Atomthreads OS routines that can
  * cause rescheduling of threads must be surrounded by calls to
@@ -163,14 +212,14 @@ __interrupt_dispatcher (void)
     {
         /* Spurious interrupt */
         uart_write_halt ("Spurious IRQ\n");
-	}
-	else
-	{
+    }
+    else
+    {
         /* Translate from vector address to vector number */
         vector = (INTC_REG(DM36X_INTC_IRQENTRY) / 4) - 1;
 
-        /* TIMER0:12 tick interrupt (call Atomthreads timer tick ISR) */
-        if (vector == DM36X_INTC_VEC_TINT0)
+        /* Check vector number is valid */
+        if ((vector > 0) && (vector <= DM36X_INTC_MAX_VEC) && (isr_handlers[vector] != NULL))
         {
             /* Ack the interrupt immediately, could get scheduled out below */
             INTC_REG(((vector >= 32) ? DM36X_INTC_IRQ1 : DM36X_INTC_IRQ0)) = (1 << ((vector >= 32) ? (vector - 32) : vector));
@@ -181,8 +230,8 @@ __interrupt_dispatcher (void)
              */
             atomIntEnter();
 
-            /* Call the OS system tick handler */
-            atomTimerTick();
+            /* Call the registered ISR */
+            isr_handlers[vector]();
 
             /* Call the interrupt exit routine */
             atomIntExit(TRUE);
@@ -193,7 +242,7 @@ __interrupt_dispatcher (void)
             uart_write_halt ("Unexpected IRQ vector\n");
         }
 
-	}
+    }
 
 }
 

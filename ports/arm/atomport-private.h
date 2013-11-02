@@ -30,9 +30,12 @@
 #ifndef __ATOM_PORT_PRIVATE_H
 #define __ATOM_PORT_PRIVATE_H
 
+/* ISR handler prototype used for registration of interuppt handlers */
+typedef void (*ISR_FUNC)(void);
 
 /* Function prototypes */
 extern void archIRQHandler (void);
+extern int archISRInstall (int int_vector, ISR_FUNC isr_func);
 
 /* Platform-specific interrupt dispatcher called on receipt of IRQ */
 extern void __interrupt_dispatcher (void);
