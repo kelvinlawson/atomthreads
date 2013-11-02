@@ -151,7 +151,7 @@ low_level_init (void)
 
 
 /**
- * \b archISRInstall
+ * \b archIntInstallISR
  *
  * Register an interrupt handler to be called if a particular
  * interrupt vector occurs.
@@ -166,7 +166,7 @@ low_level_init (void)
  * @retval ATOM_OK Success
  * @retval ATOM_ERROR Error
  */
-int archISRInstall (int int_vector, ISR_FUNC isr_func)
+int archInstallISR (int int_vector, ISR_FUNC isr_func)
 {
     int status;
 
@@ -179,7 +179,52 @@ int archISRInstall (int int_vector, ISR_FUNC isr_func)
     else
     {
         /* Valid vector, install it in the ISR table */
-        isr_handlers[int_vector] = isr_func;
+    	isr_handlers[int_vector] = isr_func;
+        status = ATOM_OK;
+    }
+
+    return (status);
+}
+
+
+/**
+ * \b archIntEnable
+ *
+ * Enable/unmask an interrupt in the interrupt controller.
+ * @param[in] int_vector Interrupt vector to enable/disable
+ * @param[in] enable TRUE=enable, FALSE=disable
+ *
+ * @retval ATOM_OK Success
+ * @retval ATOM_ERROR Error
+ */
+int archIntEnable (int int_vector, int enable)
+{
+	CRITICAL_STORE;
+    int status;
+
+    /* Check vector is valid */
+    if ((int_vector < 0) || (int_vector > DM36X_INTC_MAX_VEC))
+    {
+        /* Invalid vector number */
+        status = ATOM_ERROR;
+    }
+    else
+    {
+        /* Valid vector, mask or unmask it using RMW */
+		CRITICAL_START();
+		if (enable)
+		{
+			/* Enable/unmask the interrupt */
+	    	INTC_REG(((int_vector >= 32) ? DM36X_INTC_EINT1 : DM36X_INTC_EINT0))
+					|= (1 << ((int_vector >= 32) ? (int_vector - 32) : int_vector));
+		}
+		else
+		{
+			/* Disable/mask the interrupt */
+	    	INTC_REG(((int_vector >= 32) ? DM36X_INTC_EINT1 : DM36X_INTC_EINT0))
+					|= (1 << ((int_vector >= 32) ? (int_vector - 32) : int_vector));
+		}
+		CRITICAL_END();
         status = ATOM_OK;
     }
 

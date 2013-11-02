@@ -60,7 +60,8 @@ extern int archUsleepCheckExpired (int32_t start_time, int32_t delay_usecs);
  * ISR handler registration (optional, not available on all ports)
  */
 typedef void (*ISR_FUNC)(void);
-extern int archISRInstall (int int_vector, ISR_FUNC isr_func);
+extern int archIntInstallISR (int int_vector, ISR_FUNC isr_func);
+extern int archIntEnable (int int_vector, int enable);
 
 /**
  *
