@@ -95,6 +95,9 @@ INTERRUPT_HANDLER(RTC_CSSLSE_IRQHandler, 4)
     /* Call the interrupt entry routine */
     atomIntEnter();
 
+    /* Clear the periodic wakeup unit flag */
+    RTC_ClearITPendingBit(RTC_IT_WUT);
+
     /* Call the interrupt exit routine */
     atomIntExit(TRUE);
 }

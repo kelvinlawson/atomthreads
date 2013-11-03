@@ -123,6 +123,7 @@ NEAR static uint8_t idle_thread_stack[IDLE_STACK_SIZE_BYTES];
 static void main_thread_func (uint32_t param);
 static void CLK_Config(void);
 static void GPIO_Config(void);
+static void RTC_Config(void);
 
 /**
  * \b main
@@ -147,6 +148,12 @@ NO_REG_SAVE void main ( void )
     CLK_Config();
     /* GPIO configuration */
     GPIO_Config();
+    /* RTC configuration */
+    RTC_Config();
+
+    /* RTC wake-up event every 500 ms (timer_step x (1023 + 1) )*/
+    RTC_SetWakeUpCounter(1023);
+    RTC_WakeUpCmd(ENABLE);
 
     /**
      * Note: to protect OS structures and data during initialisation,
@@ -223,6 +230,25 @@ static void GPIO_Config(void)
 
     /* Configure USART Rx as alternate function push-pull  (software pull up)*/
     GPIO_ExternalPullUpConfig(GPIOC, GPIO_Pin_2, ENABLE);
+}
+/**
+  * @brief  Configure RTC peripheral
+  * @param  None
+  * @retval None
+  */
+static void RTC_Config(void)
+{
+    /* Enable RTC clock */
+    CLK_RTCClockConfig(CLK_RTCCLKSource_LSI, CLK_RTCCLKDiv_1);
+
+    CLK_PeripheralClockConfig(CLK_Peripheral_RTC, ENABLE);
+
+    /* Configures the RTC wakeup timer_step = RTCCLK/16 = LSI/16 = 421.052 us */
+    RTC_WakeUpClockConfig(RTC_WakeUpClock_RTCCLK_Div16);
+
+    /* Enable wake up unit Interrupt */
+    RTC_ITConfig(RTC_IT_WUT, ENABLE);
+
 }
 /**
  * \b main_thread_func

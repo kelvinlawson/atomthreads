@@ -182,6 +182,7 @@
           <name>CCDefines</name>
           <state>ATOM_STACK_CHECKING</state>
           <state>STM8L15X_MD</state>
+          <state>ATOM_IDLE_TICK</state>
         </option>
         <option>
           <name>CCPreprocFile</name>
@@ -1845,6 +1846,9 @@
     </file>
     <file>
       <name>$PROJ_DIR$\..\STM8L15x_StdPeriph_Driver\src\stm8l15x_itc.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\STM8L15x_StdPeriph_Driver\src\stm8l15x_rtc.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\STM8L15x_StdPeriph_Driver\src\stm8l15x_tim1.c</name>
