@@ -499,4 +499,37 @@ static void atomTimerDelayCallback (POINTER cb_data)
          */
     }
 }
+/**
+ * \b atomTimerUpdateIdle
+ *
+ * This is an public function for idle thread to caculate sleep time
+ * this function has to be called 
+ *
+ * Find out maxmium sleep time
+ *
+ * @return idle ticks count
+ */
+#ifdef ATOM_IDLE_TICK
+uint32_t atomTimerGetIdle (void)
+{
+    ATOM_TIMER *next_ptr = timer_queue;;
+    uint32_t max_idle_ticks = -1;
 
+    /*
+     * Walk each timer's remaining ticks count and
+     * looking for minmium ticks count
+     */
+    while (next_ptr)
+    {
+        /*find out minimum ticks count*/
+        if(next_ptr->cb_ticks < max_idle_ticks)
+        {
+            max_idle_ticks = next_ptr->cb_ticks;
+        }
+        /* Move on to the next in the list */
+        next_ptr = next_ptr->next_timer;
+    }
+    /*update max idle ticks count*/
+    return max_idle_ticks;
+}
+#endif
