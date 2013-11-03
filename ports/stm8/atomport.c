@@ -32,6 +32,7 @@
  */
 
 #include <atom.h>
+#include "atomport.h"
 #include "atomport-private.h"
 #include "stm8l15x_tim1.h"
 #if defined(__RCSTM8__)
@@ -261,9 +262,16 @@ void archInitSystemTickTimer ( void )
  */
 void archIdleHandler ( uint32_t param )
 {
+    CRITICAL_STORE;
+    static uint32_t idleticks=0;
+
 #if defined(__IAR_SYSTEMS_ICC__)
+    CRITICAL_START();
+    idleticks = atomTimerGetIdle();
+    /* only when sleep time > 150us, we will consider HALT */
     /* wait for interrupt */
-    __wait_for_interrupt();
+    __wait_for_interrupt();   
+    CRITICAL_END();
 #endif
 }
 
