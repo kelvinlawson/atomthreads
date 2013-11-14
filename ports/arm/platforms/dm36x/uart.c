@@ -243,8 +243,8 @@ int uart_write (const char *ptr, int len)
         return 0;
     }
 
-    /* Block thread on private access to the UART */
-    if (atomOSStarted && atomMutexGet(&uart_mutex, 0) == ATOM_OK)
+    /* Block thread on private access to the UART unless at interrupt context */
+    if (atomOSStarted && ((atomCurrentContext() == NULL) || (atomMutexGet(&uart_mutex, 0) == ATOM_OK)))
     {
         /* Loop through all bytes to write */
         for (todo = 0; todo < len; todo++)
@@ -257,8 +257,8 @@ int uart_write (const char *ptr, int len)
             uart_write_char(*ptr++);
         }
 
-        /* Return mutex access */
-        if (atomOSStarted)
+        /* Return mutex access if not at interrupt context */
+        if (atomOSStarted && (atomCurrentContext() != NULL))
         {
             atomMutexPut(&uart_mutex);
         }
