@@ -139,6 +139,23 @@
 #define DM36X_PINMUX4_GIO27      0
 
 
+/** PLL registers */
+#define DM36X_PLLC1_BASE         0x01C40800 /* PLLC1 base registers */
+#define DM36X_PLLC2_BASE         0x01C40C00 /* PLLC2 base registers */
+#define DM36X_PLLC_PLLM          0x110
+#define DM36X_PLLC_PREDIV        0x114
+#define DM36X_PLLC_PLLDIV1       0x118
+#define DM36X_PLLC_PLLDIV2       0x11C
+#define DM36X_PLLC_PLLDIV3       0x120
+#define DM36X_PLLC_POSTDIV       0x128
+#define DM36X_PLLC_PLLDIV4       0x160
+#define DM36X_PLLC_PLLDIV5       0x164
+#define DM36X_PLLC_PLLDIV6       0x168
+#define DM36X_PLLC_PLLDIV7       0x16C
+#define DM36X_PLLC_PLLDIV8       0x170
+#define DM36X_PLLC_PLLDIV9       0x174
+
+
 /** I2C registers */
 #define DM36X_I2C_BASE          0x01C21000 /* I2C */
 #define DM36X_I2C_ICOAR         0x00
