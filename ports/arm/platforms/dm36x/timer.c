@@ -135,7 +135,7 @@ void archUsleep (int32_t microsecs)
 /**
  * \b archUsleepStart
  *
- * Start a usec timer session.
+ * Start a usleep timer session.
  *
  * @retval Start time for use in subsequent archUsleepCheckExpired() calls
  *
@@ -156,7 +156,7 @@ int32_t archUsleepStart (void)
 /**
  * \b archUsleepCheckExpired
  *
- * Test whether a usec timer session has expired.
+ * Test whether a usleep timer session has expired.
  *
  * @param[in] start_time Beginning of timer expiry check session (returned by archUsleepStart())
  * @param[in] delay_usecs Number of microsecs to check have expired after start_timE
@@ -175,4 +175,45 @@ int archUsleepCheckExpired (int32_t start_time, int32_t delay_usecs)
     /* Check if timer has expired */
 	status = (((int32_t)TIMER_REG(DM36X_TIMER_TIM12) - start_time) < delay_timer_ticks) ? 0 : 1;
 	return (status);
+}
+
+
+/**
+ * \b archUsecStart
+ *
+ * Start a usec timer session for use with archUsecDiff() layer.
+ *
+ * @retval Start time for use in subsequent archUsecDiff() calls
+ *
+ */
+int32_t archUsecStart (void)
+{
+    /* Check we are initialised */
+    if (initialised == FALSE)
+    {
+        timer_init();
+    }
+
+    /* Return the current 24MHz count */
+    return (TIMER_REG(DM36X_TIMER_TIM12));
+}
+
+
+/**
+ * \b archUsecDiff
+ *
+ * Calculate the usecs that have expired since the passed "start_time".
+ *
+ * The 24MHz timer rolls over every 178 seconds. The use of a signed
+ * integer means that this cannot be used to measure periods over 89 seconds.
+ *
+ * @param[in] start_time Beginning of time difference session (returned by archUsecStart())
+ *
+ * @retval Number of microseconds expired since start_time
+ *
+ */
+int32_t archUsecDiff (int32_t start_time)
+{
+    /* Translate diff in 24MHz ticks to usecs */
+	return (((int32_t)TIMER_REG(DM36X_TIMER_TIM12) - start_time) / (TIMER_CLK / 1000000));
 }

@@ -55,6 +55,8 @@
 extern void archUsleep (int32_t microsecs);
 extern int32_t archUsleepStart (void);
 extern int archUsleepCheckExpired (int32_t start_time, int32_t delay_usecs);
+extern int32_t archUsecStart (void);
+extern int32_t archUsecDiff (int32_t start_time);
 
 /**
  * ISR handler registration (optional, not available on all ports)
