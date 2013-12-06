@@ -48,6 +48,7 @@
 #define DM36X_SYSTEM_PINMUX2    0x08
 #define DM36X_SYSTEM_PINMUX3    0x0C
 #define DM36X_SYSTEM_PINMUX4    0x10
+#define DM36X_SYSTEM_PERICLKCTL 0x48
 /* PINMUX0 register bitfields */
 #define DM36X_PINMUX0_MMCSD0     24
 #define DM36X_PINMUX0_GIO49      23
