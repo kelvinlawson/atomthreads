@@ -149,6 +149,7 @@
 #define DM36X_PLLC_PLLDIV2       0x11C
 #define DM36X_PLLC_PLLDIV3       0x120
 #define DM36X_PLLC_POSTDIV       0x128
+#define DM36X_PLLC_CLKEN         0x148
 #define DM36X_PLLC_PLLDIV4       0x160
 #define DM36X_PLLC_PLLDIV5       0x164
 #define DM36X_PLLC_PLLDIV6       0x168
