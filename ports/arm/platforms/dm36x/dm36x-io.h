@@ -143,13 +143,16 @@
 /** PLL registers */
 #define DM36X_PLLC1_BASE         0x01C40800 /* PLLC1 base registers */
 #define DM36X_PLLC2_BASE         0x01C40C00 /* PLLC2 base registers */
+#define DM36X_PLLC_OCSEL         0x104
 #define DM36X_PLLC_PLLM          0x110
 #define DM36X_PLLC_PREDIV        0x114
 #define DM36X_PLLC_PLLDIV1       0x118
 #define DM36X_PLLC_PLLDIV2       0x11C
 #define DM36X_PLLC_PLLDIV3       0x120
+#define DM36X_PLLC_OSCDIV1       0x124
 #define DM36X_PLLC_POSTDIV       0x128
-#define DM36X_PLLC_CLKEN         0x148
+#define DM36X_PLLC_CKEN          0x148
+#define DM36X_PLLC_CKSTAT        0x14C
 #define DM36X_PLLC_PLLDIV4       0x160
 #define DM36X_PLLC_PLLDIV5       0x164
 #define DM36X_PLLC_PLLDIV6       0x168
