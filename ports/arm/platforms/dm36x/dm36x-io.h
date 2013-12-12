@@ -163,8 +163,11 @@
 
 /** Power and sleep controller registers */
 #define DM36X_PSC_BASE          0x01C41000 /* PSC registers */
+#define DM36X_PSC_EPCPR         0x070
 #define DM36X_PSC_PTCMD         0x120
 #define DM36X_PSC_PTSTAT        0x128
+#define DM36X_PSC_PDSTAT        0x200
+#define DM36X_PSC_PDCTL1        0x304
 #define DM36X_PSC_MDSTAT_I2C    0x800 + (18 * 4)
 #define DM36X_PSC_MDCTL_I2C     0xA00 + (18 * 4)
 
