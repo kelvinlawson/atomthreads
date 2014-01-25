@@ -199,16 +199,9 @@ NO_REG_SAVE void main ( void )
   */
 static void GPIO_Config(void)
 {
-    /* Configure GPIO for flashing STM8L mini system board GPIO B0 */
-    GPIO_DeInit(GPIOB);
-    GPIO_Init(GPIOB, GPIO_PIN_0, GPIO_MODE_OUT_PP_LOW_FAST);
-
-
-    /* Configure USART Tx as alternate function push-pull  (software pull up)*/
-    GPIO_ExternalPullUpConfig(GPIOC, GPIO_PIN_3, ENABLE);
-
-    /* Configure USART Rx as alternate function push-pull  (software pull up)*/
-    GPIO_ExternalPullUpConfig(GPIOC, GPIO_PIN_2, ENABLE);
+    /* Configure GPIO for flashing STM8S mini system board GPIO E5 */
+    GPIO_DeInit(GPIOE);
+    GPIO_Init(GPIOE, GPIO_PIN_5, GPIO_MODE_OUT_PP_LOW_FAST);
 }
 
 /**
@@ -273,8 +266,8 @@ static void main_thread_func (uint32_t param)
     /* Test finished, flash slowly for pass, fast for fail */
     while (1)
     {
-        /* Toggle LED on pin B0 (STM8L mini board-specific) */
-        GPIO_WriteReverse(GPIOB, GPIO_PIN_0);
+        /* Toggle LED on pin E5 (STM8S mini board-specific) */
+        GPIO_WriteReverse(GPIOE, GPIO_PIN_5);
 
         /* Sleep then toggle LED again */
         atomTimerDelay(SYSTEM_TICKS_PER_SEC);

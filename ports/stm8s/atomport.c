@@ -28,7 +28,7 @@
  */
 /*
  * Copyright (c) 2013 Wei Shuai <cpuwolf@gmail.com> 
- * Modify to adapt STM8L
+ * Modify to adapt STM8S
  */
 
 #include <atom.h>

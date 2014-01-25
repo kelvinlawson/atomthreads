@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2013, Wei Shuai <cpuwolf@gmail.com>. All rights reserved.
  *
- * STM8L151K4T6 only supports UART1
+ * STM8S105 only supports UART2
  */
 #include <stdio.h>
 #include <stddef.h>
