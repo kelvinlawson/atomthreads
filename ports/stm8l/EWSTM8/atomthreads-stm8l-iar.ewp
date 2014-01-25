@@ -1693,8 +1693,8 @@
           </option>
           <option>
             <name>CCIncludePath2</name>
-            <state>../ports/stm8</state>
-            <state>../ports/stm8/stm8s-periphs</state>
+            <state>../ports/stm8l</state>
+            <state>../ports/stm8l/stm8s-periphs</state>
           </option>
           <option>
             <name>CCStdIncCheck</name>
@@ -1858,7 +1858,7 @@
     </file>
   </group>
   <group>
-    <name>stm8</name>
+    <name>stm8l</name>
     <file>
       <name>$PROJ_DIR$\atomport-asm-iar.s</name>
     </file>
