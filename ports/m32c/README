@@ -39,10 +39,22 @@ FILES IN THE m32c port folder
 
 PREREQUISITES
 
-The port works out-of-the-box with the Renesas HEW tools. 
+The port works with the Renesas HEW tools. 
 Tools: 
 *High-performance Embedded Workshop (HEW) V 4.09.00.007
 *M3T-NC308WA compiler.
+
+Since Renesas HEW only works with absolute paths, if you cloned this repository
+to c:  the code will compile and load without doing any extra steps.
+If you cloned to another different path do the following:
+-Click on Build->Renesas M32C standard toolchain, a window shall show up.
+-On the C tab, select:
+    Category: Source, 
+    Show entries For: Include file directories
+Click add, and add the following paths:
+    -\your clone path\atomthreads\kernel
+    -\your clone path\atomthreads\tests
+    -\your clone path\atomthreads\ports\m32c
 
 ---------------------------------------------------------------------------
 
@@ -51,7 +63,7 @@ BUILDING AND PROGRAMMING TO THE TARGET DEVICE
 In this port the target is a simulator. But you can also change the target and
 download the code to a development kit.
 Open the file:
-\atomthreads-master\ports\m32c\hew_tests\hew_tst_sem1\hew_tst_sem1.hws
+\atomthreads\ports\m32c\hew_tests\hew_tst_sem1\hew_tst_sem1.hws
 
 Click Ok on the Init window 
 Click Build->Build All
@@ -68,25 +80,25 @@ the led can show up.
 *Virtual Timer Interrupt:
  The virtual interrupt is set in View->CPU->I/O Timing Setting.
  Defaults for this port: 
-	-Interval: 10 msec
-	-Vector 23 (timer B2)
-	-Priority: 1 (Possible values are 0-7)
+    -Interval: 10 msec
+    -Vector 23 (timer B2)
+    -Priority: 1 (Possible values are 0-7)
 
 *Virtual UART:
  The virtual UART is set in View->CPU->OutputPort Then click on the "Set"
  icon.
  Defaults for this port:
- 	-Printf - UART1
- 	-Output Format: 
- 		*Window TEXT
- 		*File TEXT 		
+    -Printf - UART1
+    -Output Format: 
+        *Window TEXT
+        *File TEXT      
 
 *Virtual LED:
  The virtual LED is set in View->Graphic->GUI I/O
  Click on the folder icon that says "Load" when you do a mouseover. Open the
  file called led.pnl
  The path of the led.pnl file is: 
- \atomthreads-master\ports\m32c\hew_tests\led.pnl
+ \atomthreads\ports\m32c\hew_tests\led.pnl
 
 ---------------------------------------------------------------------------
 
@@ -106,7 +118,7 @@ sem1.c and then add any other test file to the project.
 
 
 Example 1. Test results with a breakpoint:
--Open: \atomthreads-master\ports\m32c\hew_tests\hew_tst_sem1\hew_tst_sem1.hws
+-Open: \atomthreads\ports\m32c\hew_tests\hew_tst_sem1\hew_tst_sem1.hws
 -Click Ok on the Init window 
 -Click Build->Build All
 -The code will automatically be loaded into the simulator target.
@@ -115,13 +127,13 @@ Example 1. Test results with a breakpoint:
  UART, test result output.
 
 Example 2. Test results with a virtual led flashing:
--Open: \atomthreads-master\ports\m32c\hew_tests\hew_tst_sem1\hew_tst_sem1.hws
+-Open: \atomthreads\ports\m32c\hew_tests\hew_tst_sem1\hew_tst_sem1.hws
 -Click Ok on the Init window 
 -Click Build->Build All
 -The code will automatically be loaded into the simulator target.
 -On the View->Graphic->GUI I/O window click on the folder icon called "Load"
  and open the led.pnl file. The path of the led.pnl file is: 
- \atomthreads-master\ports\m32c\hew_tests\led.pnl
+ \atomthreads\ports\m32c\hew_tests\led.pnl
 -Click on Debug->Reset Go. When the test finishes you shall see the led flash.
 -When the led is flashing click "Stop" in the simulator and the virtual UART 
  output will print the result of the test.
