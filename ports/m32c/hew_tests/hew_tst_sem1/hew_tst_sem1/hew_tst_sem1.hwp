@@ -1,0 +1,272 @@
+[HIMDBVersion]
+2.0
+[DATABASE_VERSION]
+"2.8" 
+[PROJECT_DETAILS]
+"hew_tst_sem1" "E:\projects\atomthreads pull request\atomthreads-master\ports\m32c\hew_tests\hew_tst_sem1\hew_tst_sem1" "E:\projects\atomthreads pull request\atomthreads-master\ports\m32c\hew_tests\hew_tst_sem1\hew_tst_sem1\hew_tst_sem1.hwp" "M16C/80,M32C" "Renesas M32C Standard" "C source startup Application" "M32C/80" "M32C/80" 
+[INFORMATION]
+"No project information available" 
+[TOOL_CHAIN]
+"Renesas M32C Standard Toolchain" "5.42.00" 
+[CONFIGURATIONS]
+"Debug" "E:\projects\atomthreads pull request\atomthreads-master\ports\m32c\hew_tests\hew_tst_sem1\hew_tst_sem1\Debug" 
+"Debug_M32C_Simulator" "E:\projects\atomthreads pull request\atomthreads-master\ports\m32c\hew_tests\hew_tst_sem1\hew_tst_sem1\Debug_M32C_Simulator" 
+"Release" "E:\projects\atomthreads pull request\atomthreads-master\ports\m32c\hew_tests\hew_tst_sem1\hew_tst_sem1\Release" 
+[BUILD_PHASES]
+"Renesas M32C Assembler" 1 
+"Renesas M32C C Compiler" 1 
+"Renesas M32C Configurator" 1 
+"Renesas M32C Librarian" 1 
+"Renesas M32C Linker" 1 
+"Renesas M32C Stype Converter" 1 
+[TOOL_ENVIRONMENT]
+[EXTENSIONS]
+"Absolute file" "X30" 
+"Absolute list file" "ALS" 
+"Assembler error tag file" "ATG" 
+"Assembly include file" "INC" 
+"Assembly list file" "LST" 
+"Assembly source file" "A30" 
+"Branch Information file" "JIN" 
+"C header file" "H" 
+"C source file" "C" 
+"Configuration file" "CFG" 
+"Cross reference file" "XRF" 
+"Hex file" "HEX" 
+"ID file" "ID" 
+"Library file" "LIB" 
+"Library list file" "LLS" 
+"Linkage error tag file" "LTG" 
+"Linkage map file" "MAP" 
+"Preprocessed C source file" "I" 
+"Relocatable file" "R30" 
+"S-Record file" "MOT" 
+"Systemcall file" "MRC" 
+[FILE_GROUPS]
+"Absolute file" "BIN" "NONE" "" 
+"Absolute list file" "TEXT" "EDITOR" "" 
+"Assembler error tag file" "TEXT" "EDITOR" "" 
+"Assembly include file" "TEXT" "EDITOR" "" 
+"Assembly list file" "TEXT" "EDITOR" "" 
+"Assembly source file" "TEXT" "EDITOR" "" 
+"Branch Information file" "TEXT" "EDITOR" "" 
+"C header file" "TEXT" "EDITOR" "" 
+"C source file" "TEXT" "EDITOR" "" 
+"Configuration file" "TEXT" "EDITOR" "" 
+"Cross reference file" "TEXT" "EDITOR" "" 
+"Hex file" "TEXT" "EDITOR" "" 
+"ID file" "TEXT" "EDITOR" "" 
+"Library file" "BIN" "NONE" "" 
+"Library list file" "TEXT" "EDITOR" "" 
+"Linkage error tag file" "TEXT" "EDITOR" "" 
+"Linkage map file" "TEXT" "EDITOR" "" 
+"Preprocessed C source file" "TEXT" "EDITOR" "" 
+"Relocatable file" "BIN" "NONE" "" 
+"S-Record file" "TEXT" "EDITOR" "" 
+"Systemcall file" "TEXT" "EDITOR" "" 
+[ASSOCIATED_APPLICATIONS]
+[TOOLCHAIN_PHASE]
+"Renesas M32C Assembler" 
+"Renesas M32C C Compiler" 
+"Renesas M32C Configurator" 
+"Renesas M32C Librarian" 
+"Renesas M32C Linker" 
+"Renesas M32C Stype Converter" 
+[UTILITY_PHASE]
+[CUSTOM_PHASES]
+[CUSTOM_PHASE_INPUT_GROUP]
+[CUSTOM_PHASE_OUTPUT_SYNTAX]
+[BUILD_ORDER]
+"Renesas M32C C Compiler" 1 
+"Renesas M32C Assembler" 1 
+"Renesas M32C Linker" 1 
+"Renesas M32C Stype Converter" 1 
+"Renesas M32C Librarian" 0 
+"Renesas M32C Configurator" 0 
+[BUILD_PHASE_DETAILS]
+"Renesas M32C Assembler" "Assembly source file" 1 
+"Renesas M32C C Compiler" "C source file" 1 
+"Renesas M32C Configurator" "Configuration file" 0 
+"Renesas M32C Librarian" "Relocatable file" 0 
+"Renesas M32C Linker" "Relocatable file" 0 
+"Renesas M32C Stype Converter" "Absolute file" 0 
+[BUILD_FILE_ORDER_Assembly source file]
+"Renesas M32C Assembler" 1 
+[BUILD_FILE_ORDER_C source file]
+"Renesas M32C C Compiler" 1 
+[SCRAP]
+"Project Generator Setup File" "" 
+[MAPPINGS]
+"Absolute file" "Renesas M32C Stype Converter" "Renesas M32C Linker" 
+"Assembly source file" "Renesas M32C Assembler" "Renesas M32C C Compiler" 
+"Relocatable file" "Renesas M32C Librarian" "Renesas M32C Assembler" 
+"Relocatable file" "Renesas M32C Librarian" "Renesas M32C C Compiler" 
+"Relocatable file" "Renesas M32C Linker" "Renesas M32C Assembler" 
+"Relocatable file" "Renesas M32C Linker" "Renesas M32C C Compiler" 
+[PROJECT_FILES]
+"E:\projects\atomthreads pull request\atomthreads-master\kernel\atom.h" "User" "C header file" 2 
+"E:\projects\atomthreads pull request\atomthreads-master\kernel\atomkernel.c" "User" "C source file" 2 
+"E:\projects\atomthreads pull request\atomthreads-master\kernel\atommutex.c" "User" "C source file" 2 
+"E:\projects\atomthreads pull request\atomthreads-master\kernel\atommutex.h" "User" "C header file" 2 
+"E:\projects\atomthreads pull request\atomthreads-master\kernel\atomport-template.h" "User" "C header file" 2 
+"E:\projects\atomthreads pull request\atomthreads-master\kernel\atomqueue.c" "User" "C source file" 2 
+"E:\projects\atomthreads pull request\atomthreads-master\kernel\atomqueue.h" "User" "C header file" 2 
+"E:\projects\atomthreads pull request\atomthreads-master\kernel\atomsem.c" "User" "C source file" 2 
+"E:\projects\atomthreads pull request\atomthreads-master\kernel\atomsem.h" "User" "C header file" 2 
+"E:\projects\atomthreads pull request\atomthreads-master\kernel\atomtimer.c" "User" "C source file" 2 
+"E:\projects\atomthreads pull request\atomthreads-master\kernel\atomtimer.h" "User" "C header file" 2 
+"E:\projects\atomthreads pull request\atomthreads-master\ports\m32c\atomport-asm.A30" "User" "Assembly source file" 2 
+"E:\projects\atomthreads pull request\atomthreads-master\ports\m32c\atomport-tests.h" "User" "C header file" 2 
+"E:\projects\atomthreads pull request\atomthreads-master\ports\m32c\atomport.c" "User" "C source file" 2 
+"E:\projects\atomthreads pull request\atomthreads-master\ports\m32c\atomport.h" "User" "C header file" 2 
+"E:\projects\atomthreads pull request\atomthreads-master\ports\m32c\hew_tests\hew_tst_sem1\hew_tst_sem1\fvector.c" "User" "C source file" 2 
+"E:\projects\atomthreads pull request\atomthreads-master\ports\m32c\hew_tests\hew_tst_sem1\hew_tst_sem1\initsct.c" "User" "C source file" 2 
+"E:\projects\atomthreads pull request\atomthreads-master\ports\m32c\hew_tests\hew_tst_sem1\hew_tst_sem1\intprg.c" "User" "C source file" 2 
+"E:\projects\atomthreads pull request\atomthreads-master\ports\m32c\hew_tests\hew_tst_sem1\hew_tst_sem1\resetprg.c" "User" "C source file" 2 
+"E:\projects\atomthreads pull request\atomthreads-master\ports\m32c\stdint.h" "User" "C header file" 2 
+"E:\projects\atomthreads pull request\atomthreads-master\ports\m32c\tests-main.c" "User" "C source file" 2 
+"E:\projects\atomthreads pull request\atomthreads-master\tests\atomtests.h" "User" "C header file" 2 
+"E:\projects\atomthreads pull request\atomthreads-master\tests\sem1.c" "User" "C source file" 2 
+[FOLDER]
+"Assembly source file" "Assembly source file" 
+"C header file" "C header file" 
+"C source file" "C source file" 
+[GENERAL_DATA_PROJECT]
+"USE_CUSTOM_LINKAGE_ORDER" "0" 
+[ON_DEMAND_COMPONENTS_LOADED]
+[SYNC_SESSION_NAMES]
+[SESSIONS]
+"DefaultSession" "E:\projects\atomthreads pull request\atomthreads-master\ports\m32c\hew_tests\hew_tst_sem1\hew_tst_sem1\DefaultSession.hsf" 0 
+"SessionM32C_Simulator" "E:\projects\atomthreads pull request\atomthreads-master\ports\m32c\hew_tests\hew_tst_sem1\hew_tst_sem1\SessionM32C_Simulator.hsf" 0 
+[GENERAL_DATA_SESSION_DefaultSession]
+[GENERAL_DATA_SESSION_SessionM32C_Simulator]
+[OPTIONS_Debug_Renesas M32C Assembler]
+"Assembly source file" "00ab06e22b33fc10" 2 
+"E:\projects\atomthreads pull request\atomthreads-master\ports\m32c\atomport-asm.A30" "08e4f9442b33fc10" 2 
+[OPTIONS_Debug_Renesas M32C C Compiler]
+"C source file" "0d0c6cf52b33fc10" 1 
+"E:\projects\atomthreads pull request\atomthreads-master\kernel\atomkernel.c" "0d0c6cf52b33fc10" 1 
+"E:\projects\atomthreads pull request\atomthreads-master\kernel\atommutex.c" "0d0c6cf52b33fc10" 1 
+"E:\projects\atomthreads pull request\atomthreads-master\kernel\atomqueue.c" "0d0c6cf52b33fc10" 1 
+"E:\projects\atomthreads pull request\atomthreads-master\kernel\atomsem.c" "0d0c6cf52b33fc10" 1 
+"E:\projects\atomthreads pull request\atomthreads-master\kernel\atomtimer.c" "0d0c6cf52b33fc10" 1 
+"E:\projects\atomthreads pull request\atomthreads-master\ports\m32c\atomport.c" "0d0c6cf52b33fc10" 1 
+"E:\projects\atomthreads pull request\atomthreads-master\ports\m32c\hew_tests\hew_tst_sem1\hew_tst_sem1\fvector.c" "0d0c6cf52b33fc10" 1 
+"E:\projects\atomthreads pull request\atomthreads-master\ports\m32c\hew_tests\hew_tst_sem1\hew_tst_sem1\initsct.c" "0d0c6cf52b33fc10" 1 
+"E:\projects\atomthreads pull request\atomthreads-master\ports\m32c\hew_tests\hew_tst_sem1\hew_tst_sem1\intprg.c" "0d0c6cf52b33fc10" 1 
+"E:\projects\atomthreads pull request\atomthreads-master\ports\m32c\hew_tests\hew_tst_sem1\hew_tst_sem1\resetprg.c" "0d0c6cf52b33fc10" 1 
+"E:\projects\atomthreads pull request\atomthreads-master\ports\m32c\tests-main.c" "0d0c6cf52b33fc10" 1 
+"E:\projects\atomthreads pull request\atomthreads-master\tests\sem1.c" "0d0c6cf52b33fc10" 1 
+[OPTIONS_Debug_Renesas M32C Configurator]
+"Single Shot" "03825b772b33fc10" 6 
+[OPTIONS_Debug_Renesas M32C Librarian]
+"Single Shot" "03825b772b33fc10" 5 
+[OPTIONS_Debug_Renesas M32C Linker]
+"Single Shot" "0df19b772b33fc10" 3 
+[OPTIONS_Debug_Renesas M32C Stype Converter]
+"Single Shot" "0df19b772b33fc10" 4 
+[OPTIONS_Debug]
+"" 0 
+"[V|VERSION|1] [B|COMMAND|1] [S|SPEC|UITRON3] " 6 
+"[V|VERSION|1] [B|DATALENGTH|1] [S|OUTPUT|^"$(CONFIGDIR)\$(PROJECTNAME).mot^"] " 4 
+"[V|VERSION|1] [B|STARTUPLINK|1] [B|DEBUG|1] [B|MAP-S|1] [S|OUTPUT|^"$(CONFIGDIR)\$(PROJECTNAME).x30^"] [S|INPUTLIBRARY|^"L=nc382lib^"] [S|CPU|M32C80] [S|SECTION_ORDER|^"data_SE=400,bss_SE,data_SO,bss_SO,data_NE,bss_NE,data_NO,bss_NO,stack,istack,heap_NE,rom_NE,rom_NO,data_6E=010000,bss_6E,data_6O,bss_6O,data_FE,bss_FE,data_FO,bss_FO,rom_FE=0fe0000,rom_FO,data_SEI,data_SOI,data_6EI,data_6OI,data_NEI,data_NOI,data_FEI,data_FOI,switch_table,program,interrupt,program_S,vector=0fffd00^"] " 3 
+"[V|VERSION|1] [S|LIST|LM] [B|INSPECTOR|1] [S|OUTPUTPATH|^"$(CONFIGDIR)\$(FILELEAF).r30^"] [S|CPU|M32C80] " 2 
+"[V|VERSION|1] [S|MODE|CREATE|] [S|OUTPUT|^"$(CONFIGDIR)\$(PROJECTNAME).lib^"] " 5 
+"[V|VERSION|2] [S|INCLUDE|^"E:\projects\atomthreads-master\kernel^"|^"E:\projects\atomthreads-master\tests^"|^"E:\projects\atomthreads-master\ports\m32c^"] [S|DEFINE|__STANDARD_IO__|__STACKSIZE__=0X800|__ISTACKSIZE__=0X300|VECTOR_ADR=0x0fffd00|ATOM_STACK_CHECKING|TESTS_LOG_STACK_USAGE] [S|OUTPUT|OBJECTCODE] [B|INSPECTOR|1] [S|OUTPUTPATH|^"$(CONFIGDIR)\$(FILELEAF).r30^"] [S|CPU|M32C80]
+" 1 
+[EXCLUDED_FILES_Debug]
+[LINKAGE_ORDER_Debug]
+[GENERAL_DATA_CONFIGURATION_Debug]
+[OPTIONS_Debug_M32C_Simulator_Renesas M32C Assembler]
+"Assembly source file" "00ab06e22b33fc10" 2 
+"E:\projects\atomthreads pull request\atomthreads-master\ports\m32c\atomport-asm.A30" "08e4f9442b33fc10" 2 
+[OPTIONS_Debug_M32C_Simulator_Renesas M32C C Compiler]
+"C source file" "00ab06e22b33fc10" 1 
+"E:\projects\atomthreads pull request\atomthreads-master\kernel\atomkernel.c" "0c3547e32b33fc10" 1 
+"E:\projects\atomthreads pull request\atomthreads-master\kernel\atommutex.c" "0c3547e32b33fc10" 1 
+"E:\projects\atomthreads pull request\atomthreads-master\kernel\atomqueue.c" "0c3547e32b33fc10" 1 
+"E:\projects\atomthreads pull request\atomthreads-master\kernel\atomsem.c" "0c3547e32b33fc10" 1 
+"E:\projects\atomthreads pull request\atomthreads-master\kernel\atomtimer.c" "0c3547e32b33fc10" 1 
+"E:\projects\atomthreads pull request\atomthreads-master\ports\m32c\atomport.c" "08e4f9442b33fc10" 1 
+"E:\projects\atomthreads pull request\atomthreads-master\ports\m32c\hew_tests\hew_tst_sem1\hew_tst_sem1\fvector.c" "00ab06e22b33fc10" 1 
+"E:\projects\atomthreads pull request\atomthreads-master\ports\m32c\hew_tests\hew_tst_sem1\hew_tst_sem1\initsct.c" "00ab06e22b33fc10" 1 
+"E:\projects\atomthreads pull request\atomthreads-master\ports\m32c\hew_tests\hew_tst_sem1\hew_tst_sem1\intprg.c" "00ab06e22b33fc10" 1 
+"E:\projects\atomthreads pull request\atomthreads-master\ports\m32c\hew_tests\hew_tst_sem1\hew_tst_sem1\resetprg.c" "00ab06e22b33fc10" 1 
+"E:\projects\atomthreads pull request\atomthreads-master\ports\m32c\tests-main.c" "08e4f9442b33fc10" 1 
+"E:\projects\atomthreads pull request\atomthreads-master\tests\sem1.c" "004e82b42b33fc10" 1 
+[OPTIONS_Debug_M32C_Simulator_Renesas M32C Configurator]
+"Single Shot" "03825b772b33fc10" 6 
+[OPTIONS_Debug_M32C_Simulator_Renesas M32C Librarian]
+"Single Shot" "03825b772b33fc10" 5 
+[OPTIONS_Debug_M32C_Simulator_Renesas M32C Linker]
+"Single Shot" "0df19b772b33fc10" 3 
+[OPTIONS_Debug_M32C_Simulator_Renesas M32C Stype Converter]
+"Single Shot" "0df19b772b33fc10" 4 
+[OPTIONS_Debug_M32C_Simulator]
+"" 0 
+"[V|VERSION|1] [B|COMMAND|1] [S|SPEC|UITRON3] " 6 
+"[V|VERSION|1] [B|DATALENGTH|1] [S|OUTPUT|^"$(CONFIGDIR)\$(PROJECTNAME).mot^"] " 4 
+"[V|VERSION|1] [B|STARTUPLINK|1] [B|DEBUG|1] [B|MAP-S|1] [S|OUTPUT|^"$(CONFIGDIR)\$(PROJECTNAME).x30^"] [S|INPUTLIBRARY|^"L=nc382lib^"] [S|CPU|M32C80] [S|SECTION_ORDER|^"data_SE=400,bss_SE,data_SO,bss_SO,data_NE,bss_NE,data_NO,bss_NO,stack,istack,heap_NE,rom_NE,rom_NO,data_6E=010000,bss_6E,data_6O,bss_6O,data_FE,bss_FE,data_FO,bss_FO,rom_FE=0fe0000,rom_FO,data_SEI,data_SOI,data_6EI,data_6OI,data_NEI,data_NOI,data_FEI,data_FOI,switch_table,program,interrupt,program_S,vector=0fffd00^"] " 3 
+"[V|VERSION|1] [S|LIST|L|M] [B|INSPECTOR|1] [S|OUTPUTPATH|^"$(CONFIGDIR)\$(FILELEAF).r30^"] [S|CPU|M32C80] " 2 
+"[V|VERSION|1] [S|MODE|CREATE|] [S|OUTPUT|^"$(CONFIGDIR)\$(PROJECTNAME).lib^"] " 5 
+"[V|VERSION|1] [S|OUTPUT|OBJECTCODE] [S|OUTPUTPATH|^"$(CONFIGDIR)\$(FILELEAF).r30^"] [B|INSPECTOR|1] [S|CPU|M32C80] [S|DEFINE|__STANDARD_IO__]   [S|DEFINE|__STACKSIZE__=0X800] [S|DEFINE|__ISTACKSIZE__=0X300]  [S|DEFINE|VECTOR_ADR=0x0fffd00] " 1 
+[EXCLUDED_FILES_Debug_M32C_Simulator]
+[LINKAGE_ORDER_Debug_M32C_Simulator]
+[GENERAL_DATA_CONFIGURATION_Debug_M32C_Simulator]
+[OPTIONS_Release_Renesas M32C Assembler]
+"Assembly source file" "00ab06e22b33fc10" 2 
+"E:\projects\atomthreads pull request\atomthreads-master\ports\m32c\atomport-asm.A30" "08e4f9442b33fc10" 2 
+[OPTIONS_Release_Renesas M32C C Compiler]
+"C source file" "00ab06e22b33fc10" 1 
+"E:\projects\atomthreads pull request\atomthreads-master\kernel\atomkernel.c" "0c3547e32b33fc10" 1 
+"E:\projects\atomthreads pull request\atomthreads-master\kernel\atommutex.c" "0c3547e32b33fc10" 1 
+"E:\projects\atomthreads pull request\atomthreads-master\kernel\atomqueue.c" "0c3547e32b33fc10" 1 
+"E:\projects\atomthreads pull request\atomthreads-master\kernel\atomsem.c" "0c3547e32b33fc10" 1 
+"E:\projects\atomthreads pull request\atomthreads-master\kernel\atomtimer.c" "0c3547e32b33fc10" 1 
+"E:\projects\atomthreads pull request\atomthreads-master\ports\m32c\atomport.c" "08e4f9442b33fc10" 1 
+"E:\projects\atomthreads pull request\atomthreads-master\ports\m32c\hew_tests\hew_tst_sem1\hew_tst_sem1\fvector.c" "00ab06e22b33fc10" 1 
+"E:\projects\atomthreads pull request\atomthreads-master\ports\m32c\hew_tests\hew_tst_sem1\hew_tst_sem1\initsct.c" "00ab06e22b33fc10" 1 
+"E:\projects\atomthreads pull request\atomthreads-master\ports\m32c\hew_tests\hew_tst_sem1\hew_tst_sem1\intprg.c" "00ab06e22b33fc10" 1 
+"E:\projects\atomthreads pull request\atomthreads-master\ports\m32c\hew_tests\hew_tst_sem1\hew_tst_sem1\resetprg.c" "00ab06e22b33fc10" 1 
+"E:\projects\atomthreads pull request\atomthreads-master\ports\m32c\tests-main.c" "08e4f9442b33fc10" 1 
+"E:\projects\atomthreads pull request\atomthreads-master\tests\sem1.c" "004e82b42b33fc10" 1 
+[OPTIONS_Release_Renesas M32C Configurator]
+"Single Shot" "03825b772b33fc10" 6 
+[OPTIONS_Release_Renesas M32C Librarian]
+"Single Shot" "03825b772b33fc10" 5 
+[OPTIONS_Release_Renesas M32C Linker]
+"Single Shot" "0df19b772b33fc10" 3 
+[OPTIONS_Release_Renesas M32C Stype Converter]
+"Single Shot" "0df19b772b33fc10" 4 
+[OPTIONS_Release]
+"" 0 
+"[V|VERSION|1] [B|COMMAND|1] [S|SPEC|UITRON3] " 6 
+"[V|VERSION|1] [B|DATALENGTH|1] [S|OUTPUT|^"$(CONFIGDIR)\$(PROJECTNAME).mot^"] " 4 
+"[V|VERSION|1] [B|STARTUPLINK|1] [B|DEBUG|1] [B|MAP-S|1] [S|OUTPUT|^"$(CONFIGDIR)\$(PROJECTNAME).x30^"] [S|INPUTLIBRARY|^"L=nc382lib^"] [S|CPU|M32C80] [S|SECTION_ORDER|^"data_SE=400,bss_SE,data_SO,bss_SO,data_NE,bss_NE,data_NO,bss_NO,stack,istack,heap_NE,rom_NE,rom_NO,data_6E=010000,bss_6E,data_6O,bss_6O,data_FE,bss_FE,data_FO,bss_FO,rom_FE=0fe0000,rom_FO,data_SEI,data_SOI,data_6EI,data_6OI,data_NEI,data_NOI,data_FEI,data_FOI,switch_table,program,interrupt,program_S,vector=0fffd00^"] " 3 
+"[V|VERSION|1] [S|LIST|L|M] [B|INSPECTOR|1] [S|OUTPUTPATH|^"$(CONFIGDIR)\$(FILELEAF).r30^"] [S|CPU|M32C80] " 2 
+"[V|VERSION|1] [S|MODE|CREATE|] [S|OUTPUT|^"$(CONFIGDIR)\$(PROJECTNAME).lib^"] " 5 
+"[V|VERSION|1] [S|OUTPUT|OBJECTCODE] [S|OUTPUTPATH|^"$(CONFIGDIR)\$(FILELEAF).r30^"] [B|INSPECTOR|1] [S|CPU|M32C80] [S|DEFINE|__STANDARD_IO__]   [S|DEFINE|__STACKSIZE__=0X800] [S|DEFINE|__ISTACKSIZE__=0X300]  [S|DEFINE|VECTOR_ADR=0x0fffd00] " 1 
+[EXCLUDED_FILES_Release]
+[LINKAGE_ORDER_Release]
+[GENERAL_DATA_CONFIGURATION_Release]
+[GENERAL_DATA_CONFIGURATION_SESSION_Debug_DefaultSession]
+[SESSION_DATA_CONFIGURATION_SESSION_Debug_DefaultSession]
+"MEMORY_MAPPING_OPTIONS" "" 
+[GENERAL_DATA_CONFIGURATION_SESSION_Debug_SessionM32C_Simulator]
+[SESSION_DATA_CONFIGURATION_SESSION_Debug_SessionM32C_Simulator]
+"MEMORY_MAPPING_OPTIONS" "Unknown Options" 
+[GENERAL_DATA_CONFIGURATION_SESSION_Debug_M32C_Simulator_DefaultSession]
+[SESSION_DATA_CONFIGURATION_SESSION_Debug_M32C_Simulator_DefaultSession]
+"MEMORY_MAPPING_OPTIONS" "" 
+[GENERAL_DATA_CONFIGURATION_SESSION_Debug_M32C_Simulator_SessionM32C_Simulator]
+[SESSION_DATA_CONFIGURATION_SESSION_Debug_M32C_Simulator_SessionM32C_Simulator]
+"MEMORY_MAPPING_OPTIONS" "Unknown Options" 
+[GENERAL_DATA_CONFIGURATION_SESSION_Release_DefaultSession]
+[SESSION_DATA_CONFIGURATION_SESSION_Release_DefaultSession]
+"MEMORY_MAPPING_OPTIONS" "" 
+[GENERAL_DATA_CONFIGURATION_SESSION_Release_SessionM32C_Simulator]
+[SESSION_DATA_CONFIGURATION_SESSION_Release_SessionM32C_Simulator]
+"MEMORY_MAPPING_OPTIONS" "Unknown Options" 
+[EXT_DEBUGGER_INFO]
+0 "" "" "" "" 
+[END]

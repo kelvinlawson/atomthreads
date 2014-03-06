@@ -1,0 +1,14 @@
+-I"E:\projects\atomthreads-master\kernel"
+-I"E:\projects\atomthreads-master\tests"
+-I"E:\projects\atomthreads-master\ports\m32c"
+-D__STANDARD_IO__
+-D__STACKSIZE__=0X800
+-D__ISTACKSIZE__=0X300
+-DVECTOR_ADR=0x0fffd00
+-DATOM_STACK_CHECKING
+-DTESTS_LOG_STACK_USAGE
+-c
+-finfo
+-dir "E:\projects\atomthreads pull request\atomthreads-master\ports\m32c\hew_tests\hew_tst_sem1\hew_tst_sem1\Debug"
+-M82
+"E:\projects\atomthreads pull request\atomthreads-master\ports\m32c\hew_tests\hew_tst_sem1\hew_tst_sem1\intprg.c"

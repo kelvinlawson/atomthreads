@@ -1,0 +1,12 @@
+GOF01 30 90 220 230 11 1 5 03e0h 0 1 0 0 ff ffffff 
+GOF01 80 90 190 220 11 1 5 03e0h 0 1 0 0 ff ffffff 
+GOF01 30 90 170 180 11 1 5 03e0h 0 1 0 0 ff ffffff 
+GOF01 30 40 140 170 11 1 5 03e0h 0 1 0 0 ff ffffff 
+GOF01 80 90 140 170 11 1 5 03e0h 0 1 0 0 ff ffffff 
+GOF01 50 60 150 170 11 1 5 03e0h 0 1 0 0 ff ffffff 
+GOF01 30 90 120 130 11 1 5 03e0h 0 1 0 0 ff ffffff 
+GOF01 30 40 100 120 11 1 5 03e0h 0 1 0 0 ff ffffff 
+GOF01 80 90 100 120 11 1 5 03e0h 0 1 0 0 ff ffffff 
+GOF01 40 80 90 100 11 1 5 03E0h 0 1 0 0 ff ffffff 
+GOF01 10 200 240 280 10 1 5 03E0h 0 1 0 0 1 26 Click stop to view results 0 
+GOF01 20 110 50 80 10 1 5 03E0h 0 1 0 0 1 8 Finished 0 

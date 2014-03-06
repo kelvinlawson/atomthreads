@@ -1,0 +1,147 @@
+---------------------------------------------------------------------------
+
+Library:      Atomthreads M32C/80 Port
+Author:       Juan Angel Hernandez Hernandez <hernandez0101@gmail.com>
+License:      BSD Revised
+
+---------------------------------------------------------------------------
+
+M32C/80 PORT
+
+This folder contains a port of the Atomthreads real time kernel for the
+M32C/80 processor architecture.
+
+All of the cross-platform kernel code is contained in the top-level 
+'kernel' folder, while ports to specific CPU architectures are contained in
+the 'ports' folder tree. 
+
+Atomthreads includes a suite of automated tests which prove the key OS
+functionality, and can be used with any architecture ports. 
+
+
+---------------------------------------------------------------------------
+
+FILES IN THE m32c port folder
+
+ * atomport.c: Contains the main C code that forms the portion of the core
+   M32C/80 architecture port that can be implemented in C.
+ * atomport-asm.A30: Contains the main assembler code that forms the portion
+   of the core M32C/80 architecture port that must be implemented in assembler.
+ * tests-main.c: Contains a sample Atomthreads application starting at
+   main() that initialises the operating system and runs the automated test
+   suite applications. You will normally make your own main() function
+   suitable for your application, possibly using this as a basis.
+ * atomport.h: Port-specific header required by the kernel for each port.
+ * atomport-private.h: Port-specific header required by atomport.c
+
+
+---------------------------------------------------------------------------
+
+PREREQUISITES
+
+The port works out-of-the-box with the Renesas HEW tools. 
+Tools: 
+*High-performance Embedded Workshop (HEW) V 4.09.00.007
+*M3T-NC308WA compiler.
+
+---------------------------------------------------------------------------
+
+BUILDING AND PROGRAMMING TO THE TARGET DEVICE
+
+In this port the target is a simulator. But you can also change the target and
+download the code to a development kit.
+Open the file:
+\atomthreads-master\ports\m32c\hew_tests\hew_tst_sem1\hew_tst_sem1.hws
+
+Click Ok on the Init window 
+Click Build->Build All
+And the code will automatically be loaded into the simulator target.
+
+---------------------------------------------------------------------------
+
+HEW SIMULATOR SPECIFICS
+
+The virtual timer interrupt and the virtual UART, are already setup when you 
+load the project. For the virtual led, you need to open the LED.pnl file so
+the led can show up.
+
+*Virtual Timer Interrupt:
+ The virtual interrupt is set in View->CPU->I/O Timing Setting.
+ Defaults for this port: 
+	-Interval: 10 msec
+	-Vector 23 (timer B2)
+	-Priority: 1 (Possible values are 0-7)
+
+*Virtual UART:
+ The virtual UART is set in View->CPU->OutputPort Then click on the "Set"
+ icon.
+ Defaults for this port:
+ 	-Printf - UART1
+ 	-Output Format: 
+ 		*Window TEXT
+ 		*File TEXT 		
+
+*Virtual LED:
+ The virtual LED is set in View->Graphic->GUI I/O
+ Click on the folder icon that says "Load" when you do a mouseover. Open the
+ file called led.pnl
+ The path of the led.pnl file is: 
+ \atomthreads-master\ports\m32c\hew_tests\led.pnl
+
+---------------------------------------------------------------------------
+
+RUNNING THE AUTOMATED TESTS WITH THE HEW SIMULATOR
+
+Atomthreads contains a set of generic kernel tests which can be run on any
+port to prove that all core functionality is working on your target. In
+order to accommodate a full testing regime, a large number of test threads
+are spawned which on ATmega platforms requires at least 1KB and possibly
+more RAM. Bear this in mind if you wish to run all of the automated tests
+on your target platform.
+
+The full set of tests can be found in the top-level 'tests' folder. Each of
+these tests has to be built as an independent HEW project. In this port a 
+HEW project using sem1.c is provided. To run the rest of the tests remove
+sem1.c and then add any other test file to the project.
+
+
+Example 1. Test results with a breakpoint:
+-Open: \atomthreads-master\ports\m32c\hew_tests\hew_tst_sem1\hew_tst_sem1.hws
+-Click Ok on the Init window 
+-Click Build->Build All
+-The code will automatically be loaded into the simulator target.
+-Put a breakpoint at the end of the test in tests-main.c
+-Click on Debug->Reset Go. When the test finishes you shall see the virtual
+ UART, test result output.
+
+Example 2. Test results with a virtual led flashing:
+-Open: \atomthreads-master\ports\m32c\hew_tests\hew_tst_sem1\hew_tst_sem1.hws
+-Click Ok on the Init window 
+-Click Build->Build All
+-The code will automatically be loaded into the simulator target.
+-On the View->Graphic->GUI I/O window click on the folder icon called "Load"
+ and open the led.pnl file. The path of the led.pnl file is: 
+ \atomthreads-master\ports\m32c\hew_tests\led.pnl
+-Click on Debug->Reset Go. When the test finishes you shall see the led flash.
+-When the led is flashing click "Stop" in the simulator and the virtual UART 
+ output will print the result of the test.
+
+
+---------------------------------------------------------------------------
+
+WRITING APPLICATIONS
+
+The easiest way to start a new application which utilises the Atomthreads
+scheduler is to base your main application startup on tests-main.c. This
+initialises the OS, sets up a UART and calls out to the test module entry
+functions. You can generally simply replace the call to the test modules by
+a call to your own application startup code.
+
+
+---------------------------------------------------------------------------
+
+PORTING TO NEW PLATFORMS
+
+Follow the very useful porting guide that you can find in atomthreads.com/
+
+---------------------------------------------------------------------------
