@@ -114,7 +114,7 @@
 "{95A081A1-7001-11D5-B1FD-00A0C9E23A58}RegistersWndViewBInstanceKey0" "{WK_00000001_REGISTERS}hew_tst_sem1SessionM32C_SimulatorViewB" 
 "{98DFB68C-498C-4346-A6B8-C7260C534267}PDTraceCtrlViews" "0" 
 "{99F424FE-E727-45AE-AE1F-11E29DEF272C}ECX_GuiIO_SAMPLING_RATE" "1000" 
-"{99F424FE-E727-45AE-AE1F-11E29DEF272C}PDGuiIOCtrlPDGuiIOLastSaveDirectory" "E:\projects\atomthreads pull request\atomthreads-master\ports\m32c\hew_tests\led.pnl" 
+"{99F424FE-E727-45AE-AE1F-11E29DEF272C}PDGuiIOCtrlPDGuiIOLastSaveDirectory" "C:\atomthreads\ports\m32c\hew_tests\led.pnl" 
 "{99F424FE-E727-45AE-AE1F-11E29DEF272C}PDGuiIOCtrlViews" "1" 
 "{99F424FE-E727-45AE-AE1F-11E29DEF272C}PDGuiIOWndInstanceKey0" "{WK_00000001_PDGUIIO}hew_tst_sem1SessionM32C_Simulator" 
 "{AC411480-6F0A-11D5-8EB6-00004CC34E9D}ECX_IMAGE_ADDRESS_NAME" "" 
@@ -210,8 +210,8 @@
 [WINDOW_POSITION_STATE_DATA_VD3]
 [WINDOW_POSITION_STATE_DATA_VD4]
 [WINDOW_Z_ORDER]
-"E:\projects\atomthreads pull request\atomthreads-master\kernel\atomkernel.c" 
-"E:\projects\atomthreads pull request\atomthreads-master\ports\m32c\hew_tests\hew_tst_sem1\hew_tst_sem1\resetprg.c" 
+"C:\atomthreads\kernel\atomkernel.c" 
+"C:\atomthreads\ports\m32c\hew_tests\hew_tst_sem1\hew_tst_sem1\resetprg.c" 
 [TARGET_NAME]
 "M32C Simulator" "" 0 
 [STATUSBAR_STATEINFO_VD1]

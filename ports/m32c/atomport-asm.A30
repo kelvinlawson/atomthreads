@@ -32,7 +32,7 @@
 ;/**
 ; *  \b _timer_b2
 ; *
-; *  Timer B2 1ms interrupt. 
+; *  Timer B2 interrupt service routine. 
 ; *  On interrupt, the U flag is cleared meaning that the interrupt stack (IStack)
 ; *  is selected. FLG and PC are saved on IStack, this routine then cuts and pastes 
 ; *  FLG and PC from IStack to UStack (User stack) so that all data relevant to a 
