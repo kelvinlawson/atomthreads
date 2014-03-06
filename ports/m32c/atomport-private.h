@@ -56,8 +56,8 @@ typedef enum
 
 /* Function prototypes */
 void init_timerb2(void);
-void init_pin_P0(void);
-void toggle_pin_P0(void);
+void init_pin_P0_0(void);
+void toggle_pin_P0_0(void);
 
 /* Timer B2 registers */
 #pragma ADDRESS TB2MR 035Dh

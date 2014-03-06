@@ -109,7 +109,7 @@ void archThreadContextInit (ATOM_TCB *tcb_ptr, void *stack_top, void (*entry_poi
 {
     uint16_t *stack_ptr;
     
-	/** Start at stack top */
+    /** Start at stack top */
     stack_ptr = (uint16_t*)stack_top;		
 
     /**
@@ -129,8 +129,8 @@ void archThreadContextInit (ATOM_TCB *tcb_ptr, void *stack_top, void (*entry_poi
      * Because we are filling the stack from top to bottom, this goes
      * on the stack first (at the top).
      */
-	
-	/* | Ret ADD High  PC (H)  | */
+    
+    /* | Ret ADD High  PC (H)  | */
     *stack_ptr-- = ((uint32_t)thread_shell >> 16L);
     /* | Ret ADD Low   PC (L)  | */
     *stack_ptr-- = (uint16_t)((uint32_t)thread_shell & 0x0000FFFFL);
@@ -230,22 +230,22 @@ void archFirstThreadRestore(ATOM_TCB *new_tcb_ptr)
  */
 void archContextSwitch(ATOM_TCB *old_tcb, ATOM_TCB *new_tcb)
 {
-  	asm_shell_old_tcb = old_tcb;
+    asm_shell_old_tcb = old_tcb;
     asm_shell_new_tcb = new_tcb;
-	
+    
     /* Save context */
     asm("PUSHC FLG");
     asm("PUSHM R0,R1,R2,R3,A0,A1,SB");
-	asm("MOV.L  _asm_shell_old_tcb,A0"); 
+    asm("MOV.L  _asm_shell_old_tcb,A0"); 
     asm("STC    SP,[A0]");              
-	
-	/* Restore Context */
+    
+    /* Restore Context */
     asm("MOV.L  _asm_shell_new_tcb,A0");
     asm("LDC    [A0],SP");              
     asm("POPM   R0,R1,R2,R3,A0,A1,SB");
     asm("POPC   FLG");
     asm("POPC   FB");    
-	asm("RTS");  
+    asm("RTS");  
 }
 
 /**
@@ -259,19 +259,18 @@ void init_timerb2(void)
 {	
 #ifndef HEW_SIMULATOR
     TB2MR = 0x40;       // M32C_OSC_FREQUENCY/8	      
-	TB2 = COUNT_10MS;		 
+    TB2 = COUNT_10MS;
     TB2IC = INTERRUPT_LVL_1;
 #endif    
 }
 
-void init_pin_P0(void)
+void init_pin_P0_0(void)
 {
     PD0 = 0xFF; //All outputs.
     P0  = 0x00; //Outputs low.
 }
 
-void toggle_pin_P0(void)
+void toggle_pin_P0_0(void)
 {
     P0 ^= 1 << 0;
-	P0 ^= 1 << 1;
 }

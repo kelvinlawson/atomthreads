@@ -42,32 +42,32 @@
 ; *  @return None
 ; */
 
-	.GLB _atomIntEnter
-	.GLB _atomTimerTick
-	.GLB $atomIntExit
-	.GLB __timer_b2
-	.FB    0    
+    .GLB _atomIntEnter
+    .GLB _atomTimerTick
+    .GLB $atomIntExit
+    .GLB __timer_b2
+    .FB    0    
 
     .SECTION    program,CODE,ALIGN
-	.align
+    .align
     .GLB __timer_b2
     .rvector        23, __timer_b2
-__timer_b2:		
-	PUSHC FB      ;Save FB temporary on I stack.
+__timer_b2:
+    PUSHC FB      ;Save FB temporary on I stack.
     FSET U        ;Select user stack
     PUSHC ISP     ;Save ISP in U stack
     POPC  FB      ;POP ISP to FB
-	PUSH.W 8H[FB]  ;Copy FLG from Istack to Ustack
-	PUSH.L 4H[FB]  ;Copy TskX ReturnAddress from Istack to Ustack
+    PUSH.W 8H[FB]  ;Copy FLG from Istack to Ustack
+    PUSH.L 4H[FB]  ;Copy TskX ReturnAddress from Istack to Ustack
     FCLR U        ;Select Istack
     POPC FB       ;restore original value of FB
     ADD.L #6,SP   ;Clean Istack, so it is free for interrupts.
     FSET U        ;Carry on, on Ustack
-	
-	JSR.A _atomIntEnter
-	JSR.A _atomTimerTick
-	
+    
+    JSR.A _atomIntEnter
+    JSR.A _atomTimerTick
+    
     MOV.B:Q     #1H,R0L ;Pass the TRUE parameter
-	JSR.A $atomIntExit
-	REIT
+    JSR.A $atomIntExit
+    REIT
 .END

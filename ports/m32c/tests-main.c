@@ -145,9 +145,9 @@ int main ( void )
 {
     int8_t status;
 
-	init_timerb2();	
-    init_pin_P0();
-	/**
+    init_timerb2();	
+    init_pin_P0_0();
+    /**
      * Initialise the OS before creating our threads.
      *
      * Note that we cannot enable stack-checking on the idle thread on
@@ -259,7 +259,7 @@ static void main_thread_func (uint32_t data)
     {
         /* Put code here to toggle led. Platform specific */
         /* For simulator just use a breakpoint */        
-        toggle_pin_P0();
+        toggle_pin_P0_0();
 
         /* Sleep then toggle LED again */
         atomTimerDelay (sleep_ticks);
