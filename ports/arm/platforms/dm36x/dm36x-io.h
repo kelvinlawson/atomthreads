@@ -284,6 +284,29 @@
 #define DM36X_UART1_BASE        0x01D06000 /* UART1 */
 
 
+/** SPI registers */
+#define DM36X_SPI0_BASE         0x01C66000 /* SPI0 */
+#define DM36X_SPI1_BASE         0x01C66800 /* SPI1 */
+#define DM36X_SPI2_BASE         0x01C67800 /* SPI2 */
+#define DM36X_SPI3_BASE         0x01C68000 /* SPI3 */
+#define DM36X_SPI4_BASE         0x01C23000 /* SPI4 */
+#define DM36X_SPI_SPIGCR0       0x00
+#define DM36X_SPI_SPIGCR1       0x04
+#define DM36X_SPI_SPIINT        0x08
+#define DM36X_SPI_SPILVL        0x0C
+#define DM36X_SPI_SPIFLG        0x10
+#define DM36X_SPI_SPIPC0        0x14
+#define DM36X_SPI_SPIPC2        0x1C
+#define DM36X_SPI_SPIDAT1       0x3C
+#define DM36X_SPI_SPIBUF        0x40
+#define DM36X_SPI_SPIEMU        0x44
+#define DM36X_SPI_SPIDELAY      0x48
+#define DM36X_SPI_SPIDEF        0x4C
+#define DM36X_SPI_SPIFMT0       0x50
+#define DM36X_SPI_INTVECT0      0x60
+#define DM36X_SPI_INTVECT1      0x64
+
+
 /** GPIO registers */
 #define DM36X_GPIO_BASE         0x01C67000
 #define DM36X_GPIO_DIR01        0x10
