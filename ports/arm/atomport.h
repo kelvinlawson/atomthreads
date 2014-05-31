@@ -61,7 +61,7 @@ extern int32_t archUsecDiff (int32_t start_time);
 /**
  * ISR handler registration (optional, not available on all ports)
  */
-typedef void (*ISR_FUNC)(void);
+typedef void (*ISR_FUNC)(int int_vector);
 extern int archIntInstallISR (int int_vector, ISR_FUNC isr_func);
 extern int archIntEnable (int int_vector, int enable);
 

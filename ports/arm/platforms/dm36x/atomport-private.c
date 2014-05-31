@@ -54,7 +54,7 @@ static ISR_FUNC isr_handlers[DM36X_INTC_MAX_VEC + 1] =
   NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 
   NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 
   NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 
-  atomTimerTick, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 
+  (void *)atomTimerTick, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 
   NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 
   NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 
   NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL };
@@ -276,7 +276,7 @@ __interrupt_dispatcher (void)
             atomIntEnter();
 
             /* Call the registered ISR */
-            isr_handlers[vector]();
+            isr_handlers[vector](vector);
 
             /* Call the interrupt exit routine */
             atomIntExit(TRUE);
