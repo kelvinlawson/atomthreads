@@ -37,7 +37,7 @@ extern "C" {
 typedef struct atom_sem
 {
     ATOM_TCB *  suspQ;  /* Queue of threads suspended on this semaphore */
-    uint8_t       count;  /* Semaphore count */
+    uint8_t     count;  /* Semaphore count */
 } ATOM_SEM;
 
 extern uint8_t atomSemCreate (ATOM_SEM *sem, uint8_t initial_count);
