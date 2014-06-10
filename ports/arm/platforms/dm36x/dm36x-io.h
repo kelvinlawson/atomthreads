@@ -41,6 +41,80 @@
  * IO Addresses for use with DM36x
  */
 
+/** EDMA3 registers */
+#define DM36X_CC_BASE           0x01C00000 /* EDMA3 CC registers */
+#define DM36X_PARAM_BASE        0x01C04000 /* EDMA3 PaRAM base */
+#define DM36X_TC0_BASE          0x01C10000 /* EDMA3 TC0 registers */
+#define DM36X_TC1_BASE          0x01C10400 /* EDMA3 TC1 registers */
+#define DM36X_TC2_BASE          0x01C10800 /* EDMA3 TC2 registers */
+#define DM36X_TC3_BASE          0x01C10C00 /* EDMA3 TC3 registers */
+/* EDMA3 channel mapping */
+#define DM36X_EDMA3_CHAN_TIMER3_TEVT6         0
+#define DM36X_EDMA3_CHAN_TIMER3_TEVT7         1
+#define DM36X_EDMA3_CHAN_MCBSP_XEVT           2
+#define DM36X_EDMA3_CHAN_MCBSP_REVT           3
+#define DM36X_EDMA3_CHAN_VPSS_EVT1            4
+#define DM36X_EDMA3_CHAN_VPSS_EVT2            5
+#define DM36X_EDMA3_CHAN_VPSS_EVT3            6
+#define DM36X_EDMA3_CHAN_VPSS_EVT4            7
+#define DM36X_EDMA3_CHAN_TIMER2_TEVT4         8
+#define DM36X_EDMA3_CHAN_TIMER2_TEVT5         9
+#define DM36X_EDMA3_CHAN_SPI2XEVT             10
+#define DM36X_EDMA3_CHAN_SPI2REVT             11
+#define DM36X_EDMA3_CHAN_MJCP_IMX0INT         12
+#define DM36X_EDMA3_CHAN_MJCP_SEQINT          13
+#define DM36X_EDMA3_CHAN_SPI1XEVT             14
+#define DM36X_EDMA3_CHAN_SPI1REVT             15
+#define DM36X_EDMA3_CHAN_SPI0XEVT             16
+#define DM36X_EDMA3_CHAN_SPI0REVT             17
+#define DM36X_EDMA3_CHAN_URXEVT0              18
+#define DM36X_EDMA3_CHAN_UTXEVT0              19
+#define DM36X_EDMA3_CHAN_URXEVT1              20
+#define DM36X_EDMA3_CHAN_UTXEVT1              21
+#define DM36X_EDMA3_CHAN_TIMER4_TEVT8         22
+#define DM36X_EDMA3_CHAN_TIMER4_TEVT9         23
+#define DM36X_EDMA3_CHAN_RTOEVT               24
+#define DM36X_EDMA3_CHAN_GPINT9               25
+#define DM36X_EDMA3_CHAN_MMC0RXEVT            26
+#define DM36X_EDMA3_CHAN_MMC0TXEVT            27
+#define DM36X_EDMA3_CHAN_ICREVT               28
+#define DM36X_EDMA3_CHAN_ICXEVT               29
+#define DM36X_EDMA3_CHAN_MMC1RXEVT            30
+#define DM36X_EDMA3_CHAN_MMC1TXEVT            31
+#define DM36X_EDMA3_CHAN_GPINT0               32
+#define DM36X_EDMA3_CHAN_GPINT1               33
+#define DM36X_EDMA3_CHAN_GPINT2               34
+#define DM36X_EDMA3_CHAN_GPINT3               35
+#define DM36X_EDMA3_CHAN_GPINT4               36
+#define DM36X_EDMA3_CHAN_GPINT5               37
+#define DM36X_EDMA3_CHAN_GPINT6               38
+#define DM36X_EDMA3_CHAN_GPINT7               39
+#define DM36X_EDMA3_CHAN_GPINT10              40
+#define DM36X_EDMA3_CHAN_GPINT11              41
+#define DM36X_EDMA3_CHAN_GPINT12              42
+#define DM36X_EDMA3_CHAN_GPINT13              43
+#define DM36X_EDMA3_CHAN_GPINT14              44
+#define DM36X_EDMA3_CHAN_GPINT15              45
+#define DM36X_EDMA3_CHAN_ADINT                46
+#define DM36X_EDMA3_CHAN_GPINT8               47
+#define DM36X_EDMA3_CHAN_TIMER0_TEVT0         48
+#define DM36X_EDMA3_CHAN_TIMER0_TEVT1         49
+#define DM36X_EDMA3_CHAN_TIMER1_TEVT2         50
+#define DM36X_EDMA3_CHAN_TIMER1_TEVT3         51
+#define DM36X_EDMA3_CHAN_PWM0                 52
+#define DM36X_EDMA3_CHAN_PWM1                 53
+#define DM36X_EDMA3_CHAN_PWM2                 54
+#define DM36X_EDMA3_CHAN_PWM3                 55
+#define DM36X_EDMA3_CHAN_MJCP_VLDCINT         56
+#define DM36X_EDMA3_CHAN_MJCP_BIMINT          57
+#define DM36X_EDMA3_CHAN_MJCP_DCTINT          58
+#define DM36X_EDMA3_CHAN_MJCP_QIQINT          59
+#define DM36X_EDMA3_CHAN_MJCP_BPSINT          60
+#define DM36X_EDMA3_CHAN_MJCP_VLDCERRINT      61
+#define DM36X_EDMA3_CHAN_MJCP_RCNTINT         62
+#define DM36X_EDMA3_CHAN_MJCP_COPCINT         63
+
+
 /** System registers */
 #define DM36X_SYSTEM_BASE       0x01C40000 /* System base registers */
 #define DM36X_SYSTEM_PINMUX0    0x00
