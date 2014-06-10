@@ -48,6 +48,53 @@
 #define DM36X_TC1_BASE          0x01C10400 /* EDMA3 TC1 registers */
 #define DM36X_TC2_BASE          0x01C10800 /* EDMA3 TC2 registers */
 #define DM36X_TC3_BASE          0x01C10C00 /* EDMA3 TC3 registers */
+/* EDMA3 CC global register offsets */
+#define DM36X_EDMA3_CC_EMR          0x0300 /* Event missed */
+#define DM36X_EDMA3_CC_EMRH         0x0304 /* Event missed high */
+#define DM36X_EDMA3_CC_EMCR         0x0308 /* Event missed clear */
+#define DM36X_EDMA3_CC_EMCRH        0x030C /* Event missed clear high */
+#define DM36X_EDMA3_CC_QEMR         0x0310 /* QDMA Event missed */
+#define DM36X_EDMA3_CC_QEMCR        0x0314 /* QDMA Event missed clear */
+#define DM36X_EDMA3_CC_CCERR        0x0318 /* EDMA3CC Error */
+#define DM36X_EDMA3_CC_CCERRCLR     0x031C /* EDMA3CC Error clear */
+#define DM36X_EDMA3_CC_EEVAL        0x0320 /* Error evaluate */
+#define DM36X_EDMA3_CC_CCSTAT       0x0640 /* EDMA3CC Status */
+/* EDMA3 CC global channel register offsets */
+#define DM36X_EDMA3_CC_ER           0x1000 /* Event */
+#define DM36X_EDMA3_CC_ERH          0x1004 /* Event high */
+#define DM36X_EDMA3_CC_ECR          0x1008 /* Event clear */
+#define DM36X_EDMA3_CC_ECRH         0x100C /* Event clear high */
+#define DM36X_EDMA3_CC_ESR          0x1010 /* Event set */
+#define DM36X_EDMA3_CC_ESRH         0x1014 /* Event set high */
+#define DM36X_EDMA3_CC_CER          0x1018 /* Chained event */
+#define DM36X_EDMA3_CC_CERH         0x101C /* Chained event high */
+#define DM36X_EDMA3_CC_EER          0x1020 /* Event enable */
+#define DM36X_EDMA3_CC_EERH         0x1024 /* Event enable high */
+#define DM36X_EDMA3_CC_EECR         0x1028 /* Event enable clear */
+#define DM36X_EDMA3_CC_EECRH        0x102C /* Event enable clear high */
+#define DM36X_EDMA3_CC_EESR         0x1030 /* Event enable set */
+#define DM36X_EDMA3_CC_EESRH        0x1034 /* Event enable set high */
+#define DM36X_EDMA3_CC_SER          0x1038 /* Secondary event */
+#define DM36X_EDMA3_CC_SERH         0x103C /* Secondary event high */
+#define DM36X_EDMA3_CC_SECR         0x1040 /* Secondary event clear */
+#define DM36X_EDMA3_CC_SECRH        0x1044 /* Secondary event clear high */
+#define DM36X_EDMA3_CC_IER          0x1050 /* Interrupt enable */
+#define DM36X_EDMA3_CC_IERH         0x1054 /* Interrupt enable high */
+#define DM36X_EDMA3_CC_IECR         0x1058 /* Interrupt enable clear */
+#define DM36X_EDMA3_CC_IECRH        0x105C /* Interrupt enable clear high */
+#define DM36X_EDMA3_CC_IESR         0x1060 /* Interrupt enable set */
+#define DM36X_EDMA3_CC_IESRH        0x1064 /* Interrupt enable set high */
+#define DM36X_EDMA3_CC_IPR          0x1068 /* Interrupt pending */
+#define DM36X_EDMA3_CC_IPRH         0x106C /* Interrupt pending high */
+#define DM36X_EDMA3_CC_ICR          0x1070 /* Interrupt clear */
+#define DM36X_EDMA3_CC_ICRH         0x1074 /* Interrupt clear high */
+#define DM36X_EDMA3_CC_IEVAL        0x1078 /* Interrupt evaluate */
+#define DM36X_EDMA3_CC_QER          0x1080 /* QDMA event */
+#define DM36X_EDMA3_CC_QEER         0x1084 /* QDMA event enable */
+#define DM36X_EDMA3_CC_QEECR        0x1088 /* QDMA event enable clear */
+#define DM36X_EDMA3_CC_QEESR        0x108C /* QDMA event enable set */
+#define DM36X_EDMA3_CC_QSER         0x1090 /* QDMA secondary event */
+#define DM36X_EDMA3_CC_QSECR        0x1094 /* QDMA secondary event clear */
 /* EDMA3 channel mapping */
 #define DM36X_EDMA3_CHAN_TIMER3_TEVT6         0
 #define DM36X_EDMA3_CHAN_TIMER3_TEVT7         1
