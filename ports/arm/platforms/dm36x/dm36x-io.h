@@ -42,12 +42,12 @@
  */
 
 /** EDMA3 registers */
-#define DM36X_CC_BASE           0x01C00000 /* EDMA3 CC registers */
-#define DM36X_PARAM_BASE        0x01C04000 /* EDMA3 PaRAM base */
-#define DM36X_TC0_BASE          0x01C10000 /* EDMA3 TC0 registers */
-#define DM36X_TC1_BASE          0x01C10400 /* EDMA3 TC1 registers */
-#define DM36X_TC2_BASE          0x01C10800 /* EDMA3 TC2 registers */
-#define DM36X_TC3_BASE          0x01C10C00 /* EDMA3 TC3 registers */
+#define DM36X_EDMA3_CC_BASE         0x01C00000 /* EDMA3 CC registers */
+#define DM36X_EDMA3_PARAM_BASE      0x01C04000 /* EDMA3 PaRAM base */
+#define DM36X_EDMA3_TC0_BASE        0x01C10000 /* EDMA3 TC0 registers */
+#define DM36X_EDMA3_TC1_BASE        0x01C10400 /* EDMA3 TC1 registers */
+#define DM36X_EDMA3_TC2_BASE        0x01C10800 /* EDMA3 TC2 registers */
+#define DM36X_EDMA3_TC3_BASE        0x01C10C00 /* EDMA3 TC3 registers */
 /* EDMA3 CC global register offsets */
 #define DM36X_EDMA3_CC_EMR          0x0300 /* Event missed */
 #define DM36X_EDMA3_CC_EMRH         0x0304 /* Event missed high */
