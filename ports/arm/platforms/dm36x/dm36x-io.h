@@ -58,6 +58,10 @@
 #define DM36X_EDMA3_CC_CCERR        0x0318 /* EDMA3CC Error */
 #define DM36X_EDMA3_CC_CCERRCLR     0x031C /* EDMA3CC Error clear */
 #define DM36X_EDMA3_CC_EEVAL        0x0320 /* Error evaluate */
+#define DM36X_EDMA3_CC_QSTAT0       0x0600 /* Queue 0 status */
+#define DM36X_EDMA3_CC_QSTAT1       0x0604 /* Queue 1 status */
+#define DM36X_EDMA3_CC_QSTAT2       0x0608 /* Queue 2 status */
+#define DM36X_EDMA3_CC_QSTAT3       0x060C /* Queue 3 status */
 #define DM36X_EDMA3_CC_CCSTAT       0x0640 /* EDMA3CC Status */
 /* EDMA3 CC global channel register offsets */
 #define DM36X_EDMA3_CC_ER           0x1000 /* Event */
@@ -95,6 +99,12 @@
 #define DM36X_EDMA3_CC_QEESR        0x108C /* QDMA event enable set */
 #define DM36X_EDMA3_CC_QSER         0x1090 /* QDMA secondary event */
 #define DM36X_EDMA3_CC_QSECR        0x1094 /* QDMA secondary event clear */
+/* EDMA3 TC register offsets */
+#define DM36X_EDMA3_TC_TCSTAT       0x0100 /* EDMA3 TC channel status */
+#define DM36X_EDMA3_TC_ERRSTAT      0x0120 /* Error status */
+#define DM36X_EDMA3_TC_ERREN        0x0124 /* Error enable */
+#define DM36X_EDMA3_TC_ERRCLR       0x0128 /* Error clear */
+#define DM36X_EDMA3_TC_ERRDET       0x012C /* Error details */
 /* EDMA3 channel mapping */
 #define DM36X_EDMA3_CHAN_TIMER3_TEVT6         0
 #define DM36X_EDMA3_CHAN_TIMER3_TEVT7         1
