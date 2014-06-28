@@ -454,6 +454,7 @@ static void atomTimerCallbacks (void)
             {
                 /* Add callback request to the list tail */
                 callback_list_tail->next_timer = next_ptr;
+                callback_list_tail = callback_list_tail->next_timer;
             }
 
             /* Mark this timer as the end of the callback list */
