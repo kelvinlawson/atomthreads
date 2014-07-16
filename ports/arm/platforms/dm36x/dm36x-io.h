@@ -485,6 +485,9 @@
 #define DM36X_ISIF_BASE         0x01C71000
 #define DM36X_IPIPEIF_BASE      0x01C71200
 #define DM36X_H3A_BASE          0x01C71400
+#define DM36x_GAMMA_R_TBL_3     0x01C7A800
+#define DM36x_GAMMA_G_TBL_3     0x01C7B000
+#define DM36x_GAMMA_B_TBL_3     0x01C7B800
 
 
 /** SD/MMC registers */
