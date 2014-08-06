@@ -485,7 +485,7 @@
 #define DM36X_ISIF_BASE         0x01C71000
 #define DM36X_IPIPEIF_BASE      0x01C71200
 #define DM36X_H3A_BASE          0x01C71400
-#define DM36X_OSC_BASE          0x01C71C00
+#define DM36X_OSD_BASE          0x01C71C00
 #define DM36X_VENC_BASE         0x01C71E00
 #define DM36x_GAMMA_R_TBL_3     0x01C7A800
 #define DM36x_GAMMA_G_TBL_3     0x01C7B000
