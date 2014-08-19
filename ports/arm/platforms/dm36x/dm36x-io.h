@@ -58,6 +58,8 @@
 #define DM36X_EDMA3_CC_CCERR        0x0318 /* EDMA3CC Error */
 #define DM36X_EDMA3_CC_CCERRCLR     0x031C /* EDMA3CC Error clear */
 #define DM36X_EDMA3_CC_EEVAL        0x0320 /* Error evaluate */
+#define DM36X_EDMA3_CC_DRAE0        0x0340 /* Shadow region enable */
+#define DM36X_EDMA3_CC_DRAEH0       0x0344 /* Shadow region enable */
 #define DM36X_EDMA3_CC_QSTAT0       0x0600 /* Queue 0 status */
 #define DM36X_EDMA3_CC_QSTAT1       0x0604 /* Queue 1 status */
 #define DM36X_EDMA3_CC_QSTAT2       0x0608 /* Queue 2 status */
