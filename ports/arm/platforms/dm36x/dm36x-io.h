@@ -184,6 +184,8 @@
 #define DM36X_SYSTEM_ARM_INTMUX     0x18
 #define DM36X_SYSTEM_EDMA_EVTMUX    0x1C
 #define DM36X_SYSTEM_PERICLKCTL     0x48
+#define DM36X_SYSTEM_PUPDCTL0       0x78
+#define DM36X_SYSTEM_PUPDCTL1       0x7C
 /* PINMUX0 register bitfields */
 #define DM36X_PINMUX0_MMCSD0     24
 #define DM36X_PINMUX0_GIO49      23
