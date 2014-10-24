@@ -222,7 +222,7 @@ int archIntEnable (int int_vector, int enable)
 		{
 			/* Disable/mask the interrupt */
 	    	INTC_REG(((int_vector >= 32) ? DM36X_INTC_EINT1 : DM36X_INTC_EINT0))
-					|= (1 << ((int_vector >= 32) ? (int_vector - 32) : int_vector));
+					&= ~(1 << ((int_vector >= 32) ? (int_vector - 32) : int_vector));
 		}
 		CRITICAL_END();
         status = ATOM_OK;
