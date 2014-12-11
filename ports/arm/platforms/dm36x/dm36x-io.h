@@ -49,6 +49,16 @@
 #define DM36X_EDMA3_TC2_BASE        0x01C10800 /* EDMA3 TC2 registers */
 #define DM36X_EDMA3_TC3_BASE        0x01C10C00 /* EDMA3 TC3 registers */
 /* EDMA3 CC global register offsets */
+#define DM36X_EDMA3_DMAQNUM0        0x0240 /* Channel/queue mapping 0 */
+#define DM36X_EDMA3_DMAQNUM1        0x0244 /* Channel/queue mapping 1 */
+#define DM36X_EDMA3_DMAQNUM2        0x0248 /* Channel/queue mapping 2 */
+#define DM36X_EDMA3_DMAQNUM3        0x024C /* Channel/queue mapping 3 */
+#define DM36X_EDMA3_DMAQNUM4        0x0250 /* Channel/queue mapping 4 */
+#define DM36X_EDMA3_DMAQNUM5        0x0254 /* Channel/queue mapping 5 */
+#define DM36X_EDMA3_DMAQNUM6        0x0258 /* Channel/queue mapping 6 */
+#define DM36X_EDMA3_DMAQNUM7        0x025C /* Channel/queue mapping 7 */
+#define DM36X_EDMA3_QDMAQNUM        0x0260 /* QDMA queue mapping */
+#define DM36X_EDMA3_QUEPRI          0x0284 /* Queue Priority */
 #define DM36X_EDMA3_CC_EMR          0x0300 /* Event missed */
 #define DM36X_EDMA3_CC_EMRH         0x0304 /* Event missed high */
 #define DM36X_EDMA3_CC_EMCR         0x0308 /* Event missed clear */
@@ -107,6 +117,7 @@
 #define DM36X_EDMA3_TC_ERREN        0x0124 /* Error enable */
 #define DM36X_EDMA3_TC_ERRCLR       0x0128 /* Error clear */
 #define DM36X_EDMA3_TC_ERRDET       0x012C /* Error details */
+#define DM36X_EDMA3_TC_RDRATE       0x0140 /* Read rate */
 /* EDMA3 channel mapping */
 #define DM36X_EDMA3_CHAN_TIMER3_TEVT6         0
 #define DM36X_EDMA3_CHAN_TIMER3_TEVT7         1
