@@ -4,7 +4,7 @@
 set -e
 
 # Start at top-level directory
-cd ..
+cd `dirname $0`/..
 
 # Build avr and run tests
 cd ports/avr
