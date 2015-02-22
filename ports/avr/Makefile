@@ -15,7 +15,7 @@ CC=/usr/bin/avr-gcc
 OBJCOPY=/usr/bin/avr-objcopy
 SIZE=/usr/bin/avr-size
 UISP=/usr/bin/uisp
-SIMAVR=/tmp/run_avr
+SIMAVR=/usr/local/bin/simavr
 
 # Modify this to the device name of the UART used for UISP
 UISP_DEV=/dev/ttyUSB0
