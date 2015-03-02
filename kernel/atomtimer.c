@@ -409,7 +409,7 @@ uint8_t atomTimerDelay (uint32_t ticks)
 static void atomTimerCallbacks (void)
 {
     ATOM_TIMER *prev_ptr, *next_ptr, *saved_next_ptr;
-    ATOM_TIMER *callback_list_tail, *callback_list_head = NULL;
+    ATOM_TIMER *callback_list_tail = NULL, *callback_list_head = NULL;
 
     /*
      * Walk the list decrementing each timer's remaining ticks count and
