@@ -60,6 +60,13 @@
 #define UINT32    uint32_t
 
 /**
+ * Architecture-specific definition of atom event size.
+ * It is best selected as the size of the architecture, but can be
+ * reduced or increased depending on requirements.
+ */
+typedef uint32_t ATOM_EVENTS;
+
+/**
  * Critical region protection: this should disable interrupts
  * to protect OS data structures during modification. It must
  * allow nested calls, which means that interrupts should only

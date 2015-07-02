@@ -53,6 +53,13 @@
 #define POINTER void *
 
 /**
+ * Architecture-specific definition of atom event size.
+ * It is best selected as the size of the architecture, but can be
+ * reduced or increased depending on requirements.
+ */
+typedef uint32_t ATOM_EVENTS;
+
+/**
  * Hardware timer functions (optional, not available on all ports)
  */
 extern void archUsleep (int32_t microsecs);
