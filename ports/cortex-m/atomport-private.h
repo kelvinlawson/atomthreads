@@ -45,7 +45,7 @@ struct isr_stack {
         uint32_t lr;
         uint32_t pc;
         uint32_t psr;
-};
+} __attribute__((packed));
 
 struct isr_fpu_stack {
         uint32_t s0;
@@ -65,7 +65,7 @@ struct isr_fpu_stack {
         uint32_t s14;
         uint32_t s15;
         uint32_t fpscr;
-};
+} __attribute__((packed));
 
 /**
  *  remaining context saved by task switch ISR
@@ -79,8 +79,8 @@ struct task_stack {
         uint32_t r9;
         uint32_t r10;
         uint32_t r11;
-        uint32_t lr;
-};
+        uint32_t exc_ret;
+} __attribute__((packed));
 
 struct task_fpu_stack {
         uint32_t s16;
@@ -99,7 +99,7 @@ struct task_fpu_stack {
         uint32_t s29;
         uint32_t s30;
         uint32_t s31;
-};
+} __attribute__((packed));
 
 /**
  * Info needed by pend_sv_handler used for delayed task switching.
@@ -112,6 +112,6 @@ struct task_fpu_stack {
 struct task_switch_info {
     volatile struct atom_tcb *running_tcb;
     volatile struct atom_tcb *next_tcb;
-};
+} __attribute__((packed));
 
 #endif /* __ATOMPORT_PRIVATE_H_ */

@@ -197,32 +197,32 @@ $(build_dir)/%.elf $(build_dir)/%.map: $(build_dir)/%.o $(build_objs) $(LDSCRIPT
 	$(if $(Q), @echo " (ELF)       $(subst $(build_dir)/,,$@)")
 	$(Q)$(LD) $(LDFLAGS) $(ARCH_FLAGS) $(build_objs) $(build_dir)/$(*).o $(LDLIBS) -o $@
 
-$(build_dir)/%.o: $(src_dir)/%.S
+$(build_dir)/%.o: $(src_dir)/%.S Makefile
 	$(Q)mkdir -p `dirname $@`
 	$(if $(Q), @echo " (AS)        $(subst $(build_dir)/,,$@)")
 	$(Q)$(CC) $(CFLAGS) $(CPPFLAGS) $(ARCH_FLAGS) -D__ASSEMBLY__ -I`dirname $<` -c $< -o $@
 
-$(build_dir)/%.o: $(src_dir)/%.c
+$(build_dir)/%.o: $(src_dir)/%.c Makefile
 	$(Q)mkdir -p `dirname $@`
 	$(if $(Q), @echo " (CC)        $(subst $(build_dir)/,,$@)")
 	$(Q)$(CC) $(CFLAGS) $(CPPFLAGS) $(ARCH_FLAGS) -I`dirname $<` -c $< -o $@
 
-$(build_dir)/%.o: $(board_dir)/%.c
+$(build_dir)/%.o: $(board_dir)/%.c Makefile
 	$(Q)mkdir -p `dirname $@`
 	$(if $(Q), @echo " (CC)        $(subst $(build_dir)/,,$@)")
 	$(Q)$(CC) $(CFLAGS) $(CPPFLAGS) $(ARCH_FLAGS) -I`dirname $<` -c $< -o $@
 
-$(build_dir)/%.o: $(common_dir)/%.c
+$(build_dir)/%.o: $(common_dir)/%.c Makefile
 	$(Q)mkdir -p `dirname $@`
 	$(if $(Q), @echo " (CC)        $(subst $(build_dir)/,,$@)")
 	$(Q)$(CC) $(CFLAGS) $(CPPFLAGS) $(ARCH_FLAGS) -I`dirname $<` -c $< -o $@
 
-$(build_dir)/%.o: $(kernel_dir)/%.c
+$(build_dir)/%.o: $(kernel_dir)/%.c Makefile
 	$(Q)mkdir -p `dirname $@`
 	$(if $(Q), @echo " (CC)        $(subst $(build_dir)/,,$@)")
 	$(Q)$(CC) $(CFLAGS) $(CPPFLAGS) $(ARCH_FLAGS) -I`dirname $<` -c $< -o $@
 
-$(build_dir)/%.o: $(tests_dir)/%.c
+$(build_dir)/%.o: $(tests_dir)/%.c Makefile
 	$(Q)mkdir -p `dirname $@`
 	$(if $(Q), @echo " (CC)        $(subst $(build_dir)/,,$@)")
 	$(Q)$(CC) $(CFLAGS) $(CPPFLAGS) $(ARCH_FLAGS) -I`dirname $<` -c $< -o $@

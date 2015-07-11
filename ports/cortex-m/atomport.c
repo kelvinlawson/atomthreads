@@ -165,28 +165,28 @@ void archThreadContextInit(ATOM_TCB *tcb_ptr, void *stack_top,
     isr_ctx->pc  = (uint32_t) thread_shell;
 
     /* initialise unused registers to silly value */
-    isr_ctx->lr  = 0xDEADBEEF;
-    isr_ctx->r12 = 0xDEADBEEF;
-    isr_ctx->r3  = 0xDEADBEEF;
-    isr_ctx->r2  = 0xDEADBEEF;
-    isr_ctx->r1  = 0xDEADBEEF;
-    isr_ctx->r0  = 0xDEADBEEF;
+    isr_ctx->lr  = 0xEEEEEEEE;
+    isr_ctx->r12 = 0xCCCCCCCC;
+    isr_ctx->r3  = 0x33333333;
+    isr_ctx->r2  = 0x22222222;
+    isr_ctx->r1  = 0x11111111;
+    isr_ctx->r0  = 0x00000000;
 
     /**
      * We use this special EXC_RETURN code to switch from main stack to our
      * thread stack on exception return
      */
-    tsk_ctx->lr  = 0xFFFFFFFD;
+    tsk_ctx->exc_ret = 0xFFFFFFFD;
 
     /* initialise unused registers to silly value */
-    tsk_ctx->r11 = 0xDEADBEEF;
-    tsk_ctx->r10 = 0xDEADBEEF;
-    tsk_ctx->r9  = 0xDEADBEEF;
-    tsk_ctx->r8  = 0xDEADBEEF;
-    tsk_ctx->r7  = 0xDEADBEEF;
-    tsk_ctx->r6  = 0xDEADBEEF;
-    tsk_ctx->r5  = 0xDEADBEEF;
-    tsk_ctx->r4  = 0xDEADBEEF;
+    tsk_ctx->r11 = 0xBBBBBBBB;
+    tsk_ctx->r10 = 0xAAAAAAAA;
+    tsk_ctx->r9  = 0x99999999;
+    tsk_ctx->r8  = 0x88888888;
+    tsk_ctx->r7  = 0x77777777;
+    tsk_ctx->r6  = 0x66666666;
+    tsk_ctx->r5  = 0x55555555;
+    tsk_ctx->r4  = 0x44444444;
 
     /**
      * Stack frames have been initialised, save it to the TCB. Also set

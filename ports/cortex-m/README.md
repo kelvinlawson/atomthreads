@@ -1,7 +1,7 @@
 # ARM Cortex-M Port
 
 ## Summary and Prerequisites
-This port should run on any Cortex-M3/4/4F (but not on M0, sorry). It uses
+This port should run on any Cortex-M0/3/4/4F (M0+ not tested). It uses
 RedHat's [newlib](https://sourceware.org/newlib/) and [libopencm3]
 (https://github.com/libopencm3/libopencm3). You will also need an ARM compiler
 toolchain. If you want to flash or debug your target, [openocd](http://openocd.org)

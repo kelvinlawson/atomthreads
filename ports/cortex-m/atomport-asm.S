@@ -29,11 +29,24 @@
 
 .syntax unified
 
+#undef THUMB_2
+#undef WITH_FPU
+
+#if defined(__ARM_ARCH_7M__) || defined(__ARM_ARCH_7EM__)
+#define THUMB_2
+#endif
+
+#if (defined(__VFP_FP__) && !defined(__SOFTFP__))
+#define WITH_FPU
+#endif
+
 .extern CTX_SW_NFO
 .extern _stack
 .extern vector_table
 
-.equ FPU_USED,   0x00000010
+.equ FPU_USED,      0x00000010
+.equ SCB_ICSR,      0xE000ED04
+.equ PENDSVCLR,     0x08000000
 
 .text
 
@@ -46,7 +59,7 @@ archFirstThreadRestore:
      * Disable interrupts. They should be disabled anyways, but just
      * to make sure...
      */
-    mov     r1,         #1 
+    movs    r1,         #1
     msr     PRIMASK,    r1
 
     /**
@@ -63,38 +76,101 @@ archFirstThreadRestore:
     str	    r0,         [r1, #4]
 
     /* Get thread stack pointer from tcb. Conveniently the first element */
-    ldr     r2,         [r0, #0]
+    ldr     r1,         [r0, #0]
+    msr     PSP,        r1
 
-    /* Discard dummy thread stack frame */
-    add     r2,         r2, #36
-    
     /**
-     * New threads can't have used the FPU, so no need to check for
-     * FPU stack frame here
+     * Set bit #1 in CONTROL. Causes switch to PSP, so we can work directly
+     * with SP now and use pop/push.
+     */
+    movs	r1,			#2
+    mrs     r2,         CONTROL
+    orrs    r2, 		r2,	r1
+    msr     CONTROL,    r2
+
+    /**
+     * Initialise thread's register context from its stack frame. Since this
+     * function gets called only once at system start up, execution time is
+     * not critical. We can get away with using only Thumb-1 instructions that
+     * will work on all Cortex-M devices.
+     *
+     * Initial stack looks like this:
+     * xPSR
+     * PC
+     * lr
+     * r12
+     * r3
+     * r2
+     * r1
+     * r0
+     * exc_ret <- ignored here
+     * r11
+     * r10
+     * r9
+     * r8
+     * r7
+     * r6
+     * r5
+     * r4 <- thread's saved_sp points here
      */
 
     /**
-     * Load exception stack frame to registers r3-r10. xPSR ends up in r10,
-     * pc in r9
+     *
+     * Move SP to position of r8 and restore high registers by loading
+     * them to r4-r7 before moving them to r8-r11
      */
-    ldmia   r2!,        {r3-r10}
+    add     SP,			#16
+    pop		{r4-r7}
+    mov     r8,         r4
+    mov     r9,         r5
+    mov     r10,        r6
+    mov     r11,        r7
 
-    /* initialise xPSR and store store adjusted stack pointer in PSP */
-    msr     APSR_nzcvq, r10
-    msr     PSP,        r2
+    /* move SP back to top of stack and load r4-r7 */
+    sub     SP,         #32
+    pop     {r4-r7}
 
-    /* set bit #1 in CONTROL. Causes switch to PSP */
-    mrs     r1,         CONTROL
-    orr     r1, r1,     #2
-    msr     CONTROL,    r1
+    /*load r12, lr, pc and xpsr to r0-r3 and restore r12 and lr */
+    add     SP,         #36
+    pop     {r0-r3}
+    mov     r12,        r0
+    mov     lr,         r1
+
+    /**
+     * r2 contains the PC and r3 APSR, SP is now at the bottom of the stack. We
+     * can't initialise APSR now because we will have to do a movs later when
+     * enabling interrupts, so r3 must not be touched. We also need an extra
+     * register holding the value that will be moved to PRIMASK. To do this,
+     * we build a new stack containing only the initial values of r2, r3
+     * and pc. In the end this will be directly popped into the registers,
+     * finishing the thread restore and branching to the thread's entry point.
+     */
+
+    /* Save PC value */
+    push    {r2}
+
+    /* Move values for r2 and r3 to lie directly below value for pc */
+    sub     SP,         #20
+    pop     {r1-r2}
+    add     SP,         #12
+    push    {r1-r2}
+
+    /* Load values for r0 and r1 from stack */
+    sub     SP,         #20
+    pop     {r0-r1}
+
+    /* Move SP to start of our new r2,r3,pc mini stack */
+    add     SP,         #12
+
+    /* Restore xPSR and enable interrupts */
+    movs    r2,         #0
+    msr     APSR_nzcvq, r3
+    msr     PRIMASK,    r2
     
-    /* enable interrupts */
-    mov     r1,         #0
-    msr PRIMASK,        r1
-    
-    /* branch to thread entry point */
-    bx      r9
+    /* Pop r2,r3,pc from stack, thereby jumping to thread entry point */
+    pop     {r2,r3,pc}
     nop
+
 .size   archFirstThreadRestore, . - archFirstThreadRestore
 .endfunc
 
@@ -107,13 +183,47 @@ pend_sv_handler:
      * Disable interrupts. No need to check if they were enabled because,
      * well, we're an interrupt handler. Duh...
      */
-    mov     r0,         #1
+    movs    r0,         #1
     msr     PRIMASK,    r0
     
-    /* Get running thread's stack pointer*/
+    /**
+     * Clear PendSv pending bit. There seems to exist a hardware race condition
+     * in the NVIC that can prevent automatic clearing of the PENDSVSET. See
+     * http://embeddedgurus.com/state-space/2011/09/whats-the-state-of-your-cortex/
+     */
+     ldr    r0,         = SCB_ICSR
+     ldr    r1,         = PENDSVCLR
+     str    r1,         [r0, #0]
+
+    /**
+     * Check if running and next thread are really different.
+     * From here on we have
+     * r0 = &ctx_switch_info
+     * r1 = ctx_switch_info.running_tcb
+     * r2 = ctx_switch_info.next_tcb
+     *
+     * If r1 == r2 we can skip the context switch. This may theoretically
+     * happen if the running thread gets scheduled out and in again by
+     * multiple nested or tail-chained ISRs before the PendSv handler
+     * gets called.
+     */
+    ldr     r0,         = CTX_SW_NFO
+    ldr     r1,         [r0, #0]
+    ldr     r2,         [r0, #4]
+    cmp     r1,         r2
+    beq     no_switch
+
+    /**
+     * Copy running thread's process stack pointer to r3 and use it to push
+     * */
     mrs     r3,         PSP
 
-#if (defined(__VFP_FP__) && !defined(__SOFTFP__))
+#if defined(THUMB_2)
+    /**
+     * Save old thread's context on Cortex-M[34]
+     */
+
+#if defined(WITH_FPU)
     /* Check if FPU was used by thread and store registers if necessary */
     tst     lr,         FPU_USED
     it      eq
@@ -124,31 +234,68 @@ pend_sv_handler:
      * fault handler to store the FPU registers if another thread
      * tries using it
      */
-#endif
+#endif // WITH_FPU
     
     /* Push running thread's remaining registers on stack */
     stmdb   r3!,        {r4-r11, lr}
 
-    /* Fetch running thread's TCB and store its current stack pointer */
-    ldr     r2,         = CTX_SW_NFO
-    ldr     r1,         [r2, #0]
+#else // !THUMB2
+
+    /**
+     * Save old thread's register context on Cortex-M0.
+     * Push running thread's remaining registers on stack.
+     * Thumb-1 can only use stm on low registers, so we
+     * have to do this in two steps.
+     */
+
+    /* Reserve space for r8-r11 + exc_return before storing r4-r7 */
+    subs    r3,         r3,     #36
+    stmia   r3!,        {r4-r7}
+
+    /**
+     * Move r8-r11 to low registers and use store multiple with automatic
+     * post-increment to push them on the stack
+     */
+    mov     r4,         r8
+    mov     r5,         r9
+    mov     r6,         r10
+    mov     r7,         r11
+    stmia   r3!,        {r4-r7}
+
+    /**
+     * Move lr (contains the exc_return code) to low registers and store it
+     * on the stack.
+     */
+    mov     r4,         lr
+    str     r4,         [r3, #0]
+
+    /* Re-adjust r3 to point at top of stack */
+    subs    r3,         r3, #32
+#endif // !THUMB_2
+    /**
+     * Address of running TCB still in r1. Store threads current stack top
+     * into its sp_save_ptr, which is the struct's first element
+     */
     str     r3,         [r1, #0]
     
     /**
-     * Fetch pointer to next thread's tcb from ctx_switch_info.next_tcb and
-     * use it to update ctx_switch_info.running_tcb.
+     * ctx_switch_info.next_tcb is going to become ctx_switch_info.running_tcb,
+     * so we update the pointer.
      */
-    ldr     r1,         [r2, #4]
-    str     r1,         [r2, #0]
+    str     r2,         [r0, #0]
     
     /**
-     * Fetch next thread's stack pointer from its TCB and restore
+     * Fetch next thread's stack pointer from its TCB's sp_save_ptr and restore
      * the thread's register context.
      */
-    ldr     r3,         [r1, #0]
+    ldr     r3,         [r2, #0]
+
+#if defined(THUMB_2)
+
+    /* Cortex-M[34], restore thread's task stack frame */
     ldmia   r3!,        {r4-r11, lr}
 
-#if (defined(__VFP_FP__) && !defined(__SOFTFP__))
+#if defined(WITH_FPU)
     /**
      * Check if FPU was used by new thread and restore registers if necessary.
      */
@@ -160,13 +307,43 @@ pend_sv_handler:
      * TODO: only restore FPU registers if FPU was used by another thread
      * between this thread being scheduled out and now.
      */
-#endif
+#endif // WITH_FPU
+#else // !THUMB_2
 
-    /* Restore process stack pointer */
+    /**
+     * Thread restore for Cortex-M0
+     * Restore thread's task stack frame. Because thumb 1 only supports
+     * load multiple on low register, we have to do it in two steps and
+     * adjust the stack pointer manually.
+     */
+
+    /* Restore high registers */
+    adds    r3,         r3, #16
+    ldmia   r3!,        {r4-r7}
+    mov     r8,         r4
+    mov     r9,         r5
+    mov     r10,        r6
+    mov     r11,        r7
+
+    /* Restore lr */
+    ldr     r4,         [r3, #0]
+    mov     lr,         r4
+    subs    r3,         r3, #32
+
+    /**
+     * Restore r4-r7 and adjust r3 to point at the top of the exception
+     * stack frame.
+     */
+    ldmia   r3!,        {r4-r7}
+    adds    r3,         r3, #20
+#endif // !THUMB_2
+
+    /* Set process stack pointer to new thread's stack*/
     msr     PSP,        r3
 
+no_switch:
     /* Re-enable interrupts */
-    mov     r0,         #0
+    movs    r0,         #0
     msr     PRIMASK,    r0
     
     /* Return to new thread */

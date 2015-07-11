@@ -29,6 +29,7 @@
 
 #include <stdio.h>
 
+#include <libopencm3/cm3/nvic.h>
 #include "atom.h"
 #include "atomport-private.h"
 #include "atomtests.h"
@@ -144,6 +145,8 @@ int main ( void )
 {
     int8_t status;
 
+    nvic_set_priority(NVIC_PENDSV_IRQ, 0xFF);
+    nvic_set_priority(NVIC_SYSTICK_IRQ, 0xFE);
 
     /**
      * Note: to protect OS structures and data during initialisation,
