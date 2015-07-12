@@ -144,9 +144,15 @@ extern int board_setup(void);
 int main ( void )
 {
     int8_t status;
+    uint32_t loop;
 
-    nvic_set_priority(NVIC_PENDSV_IRQ, 0xFF);
-    nvic_set_priority(NVIC_SYSTICK_IRQ, 0xFE);
+    /**
+     * Brief delay to give the debugger a chance to stop the core before we
+     * muck around with the chip's configuration.
+     */
+    for(loop = 0; loop < 1000000; ++loop){
+        __asm__("nop");
+    }
 
     /**
      * Note: to protect OS structures and data during initialisation,

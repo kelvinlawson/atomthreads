@@ -36,7 +36,7 @@
 #define THUMB_2
 #endif
 
-#if (defined(__VFP_FP__) && !defined(__SOFTFP__))
+#if defined(__VFP_FP__) && !defined(__SOFTFP__)
 #define WITH_FPU
 #endif
 

@@ -1,5 +1,5 @@
 ################################################
-# Toplevel makefile for all libopencm3 targets #
+# Toplevel makefile for all Cortex-M targets   #
 ################################################
 
 ifeq ($(V),)
@@ -20,13 +20,14 @@ src_dir=$(CURDIR)
 
 # Clean object list before including board makefile
 objs := 
+aobjs :=
 
 # set default board if none is given
 ifeq ($(BOARD),)
 	BOARD = nucleo-f103rb
 endif
 
-include $(src_dir)/boards/$(BOARD)/Makefile
+include $(src_dir)/boards/$(BOARD)/Makefile.include
 
 # Make sure target MCU is set
 ifndef TARGET
@@ -135,22 +136,24 @@ LDLIBS		+= -l$(LIBNAME)
 
 ## Flags for newlibc.    
 # This uses the version of newlib optimised for size and without libnosys.
-# This is the configuration you want to use unless you really know what
-# you are doing.
+# This usually is the version of newlib you want to use, although it has some
+# limitations, like printf not having support for floating point vars.
 LDLIBS		+= -Wl,--start-group -lc_nano -lgcc -Wl,--end-group
 
-# This is the fully bloated version of newlib optimized for speed.
+# This is the fully bloated version of newlib. Adds about 20k compared to
+# libc_nano. 
 #LDLIBS		+= -Wl,--start-group -lc -lgcc -Wl,--end-group
 
 # Use small newlib with libnosys if you do not want to use the provided stubs.
-# Be advised that heap management will probaly break in interesting ways
-# because libnosys' standard _sbrk() expects the stack to start at the top
-# end of memory while the threads' stacks are positioned inside the BSS.
+# Be advised that heap management will probaly break in interesting ways.
+# This is because libnosys' standard _sbrk() expects the stack to start at 
+# the top end of memory while the threads' stacks are positioned inside 
+# the BSS.
 #LDLIBS		+= -Wl,--start-group -lc_nano -lgcc -lnosys -Wl,--end-group
 
 # All
 .PHONY: all
-all: $(LIB_DIR)/lib$(LIBNAME).a $(build_tbins) $(build_thexs) $(build_telfs) $(build_tobjs) $(build_objs) Makefile
+all: $(LIB_DIR)/lib$(LIBNAME).a $(build_tbins) $(build_thexs) $(build_telfs) $(build_tobjs) $(build_objs) Makefile $(board_dir)/Makefile.include
 
 # add build dependency for local libopencm3 if no external libopencm3 is used 
 $(LIB_DIR)/lib$(LIBNAME).a: $(lib_needed)
@@ -169,8 +172,6 @@ build_lib:
 		exit 1; \
 		fi
 	$(Q)$(MAKE) -C libopencm3
-
-flash: $(BINARY).flash
 
 $(build_dir)/%.bin: $(build_dir)/%.elf
 	$(Q)mkdir -p `dirname $@`
@@ -197,32 +198,42 @@ $(build_dir)/%.elf $(build_dir)/%.map: $(build_dir)/%.o $(build_objs) $(LDSCRIPT
 	$(if $(Q), @echo " (ELF)       $(subst $(build_dir)/,,$@)")
 	$(Q)$(LD) $(LDFLAGS) $(ARCH_FLAGS) $(build_objs) $(build_dir)/$(*).o $(LDLIBS) -o $@
 
-$(build_dir)/%.o: $(src_dir)/%.S Makefile
+$(build_dir)/%.o: $(src_dir)/%.S Makefile $(board_dir)/Makefile.include
 	$(Q)mkdir -p `dirname $@`
 	$(if $(Q), @echo " (AS)        $(subst $(build_dir)/,,$@)")
 	$(Q)$(CC) $(CFLAGS) $(CPPFLAGS) $(ARCH_FLAGS) -D__ASSEMBLY__ -I`dirname $<` -c $< -o $@
 
-$(build_dir)/%.o: $(src_dir)/%.c Makefile
+$(build_dir)/%.o: $(src_dir)/%.c Makefile $(board_dir)/Makefile.include
 	$(Q)mkdir -p `dirname $@`
 	$(if $(Q), @echo " (CC)        $(subst $(build_dir)/,,$@)")
 	$(Q)$(CC) $(CFLAGS) $(CPPFLAGS) $(ARCH_FLAGS) -I`dirname $<` -c $< -o $@
 
-$(build_dir)/%.o: $(board_dir)/%.c Makefile
+$(build_dir)/%.o: $(board_dir)/%.S Makefile $(board_dir)/Makefile.include
+	$(Q)mkdir -p `dirname $@`
+	$(if $(Q), @echo " (AS)        $(subst $(build_dir)/,,$@)")
+	$(Q)$(CC) $(CFLAGS) $(CPPFLAGS) $(ARCH_FLAGS) -D__ASSEMBLY__ -I`dirname $<` -c $< -o $@
+
+$(build_dir)/%.o: $(board_dir)/%.c Makefile $(board_dir)/Makefile.include
 	$(Q)mkdir -p `dirname $@`
 	$(if $(Q), @echo " (CC)        $(subst $(build_dir)/,,$@)")
 	$(Q)$(CC) $(CFLAGS) $(CPPFLAGS) $(ARCH_FLAGS) -I`dirname $<` -c $< -o $@
 
-$(build_dir)/%.o: $(common_dir)/%.c Makefile
+$(build_dir)/%.o: $(common_dir)/%.S Makefile $(board_dir)/Makefile.include
+	$(Q)mkdir -p `dirname $@`
+	$(if $(Q), @echo " (AS)        $(subst $(build_dir)/,,$@)")
+	$(Q)$(CC) $(CFLAGS) $(CPPFLAGS) $(ARCH_FLAGS) -D__ASSEMBLY__ -I`dirname $<` -c $< -o $@
+
+$(build_dir)/%.o: $(common_dir)/%.c Makefile $(board_dir)/Makefile.include
 	$(Q)mkdir -p `dirname $@`
 	$(if $(Q), @echo " (CC)        $(subst $(build_dir)/,,$@)")
 	$(Q)$(CC) $(CFLAGS) $(CPPFLAGS) $(ARCH_FLAGS) -I`dirname $<` -c $< -o $@
 
-$(build_dir)/%.o: $(kernel_dir)/%.c Makefile
+$(build_dir)/%.o: $(kernel_dir)/%.c Makefile $(board_dir)/Makefile.include
 	$(Q)mkdir -p `dirname $@`
 	$(if $(Q), @echo " (CC)        $(subst $(build_dir)/,,$@)")
 	$(Q)$(CC) $(CFLAGS) $(CPPFLAGS) $(ARCH_FLAGS) -I`dirname $<` -c $< -o $@
 
-$(build_dir)/%.o: $(tests_dir)/%.c Makefile
+$(build_dir)/%.o: $(tests_dir)/%.c Makefile $(board_dir)/Makefile.include
 	$(Q)mkdir -p `dirname $@`
 	$(if $(Q), @echo " (CC)        $(subst $(build_dir)/,,$@)")
 	$(Q)$(CC) $(CFLAGS) $(CPPFLAGS) $(ARCH_FLAGS) -I`dirname $<` -c $< -o $@
@@ -242,6 +253,11 @@ endif
 doxygen:
 	doxygen $(kernel_dir)/Doxyfile
 	doxygen ./Doxyfile
+
+################################################################
+# target flashing recipes "borrowed" from libopencm3-examples  #
+################################################################
+flash: $(BINARY).flash
 
 %.stlink-flash: $(build_dir)/%.bin
 	@printf "  FLASH  $<\n"

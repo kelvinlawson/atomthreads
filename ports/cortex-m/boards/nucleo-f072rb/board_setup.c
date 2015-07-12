@@ -34,6 +34,7 @@
 #include <libopencm3/stm32/usart.h>
 #include <libopencm3/cm3/systick.h>
 #include <libopencm3/cm3/cortex.h>
+#include <libopencm3/cm3/nvic.h>
 
 #include "atomport.h"
 
@@ -80,7 +81,7 @@ static void systick_setup(void)
  */
 static void clock_setup(void)
 {
-    /* set core clock to 72MHz, generated from external 8MHz crystal */
+    /* set core clock to 48MHz, generated from PIOSC */
     rcc_clock_setup_in_hsi_out_48mhz();
 }
 
@@ -121,6 +122,12 @@ int board_setup(void)
 
     /* initialise SysTick counter */
     systick_setup();
+
+    /* Set exception priority levels. Make PendSv the lowest priority and
+     * SysTick the second to lowest
+     */
+    nvic_set_priority(NVIC_PENDSV_IRQ, 0xFF);
+    nvic_set_priority(NVIC_SYSTICK_IRQ, 0xFE);
 
     return 0;
 }

@@ -1,8 +1,8 @@
 # ARM Cortex-M Port
 
 ## Summary and Prerequisites
-This port should run on any Cortex-M0/3/4/4F (M0+ not tested). It uses
-RedHat's [newlib](https://sourceware.org/newlib/) and [libopencm3]
+This port should run on any Cortex-M0/3/4/4F (M0+ not tested). 
+It uses RedHat's [newlib](https://sourceware.org/newlib/) and [libopencm3]
 (https://github.com/libopencm3/libopencm3). You will also need an ARM compiler
 toolchain. If you want to flash or debug your target, [openocd](http://openocd.org)
  is also a must. For STM32 targets [stlink](https://github.com/texane/stlink)
@@ -18,24 +18,24 @@ apt-get install openocd
 ```
 
 ## Code Layout
-The "classic" port components (code needed for task setup and context
+The "classic" port components (code needed for task set-up and context
 switching and the atomport{-private}.h headers) are residing in the
 top level port directory.
 
 There are additional subdirectories:
 
 * **boards** contains subdirectories for specific hardware. Each
-board needs at least a Makefile, which defines certain variables describing
-the hardware used, as well as a list of extra object files needed. There will
-usually be at least a board_setup.c, which contains code to initialise the
-hardware properly (clocks, uart, systick timer)
+board needs at least a Makefile fragment, which defines certain variables 
+describing the hardware used, as well as a list of extra object files needed.
+There will usually be at least a ``board_setup.c``, which contains code to 
+initialise the hardware properly (clocks, UART, systick timer, GPIOs, etc.).
 
 * **common** contains code needed by multiple boards, such as
 stub functions for newlib or routines shared by multiple boards using the
 same family of target MCUs.
 
 * **linker** contains linker script fragments for specific target MCUs. These
-just define the memory areas (RAM, Flash) of the chip and include libopencm3's
+just define the target's memory areas (RAM, Flash)and include libopencm3's
 main linker script for the appropriate chip family
 
 * **libopencm3** unless you compile and link against an external installation
@@ -77,13 +77,108 @@ use it to flash the application image:
 ```
 make BOARD=*yourboard* BINARY=*yourimage* flash
 ```
-N.B.: with the ek-lm4f120xl board openocd will report an error after flashing.
+NB: with the ek-lm4f120xl board openocd will report an error after flashing.
 I think it is because it can not handle the changed core clock after the 
 application starts, but I simply can't be bothered to further investigate this.
 The application gets flashed and you can ignore the error.
 
 ## Adding New Boards
-*TODO*
+To add support for a new board, you will have to provide at least two parts. 
+First, a ``Makefile.include`` to be pulled in by the main Makefile. Second,
+some set-up code for your specific hardware. If there is no linker script for
+your MCU, you will have to add one, too.
+
+### Board Makefile Fragment
+The main Makefile will include the Makefile.include located in the chosen
+board's sub-directory. This is where you set compile time options and additional
+source files to be used. Here is the one for the nucleo-f103rb:
+
+```
+TARGET          ?= stm32f103rb
+LIBNAME         ?= opencm3_stm32f1
+DEFS            ?= -DSTM32F1
+DEFS            += -DSTD_CON=USART2
+DEFS            += -DMST_SIZE=0x400
+
+FP_FLAGS        ?= -msoft-float
+ARCH_FLAGS      ?= -mthumb -mcpu=cortex-m3 $(FP_FLAGS) -mfix-cortex-m3-ldrd
+
+OOCD            ?= openocd
+OOCD_INTERFACE  ?= stlink-v2-1
+OOCD_BOARD      ?= st_nucleo_f103rb
+
+objs            += board_setup.o
+objs            += stubs.o stm32_con.o
+```
+
+**TARGET** is the name for the actual MCU used on your board. It will be used
+to locate the linker script file in the ``linker`` directory by appending
+``.ld`` to it.
+
+**LIBNAME** is the name of the opencm3 library to link your object files
+against.
+
+**DEFS** are flags that will be appended to the CPPFLAGS. You will at least
+have to define the opencm3 target family (STM32F1 here), so the build process
+will find the right header files to include. If you are using the stub and
+console functions provided in the common directory, you will also have to
+define the reserved main stack size (MST_SIZE) and which UART to use for stdio
+(STD_CON).
+
+**FP_FLAGS** which floating point format to use. For MCUs without hardware
+support for floating point (M0/3, sometimes 4), use ``-msoft-float``,
+otherwise use ``-mfloat-abi=hard -mfpu=fpv4-sp-d16``. You could add these 
+directly to ``ARCH_FLAGS``, but this way it is easily overridden from the
+make command line.
+
+**ARCH_FLAGS** specify the instruction (sub)set and CPU type to compile for,
+as well as any quirk tunings needed and the ``FP_FLAGS``. These flags are
+handed to preprocessor, compiler, assembler and linker.
+
+The following flags are only used for flashing the target with openocd:
+
+**OOCD** binary to call. Give full path if it is not in your PATH environment
+variable. 
+
+**OOCD_INTERFACE** tells open which interface config to use
+
+**OOCD_BOARD** tells openocd which board config file to use.
+
+**objs** here you __append__ object files to include into __all__ binaries
+built for this board. The main Makefile will search for matching source files
+(*.c and *.S) in the main port directory, the board directory and the common
+directory. You will usually have at least a ``board_setup.c`` specific to
+your hardware and pull in the system and stdio stubs provided in the 
+``common`` directory.
+
+As you will probably know, variables assigned with the ``?=`` operator are
+only altered if they have not been already set. This way you can easily test
+different options for a build by providing the variables on the make command
+line.
+
+### Board-Specific Setup
+All hardware needs to be initialised to some degree before it is ready to run
+atomthread's kernel. At the very least you will have to
+
+1. mask interrupts
+2. set up the main clock and configure the systick timer
+3. configure console UART  
+4. configure GPIOs
+
+(Steps 3. and 4. might be optional if you do not plan to let your board
+interact with the outside world in any way...)
+
+The test suit programs expect your board set-up code to provide a function
+named ``int board_setup(void)`` to perform this tasks.
+
+### Linker Script
+If you are using an hitherto unknown target MCU, you will have to provide a
+linker script for it in the ``linker`` directory. The script's name must
+be the same as given to the ``TARGET`` variable in your Makefile.include,
+with the extension ``.ld`` added. It is recommended that you just define
+your MCU's memory regions and include libopencm3's linker file for your
+target's product family. Please look at the provided linker files for examples
+on how to do this.
 
 ## Port Internals
 The Cortex-M port is different from the other architectures insofar as it makes
@@ -95,7 +190,7 @@ special EXC_RETURN code in LR which, when loaded into the PC, will determine
 if on return program execution continues to use the MSP or switches over to 
 the PSP and, on cores with an FPU, whether FPU registers need to be restored.
 The Cortex-M also implements a nested vectored interrupt controller (NVIC),
-which means that a running ISR may be preempted by an exception of higher
+which means that a running ISR may be pre-empted by an exception of higher
 priority.
 
 The use of separate stacks for thread and exception context has the nice
