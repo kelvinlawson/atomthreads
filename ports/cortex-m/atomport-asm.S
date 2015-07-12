@@ -29,6 +29,9 @@
 
 .syntax unified
 
+/**
+ * Create more readable defines for usable intruction set and FPU
+ */
 #undef THUMB_2
 #undef WITH_FPU
 
@@ -40,10 +43,15 @@
 #define WITH_FPU
 #endif
 
+/**
+ * Extern variables needed for context switching and first thread restore
+ */
 .extern CTX_SW_NFO
-.extern _stack
 .extern vector_table
 
+/**
+ * Some bit masks and registers used
+ */
 .equ FPU_USED,      0x00000010
 .equ SCB_ICSR,      0xE000ED04
 .equ PENDSVCLR,     0x08000000
@@ -56,7 +64,7 @@
 .thumb_func
 archFirstThreadRestore:
     /**
-     * Disable interrupts. They should be disabled anyways, but just
+     * Disable interrupts. They should be disabled anyway, but just
      * to make sure...
      */
     movs    r1,         #1
@@ -71,9 +79,9 @@ archFirstThreadRestore:
     msr     MSP,        r1
     
     /* Update ctx_switch_info, set this thread as both running and next */
-    ldr     r1,         = CTX_SW_NFO	
+    ldr     r1,         = CTX_SW_NFO
     str     r0,         [r1, #0]
-    str	    r0,         [r1, #4]
+    str     r0,         [r1, #4]
 
     /* Get thread stack pointer from tcb. Conveniently the first element */
     ldr     r1,         [r0, #0]
@@ -83,9 +91,9 @@ archFirstThreadRestore:
      * Set bit #1 in CONTROL. Causes switch to PSP, so we can work directly
      * with SP now and use pop/push.
      */
-    movs	r1,			#2
+    movs    r1,         #2
     mrs     r2,         CONTROL
-    orrs    r2, 		r2,	r1
+    orrs    r2,         r2,     r1
     msr     CONTROL,    r2
 
     /**
@@ -119,8 +127,8 @@ archFirstThreadRestore:
      * Move SP to position of r8 and restore high registers by loading
      * them to r4-r7 before moving them to r8-r11
      */
-    add     SP,			#16
-    pop		{r4-r7}
+    add     SP,         #16
+    pop     {r4-r7}
     mov     r8,         r4
     mov     r9,         r5
     mov     r10,        r6

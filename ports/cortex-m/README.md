@@ -1,12 +1,16 @@
 # ARM Cortex-M Port
 
+Author: Tido Klaassen <tido@4gh.eu>
+
+License: BSD Revised. Needs libopencm3, which is LGPLv3.
+
 ## Summary and Prerequisites
 This port should run on any Cortex-M0/3/4/4F (M0+ not tested). 
 It uses RedHat's [newlib](https://sourceware.org/newlib/) and [libopencm3]
 (https://github.com/libopencm3/libopencm3). You will also need an ARM compiler
 toolchain. If you want to flash or debug your target, [openocd](http://openocd.org)
- is also a must. For STM32 targets [stlink](https://github.com/texane/stlink)
-might also be helpful.
+is also a must. For STM32 targets [stlink](https://github.com/texane/stlink)
+might be helpful.
 
 On Debian systems, compiler, newlib and openocd can easily be installed by the
 package manager (untested, not going to set up a new system just to test this):
@@ -27,7 +31,7 @@ There are additional subdirectories:
 * **boards** contains subdirectories for specific hardware. Each
 board needs at least a Makefile fragment, which defines certain variables 
 describing the hardware used, as well as a list of extra object files needed.
-There will usually be at least a ``board_setup.c``, which contains code to 
+There will usually be at least a `board_setup.c`, which contains code to 
 initialise the hardware properly (clocks, UART, systick timer, GPIOs, etc.).
 
 * **common** contains code needed by multiple boards, such as
@@ -35,14 +39,14 @@ stub functions for newlib or routines shared by multiple boards using the
 same family of target MCUs.
 
 * **linker** contains linker script fragments for specific target MCUs. These
-just define the target's memory areas (RAM, Flash)and include libopencm3's
-main linker script for the appropriate chip family
+just define the target's memory areas (RAM, Flash) and include libopencm3's
+main linker script for the appropriate chip family.
 
 * **libopencm3** unless you compile and link against an external installation
-of libopencm3, this will be a Git submodule containing, surprise!, libopencm3
+of libopencm3, this will be a Git submodule containing, surprise!, libopencm3.
 
 * **build** this is a temporary directory where all object files end up in and
-which will be removed by ``make clean``  
+which will be removed by `make clean`.
 
 ## Build Preparation
 Unless you decide to use an external installation of libopencm3, you will have
@@ -77,14 +81,14 @@ use it to flash the application image:
 ```
 make BOARD=*yourboard* BINARY=*yourimage* flash
 ```
-NB: with the ek-lm4f120xl board openocd will report an error after flashing.
+N.B.: with the ek-lm4f120xl board openocd will report an error after flashing.
 I think it is because it can not handle the changed core clock after the 
 application starts, but I simply can't be bothered to further investigate this.
 The application gets flashed and you can ignore the error.
 
 ## Adding New Boards
 To add support for a new board, you will have to provide at least two parts. 
-First, a ``Makefile.include`` to be pulled in by the main Makefile. Second,
+First, a `Makefile.include` to be pulled in by the main Makefile. Second,
 some set-up code for your specific hardware. If there is no linker script for
 your MCU, you will have to add one, too.
 
@@ -111,47 +115,47 @@ objs            += board_setup.o
 objs            += stubs.o stm32_con.o
 ```
 
-**TARGET** is the name for the actual MCU used on your board. It will be used
-to locate the linker script file in the ``linker`` directory by appending
-``.ld`` to it.
+* **TARGET** is the name for the actual MCU used on your board. It will be used
+to locate the linker script file in the `linker` directory by appending
+`.ld` to it.
 
-**LIBNAME** is the name of the opencm3 library to link your object files
+* **LIBNAME** is the name of the opencm3 library to link your object files
 against.
 
-**DEFS** are flags that will be appended to the CPPFLAGS. You will at least
+* **DEFS** are flags that will be appended to the CPPFLAGS. You will at least
 have to define the opencm3 target family (STM32F1 here), so the build process
 will find the right header files to include. If you are using the stub and
 console functions provided in the common directory, you will also have to
 define the reserved main stack size (MST_SIZE) and which UART to use for stdio
 (STD_CON).
 
-**FP_FLAGS** which floating point format to use. For MCUs without hardware
-support for floating point (M0/3, sometimes 4), use ``-msoft-float``,
-otherwise use ``-mfloat-abi=hard -mfpu=fpv4-sp-d16``. You could add these 
-directly to ``ARCH_FLAGS``, but this way it is easily overridden from the
+* **FP_FLAGS** which floating point format to use. For MCUs without hardware
+support for floating point (M0/3, sometimes 4), use `-msoft-float`,
+otherwise use `-mfloat-abi=hard -mfpu=fpv4-sp-d16`. You could add these 
+directly to `ARCH_FLAGS`, but this way it is easily overridden from the
 make command line.
 
-**ARCH_FLAGS** specify the instruction (sub)set and CPU type to compile for,
-as well as any quirk tunings needed and the ``FP_FLAGS``. These flags are
+* **ARCH_FLAGS** specify the instruction (sub)set and CPU type to compile for,
+as well as any quirk tunings needed and the `FP_FLAGS`. These flags are
 handed to preprocessor, compiler, assembler and linker.
 
 The following flags are only used for flashing the target with openocd:
 
-**OOCD** binary to call. Give full path if it is not in your PATH environment
+* **OOCD** binary to call. Give full path if it is not in your PATH environment
 variable. 
 
-**OOCD_INTERFACE** tells open which interface config to use
+* **OOCD_INTERFACE** tells open which interface config to use
 
-**OOCD_BOARD** tells openocd which board config file to use.
+* **OOCD_BOARD** tells openocd which board config file to use.
 
-**objs** here you __append__ object files to include into __all__ binaries
+* **objs** here you _append_ object files to include into _all_ binaries
 built for this board. The main Makefile will search for matching source files
 (*.c and *.S) in the main port directory, the board directory and the common
-directory. You will usually have at least a ``board_setup.c`` specific to
+directory. You will usually have at least a `board_setup.c` specific to
 your hardware and pull in the system and stdio stubs provided in the 
-``common`` directory.
+`common` directory.
 
-As you will probably know, variables assigned with the ``?=`` operator are
+As you will probably know, variables assigned with the `?=` operator are
 only altered if they have not been already set. This way you can easily test
 different options for a build by providing the variables on the make command
 line.
@@ -169,13 +173,13 @@ atomthread's kernel. At the very least you will have to
 interact with the outside world in any way...)
 
 The test suit programs expect your board set-up code to provide a function
-named ``int board_setup(void)`` to perform this tasks.
+named `int board_setup(void)` to perform this tasks.
 
 ### Linker Script
 If you are using an hitherto unknown target MCU, you will have to provide a
-linker script for it in the ``linker`` directory. The script's name must
-be the same as given to the ``TARGET`` variable in your Makefile.include,
-with the extension ``.ld`` added. It is recommended that you just define
+linker script for it in the `linker` directory. The script's name must
+be the same as given to the `TARGET` variable in your Makefile.include,
+with the extension `.ld` added. It is recommended that you just define
 your MCU's memory regions and include libopencm3's linker file for your
 target's product family. Please look at the provided linker files for examples
 on how to do this.
