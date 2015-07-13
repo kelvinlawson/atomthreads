@@ -134,6 +134,7 @@ endif
 # Target specific version libopencm3
 LDLIBS		+= -l$(LIBNAME)
 
+ifneq ($(BOARD),qemu)
 ## Flags for newlibc.    
 # This uses the version of newlib optimised for size and without libnosys.
 # This usually is the version of newlib you want to use, although it has some
@@ -150,6 +151,11 @@ LDLIBS		+= -Wl,--start-group -lc_nano -lgcc -Wl,--end-group
 # the top end of memory while the threads' stacks are positioned inside 
 # the BSS.
 #LDLIBS		+= -Wl,--start-group -lc_nano -lgcc -lnosys -Wl,--end-group
+else
+# Special LDLIBS for qemu target to enable semi-hosting. 
+# TODO: Check if this is also useful for real hardware  
+LDLIBS		+= -Wl,--start-group --specs=rdimon.specs -lc -lrdimon -lgcc -Wl,--end-group
+endif
 
 # All
 .PHONY: all
