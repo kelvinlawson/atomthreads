@@ -61,7 +61,18 @@ common_dir=$(src_dir)/common
 kernel_dir=$(src_dir)/../../kernel
 tests_dir=$(src_dir)/../../tests
 
-# Object files
+# Check if user wants to use external opencm3 lib or if we have to build
+# it ourselves
+ifeq ($(OPENCM3_DIR),)
+	OPENCM3_DIR = $(src_dir)/libopencm3
+	build_lib = true
+endif
+
+ifneq ($(V),)
+    $(info Using $(OPENCM3_DIR) as path to opencm3 library)
+endif
+
+# Object files needed by all applications
 objs += atomport.o 
 objs += atomport-asm.o 
 
@@ -72,31 +83,13 @@ objs += atommutex.o
 objs += atomtimer.o 
 objs += atomqueue.o
 
-objs += tests-main.o
-
 # Collection of built objects (excluding test applications)
 build_objs = $(foreach obj,$(objs),$(build_dir)/$(obj))
 
-# Target application filenames .elf for each test object
-tobjs = $(notdir $(patsubst %.c,%.o,$(wildcard $(tests_dir)/*.c)))
-telfs = $(patsubst %.o,%.elf,$(tobjs))
-tbins = $(patsubst %.o,%.bin,$(tobjs))
-thexs = $(patsubst %.o,%.hex,$(tobjs))
-build_tobjs = $(foreach tobj,$(tobjs),$(build_dir)/$(tobj))
-build_telfs = $(foreach telf,$(telfs),$(build_dir)/$(telf))
-build_tbins = $(foreach tbin,$(tbins),$(build_dir)/$(tbin))
-build_thexs = $(foreach thex,$(thexs),$(build_dir)/$(thex))
-
-# Check if user wants to use external opencm3 lib or if we have to build
-# it ourselves
-ifeq ($(OPENCM3_DIR),)
-	OPENCM3_DIR = $(src_dir)/libopencm3
-	lib_needed = build_lib
-endif
-
-ifneq ($(V),)
-    $(info Using $(OPENCM3_DIR) as path to opencm3 library)
-endif
+# Object needed by all test applications, but not user apps
+tmobjs = tests-main.o
+build_tmobjs    = $(foreach obj,$(tmobjs),$(build_dir)/$(obj))
+build_tmobjs   += $(build_objs)
 
 # Set up search paths for libopencm3
 INCLUDE_DIR	= $(OPENCM3_DIR)/include
@@ -105,7 +98,7 @@ SCRIPT_DIR	= $(OPENCM3_DIR)/scripts
 
 # GCC flags
 CFLAGS		=  -Os -g
-CFLAGS		+= -Wall -Wshadow -Wimplicit-function-declaration
+CFLAGS		+= -Wall -Werror
 CFLAGS		+= -Wredundant-decls -Wstrict-prototypes
 CFLAGS		+= -fno-common -ffunction-sections -fdata-sections
 
@@ -116,7 +109,7 @@ endif
 
 # C & C++ preprocessor common flags
 CPPFLAGS	+= -MD
-CPPFLAGS	+= -Wall -Wundef
+CPPFLAGS	+= -Wall -Wundef -Werror
 CPPFLAGS	+= -I$(INCLUDE_DIR) $(DEFS)
 CPPFLAGS    += -I$(board_dir) -I$(common_dir) -I$(src_dir) -I$(kernel_dir) -I$(tests_dir)
 
@@ -157,15 +150,65 @@ else
 LDLIBS		+= -Wl,--start-group --specs=rdimon.specs -lc -lrdimon -lgcc -Wl,--end-group
 endif
 
-# All
 .PHONY: all
-all: $(LIB_DIR)/lib$(LIBNAME).a $(build_tbins) $(build_thexs) $(build_telfs) $(build_tobjs) $(build_objs) Makefile $(board_dir)/Makefile.include
+all: build_all
 
-# add build dependency for local libopencm3 if no external libopencm3 is used 
-$(LIB_DIR)/lib$(LIBNAME).a: $(lib_needed)
+# Generate a direct make target for a test application 
+define build_test
+.PHONY: $(1)
+$(1): $(build_dir)/$(1).elf
+endef
 
-.PHONY: build_lib
-build_lib:
+# Target application filenames .elf for each test object
+tobjs = $(notdir $(patsubst %.c,%.o,$(wildcard $(tests_dir)/*.c)))
+telfs = $(patsubst %.o,%.elf,$(tobjs))
+tbins = $(patsubst %.o,%.bin,$(tobjs))
+thexs = $(patsubst %.o,%.hex,$(tobjs))
+build_tobjs = $(foreach tobj,$(tobjs),$(build_dir)/$(tobj))
+build_telfs = $(foreach telf,$(telfs),$(build_dir)/$(telf))
+build_tbins = $(foreach tbin,$(tbins),$(build_dir)/$(tbin))
+build_thexs = $(foreach thex,$(thexs),$(build_dir)/$(thex))
+
+# Add a direct make target for every test app
+$(foreach test,$(patsubst %.o,%,$(tobjs)),$(eval $(call build_test,$(test))))
+
+# Define an explicit target and linker rule for an application not in the
+# test suite. This will be a stand-alone applications located in the board
+# or common directory
+define build_app
+.PHONY: $(1)
+$(1): $(build_dir)/$(1).elf
+
+$(build_dir)/$(1).elf $(build_dir)/$(1).map: $(LIB_DIR)/lib$(LIBNAME).a $(build_dir)/$(1).o $(build_objs) $(LDSCRIPT)
+	$$(Q)mkdir -p `dirname $$@`
+	$$(if $$(Q), @echo " (ELF)       $$(subst $$(build_dir)/,,$$@)")
+	$$(Q)$$(LD) $$(LDFLAGS) $$(ARCH_FLAGS) $$(build_objs) $$(build_dir)/$(1).o $(LDLIBS) -o $$@
+endef
+
+# Target application filenames .elf for each user app object
+aelfs  = $(patsubst %.o,%.elf,$(aobjs))
+abins  = $(patsubst %.o,%.bin,$(aobjs))
+ahexs  = $(patsubst %.o,%.hex,$(aobjs))
+build_aobjs = $(foreach aobj,$(aobjs),$(build_dir)/$(aobj))
+build_aelfs = $(foreach aelf,$(aelfs),$(build_dir)/$(aelf))
+build_abins = $(foreach abin,$(abins),$(build_dir)/$(abin))
+build_ahexs = $(foreach ahex,$(ahexs),$(build_dir)/$(ahex))
+
+# add a direct make target for every standalone app
+$(foreach app,$(patsubst %.o,%,$(aobjs)),$(eval $(call build_app,$(app))))
+
+# Build all test and user applications
+all_bins	= $(build_tbins) $(build_abins)
+all_hexs	= $(build_thexs) $(build_ahexs)
+all_elfs	= $(build_telfs) $(build_aelfs)
+all_objs	= $(build_tobjs) $(build_aobjs) $(build_tmobjs)
+
+.PHONY: build_all
+build_all: $(LIB_DIR)/lib$(LIBNAME).a $(all_bins) $(all_hexs) $(all_elfs) $(all_objs) Makefile $(board_dir)/Makefile.include
+
+# Add build dependency for local libopencm3 if no external libopencm3 is used 
+ifeq ($(build_lib),true)
+$(LIB_DIR)/lib$(LIBNAME).a: 
 	$(Q)if [ ! -d libopencm3 ] ; then \
 		printf "######## ERROR ########\n"; \
 		printf "\tlibopencm3 is not initialized.\n"; \
@@ -177,7 +220,8 @@ build_lib:
 		printf "######## ERROR ########\n"; \
 		exit 1; \
 		fi
-	$(Q)$(MAKE) -C libopencm3
+	$(Q)$(MAKE) -C libopencm3 V=$(V)
+endif
 
 $(build_dir)/%.bin: $(build_dir)/%.elf
 	$(Q)mkdir -p `dirname $@`
@@ -199,10 +243,13 @@ $(build_dir)/%.list: $(build_dir)/%.elf
 	$(if $(Q), @echo " (OBJDUMP)   $(subst $(build_dir)/,,$@)")
 	$(Q)$(OBJDUMP) -S $< > $@
 
-$(build_dir)/%.elf $(build_dir)/%.map: $(build_dir)/%.o $(build_objs) $(LDSCRIPT) $(LIB_DIR)/lib$(LIBNAME).a
+# This is the default rule for linking the test suite applications.
+# User applications defined in a board Makefile fragment are linked
+# by an explicitly generated rule.
+$(build_dir)/%.elf $(build_dir)/%.map: $(LIB_DIR)/lib$(LIBNAME).a $(build_dir)/%.o $(build_tmobjs) $(LDSCRIPT)
 	$(Q)mkdir -p `dirname $@`
 	$(if $(Q), @echo " (ELF)       $(subst $(build_dir)/,,$@)")
-	$(Q)$(LD) $(LDFLAGS) $(ARCH_FLAGS) $(build_objs) $(build_dir)/$(*).o $(LDLIBS) -o $@
+	$(Q)$(LD) $(LDFLAGS) $(ARCH_FLAGS) $(build_tmobjs) $(build_dir)/$(*).o $(LDLIBS) -o $@
 
 $(build_dir)/%.o: $(src_dir)/%.S Makefile $(board_dir)/Makefile.include
 	$(Q)mkdir -p `dirname $@`
@@ -244,13 +291,17 @@ $(build_dir)/%.o: $(tests_dir)/%.c Makefile $(board_dir)/Makefile.include
 	$(if $(Q), @echo " (CC)        $(subst $(build_dir)/,,$@)")
 	$(Q)$(CC) $(CFLAGS) $(CPPFLAGS) $(ARCH_FLAGS) -I`dirname $<` -c $< -o $@
 
-# Clean
+# Clean. Remove only atomthread's object files and images
 .PHONY: clean
 clean:
 	rm -rf doxygen-kernel
 	rm -rf doxygen-opencm3
 	rm -rf $(build_dir)
-ifneq ($(lib_needed),)
+
+# Real clean. Also clean libopencm3 if it was built in tree
+.PHONY: realclean
+realclean: clean
+ifeq ($(build_lib),true)
 	$(Q)$(MAKE) -C libopencm3 V=$(V) clean
 endif
 
@@ -258,56 +309,58 @@ endif
 .PHONY: doxygen
 doxygen:
 	doxygen $(kernel_dir)/Doxyfile
-	doxygen ./Doxyfile
+ifeq ($(build_lib),true)
+	$(Q)$(MAKE) -C libopencm3 V=$(V) doc
+endif
 
-################################################################
-# target flashing recipes "borrowed" from libopencm3-examples  #
-################################################################
-flash: $(BINARY).flash
+#################################################################################
+# Target flashing recipes "borrowed" from libopencm3-examples. Mostly untested. #
+#################################################################################
 
 %.stlink-flash: $(build_dir)/%.bin
-	@printf "  FLASH  $<\n"
-	$(Q)$(STFLASH) write $(build_dir)/$(*).bin 0x8000000
+	$(if $(Q), @echo " (FLASH)     $(subst $(build_dir)/,,$<)")
+	$(Q)$(STFLASH) write $< 0x8000000
 
 ifeq ($(STLINK_PORT),)
 ifeq ($(BMP_PORT),)
 ifeq ($(OOCD_SERIAL),)
 %.flash: $(build_dir)/%.hex
-	@printf "  FLASH   $<\n"
+	$(if $(Q), @echo " (FLASH)     $(subst $(build_dir)/,,$<)")
 	@# IMPORTANT: Don't use "resume", only "reset" will work correctly!
 	-$(Q)$(OOCD) -f interface/$(OOCD_INTERFACE).cfg \
 		    -f board/$(OOCD_BOARD).cfg \
 		    -c "init" -c "reset init" \
-		    -c "flash write_image erase $(build_dir)/$(*).hex" \
+		    -c "flash write_image erase $<" \
 		    -c "reset" \
 		    -c "shutdown" $(NULL)
 else
 %.flash: $(build_dir)/%.hex
-	@printf "  FLASH   $<\n"
+	$(if $(Q), @echo " (FLASH)     $(subst $(build_dir)/,,$<)")
 	@# IMPORTANT: Don't use "resume", only "reset" will work correctly!
 	-$(Q)$(OOCD) -f interface/$(OOCD_INTERFACE).cfg \
 		    -f board/$(OOCD_BOARD).cfg \
 		    -c "ft2232_serial $(OOCD_SERIAL)" \
 		    -c "init" -c "reset init" \
-		    -c "flash write_image erase $(build_dir)/$(*).hex" \
+		    -c "flash write_image erase $<" \
 		    -c "reset" \
 		    -c "shutdown" $(NULL)
 endif
 else
 %.flash: $(build_dir)/%.elf
-	@printf "  GDB   $(build_dir)/$(*).elf (flash)\n"
+	$(if $(Q), @echo " (GDB)       $(subst $(build_dir)/,,$<)")
 	$(Q)$(GDB) --batch \
 		   -ex 'target extended-remote $(BMP_PORT)' \
 		   -x $(SCRIPT_DIR)/black_magic_probe_flash.scr \
-		   $(build_dir)/$(*).elf
+		   $<
 endif
 else
 %.flash: $(build_dir)/%.elf
-	@printf "  GDB   $(build_dir)/$(*).elf (flash)\n"
+	$(if $(Q), @echo " (GDB)       $(subst $(build_dir)/,,$<)")
 	$(Q)$(GDB) --batch \
 		   -ex 'target extended-remote $(STLINK_PORT)' \
 		   -x $(SCRIPT_DIR)/stlink_flash.scr \
-		   $(build_dir)/$(*).elf
+		   $<
 endif
 
-
+# Include auto-generated dependencies
+-include $(all_objs:.o=.d)

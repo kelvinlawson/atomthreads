@@ -12,3 +12,4 @@ OOCD_INTERFACE  ?= stlink-v2-1
 OOCD_BOARD      ?= st_nucleo_f103rb
 
 objs            += board_setup.o
+# aobjs           += helloworld.o

@@ -220,7 +220,7 @@ int main ( void )
  * @return None
  */
 extern void test_led_toggle(void);
-static void main_thread_func (uint32_t data)
+static void main_thread_func (uint32_t data __maybe_unused)
 {
     uint32_t test_status;
     int sleep_ticks;

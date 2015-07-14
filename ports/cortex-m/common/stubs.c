@@ -31,6 +31,8 @@
 
 #include <libopencm3/cm3/vector.h>
 
+#include "atomport.h"
+
 /**
  * _sbrk is needed by newlib for heap management.
  * The main stack usually starts at the top of RAM and grows downwards,
@@ -82,29 +84,33 @@ caddr_t _sbrk(int incr)
 /**
  * dummy stubs needed by newlib when not linked with libnosys
  */
-int _close(int file)
+int _close(int file __maybe_unused)
 {
     return -1;
 }
 
-int _fstat(int file, struct stat *st)
+int _fstat(int file __maybe_unused, struct stat *st)
 {
     st->st_mode = S_IFCHR;
 
     return 0;
 }
 
-int _isatty(int file)
+int _isatty(int file __maybe_unused)
 {
     return 1;
 }
 
-int _lseek(int file, int ptr, int dir)
+int _lseek(int file __maybe_unused,
+           int ptr __maybe_unused,
+           int dir __maybe_unused)
 {
     return 0;
 }
 
-int _open(const char *name, int flags, int mode)
+int _open(const char *name __maybe_unused,
+          int flags __maybe_unused,
+          int mode __maybe_unused)
 {
     return -1;
 }

@@ -87,7 +87,7 @@ static void clock_setup(void)
 
 /**
  * Set up user LED and provide function for toggling it. This is for
- * use by the test suit programs
+ * use by the test suite programs
  */
 static void test_led_setup(void)
 {

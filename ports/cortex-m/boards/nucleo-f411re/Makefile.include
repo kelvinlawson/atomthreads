@@ -1,4 +1,5 @@
 TARGET          ?= stm32f411re
+
 LIBNAME         ?= opencm3_stm32f4
 DEFS            ?= -DSTM32F4
 DEFS            += -DSTD_CON=USART2
@@ -13,3 +14,4 @@ OOCD_BOARD      ?= st_nucleo_f4
 
 objs            += board_setup.o
 objs            += stubs.o stm32_con.o
+# aobjs           += helloworld.o

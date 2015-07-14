@@ -76,11 +76,20 @@ To build with an external libopencm3, run
 ```
 make BOARD=*yourboard* OPENCM3_DIR=*/path/to/libopencm3* all
 ```
-If your board Makefile also set up the necessary openocd variables, you can
-use it to flash the application image:
+
+Instead of building the whole test suite you can also just build a specific
+application image by giving its base name. If, for example, you only want
+to build the `queue2` test app, you can do that like this:
 ```
-make BOARD=*yourboard* BINARY=*yourimage* flash
+make BOARD=*yourboard* queue2
 ```
+ 
+If your board Makefile also sets up the necessary openocd variables, you can
+use it to flash the application image by appending `.flash` to its base name.
+```
+make BOARD=*yourboard* *yourimage*.flash
+```
+
 N.B.: with the ek-lm4f120xl board openocd will report an error after flashing.
 I think it is because it can not handle the changed core clock after the 
 application starts, but I simply can't be bothered to further investigate this.
@@ -144,9 +153,9 @@ The following flags are only used for flashing the target with openocd:
 * **OOCD** binary to call. Give full path if it is not in your PATH environment
 variable. 
 
-* **OOCD_INTERFACE** tells open which interface config to use
+* **OOCD_INTERFACE** tells open which interface configuration to use
 
-* **OOCD_BOARD** tells openocd which board config file to use.
+* **OOCD_BOARD** tells openocd which board configuration file to use.
 
 * **objs** here you _append_ object files to include into _all_ binaries
 built for this board. The main Makefile will search for matching source files
@@ -155,12 +164,19 @@ directory. You will usually have at least a `board_setup.c` specific to
 your hardware and pull in the system and stdio stubs provided in the 
 `common` directory.
 
+* **aobjs** the build system will build one application for each object you 
+add to this variable. It will do so by linking each of these objects with all
+of the kernel-, port- and board-objects (but none of the testsuite-objects). 
+The source for the app-object should be located in either the board or
+common directory and must contain the application's `main()` function.
+The `helloworld.c` file in the common directory is provided as an example.
+
 As you will probably know, variables assigned with the `?=` operator are
 only altered if they have not been already set. This way you can easily test
 different options for a build by providing the variables on the make command
 line.
 
-### Board-Specific Setup
+### Board-Specific Set-up
 All hardware needs to be initialised to some degree before it is ready to run
 atomthread's kernel. At the very least you will have to
 
@@ -172,7 +188,7 @@ atomthread's kernel. At the very least you will have to
 (Steps 3. and 4. might be optional if you do not plan to let your board
 interact with the outside world in any way...)
 
-The test suit programs expect your board set-up code to provide a function
+The test suite programs expect your board set-up code to provide a function
 named `int board_setup(void)` to perform this tasks.
 
 ### Linker Script
