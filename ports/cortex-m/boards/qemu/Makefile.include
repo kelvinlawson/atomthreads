@@ -13,3 +13,15 @@ OOCD_BOARD      ?= st_nucleo_f103rb
 
 objs            += board_setup.o
 # aobjs           += helloworld.o
+
+# Special requirements for running automated tests with QEMU
+
+QEMU            ?= qemu-system-gnuarmeclipse
+.DEFAULT_GOAL   := all
+.SECONDEXPANSION:
+
+.PHONY: qemutests
+qemutests: $$(addsuffix .sim, $$(sort $$(build_telfs)))
+
+%.sim: $$(basename $$@)
+	boards/qemu/run_test.exp $(QEMU) $(*)

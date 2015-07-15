@@ -15,7 +15,17 @@ a usable target.
 After installing you can use it to run the test binaries like this:
 
 ```
-qemu-system-gnuarmeclipse -nographic -monitor null -serial stdio \
-      -semihosting --semihosting-config target=native \
-      --machine NUCLEO-F103RB --kernel build/kern1.elf --verbose
+qemu-system-gnuarmeclipse -nographic -monitor null \
+      -semihosting --machine NUCLEO-F103RB \
+      --verbose --kernel build/kern1.elf
 ```
+
+The whole test suite can be run in an automatic way from the build system by
+using the tool `expect`.
+
+```
+make BOARD=qemu QEMU=/path/to/your/qemu/binary qemutests
+```
+
+If your qemu-binary is called `qemu-system-gnuarmeclipse` and is located
+in your search path, you can omit the `QEMU=...` part.
