@@ -238,19 +238,19 @@ uint8_t atomEventWait (ATOM_EVENTS event_mask, ATOM_EVENTS *events, int32_t time
     }
     else
     {
-        CRITICAL_START();
+        CRITICAL_START ();
         /* If already event bits are set in the TCBs event register */
         if (event_mask & curr_tcb_ptr->events)
         {
             *events = curr_tcb_ptr->events & event_mask;
-            CRITICAL_END();
+            CRITICAL_END ();
             status = ATOM_OK;
         }
         else
         {
             if (timeout < 0)
             {
-                CRITICAL_END();
+                CRITICAL_END ();
                 *events = 0;
                 status = ATOM_WOULDBLOCK;
             }
