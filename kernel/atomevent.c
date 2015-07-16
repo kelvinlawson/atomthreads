@@ -163,6 +163,8 @@ uint8_t atomEventSignal (ATOM_TCB *curr_tcb_ptr, ATOM_EVENTS events)
                    considered an error in parameters. */
                 status = ATOM_ERR_PARAM;
             }
+            /* Exit critical region */
+            CRITICAL_END ();
             if (status == ATOM_OK)
             {
                 if (atomCurrentContext())
@@ -175,11 +177,11 @@ uint8_t atomEventSignal (ATOM_TCB *curr_tcb_ptr, ATOM_EVENTS events)
         {
             /* TCB is not waiting for events, we mask in signalled events */
             curr_tcb_ptr->events = events;
+            /* Exit critical region */
+            CRITICAL_END ();
             status = ATOM_OK;
         }
 
-        /* Exit critical region */
-        CRITICAL_END ();
     }
     return status;
 }
@@ -301,7 +303,8 @@ uint8_t atomEventWait (ATOM_EVENTS event_mask, ATOM_EVENTS *events, int32_t time
                  * otherwise it will be called on exiting the ISR by
                  * atomIntExit().
                  */
-                if ((status  == ATOM_OK) && atomCurrentContext())
+                CRITICAL_END ();
+                if ((status == ATOM_OK) && atomCurrentContext())
                 {
                     atomSched (FALSE);
                     /* Restore returned events, clears event memory and update
@@ -314,7 +317,6 @@ uint8_t atomEventWait (ATOM_EVENTS event_mask, ATOM_EVENTS *events, int32_t time
                 {
                     status = ATOM_ERR_CONTEXT;
                 }
-                CRITICAL_END();
             }
         }
     }
