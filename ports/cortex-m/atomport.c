@@ -144,6 +144,11 @@ void archThreadContextInit(ATOM_TCB *tcb_ptr, void *stack_top,
     struct task_stack *tsk_ctx;
 
     /**
+     * Enforce initial stack alignment
+     */
+    stack_top = STACK_ALIGN(stack_top, STACK_ALIGN_SIZE);
+
+    /**
      * New threads will be scheduled from an exception handler, so we have to
      * set up an exception stack frame as well as task stack frame
      */

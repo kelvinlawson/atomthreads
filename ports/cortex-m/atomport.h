@@ -40,6 +40,10 @@
 /* Size of each stack entry / stack alignment size (4 bytes on Cortex-M without FPU) */
 #define STACK_ALIGN_SIZE    sizeof(uint32_t)
 
+#define ALIGN(x, a)         ((x + (typeof(x))(a) - 1) & ~((typeof(x))(a) - 1))
+#define PTR_ALIGN(p, a)     ((typeof(p))ALIGN((uint32_t)(p), (a)))
+#define STACK_ALIGN(p, a)   (typeof(p))((typeof(a))(p) & ~((a) - 1))
+
 #define POINTER             void *
 #define UINT32              uint32_t
 
