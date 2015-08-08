@@ -342,26 +342,16 @@ static void atomThreadSwitch(ATOM_TCB *old_tcb, ATOM_TCB *new_tcb)
         /* Set the new currently-running thread pointer */
         curr_tcb = new_tcb;
 
-        /* TKL: If the thread is being scheduled in, it can not be suspended */
-        curr_tcb->suspended = FALSE;
+        /**
+         * The context switch will shift execution to a different thread. The
+         * new thread is now ready to run so clear its suspend status in
+         * preparation for it waking up.
+         */
+        new_tcb->suspended = FALSE;
 
         /* Call the architecture-specific context switch */
         archContextSwitch (old_tcb, new_tcb);
     }
-
-    /**
-     * The context switch shifted execution to a different thread. By the time
-     * we get back here, we are running in old_tcb context again. Clear its
-     * suspend status now that we're back.
-     */
-
-    /**
-     *  TKL: does not work on Cortex-M because of the delayed context switching
-     *  via pend_sv_handler and also the separate thread and exception stacks
-     *  being used.
-     */
-    // old_tcb->suspended = FALSE;
-
 }
 
 
