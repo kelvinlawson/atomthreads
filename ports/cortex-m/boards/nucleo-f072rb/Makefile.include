@@ -1,0 +1,17 @@
+TARGET          ?= stm32f072rb
+
+LIBNAME         ?= opencm3_stm32f0
+DEFS            ?= -DSTM32F0
+DEFS            += -DSTD_CON=USART2
+DEFS            += -DMST_SIZE=0x400
+
+FP_FLAGS        ?= -msoft-float
+ARCH_FLAGS      ?= -mthumb -mcpu=cortex-m0
+
+OOCD            ?= openocd
+OOCD_INTERFACE  ?= stlink-v2-1
+OOCD_BOARD      ?= st_nucleo_f0
+
+objs            += board_setup.o
+objs            += stubs.o stm32_con.o
+# aobjs           += helloworld.o

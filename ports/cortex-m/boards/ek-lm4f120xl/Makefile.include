@@ -1,0 +1,17 @@
+TARGET          ?= lm4f120xl
+
+LIBNAME         ?= opencm3_lm4f
+DEFS            ?= -DLM4F
+DEFS            += -DSTD_CON=UART0
+DEFS            += -DMST_SIZE=0x400
+
+FP_FLAGS        ?= -mfloat-abi=hard -mfpu=fpv4-sp-d16
+ARCH_FLAGS      ?= -mthumb -mcpu=cortex-m4 $(FP_FLAGS)
+
+OOCD            ?= openocd
+OOCD_INTERFACE	?= ti-icdi
+OOCD_BOARD	    ?= ek-lm4f120xl
+
+objs            += board_setup.o
+objs            += stubs.o lm4f_con.o
+# aobjs           += helloworld.o

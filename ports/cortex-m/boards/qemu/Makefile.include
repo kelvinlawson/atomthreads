@@ -1,0 +1,27 @@
+TARGET          ?= stm32f103rb
+LIBNAME         ?= opencm3_stm32f1
+DEFS            ?= -DSTM32F1
+DEFS            += -DSTD_CON=USART2
+DEFS            += -DMST_SIZE=0x400
+
+FP_FLAGS        ?= -msoft-float
+ARCH_FLAGS      ?= -mthumb -mcpu=cortex-m3 $(FP_FLAGS) -mfix-cortex-m3-ldrd
+
+OOCD            ?= openocd
+OOCD_INTERFACE  ?= stlink-v2-1
+OOCD_BOARD      ?= st_nucleo_f103rb
+
+objs            += board_setup.o
+# aobjs           += helloworld.o
+
+# Special requirements for running automated tests with QEMU
+
+QEMU            ?= qemu-system-gnuarmeclipse
+.DEFAULT_GOAL   := all
+.SECONDEXPANSION:
+
+.PHONY: qemutests
+qemutests: $$(addsuffix .sim, $$(sort $$(build_telfs)))
+
+%.sim: $$(basename $$@)
+	boards/qemu/run_test.exp $(QEMU) $(*)
