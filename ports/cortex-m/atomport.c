@@ -27,6 +27,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include <string.h>
+
 #include <libopencm3/cm3/nvic.h>
 #include <libopencm3/cm3/systick.h>
 #include <libopencm3/cm3/cortex.h>
@@ -201,5 +203,12 @@ void archThreadContextInit(ATOM_TCB *tcb_ptr, void *stack_top,
     tcb_ptr->sp_save_ptr = tsk_ctx;
     tcb_ptr->entry_point = entry_point;
     tcb_ptr->entry_param = entry_param;
+
+#if defined(__NEWLIB__)
+    /**
+     * Initialise thread's reentry context for newlib
+     */ 
+    _REENT_INIT_PTR(&(tcb_ptr->port_priv.reent));
+#endif
 }
 

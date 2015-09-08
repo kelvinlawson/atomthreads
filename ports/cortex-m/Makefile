@@ -113,6 +113,10 @@ CPPFLAGS	+= -Wall -Wundef -Werror
 CPPFLAGS	+= -I$(INCLUDE_DIR) $(DEFS)
 CPPFLAGS    += -I$(board_dir) -I$(common_dir) -I$(src_dir) -I$(kernel_dir) -I$(tests_dir)
 
+# Assembler flags
+ASFLAGS     += -D__ASSEMBLY__ 
+ASFLAGS     += -D__NEWLIB__
+
 # Linker flags
 LDFLAGS		+= --static -nostartfiles
 LDFLAGS		+= -L$(LIB_DIR)
@@ -254,7 +258,7 @@ $(build_dir)/%.elf $(build_dir)/%.map: $(LIB_DIR)/lib$(LIBNAME).a $(build_dir)/%
 $(build_dir)/%.o: $(src_dir)/%.S Makefile $(board_dir)/Makefile.include
 	$(Q)mkdir -p `dirname $@`
 	$(if $(Q), @echo " (AS)        $(subst $(build_dir)/,,$@)")
-	$(Q)$(CC) $(CFLAGS) $(CPPFLAGS) $(ARCH_FLAGS) -D__ASSEMBLY__ -I`dirname $<` -c $< -o $@
+	$(Q)$(CC) $(CFLAGS) $(CPPFLAGS) $(ARCH_FLAGS) $(ASFLAGS) -I`dirname $<` -c $< -o $@
 
 $(build_dir)/%.o: $(src_dir)/%.c Makefile $(board_dir)/Makefile.include
 	$(Q)mkdir -p `dirname $@`
@@ -264,7 +268,7 @@ $(build_dir)/%.o: $(src_dir)/%.c Makefile $(board_dir)/Makefile.include
 $(build_dir)/%.o: $(board_dir)/%.S Makefile $(board_dir)/Makefile.include
 	$(Q)mkdir -p `dirname $@`
 	$(if $(Q), @echo " (AS)        $(subst $(build_dir)/,,$@)")
-	$(Q)$(CC) $(CFLAGS) $(CPPFLAGS) $(ARCH_FLAGS) -D__ASSEMBLY__ -I`dirname $<` -c $< -o $@
+	$(Q)$(CC) $(CFLAGS) $(CPPFLAGS) $(ARCH_FLAGS) $(ASFLAGS) -I`dirname $<` -c $< -o $@
 
 $(build_dir)/%.o: $(board_dir)/%.c Makefile $(board_dir)/Makefile.include
 	$(Q)mkdir -p `dirname $@`
@@ -274,7 +278,7 @@ $(build_dir)/%.o: $(board_dir)/%.c Makefile $(board_dir)/Makefile.include
 $(build_dir)/%.o: $(common_dir)/%.S Makefile $(board_dir)/Makefile.include
 	$(Q)mkdir -p `dirname $@`
 	$(if $(Q), @echo " (AS)        $(subst $(build_dir)/,,$@)")
-	$(Q)$(CC) $(CFLAGS) $(CPPFLAGS) $(ARCH_FLAGS) -D__ASSEMBLY__ -I`dirname $<` -c $< -o $@
+	$(Q)$(CC) $(CFLAGS) $(CPPFLAGS) $(ARCH_FLAGS) $(ASFLAGS) -I`dirname $<` -c $< -o $@
 
 $(build_dir)/%.o: $(common_dir)/%.c Makefile $(board_dir)/Makefile.include
 	$(Q)mkdir -p `dirname $@`

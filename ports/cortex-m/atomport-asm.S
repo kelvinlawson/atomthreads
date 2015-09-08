@@ -49,6 +49,13 @@
 .extern CTX_SW_NFO
 .extern vector_table
 
+#if defined(__NEWLIB__)
+/**
+ * When using newlib, reentry context needs to be updated on task switch
+ */
+.extern _impure_ptr
+#endif
+
 /**
  * Some bit masks and registers used
  */
@@ -86,6 +93,17 @@ archFirstThreadRestore:
     /* Get thread stack pointer from tcb. Conveniently the first element */
     ldr     r1,         [r0, #0]
     msr     PSP,        r1
+
+#if defined(__NEWLIB__)
+    /**
+     * Store the thread's reentry context address in _impure_ptr. This
+     * should be the TCB's second element
+     */ 
+    ldr     r1,         = _impure_ptr
+    mov     r2,         r0
+    add     r2,         #4
+    str     r2,         [r1, #0]
+#endif
 
     /**
      * Set bit #1 in CONTROL. Causes switch to PSP, so we can work directly
@@ -223,7 +241,8 @@ pend_sv_handler:
 
     /**
      * Copy running thread's process stack pointer to r3 and use it to push
-     * */
+     * the thread's register context on its stack
+     */
     mrs     r3,         PSP
 
 #if defined(THUMB_2)
@@ -281,7 +300,7 @@ pend_sv_handler:
     subs    r3,         r3, #32
 #endif // !THUMB_2
     /**
-     * Address of running TCB still in r1. Store threads current stack top
+     * Address of running TCB still in r1. Store thread's current stack top
      * into its sp_save_ptr, which is the struct's first element
      */
     str     r3,         [r1, #0]
@@ -292,6 +311,17 @@ pend_sv_handler:
      */
     str     r2,         [r0, #0]
     
+#if defined(__NEWLIB__)
+    /**
+     * Store the thread's reentry context address in _impure_ptr. This
+     * should be the TCB's second element
+     */ 
+    mov     r4,         r2
+    add     r4,         #4
+    ldr     r3,         = _impure_ptr
+    str     r4,         [r3, #0]
+#endif
+
     /**
      * Fetch next thread's stack pointer from its TCB's sp_save_ptr and restore
      * the thread's register context.

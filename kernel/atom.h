@@ -42,6 +42,15 @@ extern "C" {
 /* Forward declaration */
 struct atom_tcb;
 
+/*
+ *  Define THREAD_PORT_PRIV to be empty if the used atomport.h does not define
+ *  a port specific entry for the atom_tcb struct. This way we do not have an
+ *  unused element.
+ */  
+#if !defined(THREAD_PORT_PRIV)
+#define THREAD_PORT_PRIV
+#endif
+
 typedef struct atom_tcb
 {
     /*
@@ -49,6 +58,12 @@ typedef struct atom_tcb
      * out the architecture port can save its stack pointer here.
      */
     POINTER sp_save_ptr;
+
+    /* Thread's port specific private data. Do not move, some poorly written
+     * thread switching code (*cough* Cortex-M *cough*) might depend on a 
+     * known offset into the atom_tcb struct
+     */
+    THREAD_PORT_PRIV;
 
     /* Thread priority (0-255) */
     uint8_t priority;
