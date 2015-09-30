@@ -59,10 +59,7 @@ typedef struct atom_tcb
      */
     POINTER sp_save_ptr;
 
-    /* Thread's port specific private data. Do not move, some poorly written
-     * thread switching code (*cough* Cortex-M *cough*) might depend on a 
-     * known offset into the atom_tcb struct
-     */
+    /* Thread's port specific private data. */
     THREAD_PORT_PRIV;
 
     /* Thread priority (0-255) */

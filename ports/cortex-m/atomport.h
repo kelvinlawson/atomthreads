@@ -52,6 +52,11 @@
 #define unlikely(x)         __builtin_expect(!!(x), 0)
 #define __maybe_unused      __attribute__((unused))
 
+#define assert_static(e) \
+   do { \
+      enum { assert_static__ = 1/(e) }; \
+   } while (0)
+
 /**
  * Critical region protection: this should disable interrupts
  * to protect OS data structures during modification. It must

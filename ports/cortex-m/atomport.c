@@ -37,17 +37,26 @@
 
 #include "atomport.h"
 #include "atomport-private.h"
+#include "asm_offsets.h"
 
 static void thread_shell(void);
 
-/**
- *
- */
 struct task_switch_info ctx_switch_info asm("CTX_SW_NFO") =
 {
     .running_tcb = NULL,
     .next_tcb    = NULL,
 };
+
+extern void _archFirstThreadRestore(ATOM_TCB *);
+void archFirstThreadRestore(ATOM_TCB *new_tcb_ptr)
+{
+#if defined(__NEWLIB__)
+    ctx_switch_info.reent = &(new_tcb_ptr->port_priv.reent);
+    __dmb();
+#endif
+
+    _archFirstThreadRestore(new_tcb_ptr);
+}
 
 /**
  * We do not perform the context switch directly. Instead we mark the new tcb
@@ -70,7 +79,9 @@ archContextSwitch(ATOM_TCB *old_tcb_ptr __maybe_unused, ATOM_TCB *new_tcb_ptr)
 {
     if(likely(ctx_switch_info.running_tcb != NULL)){
         ctx_switch_info.next_tcb = new_tcb_ptr;
-
+#if defined(__NEWLIB__)
+        ctx_switch_info.reent = &(new_tcb_ptr->port_priv.reent);
+#endif
         __dmb();
 
         SCB_ICSR = SCB_ICSR_PENDSVSET;
@@ -144,6 +155,17 @@ void archThreadContextInit(ATOM_TCB *tcb_ptr, void *stack_top,
 {
     struct isr_stack *isr_ctx;
     struct task_stack *tsk_ctx;
+
+    /**
+     * Do compile time verification for offsets used in _archFirstThreadRestore
+     * and pend_sv_handler. If compilation aborts here, you will have to adjust
+     * the offsets for struct task_switch_info's members in asm-offsets.h
+     */
+    assert_static(offsetof(struct task_switch_info, running_tcb) == CTX_RUN_OFF);
+    assert_static(offsetof(struct task_switch_info, next_tcb) == CTX_NEXT_OFF);
+#if defined(__NEWLIB__)
+    assert_static(offsetof(struct task_switch_info, reent) == CTX_REENT_OFF);
+#endif
 
     /**
      * Enforce initial stack alignment

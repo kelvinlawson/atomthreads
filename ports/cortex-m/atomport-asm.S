@@ -27,6 +27,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include "asm_offsets.h"
+
 .syntax unified
 
 /**
@@ -65,11 +67,11 @@
 
 .text
 
-.global archFirstThreadRestore
-.func   archFirstThreadRestore
-.type   archFirstThreadRestore,%function
+.global _archFirstThreadRestore
+.func   _archFirstThreadRestore
+.type   _archFirstThreadRestore,%function
 .thumb_func
-archFirstThreadRestore:
+_archFirstThreadRestore:
     /**
      * Disable interrupts. They should be disabled anyway, but just
      * to make sure...
@@ -87,23 +89,22 @@ archFirstThreadRestore:
     
     /* Update ctx_switch_info, set this thread as both running and next */
     ldr     r1,         = CTX_SW_NFO
-    str     r0,         [r1, #0]
-    str     r0,         [r1, #4]
-
-    /* Get thread stack pointer from tcb. Conveniently the first element */
-    ldr     r1,         [r0, #0]
-    msr     PSP,        r1
+    str     r0,         [r1, #CTX_RUN_OFF]
+    str     r0,         [r1, #CTX_NEXT_OFF]
 
 #if defined(__NEWLIB__)
     /**
      * Store the thread's reentry context address in _impure_ptr. This
-     * should be the TCB's second element
+     * will have been stored in ctx_switch_info.reent.
      */ 
-    ldr     r1,         = _impure_ptr
-    mov     r2,         r0
-    add     r2,         #4
-    str     r2,         [r1, #0]
+    ldr     r2,         [r1, #CTX_REENT_OFF]
+    ldr     r3,         = _impure_ptr
+    str     r2,         [r3, #0]
 #endif
+
+    /* Get thread stack pointer from tcb. Conveniently the first element */
+    ldr     r1,         [r0, #0]
+    msr     PSP,        r1
 
     /**
      * Set bit #1 in CONTROL. Causes switch to PSP, so we can work directly
@@ -197,7 +198,7 @@ archFirstThreadRestore:
     pop     {r2,r3,pc}
     nop
 
-.size   archFirstThreadRestore, . - archFirstThreadRestore
+.size   _archFirstThreadRestore, . - _archFirstThreadRestore
 .endfunc
 
 .global pend_sv_handler
@@ -234,8 +235,8 @@ pend_sv_handler:
      * gets called.
      */
     ldr     r0,         = CTX_SW_NFO
-    ldr     r1,         [r0, #0]
-    ldr     r2,         [r0, #4]
+    ldr     r1,         [r0, #CTX_RUN_OFF]
+    ldr     r2,         [r0, #CTX_NEXT_OFF]
     cmp     r1,         r2
     beq     no_switch
 
@@ -271,7 +272,7 @@ pend_sv_handler:
     /**
      * Save old thread's register context on Cortex-M0.
      * Push running thread's remaining registers on stack.
-     * Thumb-1 can only use stm on low registers, so we
+     * Thumb-1 can use stm only on low registers, so we
      * have to do this in two steps.
      */
 
@@ -301,7 +302,7 @@ pend_sv_handler:
 #endif // !THUMB_2
     /**
      * Address of running TCB still in r1. Store thread's current stack top
-     * into its sp_save_ptr, which is the struct's first element
+     * into its sp_save_ptr, which is the struct's first element.
      */
     str     r3,         [r1, #0]
     
@@ -309,15 +310,14 @@ pend_sv_handler:
      * ctx_switch_info.next_tcb is going to become ctx_switch_info.running_tcb,
      * so we update the pointer.
      */
-    str     r2,         [r0, #0]
+    str     r2,         [r0, #CTX_RUN_OFF]
     
 #if defined(__NEWLIB__)
     /**
      * Store the thread's reentry context address in _impure_ptr. This
-     * should be the TCB's second element
+     * will have been stored in ctx_switch_info.reent.
      */ 
-    mov     r4,         r2
-    add     r4,         #4
+    ldr     r4,         [r0, #CTX_REENT_OFF]
     ldr     r3,         = _impure_ptr
     str     r4,         [r3, #0]
 #endif

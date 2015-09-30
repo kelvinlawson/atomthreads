@@ -112,6 +112,9 @@ struct task_fpu_stack {
 struct task_switch_info {
     volatile struct atom_tcb *running_tcb;
     volatile struct atom_tcb *next_tcb;
+#if defined(__NEWLIB__)
+    struct _reent *reent;
+#endif
 } __attribute__((packed));
 
 #endif /* __ATOMPORT_PRIVATE_H_ */
