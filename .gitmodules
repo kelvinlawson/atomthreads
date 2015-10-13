@@ -1,0 +1,3 @@
+[submodule "ports/cortex-m/libopencm3"]
+	path = ports/cortex-m/libopencm3
+	url = https://github.com/libopencm3/libopencm3.git

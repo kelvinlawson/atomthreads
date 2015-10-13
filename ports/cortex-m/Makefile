@@ -217,7 +217,6 @@ $(LIB_DIR)/lib$(LIBNAME).a:
 		printf "######## ERROR ########\n"; \
 		printf "\tlibopencm3 is not initialized.\n"; \
 		printf "\tPlease run:\n"; \
-		printf "\t$$ git submodule add https://github.com/libopencm3/libopencm3.git\n"; \
 		printf "\t$$ git submodule init\n"; \
 		printf "\t$$ git submodule update\n"; \
 		printf "\tbefore running make.\n"; \

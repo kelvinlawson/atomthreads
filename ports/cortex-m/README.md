@@ -52,16 +52,8 @@ which will be removed by `make clean`.
 Unless you decide to use an external installation of libopencm3, you will have
 to set up the libopencm3 sub-module:
 ```
-git submodule add https://github.com/libopencm3/libopencm3.git
 git submodule init
 git submodule update
-```
-Optional: As of 2015-07-08 the libopencm3 API has not been declared stable. If
-future changes break the build, you can check out the older revision used while
-developing this port:
-```
-cd libopencm3
-git checkout a4bb8f7e240c9f238384cf86d009002ba42a25ed
 ```
 
 ## Building and Flashing
