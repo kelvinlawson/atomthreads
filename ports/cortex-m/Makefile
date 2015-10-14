@@ -8,6 +8,21 @@ ifeq ($(V),)
     MAKEFLAGS += --no-print-directory
 endif
 
+# Use the size optimised nano version of newlib.
+# This usually is the version of newlib you want to use, although it has some
+# limitations, like printf not having support for floating point vars.
+# This relies on your newlib installation to provide a working nano.specs
+# file. On Debian you will need at least version 2.1.0+git20141201.db59ff3-2
+# of package libnewlib-arm-none-eabi
+USE_NANO    := true
+
+# Debian's libnewlib-arm-none-eabi package version 2.2.0+git20150830.5a3d536-1
+# ships with a buggy nano.specs file that does not set up a proper include
+# path for finding the nano version of newlib.h.
+# Also, the nano version has been built with the -fshort-wchar option, making
+# it incompatible with object files using the standard ABI.
+#FIX_DEBIAN  := true
+
 # Build directory
 ifdef O
     build_dir=$(shell readlink -f $(O))
@@ -136,20 +151,14 @@ LDLIBS		+= -l$(LIBNAME)
 NEWLIBS	    += -lc -lgcc
 
 ifneq ($(BOARD),qemu)
-# Use the size optimised nano version of newlib.
-# This usually is the version of newlib you want to use, although it has some
-# limitations, like printf not having support for floating point vars.
+ifeq ($(USE_NANO),true)
 SPECS       := -specs=nano.specs
 
-ifneq ($(FIX_DEBIAN),)
-# Debian's libnewlib-arm-none-eabi package version 2.2.0+git20150830.5a3d536-1
-# ships with a buggy nano.specs file that does not set up a proper include
-# path for finding the nano version of newlib.h.
-# Also, the nano version has been built with the -fshort-wchar option, making
-# it incompatible with object files using the standard ABI.
+ifeq ($(FIX_DEBIAN),true)
 SPECS       += -I/usr/include/newlib/nano
 LOCM3_FLAGS += -fshort-wchar
 CFLAGS      += -fshort-wchar
+endif
 endif
 
 # Uncomment to link against libnosys if you do not want to use the provided

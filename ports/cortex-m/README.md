@@ -20,6 +20,17 @@ apt-get install gcc-arm-none-eabi binutils-arm-none-eabi
 apt-get install libnewlib-arm-none-eabi libnewlib-dev
 apt-get install openocd
 ```
+**N.B.** Usually you will want to compile and link against the size optimised
+"nano" version of newlib. This is done by default. If your version
+of newlib does not support this (Debian's libnewlib package version before
+2.1.0+git20141201.db59ff3-2) you will have to comment out the line
+`USE_NANO := true` in the Makefile or pass `USE_NANO=` as
+a command line option to make.
+
+**N.B.** Debian's libnewlib-arm-none-eabi version 2.2.0+git20150830.5a3d536-1
+ships with broken nano support. To enable necessary workarounds, uncomment
+the line `#FIX_DEBIAN := true` in the Makefile or pass `FIX_DEBIAN=true`
+as a command line option to make.
 
 ## Code Layout
 The "classic" port components (code needed for task set-up and context
