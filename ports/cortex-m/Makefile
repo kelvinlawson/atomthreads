@@ -20,7 +20,8 @@ USE_NANO    := true
 # ships with a buggy nano.specs file that does not set up a proper include
 # path for finding the nano version of newlib.h.
 # Also, the nano version has been built with the -fshort-wchar option, making
-# it incompatible with object files using the standard ABI.
+# it incompatible with object files using the standard ABI. By enabling this
+# option atomthreads and libopencm3 will also be compiled with -fshort-wchar.
 #FIX_DEBIAN  := true
 
 # Build directory
@@ -238,7 +239,7 @@ build_all: $(LIB_DIR)/lib$(LIBNAME).a $(all_bins) $(all_hexs) $(all_elfs) $(all_
 # Add build dependency for local libopencm3 if no external libopencm3 is used 
 ifeq ($(build_lib),true)
 $(LIB_DIR)/lib$(LIBNAME).a: 
-	$(Q)if [ ! -d libopencm3 ] ; then \
+	$(Q)if [ ! -f libopencm3/Makefile ] ; then \
 		printf "######## ERROR ########\n"; \
 		printf "\tlibopencm3 is not initialized.\n"; \
 		printf "\tPlease run:\n"; \
