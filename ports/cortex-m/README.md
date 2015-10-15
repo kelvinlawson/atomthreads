@@ -31,6 +31,8 @@ a command line option to make.
 ships with broken nano support. To enable necessary workarounds, uncomment
 the line `#FIX_DEBIAN := true` in the Makefile or pass `FIX_DEBIAN=true`
 as a command line option to make.
+If you are using this fix, be advised that when switching between nano
+and regular builds, you will have to do a `make realclean` first.
 
 ## Code Layout
 The "classic" port components (code needed for task set-up and context
