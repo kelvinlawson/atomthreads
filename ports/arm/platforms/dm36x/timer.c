@@ -95,6 +95,13 @@ static int timer_init (void)
         status = ATOM_OK;
     }
 
+    /* Already initialised */
+    else
+    {
+        /* Success */
+        status = ATOM_OK;
+    }
+
     /* Finished */
     return (status);
 }

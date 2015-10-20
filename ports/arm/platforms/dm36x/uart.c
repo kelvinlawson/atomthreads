@@ -148,6 +148,13 @@ static int uart_init (void)
         }
     }
 
+    /* Already initialised */
+    else
+    {
+        /* Success */
+        status = ATOM_OK;
+    }
+
     /* Finished */
     return (status);
 }
