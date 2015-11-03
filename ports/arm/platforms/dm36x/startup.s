@@ -5,6 +5,8 @@
 .extern __fiq_stack_top__
 .extern __svc_stack_top__
 
+.extern __null_handler 
+
 
 .equ USR_MODE,            0x10
 .equ FIQ_MODE,            0x11
@@ -21,13 +23,13 @@
 __interrupt_vector_table:
 
   B Reset_Handler /* Reset */
-  ldr PC,=null_handler  /* Undefined */
-  ldr PC,=null_handler  /* SWI */
-  ldr PC,=null_handler  /* Prefetch Abort */
-  ldr PC,=null_handler  /* Data Abort */
-  ldr PC,=null_handler  /* reserved */
+  ldr PC,=Exception_Handler  /* Undefined */
+  ldr PC,=Exception_Handler  /* SWI */
+  ldr PC,=Exception_Handler  /* Prefetch Abort */
+  ldr PC,=Exception_Handler  /* Data Abort */
+  ldr PC,=Exception_Handler  /* reserved */
   ldr PC,=archIRQHandler/* IRQ */
-  ldr PC,=null_handler  /* FIQ */
+  ldr PC,=Exception_Handler  /* FIQ */
  
 
 Reset_Handler:
@@ -42,6 +44,45 @@ Reset_Handler:
     BL low_level_init
     BL _mainCRTStartup
 
+/**
+ *  \b Exception_Handler
+ *
+ *  IRQ entry point.
+ *
+ *  Save the process/thread context onto its own stack before calling __interrupt_dispatcher().
+ *  __interrupt_dispatcher() might switch stacks. On return the same context is popped from the 
+ *  stack and control is returned to the process.
+ *
+ *  @return None
+ */
+Exception_Handler:
+
+    MSR         cpsr_c, #(SVC_MODE | I_BIT)     /* Save current process context in process stack */
+    STMFD       sp!, {r0 - r3, ip, lr}          
+                                                
+    MSR         cpsr_c, #(IRQ_MODE | I_BIT)     /* Save lr_irq and spsr_irq in process stack */
+    SUB         lr, lr, #4                      
+    MOV         r1, lr                          
+    MRS         r2, spsr                        
+    MSR         cpsr_c, #(SVC_MODE | I_BIT)     
+    STMFD       sp!, {r1, r2}                   
+                                                
+    BL          __null_handler          /* Dispatch the interrupt to platform folder for
+                                                   the timer tick interrupt or a simular function
+                                                   for other interrupts. Some of those IRQs may
+                                                   call Atomthreads kernel routines and cause a
+                                                   thread switch. */
+
+    LDMFD       sp!, {r1, r2}                   /* Restore lr_irq and spsr_irq from process stack */
+    MSR         cpsr_c, #(IRQ_MODE | I_BIT)     
+    STMFD       sp!, {r1}                       
+    MSR         spsr_cxsf, r2                   
+                                                
+    MSR         cpsr_c, #(SVC_MODE | I_BIT)     /* Restore process regs */
+    LDMFD       sp!, {r0 - r3, ip, lr}          
+                                                
+    MSR         cpsr_c, #(IRQ_MODE | I_BIT)     /* Exit from IRQ */
+    LDMFD       sp!, {pc}^
 
   B .
 

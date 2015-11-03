@@ -293,12 +293,12 @@ __interrupt_dispatcher (void)
 
 
 /**
- * \b null_handler
+ * \b __null_handler
  *
  * Handler to catch interrupts at uninitialised vectors.
  *
  */
-void null_handler (void) 
+void __null_handler (void) 
 {
     uart_write_halt ("Unhandled interrupt\n");
 }
