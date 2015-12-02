@@ -33,6 +33,7 @@
 #include <stdint.h>
 #include <stddef.h>
 #include <libopencm3/cm3/cortex.h>
+#include <stdlib.h>
 
 /* Required number of system ticks per second (normally 100 for 10ms tick) */
 #define SYSTEM_TICKS_PER_SEC            100
@@ -51,6 +52,11 @@
 #define unlikely(x)         __builtin_expect(!!(x), 0)
 #define __maybe_unused      __attribute__((unused))
 
+#define assert_static(e) \
+   do { \
+      enum { assert_static__ = 1/(e) }; \
+   } while (0)
+
 /**
  * Critical region protection: this should disable interrupts
  * to protect OS data structures during modification. It must
@@ -60,6 +66,18 @@
 #define CRITICAL_STORE      bool __irq_flags
 #define CRITICAL_START()    __irq_flags = cm_mask_interrupts(true)
 #define CRITICAL_END()      (void) cm_mask_interrupts(__irq_flags)
+
+/**
+ * When using newlib, define port private field in atom_tcb to be a
+ * struct _reent.
+ */
+#if defined(__NEWLIB__)
+struct cortex_port_priv {
+    struct _reent reent;
+};
+
+#define THREAD_PORT_PRIV    struct cortex_port_priv port_priv
+#endif
 
 /* Uncomment to enable stack-checking */
 /* #define ATOM_STACK_CHECKING */

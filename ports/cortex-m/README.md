@@ -20,6 +20,19 @@ apt-get install gcc-arm-none-eabi binutils-arm-none-eabi
 apt-get install libnewlib-arm-none-eabi libnewlib-dev
 apt-get install openocd
 ```
+**N.B.** Usually you will want to compile and link against the size optimised
+"nano" version of newlib. This is done by default. If your version
+of newlib does not support this (Debian's libnewlib package version before
+2.1.0+git20141201.db59ff3-2) you will have to comment out the line
+`USE_NANO := true` in the Makefile or pass `USE_NANO=` as
+a command line option to make.
+
+**N.B.** Debian's libnewlib-arm-none-eabi version 2.2.0+git20150830.5a3d536-1
+ships with broken nano support. To enable necessary workarounds, uncomment
+the line `#FIX_DEBIAN := true` in the Makefile or pass `FIX_DEBIAN=true`
+as a command line option to make.
+If you are using this fix, be advised that when switching between nano
+and regular builds, you will have to do a `make realclean` first.
 
 ## Code Layout
 The "classic" port components (code needed for task set-up and context
@@ -52,16 +65,8 @@ which will be removed by `make clean`.
 Unless you decide to use an external installation of libopencm3, you will have
 to set up the libopencm3 sub-module:
 ```
-git submodule add https://github.com/libopencm3/libopencm3.git
 git submodule init
 git submodule update
-```
-Optional: As of 2015-07-08 the libopencm3 API has not been declared stable. If
-future changes break the build, you can check out the older revision used while
-developing this port:
-```
-cd libopencm3
-git checkout a4bb8f7e240c9f238384cf86d009002ba42a25ed
 ```
 
 ## Building and Flashing

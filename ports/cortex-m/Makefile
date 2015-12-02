@@ -3,16 +3,32 @@
 ################################################
 
 ifeq ($(V),)
-	Q := @
-	# Do not print "Entering directory ...".
-	MAKEFLAGS += --no-print-directory
+    Q := @
+    # Do not print "Entering directory ...".
+    MAKEFLAGS += --no-print-directory
 endif
+
+# Use the size optimised nano version of newlib.
+# This usually is the version of newlib you want to use, although it has some
+# limitations, like printf not having support for floating point vars.
+# This relies on your newlib installation to provide a working nano.specs
+# file. On Debian you will need at least version 2.1.0+git20141201.db59ff3-2
+# of package libnewlib-arm-none-eabi
+USE_NANO    := true
+
+# Debian's libnewlib-arm-none-eabi package version 2.2.0+git20150830.5a3d536-1
+# ships with a buggy nano.specs file that does not set up a proper include
+# path for finding the nano version of newlib.h.
+# Also, the nano version has been built with the -fshort-wchar option, making
+# it incompatible with object files using the standard ABI. By enabling this
+# option atomthreads and libopencm3 will also be compiled with -fshort-wchar.
+#FIX_DEBIAN  := true
 
 # Build directory
 ifdef O
-	build_dir=$(shell readlink -f $(O))
+    build_dir=$(shell readlink -f $(O))
 else
-	build_dir=$(CURDIR)/build
+    build_dir=$(CURDIR)/build
 endif
 
 # Source directory
@@ -24,30 +40,30 @@ aobjs :=
 
 # set default board if none is given
 ifeq ($(BOARD),)
-	BOARD = nucleo-f103rb
+    BOARD = nucleo-f103rb
 endif
 
 include $(src_dir)/boards/$(BOARD)/Makefile.include
 
 # Make sure target MCU is set
 ifndef TARGET
-	$(error TARGET undefined)
+    $(error TARGET undefined)
 endif
 
 # Configure toolchain
-CROSS_COMPILE	?=	arm-none-eabi-
+CROSS_COMPILE   ?=  arm-none-eabi-
 
-CC		:= $(CROSS_COMPILE)gcc
-CXX		:= $(CROSS_COMPILE)g++
-LD		:= $(CROSS_COMPILE)gcc
-AR		:= $(CROSS_COMPILE)ar
-AS		:= $(CROSS_COMPILE)as
-OBJCOPY		:= $(CROSS_COMPILE)objcopy
-OBJDUMP		:= $(CROSS_COMPILE)objdump
-GDB		:= $(CROSS_COMPILE)gdb
-STFLASH		= $(shell which st-flash)
+CC      := $(CROSS_COMPILE)gcc
+CXX     := $(CROSS_COMPILE)g++
+LD      := $(CROSS_COMPILE)gcc
+AR      := $(CROSS_COMPILE)ar
+AS      := $(CROSS_COMPILE)as
+OBJCOPY := $(CROSS_COMPILE)objcopy
+OBJDUMP := $(CROSS_COMPILE)objdump
+GDB     := $(CROSS_COMPILE)gdb
+STFLASH  = $(shell which st-flash)
 
-LDSCRIPT	?= linker/$(TARGET).ld
+LDSCRIPT    ?= linker/$(TARGET).ld
 
 # Enable stack-checking. WARNING: the full automated test suite currently
 # requires a little over 1KB RAM with stack-checking enabled. If you are 
@@ -64,8 +80,8 @@ tests_dir=$(src_dir)/../../tests
 # Check if user wants to use external opencm3 lib or if we have to build
 # it ourselves
 ifeq ($(OPENCM3_DIR),)
-	OPENCM3_DIR = $(src_dir)/libopencm3
-	build_lib = true
+    OPENCM3_DIR = $(src_dir)/libopencm3
+    build_lib = true
 endif
 
 ifneq ($(V),)
@@ -84,71 +100,85 @@ objs += atomtimer.o
 objs += atomqueue.o
 
 # Collection of built objects (excluding test applications)
-build_objs = $(foreach obj,$(objs),$(build_dir)/$(obj))
+build_objs  = $(foreach obj,$(objs),$(build_dir)/$(obj))
 
 # Object needed by all test applications, but not user apps
 tmobjs = tests-main.o
-build_tmobjs    = $(foreach obj,$(tmobjs),$(build_dir)/$(obj))
-build_tmobjs   += $(build_objs)
+build_tmobjs     = $(foreach obj,$(tmobjs),$(build_dir)/$(obj))
+build_tmobjs    += $(build_objs)
 
 # Set up search paths for libopencm3
-INCLUDE_DIR	= $(OPENCM3_DIR)/include
-LIB_DIR		= $(OPENCM3_DIR)/lib
-SCRIPT_DIR	= $(OPENCM3_DIR)/scripts
+INCLUDE_DIR = $(OPENCM3_DIR)/include
+LIB_DIR     = $(OPENCM3_DIR)/lib
+SCRIPT_DIR  = $(OPENCM3_DIR)/scripts
 
 # GCC flags
-CFLAGS		=  -Os -g
-CFLAGS		+= -Wall -Werror
-CFLAGS		+= -Wredundant-decls -Wstrict-prototypes
-CFLAGS		+= -fno-common -ffunction-sections -fdata-sections
+CFLAGS       =  -Os -g
+CFLAGS      += -Wall -Werror
+CFLAGS      += -Wredundant-decls -Wstrict-prototypes
+CFLAGS      += -fno-common -ffunction-sections -fdata-sections
 
 # Enable stack-checking (disable if not required)
 ifeq ($(STACK_CHECK),true)
-CFLAGS += -DATOM_STACK_CHECKING -DTESTS_LOG_STACK_USAGE
+    CFLAGS  += -DATOM_STACK_CHECKING -DTESTS_LOG_STACK_USAGE
 endif
 
 # C & C++ preprocessor common flags
-CPPFLAGS	+= -MD
-CPPFLAGS	+= -Wall -Wundef -Werror
-CPPFLAGS	+= -I$(INCLUDE_DIR) $(DEFS)
+CPPFLAGS    += -MD
+CPPFLAGS    += -Wall -Wundef -Werror
+CPPFLAGS    += -I$(INCLUDE_DIR) $(DEFS)
 CPPFLAGS    += -I$(board_dir) -I$(common_dir) -I$(src_dir) -I$(kernel_dir) -I$(tests_dir)
 
+# Assembler flags
+ASFLAGS     += -D__ASSEMBLY__ 
+ASFLAGS     += -D__NEWLIB__
+
 # Linker flags
-LDFLAGS		+= --static -nostartfiles
-LDFLAGS		+= -L$(LIB_DIR)
-LDFLAGS		+= -T$(LDSCRIPT)
-LDFLAGS		+= -Wl,-Map=$(build_dir)/$(*).map
-LDFLAGS		+= -Wl,--gc-sections
+LDFLAGS     += --static -nostartfiles
+LDFLAGS     += -L$(LIB_DIR)
+LDFLAGS     += -T$(LDSCRIPT)
+LDFLAGS     += -Wl,-Map=$(build_dir)/$(*).map
+LDFLAGS     += -Wl,--gc-sections
+LDFLAGS     += -Wl,--fatal-warnings
 ifeq ($(V),99)
-LDFLAGS		+= -Wl,--print-gc-sections
+LDFLAGS     += -Wl,--print-gc-sections
 endif
 
 ## Used libraries
 # Target specific version libopencm3
 LDLIBS		+= -l$(LIBNAME)
 
+## Gather newlib libraries and set up specfiles.
+NEWLIBS	    += -lc -lgcc
+
 ifneq ($(BOARD),qemu)
-## Flags for newlibc.    
-# This uses the version of newlib optimised for size and without libnosys.
-# This usually is the version of newlib you want to use, although it has some
-# limitations, like printf not having support for floating point vars.
-LDLIBS		+= -Wl,--start-group -lc_nano -lgcc -Wl,--end-group
+ifeq ($(USE_NANO),true)
+SPECS       := -specs=nano.specs
 
-# This is the fully bloated version of newlib. Adds about 20k compared to
-# libc_nano. 
-#LDLIBS		+= -Wl,--start-group -lc -lgcc -Wl,--end-group
+ifeq ($(FIX_DEBIAN),true)
+SPECS       += -I/usr/include/newlib/nano
+LOCM3_FLAGS += -fshort-wchar
+CFLAGS      += -fshort-wchar
+endif
+endif
 
-# Use small newlib with libnosys if you do not want to use the provided stubs.
-# Be advised that heap management will probaly break in interesting ways.
+# Uncomment to link against libnosys if you do not want to use the provided
+# stubs.
+# Be advised that heap management will probably break in interesting ways.
 # This is because libnosys' standard _sbrk() expects the stack to start at 
 # the top end of memory while the threads' stacks are positioned inside 
 # the BSS.
-#LDLIBS		+= -Wl,--start-group -lc_nano -lgcc -lnosys -Wl,--end-group
+#NEWLIBS    += -lnosys
+
 else
 # Special LDLIBS for qemu target to enable semi-hosting. 
 # TODO: Check if this is also useful for real hardware  
-LDLIBS		+= -Wl,--start-group --specs=rdimon.specs -lc -lrdimon -lgcc -Wl,--end-group
+NEWLIBS     += -lrdimon
+SPECS       := -specs=rdimon.specs
 endif
+
+# add all required newlib libraries as a group
+LDLIBS      += -Wl,--start-group $(NEWLIBS) -Wl,--end-group
 
 .PHONY: all
 all: build_all
@@ -182,7 +212,7 @@ $(1): $(build_dir)/$(1).elf
 $(build_dir)/$(1).elf $(build_dir)/$(1).map: $(LIB_DIR)/lib$(LIBNAME).a $(build_dir)/$(1).o $(build_objs) $(LDSCRIPT)
 	$$(Q)mkdir -p `dirname $$@`
 	$$(if $$(Q), @echo " (ELF)       $$(subst $$(build_dir)/,,$$@)")
-	$$(Q)$$(LD) $$(LDFLAGS) $$(ARCH_FLAGS) $$(build_objs) $$(build_dir)/$(1).o $(LDLIBS) -o $$@
+	$$(Q)$$(LD) $$(SPECS) $$(LDFLAGS) $$(ARCH_FLAGS) $$(build_objs) $$(build_dir)/$(1).o $(LDLIBS) -o $$@
 endef
 
 # Target application filenames .elf for each user app object
@@ -209,18 +239,17 @@ build_all: $(LIB_DIR)/lib$(LIBNAME).a $(all_bins) $(all_hexs) $(all_elfs) $(all_
 # Add build dependency for local libopencm3 if no external libopencm3 is used 
 ifeq ($(build_lib),true)
 $(LIB_DIR)/lib$(LIBNAME).a: 
-	$(Q)if [ ! -d libopencm3 ] ; then \
+	$(Q)if [ ! -f libopencm3/Makefile ] ; then \
 		printf "######## ERROR ########\n"; \
 		printf "\tlibopencm3 is not initialized.\n"; \
 		printf "\tPlease run:\n"; \
-		printf "\t$$ git submodule add https://github.com/libopencm3/libopencm3.git\n"; \
 		printf "\t$$ git submodule init\n"; \
 		printf "\t$$ git submodule update\n"; \
 		printf "\tbefore running make.\n"; \
 		printf "######## ERROR ########\n"; \
 		exit 1; \
 		fi
-	$(Q)$(MAKE) -C libopencm3 V=$(V)
+	$(Q)$(MAKE) -C libopencm3 V=$(V) CFLAGS=$(LOCM3_FLAGS)
 endif
 
 $(build_dir)/%.bin: $(build_dir)/%.elf
@@ -249,47 +278,47 @@ $(build_dir)/%.list: $(build_dir)/%.elf
 $(build_dir)/%.elf $(build_dir)/%.map: $(LIB_DIR)/lib$(LIBNAME).a $(build_dir)/%.o $(build_tmobjs) $(LDSCRIPT)
 	$(Q)mkdir -p `dirname $@`
 	$(if $(Q), @echo " (ELF)       $(subst $(build_dir)/,,$@)")
-	$(Q)$(LD) $(LDFLAGS) $(ARCH_FLAGS) $(build_tmobjs) $(build_dir)/$(*).o $(LDLIBS) -o $@
+	$(Q)$(LD) $(SPECS) $(LDFLAGS) $(ARCH_FLAGS) $(build_tmobjs) $(build_dir)/$(*).o $(LDLIBS) -o $@
 
 $(build_dir)/%.o: $(src_dir)/%.S Makefile $(board_dir)/Makefile.include
 	$(Q)mkdir -p `dirname $@`
 	$(if $(Q), @echo " (AS)        $(subst $(build_dir)/,,$@)")
-	$(Q)$(CC) $(CFLAGS) $(CPPFLAGS) $(ARCH_FLAGS) -D__ASSEMBLY__ -I`dirname $<` -c $< -o $@
+	$(Q)$(CC) $(SPECS) $(CFLAGS) $(CPPFLAGS) $(ARCH_FLAGS) $(ASFLAGS) -I`dirname $<` -c $< -o $@
 
 $(build_dir)/%.o: $(src_dir)/%.c Makefile $(board_dir)/Makefile.include
 	$(Q)mkdir -p `dirname $@`
 	$(if $(Q), @echo " (CC)        $(subst $(build_dir)/,,$@)")
-	$(Q)$(CC) $(CFLAGS) $(CPPFLAGS) $(ARCH_FLAGS) -I`dirname $<` -c $< -o $@
+	$(Q)$(CC) $(SPECS) $(CFLAGS) $(CPPFLAGS) $(ARCH_FLAGS) -I`dirname $<` -c $< -o $@
 
 $(build_dir)/%.o: $(board_dir)/%.S Makefile $(board_dir)/Makefile.include
 	$(Q)mkdir -p `dirname $@`
 	$(if $(Q), @echo " (AS)        $(subst $(build_dir)/,,$@)")
-	$(Q)$(CC) $(CFLAGS) $(CPPFLAGS) $(ARCH_FLAGS) -D__ASSEMBLY__ -I`dirname $<` -c $< -o $@
+	$(Q)$(CC) $(SPECS) $(CFLAGS) $(CPPFLAGS) $(ARCH_FLAGS) $(ASFLAGS) -I`dirname $<` -c $< -o $@
 
 $(build_dir)/%.o: $(board_dir)/%.c Makefile $(board_dir)/Makefile.include
 	$(Q)mkdir -p `dirname $@`
 	$(if $(Q), @echo " (CC)        $(subst $(build_dir)/,,$@)")
-	$(Q)$(CC) $(CFLAGS) $(CPPFLAGS) $(ARCH_FLAGS) -I`dirname $<` -c $< -o $@
+	$(Q)$(CC) $(SPECS) $(CFLAGS) $(CPPFLAGS) $(ARCH_FLAGS) -I`dirname $<` -c $< -o $@
 
 $(build_dir)/%.o: $(common_dir)/%.S Makefile $(board_dir)/Makefile.include
 	$(Q)mkdir -p `dirname $@`
 	$(if $(Q), @echo " (AS)        $(subst $(build_dir)/,,$@)")
-	$(Q)$(CC) $(CFLAGS) $(CPPFLAGS) $(ARCH_FLAGS) -D__ASSEMBLY__ -I`dirname $<` -c $< -o $@
+	$(Q)$(CC) $(SPECS) $(CFLAGS) $(CPPFLAGS) $(ARCH_FLAGS) $(ASFLAGS) -I`dirname $<` -c $< -o $@
 
 $(build_dir)/%.o: $(common_dir)/%.c Makefile $(board_dir)/Makefile.include
 	$(Q)mkdir -p `dirname $@`
 	$(if $(Q), @echo " (CC)        $(subst $(build_dir)/,,$@)")
-	$(Q)$(CC) $(CFLAGS) $(CPPFLAGS) $(ARCH_FLAGS) -I`dirname $<` -c $< -o $@
+	$(Q)$(CC) $(SPECS) $(CFLAGS) $(CPPFLAGS) $(ARCH_FLAGS) -I`dirname $<` -c $< -o $@
 
 $(build_dir)/%.o: $(kernel_dir)/%.c Makefile $(board_dir)/Makefile.include
 	$(Q)mkdir -p `dirname $@`
 	$(if $(Q), @echo " (CC)        $(subst $(build_dir)/,,$@)")
-	$(Q)$(CC) $(CFLAGS) $(CPPFLAGS) $(ARCH_FLAGS) -I`dirname $<` -c $< -o $@
+	$(Q)$(CC) $(SPECS) $(CFLAGS) $(CPPFLAGS) $(ARCH_FLAGS) -I`dirname $<` -c $< -o $@
 
 $(build_dir)/%.o: $(tests_dir)/%.c Makefile $(board_dir)/Makefile.include
 	$(Q)mkdir -p `dirname $@`
 	$(if $(Q), @echo " (CC)        $(subst $(build_dir)/,,$@)")
-	$(Q)$(CC) $(CFLAGS) $(CPPFLAGS) $(ARCH_FLAGS) -I`dirname $<` -c $< -o $@
+	$(Q)$(CC) $(SPECS) $(CFLAGS) $(CPPFLAGS) $(ARCH_FLAGS) -I`dirname $<` -c $< -o $@
 
 # Clean. Remove only atomthread's object files and images
 .PHONY: clean

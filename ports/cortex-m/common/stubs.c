@@ -64,19 +64,23 @@ static char *heap_end = 0;
 caddr_t _sbrk(int incr)
 {
     char *prev_end;
+    CRITICAL_STORE;
 
-    if(heap_end == 0){
+    prev_end = NULL;
+
+    CRITICAL_START();
+
+    if(unlikely(heap_end == 0)){
         heap_end = &end;
     }
 
-    prev_end = heap_end;
-
-    if(heap_end + incr + MST_SIZE > (char *) vector_table.initial_sp_value){
-        /* new heap size would collide with main stack area*/
-        return (caddr_t) 0;
+    /* make sure new heap size does not collide with main stack area*/
+    if(heap_end + incr + MST_SIZE <= (char *) vector_table.initial_sp_value){
+        prev_end = heap_end;
+        heap_end += incr;
     }
 
-    heap_end += incr;
+    CRITICAL_END();
 
     return (caddr_t) prev_end;
 }
