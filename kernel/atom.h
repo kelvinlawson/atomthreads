@@ -59,7 +59,7 @@ typedef struct atom_tcb
      */
     POINTER sp_save_ptr;
 
-    /* Thread's port specific private data. */
+    /* Thread's port specific private data */
     THREAD_PORT_PRIV;
 
     /* Thread priority (0-255) */
