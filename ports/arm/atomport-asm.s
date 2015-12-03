@@ -60,7 +60,7 @@
 .code 32
 
 
-/*
+/**
  * \b archContextSwitch
  *
  * Architecture-specific context switch routine.
