@@ -126,7 +126,7 @@ doxygen:
 	doxygen ../../Doxyfile
 	doxygen ./Doxyfile
 
-# Run tests within simavr simulator
+# Run tests within QEMU simulator
 phony_qemu_elfs = $(addsuffix .sim, $(TEST_ELFS))
 qemutests: $(phony_qemu_elfs)
 .PHONY: qemutests $(phony_qemu_elfs)
