@@ -123,10 +123,17 @@ int _lseek(int file, int ptr, int dir)
  *
  * Simple stub implementation with no file table. All parameters ignored.
  *
+ * We only support reading/writing to the UART, so we don't bother inspecting
+ * the filename to decide which underlying device to use, _read() and _write()
+ * only access the UART driver.
+ *
+ * This is currently only called once (each thread opens its own stdout when
+ * it starts executing).
+ *
  */
 int _open(const char *name, int flags, int mode)
 {
-    return -1;
+    return 0;
 }
 
 

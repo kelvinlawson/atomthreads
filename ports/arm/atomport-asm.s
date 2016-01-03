@@ -43,6 +43,10 @@
 
 .extern __interrupt_dispatcher 
 
+/* When using newlib, reentrancy context needs to be updated on task switch */
+.extern _impure_ptr
+
+
 /**/
 .equ USR_MODE,            0x10
 .equ FIQ_MODE,            0x11
@@ -79,6 +83,10 @@
  */
 archContextSwitch:
     STMFD       sp!, {r4 - r11, lr}             /* Save registers */
+
+    ADD         r4, r1, #4                      /* Add offset to get address of new_tcb_ptr->reent context (second TCB element) */
+    LDR         r5, = _impure_ptr               /* Get address of _impure_ptr into r5 */
+    STR         r4, [r5]                        /* Store new_tcb_ptr->reent context in _impure_ptr */
 
     STR         sp, [r0]                        /* Save old SP in old_tcb_ptr->sp_save_ptr (first TCB element) */
     LDR         r1, [r1]                        /* Load new SP from new_tcb_ptr->sp_save_ptr (first TCB element) */
@@ -120,6 +128,11 @@ archContextSwitch:
  * void archFirstThreadRestore (ATOM_TCB *new_tcb_ptr)
  */
 archFirstThreadRestore:
+
+    ADD         r4, r0, #4                      /* Add offset to get address of new_tcb_ptr->reent context (second TCB element) */
+    LDR         r5, = _impure_ptr               /* Get address of _impure_ptr into r5 */
+    STR         r4, [r5]                        /* Store new_tcb_ptr->reent context in _impure_ptr */
+
     LDR         r0, [r0]                        /* Get SP (sp_save_ptr is conveniently first element of TCB) */
     MOV         sp, r0                          /* Load new stack pointer */
     LDMFD       sp!, {r4 - r11, pc}             /* Load new registers */

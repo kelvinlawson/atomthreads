@@ -36,6 +36,9 @@
 /* Definition of NULL is available from stddef.h on this platform */
 #include <stddef.h>
 
+/* Reentrancy structure */
+#include <sys/reent.h>
+
 /* Required number of system ticks per second (normally 100 for 10ms tick) */
 #define SYSTEM_TICKS_PER_SEC            100
 
@@ -82,6 +85,15 @@ extern void      contextExitCritical (uint32_t posture) ;
 #define CRITICAL_STORE          uint32_t __atom_critical
 #define CRITICAL_START()        __atom_critical = contextEnterCritical()
 #define CRITICAL_END()          contextExitCritical(__atom_critical)
+
+/**
+ * When using newlib, define port private field in atom_tcb to be a
+ * struct _reent.
+ */
+struct arm_port_priv {
+    struct _reent reent;
+};
+#define THREAD_PORT_PRIV    struct arm_port_priv port_priv
 
 /* Uncomment to enable stack-checking */
 /* #define ATOM_STACK_CHECKING */
