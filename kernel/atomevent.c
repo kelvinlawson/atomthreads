@@ -43,35 +43,35 @@
  * signaller must know the TCB of the thread to call.
  *
  * \par No initialization before use
- * Having the event register int the TCB means you don't have to allocate
- * and initialize anything before using event.
+ * Having the event register in the TCB means you don't have to allocate
+ * and initialize anything before using event(s).
  *
  * \par Interrupt-safe calls
- * atomEventWait() for events generally blocks while waiting for
- * atomEventSignal() to signal, but this can be controlled at call.
- * atomEventSignal() to does not block at all. If the thread is not waiting
- * for an event, the events signalled is stored in the event register of the
- * TCB.
+ * atomEventWait() generally blocks while waiting for atomEventSignal() to
+ * signal, but this can be controlled when calling the function.
+ * atomEventSignal() does not block at all. If the thread is not
+ * waiting for an event, the events signalled are stored in the event register
+ * of the TCB.
  *
  * \par Thread to thread signalling
- * Signalling can only go to one task at a time, so several tasks can not lock
+ * Signals can only go to one task at a time, so several tasks can not lock
  * on a particual event.
  *
  * \par Signalling events can not lock
- * When event(s) are signalled with atomEventSignal() two things can happen.
+ * When event(s) are signalled with atomEventSignal() two things can happen:
  * -# If the thread is not waiting for an event, the event mask will be stored
  * in the threads event register
- * -# If the thread is waiting for an event the thread will be put back on the
+ * -# If the thread is waiting for an event, the thread will be put back on the
  * ready queue and will be scheduled in as soon as its priority allows.
  * Please note that when atomEventWait() returns it will clear the event
  * register in the TCB.
  *
  * \par Events
- * Events is a bitfields with implementation defined size and every
+ * Events is a bitfield with implementation defined size and every
  * bit in that word can signify an event. That makes it possible to wait for
  * several events at the same time.
  * Signalling of events is per thread, so the signaller must know the TCB of the
- * thread to signal before hand (not usually a problem).
+ * thread to signal before hand (usually not a problem).
  *
  * \n <b> Usage instructions: </b> \n
  *
@@ -100,7 +100,7 @@ static void atomEventTimerCallback (POINTER cb_data);
  * Signals an event to a thread given by the TCB pointer waiting in
  * an atomEventWait() with the same bits set in the event mask.
  * If the thread is not waiting, then the events signalled will be stored
- * int the event register of the TCB until the atomEventWait() is called.
+ * in the event register of the TCB until the atomEventWait() is called.
  *
  * @param[in] curr_tcb_ptr Pointer to TCB which is to be signalled
  * @param[in] events Bits to signal to thread.
@@ -192,19 +192,21 @@ uint8_t atomEventSignal (ATOM_TCB *curr_tcb_ptr, ATOM_EVENTS events)
  *
  * Wait for events to be signalled.
  *
- * Depending on the \c timeout value specified the call will do one of
+ * Depending on the \c timeout value specified, the call will do one of
  * the following:
+ * - If \c timeout == 0 : Call will block until it is signalled \n
+ * - If \c timeout > 0 : Call will block until available up to the specified timeout \n
  *
- * \c timeout == 0 : Call will block until it is signalled \n
- * \c timeout > 0 : Call will block until available up to the specified timeout \n
  *
  * If the call needs to block and \c timeout is zero, it will block
- * indefinitely until the someone will call atomEventSignal() with one
+ * indefinitely until someone will call atomEventSignal() with one
  * or several of the event mask bits set.
  *
- * If the call needs to block and \c timeout is non-zero, the call will o1nly
- * block for the specified number of system ticks after which time, if the
- * thread was not already woken, the call will return with \c 0.
+ * If the call needs to block and \c timeout is positive, the call will only
+ * block for the specified number of system ticks after which, if the
+ * thread was not already woken, the call will return with \c ATOM_TIMEOUT.
+ * If the call needs to block and \c timeout is -1, the function will return
+ * with \c ATOM_WOULDBLOCK.
  *
  * WaitEvent clears the event memory after an event has occurred.
  * WaitSingleEvent does not clear event memory.
