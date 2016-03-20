@@ -72,12 +72,13 @@ static void thread_shell (void)
     /* Get the TCB of the thread being started */
     curr_tcb = atomCurrentContext();
 
-   /**
-    * Open a stdout file descriptor so that the thread has its own stdout.
-    * In theory threads could open stdout to different output drivers
-    * if syscalls.s supported different output write functions.
-    */
-   stdout = fopen ("/debuguart", "w");
+    /**
+     * Open a stdout file descriptor so that the thread has its own stdout.
+     * In theory threads could open stdout to different output drivers
+     * if syscalls.s supported different output write functions.
+     */
+    stdout = fopen ("/debuguart", "w");
+    setvbuf (stdout, 0, _IONBF, 0);
  
     /**
      * Enable interrupts - these will not be enabled when a thread
