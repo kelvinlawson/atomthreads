@@ -76,7 +76,7 @@ extern int _exit(int val) __attribute__((weak));
  */
 int _close(int file)
 {
-    return -1;
+    return 0;
 }
 
 

@@ -92,6 +92,7 @@ static void thread_shell (void)
     }
 
     /* Clean up after thread completion */
+    fclose (stdout);
     _reclaim_reent (&(curr_tcb->port_priv.reent));
 
     /* Thread has run to completion: remove it from the ready list */
