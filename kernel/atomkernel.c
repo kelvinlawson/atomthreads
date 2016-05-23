@@ -241,10 +241,11 @@ void atomSched (uint8_t timer_tick)
     CRITICAL_START ();
 
     /**
-     * If the current thread is going into suspension, then
-     * unconditionally dequeue the next thread for execution.
+     * If the current thread is going into suspension or is being
+     * terminated (run to completion), then unconditionally dequeue
+     * the next thread for execution.
      */
-    if (curr_tcb->suspended == TRUE)
+    if ((curr_tcb->suspended == TRUE) || (curr_tcb->terminated == TRUE))
     {
         /**
          * Dequeue the next ready to run thread. There will always be

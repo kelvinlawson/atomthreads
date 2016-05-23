@@ -97,7 +97,7 @@ static void thread_shell (void)
     _reclaim_reent (&(curr_tcb->port_priv.reent));
 
     /* Thread has run to completion: remove it from the ready list */
-    curr_tcb->suspended = TRUE;
+    curr_tcb->terminated = TRUE;
     atomSched (FALSE);
 }
 

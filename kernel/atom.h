@@ -77,6 +77,7 @@ typedef struct atom_tcb
     uint8_t suspended;            /* TRUE if task is currently suspended */
     uint8_t suspend_wake_status;  /* Status returned to woken suspend calls */
     ATOM_TIMER *suspend_timo_cb;  /* Callback registered for suspension timeouts */
+    uint8_t terminated;           /* TRUE if task is being terminated (run to completion) */
 
     /* Details used if thread stack-checking is required */
 #ifdef ATOM_STACK_CHECKING

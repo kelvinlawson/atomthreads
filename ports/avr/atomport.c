@@ -111,8 +111,9 @@ static void thread_shell (void)
         curr_tcb->entry_point(curr_tcb->entry_param);
     }
 
-    /* Not reached - threads should never return from the entry point */
-
+    /* Thread has run to completion: remove it from the ready list */
+    curr_tcb->terminated = TRUE;
+    atomSched (FALSE);
 }
 
 
