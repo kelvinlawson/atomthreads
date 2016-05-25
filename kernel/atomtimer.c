@@ -488,6 +488,13 @@ static void atomTimerCallbacks (void)
         next_ptr = callback_list_head;
         while (next_ptr)
         {
+            /* If the cb_func re-registers the timer, it will be prepended
+             * to the timer_queue. Save next_timer pointer here, otherwise we
+             * might end up processing the timer_queue instead of the callback
+             * list.
+             */
+            saved_next_ptr = next_ptr->next_timer;
+
             /* Call the registered callback */
             if (next_ptr->cb_func)
             {
@@ -495,7 +502,7 @@ static void atomTimerCallbacks (void)
             }
 
             /* Move on to the next callback in the list */
-            next_ptr = next_ptr->next_timer;
+            next_ptr = saved_next_ptr;
         }
     }
 
