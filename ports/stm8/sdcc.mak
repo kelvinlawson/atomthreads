@@ -42,17 +42,17 @@ vpath %.elf .\$(BUILD_DIR)
 vpath %.hex .\$(BUILD_DIR)
 
 # Compiler/Assembler flags
-CFLAGS= -mstm8 -c -D $(PART) --opt-code-size --max-allocs-per-node 3000
-DBG_CFLAGS= -mstm8 -c -D $(PART) --opt-code-size --max-allocs-per-node 3000
+CFLAGS= -mstm8 -c -D $(PART) --opt-code-size
+DBG_CFLAGS= -mstm8 -c -D $(PART) --opt-code-size
 ASMFLAGS= -loff
 DBG_ASMFLAGS= -loff
 LINKFLAGS= -mstm8
-DBG_LINKFLAGS= -mstm8
+DBG_LINKFLAGS= --debug -mstm8
 
 # Enable stack-checking (disable if not required)
 ifeq ($(STACK_CHECK),true)
 CFLAGS += -D ATOM_STACK_CHECKING
-DBG_CFLAGS += -D ATOM_STACK_CHECKING
+DBG_CFLAGS += --debug -D ATOM_STACK_CHECKING
 endif
 
 #################
