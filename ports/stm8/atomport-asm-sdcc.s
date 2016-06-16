@@ -21,7 +21,10 @@ _archContextSwitch::
 
 	; restore context
 	ldw	x, (5, sp)
-	jra	restore
+	ldw	x, (x)
+	ldw	sp, x
+
+	ret
 
 ; void archFirstThreadRestore (ATOM_TCB *new_tcb_ptr)
 _archFirstThreadRestore::
