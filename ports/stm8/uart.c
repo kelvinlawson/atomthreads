@@ -154,3 +154,19 @@ size_t __write(int handle, const unsigned char *buf, size_t bufSize)
     return (chars_written);
 }
 #endif /* __IAR_SYSTEMS_ICC__ */
+
+#if defined(__SDCC_stm8)
+#if __SDCC_REVISION >= 9624
+int putchar (int c)
+{
+    return(uart_putchar(c));
+}
+#else
+void putchar (char c)
+{
+    uart_putchar(c);
+}
+#endif
+
+#endif
+

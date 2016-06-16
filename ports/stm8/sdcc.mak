@@ -42,7 +42,7 @@ vpath %.elf .\$(BUILD_DIR)
 vpath %.hex .\$(BUILD_DIR)
 
 # Compiler/Assembler flags
-CFLAGS= -mstm8 -c -D $(PART) --opt-code-size --max-allocs-per-node 300
+CFLAGS= -mstm8 -c -D $(PART) --opt-code-size --max-allocs-per-node 3000
 DBG_CFLAGS= -mstm8 -c -D $(PART) --opt-code-size --max-allocs-per-node 3000
 ASMFLAGS= -off
 DBG_ASMFLAGS= -off

@@ -95,6 +95,8 @@ static NO_REG_SAVE void thread_shell (void)
     rim();
 #elif defined(__RCSTM8__)
     _rim_();
+#elif defined(__SDCC_stm8)
+	__asm__("rim");
 #endif
 
     /* Call the thread entry point */
@@ -293,6 +295,7 @@ void archInitSystemTickTimer ( void )
 INTERRUPT void TIM1_SystemTickISR (void)
 #if defined(__RCSTM8__)
 interrupt 11
+
 #elif defined(__SDCC_stm8)
 __interrupt(11)
 #endif
@@ -309,3 +312,4 @@ __interrupt(11)
     /* Call the interrupt exit routine */
     atomIntExit(TRUE);
 }
+
