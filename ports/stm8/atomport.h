@@ -84,6 +84,14 @@
 #define CRITICAL_STORE      unsigned char ccr
 #define CRITICAL_START()    ccr = _getCC_(); _sim_()
 #define CRITICAL_END()      _setCC_(ccr)
+
+/* SDCC: Use custom function */
+#elif defined(__SDCC_stm8)
+uint8_t get_cc(void);
+void set_cc(uint8_t);
+#define CRITICAL_STORE      uint8_t ccr
+#define CRITICAL_START()    ccr = get_cc(); __asm__("sim")
+#define CRITICAL_END()      set_cc(ccr)
 #endif
 
 /* Uncomment to enable stack-checking */
