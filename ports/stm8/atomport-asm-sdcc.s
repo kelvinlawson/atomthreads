@@ -1,3 +1,5 @@
+.area CODE
+
 ; uint8_t get_cc(void);
 _get_cc::
 	push	cc
