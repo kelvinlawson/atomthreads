@@ -39,12 +39,20 @@
 * None
 * @retval u8 Content of CC register (in A register).
   */
+#ifdef __SDCC_stm8
+uint8_t get_cc(void);
+#endif
+
 u8 ITC_GetCPUCC(void)
 {
 #ifdef _COSMIC_
     _asm("push cc");
     _asm("pop a");
     return; /* Ignore compiler warning, the returned value is in A register */
+#endif
+
+#ifdef __SDCC_stm8
+	return get_cc();
 #endif
     
 #ifdef _RAISONANCE_

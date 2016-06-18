@@ -33,7 +33,6 @@ _archFirstThreadRestore::
 
 	; restore context
 	ldw	x, (3, sp)
-	restore:
 	ldw	x, (x)
 	ldw	sp, x
 
