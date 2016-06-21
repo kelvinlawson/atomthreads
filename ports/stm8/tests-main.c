@@ -78,7 +78,7 @@
  * future as the codebase changes but for the time being is enough to
  * cope with all of the automated tests.
  */
-#define MAIN_STACK_SIZE_BYTES       256
+#define MAIN_STACK_SIZE_BYTES       384
 
 
 /*
