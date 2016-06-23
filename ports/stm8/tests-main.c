@@ -73,7 +73,7 @@
  * stack for application code local variables etc.
  *
  * With all OS tests implemented to date on the STM8, the Main thread
- * stack has not exceeded 256 bytes. To allow all tests to run we set
+ * stack has not exceeded 384 bytes. To allow all tests to run we set
  * a minimum main thread stack size of 204 bytes. This may increase in
  * future as the codebase changes but for the time being is enough to
  * cope with all of the automated tests.
