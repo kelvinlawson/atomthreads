@@ -1,9 +1,9 @@
 ---------------------------------------------------------------------------
 
-Library:      Atomthreads
-Author:       Kelvin Lawson <info@atomthreads.com>
-Website:      http://atomthreads.com
-License:      BSD Revised
+ * Library: Atomthreads
+ * Author: Kelvin Lawson <info@atomthreads.com>
+ * Website: http://atomthreads.com
+ * License: BSD Revised
 
 ---------------------------------------------------------------------------
 
@@ -39,9 +39,9 @@ make a software build for the AVR architecture see ports/avr/README.
 
 SOURCE TREE:
 
- * kernel        Core kernel sources
- * tests         Automated test suite
- * ports         CPU architecture ports
+ * kernel: Core kernel sources
+ * tests: Automated test suite
+ * ports: CPU architecture ports
 
 ---------------------------------------------------------------------------
 
