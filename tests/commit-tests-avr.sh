@@ -11,4 +11,3 @@ cd ports/avr
 make clean
 make PART=atmega128
 make PART=atmega128 simtests
-cd ../..
