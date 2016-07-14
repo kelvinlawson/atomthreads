@@ -12,4 +12,3 @@ before_install:
 script:
     - docker run --rm -v $TRAVIS_BUILD_DIR/:/data -t kelvinlawson/atomthreads /data/tests/commit-tests-arm.sh
     - docker run --rm -v $TRAVIS_BUILD_DIR/:/data -t kelvinlawson/atomthreads /data/tests/commit-tests-avr.sh
-    - docker run --rm -v $TRAVIS_BUILD_DIR/:/data -t kelvinlawson/atomthreads-cortex-m /data/tests/commit-tests-cortex-m.sh
