@@ -1,0 +1,4 @@
+ports/x86/build/*
+*.swp
+*.o
+tags
