@@ -1,12 +1,18 @@
 #!/bin/bash
 
+# Quit on any error
+set -e
+
+# Build qemu-arm-cortex-m and run tests
+cd ../ports/x86
+
 BIN_DIR=build/run/iso/boot
 GRUB_CFG=$BIN_DIR/grub/grub.cfg
 ISO=all_tests_multiboot.iso
 
-rm  $BIN_DIR/*.bin
 rm $GRUB_CFG
 
+make clean
 make 
 
 cp build/*.bin build/run/iso/boot/
