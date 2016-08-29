@@ -111,7 +111,7 @@ static void app_entry (uint32_t data)
     else
     {
         print_color("\nTets Fail\n", COLOR_WHITE, COLOR_RED );
-	kprintf("Error Code: %d\n");
+	kprintf("Total Failures: %d\n", test_status);
     }
 
     print("\n\nPress Q to reboot\n");
