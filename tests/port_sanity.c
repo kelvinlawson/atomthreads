@@ -7,9 +7,6 @@
  */
 
 #include "atom.h"
-#include "atomport.h"
-#include "atomtimer.h"
-#include "plat.h"
 #include "atomtests.h"
 
 #define TEST_OK 0
@@ -40,13 +37,13 @@ static void appTick()
 	{
 		if(atomTimeGet() > t)
 		{
-			kprintf("%d] time: %d\n", getThreadId(), atomTimeGet());	
+			ATOMLOG (_STR("%d] time: %d\n"), getThreadId(), atomTimeGet());	
 			t = atomTimeGet();
 		}
 		if(atomTimeGet()>getThreadId()*TICKS_FACTOR) break;
 	}
 
-	kprintf("%d] - is done!\n", getThreadId());
+	ATOMLOG (_STR("%d] - is done!\n"), getThreadId());
 
 	--counter;	
 }
