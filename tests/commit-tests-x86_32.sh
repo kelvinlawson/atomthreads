@@ -2,8 +2,6 @@
 
 # Quit on any error
 set -e
-
-# Build qemu-arm-cortex-m and run tests
 cd ../ports/x86
 
 BIN_DIR=build/run/iso/boot
