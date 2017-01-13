@@ -490,27 +490,38 @@
 
 
 /** GPIO registers */
-#define DM36X_GPIO_BASE         0x01C67000
-#define DM36X_GPIO_DIR01        0x10
-#define DM36X_GPIO_OUT01        0x14
-#define DM36X_GPIO_SET01        0x18
-#define DM36X_GPIO_CLR01        0x1C
-#define DM36X_GPIO_IN01         0x20
-#define DM36X_GPIO_DIR23        0x38
-#define DM36X_GPIO_OUT23        0x3C
-#define DM36X_GPIO_SET23        0x40
-#define DM36X_GPIO_CLR23        0x44
-#define DM36X_GPIO_IN23         0x48
-#define DM36X_GPIO_DIR45        0x60
-#define DM36X_GPIO_OUT45        0x64
-#define DM36X_GPIO_SET45        0x68
-#define DM36X_GPIO_CLR45        0x6C
-#define DM36X_GPIO_IN45         0x70
-#define DM36X_GPIO_DIR6         0x88
-#define DM36X_GPIO_OUT6         0x8C
-#define DM36X_GPIO_SET6         0x90
-#define DM36X_GPIO_CLR6         0x94
-#define DM36X_GPIO_IN6          0x98
+#define DM36X_GPIO_BASE              0x01C67000
+#define DM36X_GPIO_BINTEN            0x08
+#define DM36X_GPIO_DIR01             0x10
+#define DM36X_GPIO_OUT01             0x14
+#define DM36X_GPIO_SET01             0x18
+#define DM36X_GPIO_CLR01             0x1C
+#define DM36X_GPIO_IN01              0x20
+#define DM36X_GPIO_SET_RIS_TRIG01    0x24
+#define DM36X_GPIO_CLR_RIS_TRIG01    0x28
+#define DM36X_GPIO_SET_FAL_TRIG01    0x2C
+#define DM36X_GPIO_CLR_FAL_TRIG01    0x30
+#define DM36X_GPIO_INTSTAT01         0x34
+#define DM36X_GPIO_DIR23             0x38
+#define DM36X_GPIO_OUT23             0x3C
+#define DM36X_GPIO_SET23             0x40
+#define DM36X_GPIO_CLR23             0x44
+#define DM36X_GPIO_IN23              0x48
+#define DM36X_GPIO_DIR45             0x60
+#define DM36X_GPIO_OUT45             0x64
+#define DM36X_GPIO_SET45             0x68
+#define DM36X_GPIO_CLR45             0x6C
+#define DM36X_GPIO_IN45              0x70
+#define DM36X_GPIO_DIR6              0x88
+#define DM36X_GPIO_OUT6              0x8C
+#define DM36X_GPIO_SET6              0x90
+#define DM36X_GPIO_CLR6              0x94
+#define DM36X_GPIO_IN6               0x98
+#define DM36X_GPIO_SET_RIS_TRIG6     0x9C
+#define DM36X_GPIO_CLR_RIS_TRIG6     0xA0
+#define DM36X_GPIO_SET_FAL_TRIG6     0xA4
+#define DM36X_GPIO_CLR_FAL_TRIG6     0xA8
+#define DM36X_GPIO_INTSTAT6          0xAC
 
 
 /** VPFE/VPBE registers */
