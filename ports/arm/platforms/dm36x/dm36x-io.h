@@ -442,6 +442,22 @@
 #define DM36X_INTC_VEC_UART1INT      41
 #define DM36X_INTC_VEC_SPI0INT0      42
 #define DM36X_INTC_VEC_SPI3INT0      43
+#define DM36X_INTC_VEC_GIO0          44
+#define DM36X_INTC_VEC_GIO1          45
+#define DM36X_INTC_VEC_GIO2          46
+#define DM36X_INTC_VEC_GIO3          47
+#define DM36X_INTC_VEC_GIO4          48
+#define DM36X_INTC_VEC_GIO5          49
+#define DM36X_INTC_VEC_GIO6          50
+#define DM36X_INTC_VEC_GIO7          51
+#define DM36X_INTC_VEC_GIO8          52
+#define DM36X_INTC_VEC_GIO9          53
+#define DM36X_INTC_VEC_GIO10         54
+#define DM36X_INTC_VEC_GIO11         55
+#define DM36X_INTC_VEC_GIO12         56
+#define DM36X_INTC_VEC_GIO13         57
+#define DM36X_INTC_VEC_GIO14         58
+#define DM36X_INTC_VEC_GIO15         59
 #define DM36X_INTC_MAX_VEC           63
 
 
