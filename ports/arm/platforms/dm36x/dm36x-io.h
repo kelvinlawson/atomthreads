@@ -569,7 +569,7 @@
 
 
 /** McBSP registers */
-#define DM36X_MCBPSP_BASE   0x01D02000 /* McBSP */
+#define DM36X_MCBSP_BASE    0x01D02000 /* McBSP */
 #define DM36X_MCBSP_DRR     0x00
 #define DM36X_MCBSP_DXR     0x04
 #define DM36X_MCBSP_SPCR    0x08
