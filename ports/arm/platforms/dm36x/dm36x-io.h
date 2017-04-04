@@ -319,6 +319,7 @@
 #define DM36X_PSC_MDSTAT_BASE   0x800
 #define DM36X_PSC_MDCTL_BASE    0xA00
 #define DM36X_PSC_MOD_SPI1      6
+#define DM36X_PSC_MOD_MCBSP     8
 #define DM36X_PSC_MOD_SPI2      11
 #define DM36X_PSC_MOD_I2C       18
 #define DM36X_PSC_MOD_SPI0      22
