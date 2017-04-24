@@ -76,6 +76,8 @@ typedef struct atom_tcb
     /* Suspension data */
     uint8_t suspended;            /* TRUE if task is currently suspended */
     uint8_t suspend_wake_status;  /* Status returned to woken suspend calls */
+    uint32_t	suspend_option;			/* yujs used for event to save the event flags  get option*/
+    uint32_t	suspend_info; /* Remember which event flags we are looking for. requested_flags yujs */
     ATOM_TIMER *suspend_timo_cb;  /* Callback registered for suspension timeouts */
     uint8_t terminated;           /* TRUE if task is being terminated (run to completion) */
 
