@@ -59,6 +59,12 @@
 #define uint32_t u32
 #define POINTER  void *
 
+/**
+ * Architecture-specific definition of atom event size.
+ * It is best selected as the size of the architecture, but can be
+ * reduced or increased depending on requirements.
+ */
+typedef uint8_t ATOM_EVENTS;
 
 /**
  * Critical region protection: this should disable interrupts

@@ -71,6 +71,7 @@ objs += atomsem.o
 objs += atommutex.o 
 objs += atomtimer.o 
 objs += atomqueue.o
+objs += atomevent.o
 
 # Collection of built objects (excluding test applications)
 build_objs = $(foreach obj,$(objs),$(build_dir)/$(obj))

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010, Kelvin Lawson. All rights reserved.
+ * Copyright (c) 2015, Stefan Petersen. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,54 +26,21 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
+#ifndef __ATOM_EVENT_H
+#define __ATOM_EVENT_H
 
-#ifndef __ATOM_PORT_H
-#define __ATOM_PORT_H
+#ifdef __cplusplus
+extern "C" {
+#endif
 
-#include <avr/io.h>
-#include <avr/interrupt.h>
-#include <avr/pgmspace.h>
+#include "atom.h"
 
-/* Portable uint8_t and friends available from stdint.h on this platform */
-#include <stdint.h>
+extern uint8_t atomEventSignal(ATOM_TCB *tcb, ATOM_EVENTS events);
+extern uint8_t atomEventWait(ATOM_EVENTS event_mask, ATOM_EVENTS *events,
+                             int32_t timeout);
 
-/* Definition of NULL is available from stddef.h on this platform */
-#include <stddef.h>
+#ifdef __cplusplus
+}
+#endif
 
-/* Required number of system ticks per second (normally 100 for 10ms tick) */
-#define SYSTEM_TICKS_PER_SEC            100
-
-/* Size of each stack entry / stack alignment size (8 bits on AVR) */
-#define STACK_ALIGN_SIZE                sizeof(uint8_t)
-
-/**
- * Architecture-specific types.
- * Most of these are available from stdint.h on this platform, which is
- * included above.
- */
-#define POINTER void *
-
-/**
- * Architecture-specific definition of atom event size.
- * It is best selected as the size of the architecture, but can be
- * reduced or increased depending on requirements.
- */
-typedef uint8_t ATOM_EVENTS;
-
-
-/**
- * Critical region protection: this should disable interrupts
- * to protect OS data structures during modification. It must
- * allow nested calls, which means that interrupts should only
- * be re-enabled when the outer CRITICAL_END() is reached.
- */
-#define CRITICAL_STORE      uint8_t sreg
-#define CRITICAL_START()    sreg = SREG; cli();
-#define CRITICAL_END()      SREG = sreg
-
-
-/* Uncomment to enable stack-checking */
-/* #define ATOM_STACK_CHECKING */
-
-
-#endif /* __ATOM_PORT_H */
+#endif /* __ATOM_EVENT_H */

@@ -79,6 +79,8 @@ typedef struct atom_tcb
     ATOM_TIMER *suspend_timo_cb;  /* Callback registered for suspension timeouts */
     uint8_t terminated;           /* TRUE if task is being terminated (run to completion) */
 
+    /* Event bits */
+    ATOM_EVENTS events;           /* Mask of bits events are waiting for */
     /* Details used if thread stack-checking is required */
 #ifdef ATOM_STACK_CHECKING
     POINTER stack_bottom;         /* Pointer to bottom of stack allocation */

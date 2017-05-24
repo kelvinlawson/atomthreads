@@ -45,6 +45,7 @@ APP_ASM_OBJECTS = atomport-entry.o atomport-asm.o
 
 # Kernel object files
 KERNEL_OBJECTS = atomkernel.o atomsem.o atommutex.o atomtimer.o atomqueue.o
+KERNEL_OBJECTS += atomevent.o
 
 # Collection of built objects (excluding test applications)
 ALL_OBJECTS = $(APP_ASM_OBJECTS) $(APP_OBJECTS) $(KERNEL_OBJECTS)

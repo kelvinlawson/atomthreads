@@ -38,6 +38,7 @@ PERIPH_OBJECTS = stm8s_gpio.o stm8s_tim1.o stm8s_clk.o stm8s_uart2.o
 
 # Kernel object files
 KERNEL_OBJECTS = atomkernel.o atomsem.o atommutex.o atomtimer.o atomqueue.o
+KERNEL_OBJECTS += atomevent.o
 
 # Collection of built objects (excluding test applications)
 ALL_OBJECTS = $(APP_OBJECTS) $(APP_ASM_OBJECTS) $(PERIPH_OBJECTS) $(KERNEL_OBJECTS)
