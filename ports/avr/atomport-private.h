@@ -33,7 +33,15 @@
 /* CPU Frequency */
 #define AVR_CPU_HZ          1000000
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /* Function prototypes */
 void avrInitSystemTickTimer ( void );
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* __ATOM_PORT_PRIVATE_H */
