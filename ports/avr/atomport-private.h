@@ -31,7 +31,11 @@
 #define __ATOM_PORT_PRIVATE_H
 
 /* CPU Frequency */
+#ifdef F_CPU
+#define AVR_CPU_HZ          F_CPU
+#else
 #define AVR_CPU_HZ          1000000
+#endif
 
 #ifdef __cplusplus
 extern "C" {
