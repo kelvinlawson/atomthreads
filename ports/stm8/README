@@ -1,0 +1,199 @@
+---------------------------------------------------------------------------
+
+Library:      Atomthreads
+Author:       Kelvin Lawson <info@atomthreads.com>
+Website:      http://atomthreads.com
+License:      BSD Revised
+
+---------------------------------------------------------------------------
+
+STM8 PORT
+
+This folder contains a port of the Atomthreads real time kernel for the
+STM8 processor architecture. These instructions cover compiler-agnostic
+aspects of usage of Atomthreads.
+
+All of the cross-platform kernel code is contained in the top-level 
+'kernel' folder, while ports to specific CPU architectures are contained in
+the 'ports' folder tree. A port to a CPU architecture can comprise just one
+or two modules which provide the architecture-specific functionality, such
+as the context-switch routine which saves and restores processor registers
+on a thread switch. In this case, the kernel port is split into two files:
+
+ * atomport.c: Those functions which can be written in C
+ * atomport-asm-raisonance.s: Main register save/restore assembler routines
+
+Each Atomthreads port requires also a header file which describes various
+architecture-specific details such as appropriate types for 8-bit, 16-bit
+etc variables, the port's system tick frequency, and macros for performing
+interrupt lockouts / critical sections:
+
+ * atomport.h: Port-specific header required by the kernel for each port
+
+A few additional source files are also included here:
+
+ * tests-main.c: Main application file (used for launching automated tests)
+ * uart.c: UART wrapper to allow use of stdio/printf()
+ * stm8s-periphs/*.*: Peripheral drivers as delivered by ST (no changes
+     to distributed code).
+
+Atomthreads includes a suite of automated tests which prove the key OS
+functionality, and can be used with any architecture ports. This port
+provides an easy mechanism for building, downloading and running the test
+suite to prove the OS on your target.
+
+The port was carried out and tested on an STM8S105C6 running within an
+STM8S-Discovery board, and supports the SDCC, Cosmic, Raisonance and IAR compiler
+tools. It is possible to use it with other processors in the STM8 range, as
+well as other hardware platforms and compilers, with minimal changes.
+Platform and compiler specific code has been kept to an absolute minimum.
+
+This README covers th ecompiler-agnostic aspects of usage of Atomthreads.
+
+Instructions for users of particular compilers are available in README-SDCC,
+README-IAR, README-COSMIC and README-RASONANCE.
+
+---------------------------------------------------------------------------
+
+STM8S-DISCOVERY SPECIFICS
+
+There are very minimal board-specific aspects to the STM8 port so it is
+trivial to run Atomthreads on other STM8 platforms.
+
+The test applications make use of a LED to indicate test pass/fail status.
+This is currently configured to use a bit in GPIOD, which on the Discovery
+board maps to the board's only LED. You may change the port and register
+bit in tests-main.c to utilise a different pin on other hardware platforms.
+You may also completely omit the LED flashing in the test application if
+you prefer to use the UART for monitoring test status.
+
+The test applications also make use of the UART to print out pass/fail
+indications and other information. For this you should connect a serial
+cable to the Discovery board via the external pin connectors. Use of
+a UART is not required if you prefer to use the LED or some other method
+of notifying test pass/fail status.
+
+To connect a serial cable to the Discovery you will need to connect to
+the following pins on the external connectors:
+ Vcc: CN2 pin 8
+ GND: CN2 pin 7
+ UART RX: CN4 pin 11 (connect to TX at the PC end)
+ UART TX: CN4 pin 10 (connect to RX at the PC end)
+Note that the board uses TTL levels so you may need to use a level
+converter. External level converters may need to be powered using
+a Vdd of 5v, which can be achieved by positioning JP1 on the Discovery.
+
+The STM8 device on the Discovery only offers UART2. If you are using a
+different device or wish to use an alternative UART then you must change
+the stm8s_conf.h file.
+
+If you are using a CPU other than the STM8S105C6 you should change the
+PART macro from "STM8S105" to your target CPU. This can be changed in the
+raisonance.mak Makefile. If you are using the STVD project it should be
+changed in the project preprocessor settings for both Debug and Release
+builds. You may also wish to enable any CPU peripherals which you wish to
+use in the stm8s_conf.h file.
+
+---------------------------------------------------------------------------
+
+RAM FOOTPRINT & STACK USAGE
+
+The Atomthreads kernel is written in well-structured pure C which is highly
+portable and not targeted at any particular compiler or CPU architecture.
+For this reason it is not highly optimised for the STM8 architecture, and
+by its nature will likely have a higher text and data footprint than an
+RTOS targeted at the STM8 architecture only. The emphasis here is on
+C-based portable, readable and maintainable code which can run on any CPU
+architecture, from the 8-bitters up.
+
+A good rule of thumb when using Atomthreads on the STM8 architecture is
+that a minimum of 1KB RAM is required in order to support an application
+with 4 or 5 threads and the idle thread. If a minimum of approximately
+128 bytes per thread stack is acceptable then you will benefit from the
+easy-to-read, portable implementation of an RTOS herein.
+
+The major consumer of RAM when using Atomthreads is your thread stacks.
+Functionality that is shared between several kernel modules is farmed out
+to separate functions, resulting in readable and maintainable code but
+with some associated stack cost of calling out to subroutines. Further,
+each thread stack is used for saving its own registers on a context
+switch, and there is no separate interrupt stack which means that each
+thread stack has to be able to cope with the maximum stack usage of the
+kernel (and application) interrupt handlers.
+
+Clearly the stack requirement for each thread depends on what your
+application code does, and what memory model is used etc, but generally
+you should find that 128 bytes is enough to allow for the thread to be
+switched out (and thus save its registers) while deep within a kernel
+or application call stack, and similarly enough to provide stack for
+interrupt handlers interrupting while the thread is deep within a kernel
+or application call stack. You will need to increase this depending on
+what level of stack the application code in question requires.
+
+At this time the maximum stack consumed by the test threads within the
+automated test modules is 95 bytes of stack, and the main test thread has
+been seen to consume 163 bytes of stack. At this time the queue9 test is
+the largest consumer of test thread stack (95 bytes) and the sem1 test
+consumes the largest main thread stack (137 bytes). If your applications
+have large amounts of local data or call several subroutines then you may
+find that you need larger than 128 bytes.
+
+You may monitor the stack usage of your application threads during runtime
+by defining the macro ATOM_STACK_CHECKING and calling
+atomThreadStackCheck(). This macro is defined by default in the Makefile
+so that the automated test modules can check for stack overflows, but you
+may wish to undefine this in your application Makefiles when you are happy
+that the stack usage is acceptable. Enabling ATOM_STACK_CHECKING will
+increase the size of your threads' TCBs slightly, and will incur a minor
+CPU cycles overhead whenever threads are created due to prefilling the
+thread stack with a known value.
+
+With careful consideration and few threads it would be possible to use
+a platform with 512 bytes RAM, but not all of the automated test suite
+would run on such a platform (some of the test modules use 6 threads: a
+main thread together with 4 test threads and the idle thread).
+
+
+---------------------------------------------------------------------------
+
+INTERRUPT HANDLING
+
+Interrupt handlers use the stack of the thread which was running when the
+interrupt occurred. If no thread rescheduling occurs during the ISR then
+on exit from the ISR any data stacked by the ISR on the thread's stack is
+popped off the stack and execution of the thread resumes. If a reschedule
+during the ISR causes a context switch to a new thread, then the ISR's
+data will remain on the thread's stack until the thread is scheduled back
+in.
+
+Interrupt priorities (via the ITC_SPRx registers) are left in their
+default power-on state, which disables interrupt nesting. Kernel changes
+may be required to support interrupt nesting.
+
+Note that the STM8 programming manual currently describes the following
+feature:
+
+ "Fast interrupt handling through alternate register files (up to 4
+  contexts) with standard stack compatible mode (for real time OS
+  kernels)"
+
+This feature was implemented by ST in the core but has to date never been
+included in any STM8 products. If it is included in future products then
+you will need to put the device in the stack compatible mode described.
+
+
+---------------------------------------------------------------------------
+
+WRITING NEW INTERRUPT HANDLERS
+
+All interrupt handlers which will call out to the OS kernel and potentially
+cause a thread switch must call atomIntEnter() and atomIntExit(). An
+example of this can be seen in the timer tick ISR in atomport.c.
+
+You may also implement fast interrupt handlers in the system which do not
+call atomIntEnter()/atomIntExit(), however these ISRs cannot perform OS
+functions such as posting semaphores or effecting a thread switch.
+
+
+---------------------------------------------------------------------------
+
