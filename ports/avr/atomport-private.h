@@ -31,7 +31,9 @@
 #define __ATOM_PORT_PRIVATE_H
 
 /* CPU Frequency */
+#ifndef AVR_CPU_HZ
 #define AVR_CPU_HZ          1000000
+#endif
 
 /* Function prototypes */
 void avrInitSystemTickTimer ( void );
