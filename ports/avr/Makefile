@@ -36,7 +36,7 @@ PART=atmega16
 BUILD_DIR=build
 
 # Port/application object files
-APP_OBJECTS = atomport.o uart.o tests-main.o
+APP_OBJECTS = atomport.o atomport-private.o uart.o tests-main.o
 APP_ASM_OBJECTS = atomport-asm.o
 
 # Kernel object files
