@@ -1,0 +1,17 @@
+[HIMDBVersion]
+2.0
+[DATABASE_VERSION]
+"1.2" 
+[CURRENT_PROJECT]
+"hew_tst_sem1" 
+[GENERAL_DATA]
+[BREAKPOINTS]
+[OPEN_WORKSPACE_FILES]
+"C:\atomthreads\kernel\atomkernel.c" 
+"C:\atomthreads\ports\m32c\hew_tests\hew_tst_sem1\hew_tst_sem1\resetprg.c" 
+[WORKSPACE_FILE_STATES]
+"C:\atomthreads\kernel\atomkernel.c" 0 0 1114 570 0 1 
+"C:\atomthreads\ports\m32c\hew_tests\hew_tst_sem1\hew_tst_sem1\resetprg.c" -8 -30 1114 570 1 0 
+[LOADED_PROJECTS]
+"hew_tst_sem1" 
+[END]
