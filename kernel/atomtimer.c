@@ -547,3 +547,40 @@ static void atomTimerDelayCallback (POINTER cb_data)
     }
 }
 
+
+/**
+ * \b atomUserTimerWakeupTimeGet
+ *
+ * Get user timers wake-up time.
+ *
+ * @return None
+ */
+uint32_t atomUserTimerWakeupTimeGet(void)
+{
+    ATOM_TIMER *next_ptr = timer_queue;
+    uint32_t wake_up_time = 0;
+
+    if (tcbReadyQ && tcbReadyQ->priority != IDLE_THREAD_PRIORITY)
+    {
+        return wake_up_time;
+    }
+
+    if (next_ptr != NULL)
+    {
+        wake_up_time = next_ptr->cb_ticks;
+        next_ptr = next_ptr->next_timer;
+    }
+
+    while (next_ptr)
+    {
+        if (next_ptr->cb_ticks < wake_up_time)
+        {
+            wake_up_time = next_ptr->cb_ticks;
+        }
+
+        /* Move on to the next in the list */
+        next_ptr = next_ptr->next_timer;
+    }
+
+    return wake_up_time;
+}
