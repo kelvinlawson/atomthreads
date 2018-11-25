@@ -176,6 +176,21 @@ NO_REG_SAVE void main ( void )
 
 
 /**
+ * \b userIdleHook
+ *
+ * This function will be called in a endless loop by entry point of idle thread.
+ *
+ * It must not call any library routines which would cause it to block.
+ * 
+ *@return None
+ */
+void userIdleHook(void)
+{
+
+}
+
+
+/**
  * \b main_thread_func
  *
  * Entry point for main application thread.

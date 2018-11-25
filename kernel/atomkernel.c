@@ -180,7 +180,11 @@ uint8_t atomOSStarted = FALSE;
 static ATOM_TCB *curr_tcb = NULL;
 
 /** Storage for the idle thread's TCB */
+#ifdef ATOM_STACK_CHECKING
+ATOM_TCB idle_tcb;
+#else
 static ATOM_TCB idle_tcb;
+#endif
 
 /* Number of nested interrupts */
 static int atomIntCnt = 0;
@@ -768,7 +772,7 @@ static void atomIdleThread (uint32_t param)
     /* Loop forever */
     while (1)
     {
-        /** \todo Provide user idle hooks*/
+        userIdleHook();
     }
 }
 
@@ -1049,3 +1053,84 @@ ATOM_TCB *tcbDequeuePriority (ATOM_TCB **tcb_queue_ptr, uint8_t priority)
 
     return (ret_ptr);
 }
+
+
+/**
+ * \b atomOsLock
+ *
+ * This is an internal function not for use by application code.
+ *
+ * Stop system timer to lock OS.
+ *
+ * @return None
+ */
+static void atomOsLock (void)
+{
+    archSystemTickTimerStop();
+    atomOSStarted = FALSE;
+}
+
+
+/**
+ * \b atomOsUnlock
+ *
+ * This is an internal function not for use by application code.
+ *
+ * Restart system timer to unlock OS.
+ *
+ * @return None
+ */
+static void atomOsUnlock (void)
+{
+    atomOSStarted = TRUE;
+    archSystemTickTimerRestart();
+}
+
+
+/**
+ * \b atomOsSuspend
+ *
+ * Suspend OS scheduler and return ticks count that OS can be suspended.
+ *
+ * @return Tick count that OS can be suspended
+ */
+uint32_t atomOsSuspend (void)
+{
+    uint32_t delta = 0xffff;
+
+    atomOsLock();
+
+    delta = atomUserTimerWakeupTimeGet();
+
+    if (delta < EXPECTED_IDLE_TIME_BEFORE_SUSPEND)
+    {
+        delta = 0;
+    }
+
+    return delta;
+}
+
+
+/**
+ * \b atomOsResume
+ *
+ * Resume OS scheduler after suspend.
+ *
+ * @param[in] sleep_ticks ticks count that OS was suspended
+ *
+ * @return None
+ */
+void atomOsResume (uint32_t sleep_ticks)
+{
+    uint32_t new_system_ticks, old_system_ticks;
+
+    old_system_ticks = atomTimeGet();
+
+    new_system_ticks = sleep_ticks + old_system_ticks;
+
+    atomUserTimerUpdate(sleep_ticks);
+    atomTimeSet(new_system_ticks);
+
+    atomOsUnlock();
+}
+

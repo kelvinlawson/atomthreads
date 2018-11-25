@@ -62,6 +62,7 @@ extern uint8_t atomTimerDelay (uint32_t ticks);
 extern uint32_t atomTimeGet (void);
 extern void atomTimeSet (uint32_t new_time);
 extern uint32_t atomUserTimerWakeupTimeGet(void);
+extern void atomUserTimerUpdate (uint32_t sleep_time);
 
 #ifdef __cplusplus
 }

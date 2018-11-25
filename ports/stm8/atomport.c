@@ -313,3 +313,30 @@ __interrupt(11)
     atomIntExit(TRUE);
 }
 
+
+/**
+ * \b archSystemTickTimerStop
+ *
+ * Stop the system tick timer.
+ *
+ * @return None
+ */
+void archSystemTickTimerStop(void)
+{
+    /* Disable TIM1 */
+    TIM1_Cmd(DISABLE);
+}
+
+
+/**
+ * \b archSystemTickTimerRestart
+ *
+ * Restart the system tick timer.
+ *
+ * @return None
+ */
+void archSystemTickTimerRestart(void)
+{
+    /* Enable TIM1 */
+    TIM1_Cmd(ENABLE);
+}

@@ -584,3 +584,30 @@ uint32_t atomUserTimerWakeupTimeGet(void)
 
     return wake_up_time;
 }
+
+
+/**
+ * \b atomUserTimerUpdate
+ *
+ * This is an internal function not for use by application code.
+ *
+ * Update user timers on resume.
+ *
+ * @param[in] tick count value
+ *
+ * @return None
+ */
+void atomUserTimerUpdate (uint32_t sleep_time)
+{
+    ATOM_TIMER *next_ptr;
+
+    next_ptr = timer_queue;
+    while (next_ptr)
+    {
+        next_ptr->cb_ticks -= sleep_time;
+
+        /* Move on to the next in the list */
+        next_ptr = next_ptr->next_timer;
+    }
+}
+
