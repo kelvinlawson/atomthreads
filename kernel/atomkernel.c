@@ -413,6 +413,8 @@ uint8_t atomThreadCreate (ATOM_TCB *tcb_ptr, uint8_t priority, void (*entry_poin
         tcb_ptr->prev_tcb = NULL;
         tcb_ptr->next_tcb = NULL;
         tcb_ptr->suspend_timo_cb = NULL;
+        tcb_ptr->events = 0;
+        tcb_ptr->waits = 0;
 
         /**
          * Store the thread entry point and parameter in the TCB. This may
