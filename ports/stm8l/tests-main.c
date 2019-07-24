@@ -36,7 +36,7 @@
 #include "atomtests.h"
 #include "atomtimer.h"
 #include "uart.h"
-#include "stm8s.h"
+#include "stm8l15x.h"
 
 
 /* Constants */
@@ -116,7 +116,7 @@ static void main_thread_func (uint32_t param);
  *
  * Program entry point.
  *
- * Sets up the STM8 hardware resources (system tick timer interrupt) necessary
+ * Sets up the STM8l hardware resources (system tick timer interrupt) necessary
  * for the OS to be started. Creates an application thread and starts the OS.
  *
  * If the compiler supports it, stack space can be saved by preventing
@@ -189,7 +189,6 @@ void userIdleHook(void)
 
 }
 
-
 /**
  * \b main_thread_func
  *
@@ -209,14 +208,14 @@ static void main_thread_func (uint32_t param)
     /* Compiler warnings */
     param = param;
 
-    /* Initialise UART (9600bps) */
-    if (uart_init(9600) != 0)
+    /* Initialise UART (115200bps) */
+    if (uart_init(115200) != 0)
     {
         /* Error initialising UART */
     }
 
     /* Put a message out on the UART */
-    printf ("Go\n");
+    printf("Go\n");
 
     /* Start test. All tests use the same start API. */
     test_status = test_start();
@@ -259,18 +258,20 @@ static void main_thread_func (uint32_t param)
     /* Flash LED once per second if passed, very quickly if failed */
     sleep_ticks = (test_status == 0) ? SYSTEM_TICKS_PER_SEC : (SYSTEM_TICKS_PER_SEC/8);
 
-    /* Configure GPIO for flashing the STM8S Discovery LED on GPIO D0 */
-    GPIO_DeInit(GPIOD);
-    GPIO_Init(GPIOD, GPIO_PIN_0, GPIO_MODE_OUT_PP_LOW_FAST);
+
+    /* Configure GPIO for flashing the STM8S Discovery LED on GPIO C4 */
+    GPIO_DeInit(GPIOC);
+    GPIO_Init(GPIOC, GPIO_Pin_4, GPIO_Mode_Out_PP_Low_Fast);
 
     /* Test finished, flash slowly for pass, fast for fail */
     while (1)
     {
+
         /* Toggle LED on pin D0 (Discovery-specific) */
-        GPIO_WriteReverse(GPIOD, GPIO_PIN_0);
+        GPIO_ToggleBits(GPIOC, GPIO_Pin_4);
 
         /* Sleep then toggle LED again */
-        atomTimerDelay (sleep_ticks);
+        atomTimerDelay(sleep_ticks);
     }
 }
 

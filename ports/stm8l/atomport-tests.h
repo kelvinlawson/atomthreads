@@ -27,45 +27,38 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef __ATOM_TIMER_H
-#define __ATOM_TIMER_H
+#ifndef __ATOM_PORT_TESTS_H
+#define __ATOM_PORT_TESTS_H
 
-#ifdef __cplusplus
-extern "C" {
+/* Include Atomthreads kernel API */
+#include "atom.h"
+
+/* Prerequisite include for ATOMLOG() macro (via printf) */
+#include <stdio.h>
+
+/* Logger macro for viewing test results */
+#define ATOMLOG     printf
+
+/*
+ * String location macro: for platforms which need to place strings in
+ * alternative locations. Not used on this platform.
+ */
+#define _STR
+
+/* Default thread stack size (in bytes) */
+#define TEST_THREAD_STACK_SIZE      128
+
+/* Uncomment to enable logging of stack usage to UART */
+#define TESTS_LOG_STACK_USAGE
+
+/**
+ * IAR EWSTM8: Ignore warnings on volatile ordering thrown up
+ * by ATOMLOG() statements in the test modules.
+ */
+#ifdef __IAR_SYSTEMS_ICC__
+#pragma diag_suppress=Pa082
 #endif
 
-#include "atomport.h"
 
+#endif /* __ATOM_PORT_TESTS_H */
 
-/* Callback function prototype */
-typedef void ( * TIMER_CB_FUNC ) ( POINTER cb_data ) ;
-
-/* Data structures */
-
-/* Timer descriptor */
-typedef struct atom_timer
-{
-    TIMER_CB_FUNC   cb_func;    /* Callback function */
-    POINTER	        cb_data;    /* Pointer to callback parameter/data */
-    uint32_t	    cb_ticks;   /* Ticks until callback */
-
-	/* Internal data */
-    struct atom_timer *next_timer;		/* Next timer in doubly-linked list */
-
-} ATOM_TIMER;
-
-/* Function prototypes */
-
-extern uint8_t atomTimerRegister (ATOM_TIMER *timer_ptr);
-extern uint8_t atomTimerCancel (ATOM_TIMER *timer_ptr);
-extern uint8_t atomTimerDelay (uint32_t ticks);
-extern uint32_t atomTimeGet (void);
-extern void atomTimeSet (uint32_t new_time);
-extern uint32_t atomUserTimerWakeupTimeGet(void);
-extern void atomUserTimerUpdate (uint32_t sleep_time);
-
-#ifdef __cplusplus
-}
-#endif
-
-#endif /* __ATOM_TIMER_H */

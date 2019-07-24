@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010, Kelvin Lawson. All rights reserved.
+ * Copyright (c) 2018, Mike Yu. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,45 +27,29 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef __ATOM_TIMER_H
-#define __ATOM_TIMER_H
+#ifndef __ATOM_SIGNAL_H
+#define __ATOM_SIGNAL_H
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-#include "atomport.h"
+#include "atom.h"
 
+#define atomFeature_Signals      12      ///< 12 Signal Flags available per thread
 
-/* Callback function prototype */
-typedef void ( * TIMER_CB_FUNC ) ( POINTER cb_data ) ;
-
-/* Data structures */
-
-/* Timer descriptor */
-typedef struct atom_timer
+typedef struct atom_signal
 {
-    TIMER_CB_FUNC   cb_func;    /* Callback function */
-    POINTER	        cb_data;    /* Pointer to callback parameter/data */
-    uint32_t	    cb_ticks;   /* Ticks until callback */
+    uint8_t     status;
+    uint16_t     value;
+} ATOM_SIGNAL;
 
-	/* Internal data */
-    struct atom_timer *next_timer;		/* Next timer in doubly-linked list */
-
-} ATOM_TIMER;
-
-/* Function prototypes */
-
-extern uint8_t atomTimerRegister (ATOM_TIMER *timer_ptr);
-extern uint8_t atomTimerCancel (ATOM_TIMER *timer_ptr);
-extern uint8_t atomTimerDelay (uint32_t ticks);
-extern uint32_t atomTimeGet (void);
-extern void atomTimeSet (uint32_t new_time);
-extern uint32_t atomUserTimerWakeupTimeGet(void);
-extern void atomUserTimerUpdate (uint32_t sleep_time);
+extern ATOM_SIGNAL atomSignalWait(uint16_t signals, int32_t timeout);
+extern uint8_t atomSignalSet(ATOM_TCB *tcb, uint16_t signals);
+extern uint8_t atomSignalClear(ATOM_TCB *tcb, uint16_t signals);
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* __ATOM_TIMER_H */
+#endif

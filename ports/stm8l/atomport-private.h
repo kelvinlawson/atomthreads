@@ -27,45 +27,24 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef __ATOM_TIMER_H
-#define __ATOM_TIMER_H
+#ifndef __ATOM_PORT_PRIVATE_H
+#define __ATOM_PORT_PRIVATE_H
 
-#ifdef __cplusplus
-extern "C" {
+
+/**
+ * Compiler-specific modifier to prevent some functions from saving
+ * and restoring registers on entry and exit, if the function is
+ * known to never complete (e.g. thread entry points).
+ * Reduces stack usage on supporting compilers.
+ */
+#ifdef __IAR_SYSTEMS_ICC__
+#define NO_REG_SAVE __task
+#else
+#define NO_REG_SAVE
 #endif
-
-#include "atomport.h"
-
-
-/* Callback function prototype */
-typedef void ( * TIMER_CB_FUNC ) ( POINTER cb_data ) ;
-
-/* Data structures */
-
-/* Timer descriptor */
-typedef struct atom_timer
-{
-    TIMER_CB_FUNC   cb_func;    /* Callback function */
-    POINTER	        cb_data;    /* Pointer to callback parameter/data */
-    uint32_t	    cb_ticks;   /* Ticks until callback */
-
-	/* Internal data */
-    struct atom_timer *next_timer;		/* Next timer in doubly-linked list */
-
-} ATOM_TIMER;
 
 /* Function prototypes */
+void archInitSystemTickTimer (void);
+void TIM4_SystemTickISR (void);
 
-extern uint8_t atomTimerRegister (ATOM_TIMER *timer_ptr);
-extern uint8_t atomTimerCancel (ATOM_TIMER *timer_ptr);
-extern uint8_t atomTimerDelay (uint32_t ticks);
-extern uint32_t atomTimeGet (void);
-extern void atomTimeSet (uint32_t new_time);
-extern uint32_t atomUserTimerWakeupTimeGet(void);
-extern void atomUserTimerUpdate (uint32_t sleep_time);
-
-#ifdef __cplusplus
-}
-#endif
-
-#endif /* __ATOM_TIMER_H */
+#endif /* __ATOM_PORT_PRIVATE_H */

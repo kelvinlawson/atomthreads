@@ -30,7 +30,7 @@
 
 #include "atom.h"
 #include "atomport-private.h"
-#include "stm8s_tim1.h"
+#include "stm8l15x.h"
 #if defined(__RCSTM8__)
 #include <intrins.h>
 #endif
@@ -232,23 +232,35 @@ void archThreadContextInit (ATOM_TCB *tcb_ptr, void *stack_top, void (*entry_poi
 /**
  * \b archInitSystemTickTimer
  *
- * Initialise the system tick timer. Uses the STM8's TIM1 facility.
+ * Initialise the system tick timer. Uses the STM8's TIM4 facility.
  *
  * @return None
  */
 void archInitSystemTickTimer ( void )
 {
-    /* Reset TIM1 */
-    TIM1_DeInit();
+    /* Enable TIM4 CLK */
+    CLK_PeripheralClockConfig(CLK_Peripheral_TIM4, ENABLE);
+    
+    /* TIM4 configuration:
+     - TIM4CLK is set to 2 MHz, the TIM4 Prescaler is equal to 128 so the TIM1 counter
+     clock used is 2 MHz / 128 = 15625 Hz
+    - With 125 000 Hz we can generate time base:
+      max time base is 16.384 ms if TIM4_PERIOD = 255 --> (255 + 1) / 15625 = 16.384 ms
+      min time base is  0.128 ms if TIM4_PERIOD = 1   --> (  1 + 1) / 15625 =  0.128 ms
+    - In this example we need to generate a time base equal to 10 ms
+     so TIM4_PERIOD = (0.01 * 15625 - 1) = 155 */
 
-    /* Configure a 10ms tick */
-    TIM1_TimeBaseInit(10000, TIM1_COUNTERMODE_UP, 1, 0);
+    /* Time base configuration */
+    TIM4_TimeBaseInit(TIM4_Prescaler_128, 155);
+    /* Clear TIM4 update flag */
+    TIM4_ClearFlag(TIM4_FLAG_Update);
+    /* Enable update interrupt */
+    TIM4_ITConfig(TIM4_IT_Update, ENABLE);
+    /* enable interrupts */
+    enableInterrupts();
 
-    /* Generate an interrupt on timer count overflow */
-    TIM1_ITConfig(TIM1_IT_UPDATE, ENABLE);
-
-    /* Enable TIM1 */
-    TIM1_Cmd(ENABLE);
+    /* Enable TIM4 */
+    TIM4_Cmd(ENABLE);
 
 }
 
@@ -289,16 +301,7 @@ void archInitSystemTickTimer ( void )
  *
  * @return None
  */
-#if defined(__IAR_SYSTEMS_ICC__)
-#pragma vector = 13
-#endif
-INTERRUPT void TIM1_SystemTickISR (void)
-#if defined(__RCSTM8__)
-interrupt 11
-
-#elif defined(__SDCC_stm8)
-__interrupt(11)
-#endif
+void TIM4_SystemTickISR (void)
 {
     /* Call the interrupt entry routine */
     atomIntEnter();
@@ -306,8 +309,8 @@ __interrupt(11)
     /* Call the OS system tick handler */
     atomTimerTick();
 
-    /* Ack the interrupt (Clear TIM1:SR1 register bit 0) */
-    TIM1->SR1 = (uint8_t)(~(uint8_t)TIM1_IT_UPDATE);
+    /* Cleat Interrupt Pending bit */
+    TIM4_ClearITPendingBit(TIM4_IT_Update);
 
     /* Call the interrupt exit routine */
     atomIntExit(TRUE);
@@ -317,26 +320,31 @@ __interrupt(11)
 /**
  * \b archSystemTickTimerStop
  *
- * Stop the system tick timer.
+ * Stop the system tick timer. Uses the STM8's TIM4 facility.
  *
  * @return None
  */
 void archSystemTickTimerStop(void)
 {
-    /* Disable TIM1 */
-    TIM1_Cmd(DISABLE);
+    /* Disable TIM4 CLK */
+    CLK_PeripheralClockConfig(CLK_Peripheral_TIM4, DISABLE);
+    /* Disable TIM4 */
+    TIM4_Cmd(DISABLE);
 }
 
 
 /**
  * \b archSystemTickTimerRestart
  *
- * Restart the system tick timer.
+ * Restart the system tick timer. Uses the STM8's TIM4 facility.
  *
  * @return None
  */
 void archSystemTickTimerRestart(void)
 {
-    /* Enable TIM1 */
-    TIM1_Cmd(ENABLE);
+    /* Enable TIM4 CLK */
+    CLK_PeripheralClockConfig(CLK_Peripheral_TIM4, ENABLE);
+    /* Enable TIM4 */
+    TIM4_Cmd(ENABLE);
 }
+

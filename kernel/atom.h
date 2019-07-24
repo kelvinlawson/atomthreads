@@ -72,6 +72,8 @@ typedef struct atom_tcb
     ATOM_TIMER *suspend_timo_cb;  /* Callback registered for suspension timeouts */
     uint8_t terminated;           /* TRUE if task is being terminated (run to completion) */
 
+    uint16_t events;               /* Evend flags */
+    uint16_t waits;                /* Wait flags */
     /* Details used if thread stack-checking is required */
 #ifdef ATOM_STACK_CHECKING
     POINTER stack_bottom;         /* Pointer to bottom of stack allocation */
@@ -108,6 +110,13 @@ extern uint8_t atomOSStarted;
 /* Idle thread priority (lowest) */
 #define IDLE_THREAD_PRIORITY    255
 
+#ifndef EXPECTED_IDLE_TIME_BEFORE_SUSPEND
+    #define EXPECTED_IDLE_TIME_BEFORE_SUSPEND 2
+#endif
+
+#if EXPECTED_IDLE_TIME_BEFORE_SUSPEND < 2
+    #error EXPECTED_IDLE_TIME_BEFORE_SUSPEND must not be less than 2
+#endif
 
 /* Function prototypes */
 extern uint8_t atomOSInit (void *idle_thread_stack_bottom, uint32_t idle_thread_stack_size, uint8_t idle_thread_stack_check);
@@ -133,6 +142,13 @@ extern void archThreadContextInit (ATOM_TCB *tcb_ptr, void *stack_top, void (*en
 extern void archFirstThreadRestore(ATOM_TCB *new_tcb_ptr);
 
 extern void atomTimerTick (void);
+extern void archSystemTickTimerStop (void);
+extern void archSystemTickTimerRestart (void);
+
+extern uint32_t atomOsSuspend(void);
+extern void atomOsResume (uint32_t sleep_ticks);
+
+extern void userIdleHook(void);
 
 #ifdef __cplusplus
 }
