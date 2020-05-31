@@ -30,15 +30,23 @@
 #if defined(__CSMC__)
  #undef _RAISONANCE_
  #undef _IAR_SYSTEMS_
+ #undef _SDCC_
  #define _COSMIC_
 #elif defined(__RCST7__)
  #undef _COSMIC_
  #undef _IAR_SYSTEMS_
+ #undef _SDCC_
  #define _RAISONANCE_
 #elif defined(__IAR_SYSTEMS_ICC__)
  #undef _COSMIC_
  #undef _RAISONANCE_
+ #undef _SDCC_
  #define _IAR_SYSTEMS_
+#elif defined(__SDCC_stm8)
+ #undef _COSMIC_
+ #undef _RAISONANCE_
+ #undef _IAR_SYSTEMS_
+ #define _SDCC_
 #else
  #error "Unsupported Compiler!"          /* Compiler defines not found */
 #endif
@@ -87,6 +95,11 @@
  #define FAR  __far
  #define NEAR __near
  #define TINY __tiny
+ #define __CONST  const
+#endif
+
+#ifdef _SDCC_
+ #define NEAR
  #define __CONST  const
 #endif
 

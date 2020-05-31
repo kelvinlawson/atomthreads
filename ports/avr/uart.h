@@ -13,6 +13,9 @@
 
 #include "atom.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 /*
  * Perform UART startup initialization.
@@ -23,3 +26,7 @@ int	uart_init(uint32_t baudrate);
  * Send one character to the UART.
  */
 int	uart_putchar(char c, FILE *stream);
+
+#ifdef __cplusplus
+}
+#endif

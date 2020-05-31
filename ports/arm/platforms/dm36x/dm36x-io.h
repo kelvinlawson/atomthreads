@@ -319,6 +319,7 @@
 #define DM36X_PSC_MDSTAT_BASE   0x800
 #define DM36X_PSC_MDCTL_BASE    0xA00
 #define DM36X_PSC_MOD_SPI1      6
+#define DM36X_PSC_MOD_MCBSP     8
 #define DM36X_PSC_MOD_SPI2      11
 #define DM36X_PSC_MOD_I2C       18
 #define DM36X_PSC_MOD_SPI0      22
@@ -442,6 +443,22 @@
 #define DM36X_INTC_VEC_UART1INT      41
 #define DM36X_INTC_VEC_SPI0INT0      42
 #define DM36X_INTC_VEC_SPI3INT0      43
+#define DM36X_INTC_VEC_GIO0          44
+#define DM36X_INTC_VEC_GIO1          45
+#define DM36X_INTC_VEC_GIO2          46
+#define DM36X_INTC_VEC_GIO3          47
+#define DM36X_INTC_VEC_GIO4          48
+#define DM36X_INTC_VEC_GIO5          49
+#define DM36X_INTC_VEC_GIO6          50
+#define DM36X_INTC_VEC_GIO7          51
+#define DM36X_INTC_VEC_GIO8          52
+#define DM36X_INTC_VEC_GIO9          53
+#define DM36X_INTC_VEC_GIO10         54
+#define DM36X_INTC_VEC_GIO11         55
+#define DM36X_INTC_VEC_GIO12         56
+#define DM36X_INTC_VEC_GIO13         57
+#define DM36X_INTC_VEC_GIO14         58
+#define DM36X_INTC_VEC_GIO15         59
 #define DM36X_INTC_MAX_VEC           63
 
 
@@ -474,27 +491,38 @@
 
 
 /** GPIO registers */
-#define DM36X_GPIO_BASE         0x01C67000
-#define DM36X_GPIO_DIR01        0x10
-#define DM36X_GPIO_OUT01        0x14
-#define DM36X_GPIO_SET01        0x18
-#define DM36X_GPIO_CLR01        0x1C
-#define DM36X_GPIO_IN01         0x20
-#define DM36X_GPIO_DIR23        0x38
-#define DM36X_GPIO_OUT23        0x3C
-#define DM36X_GPIO_SET23        0x40
-#define DM36X_GPIO_CLR23        0x44
-#define DM36X_GPIO_IN23         0x48
-#define DM36X_GPIO_DIR45        0x60
-#define DM36X_GPIO_OUT45        0x64
-#define DM36X_GPIO_SET45        0x68
-#define DM36X_GPIO_CLR45        0x6C
-#define DM36X_GPIO_IN45         0x70
-#define DM36X_GPIO_DIR6         0x88
-#define DM36X_GPIO_OUT6         0x8C
-#define DM36X_GPIO_SET6         0x90
-#define DM36X_GPIO_CLR6         0x94
-#define DM36X_GPIO_IN6          0x98
+#define DM36X_GPIO_BASE              0x01C67000
+#define DM36X_GPIO_BINTEN            0x08
+#define DM36X_GPIO_DIR01             0x10
+#define DM36X_GPIO_OUT01             0x14
+#define DM36X_GPIO_SET01             0x18
+#define DM36X_GPIO_CLR01             0x1C
+#define DM36X_GPIO_IN01              0x20
+#define DM36X_GPIO_SET_RIS_TRIG01    0x24
+#define DM36X_GPIO_CLR_RIS_TRIG01    0x28
+#define DM36X_GPIO_SET_FAL_TRIG01    0x2C
+#define DM36X_GPIO_CLR_FAL_TRIG01    0x30
+#define DM36X_GPIO_INTSTAT01         0x34
+#define DM36X_GPIO_DIR23             0x38
+#define DM36X_GPIO_OUT23             0x3C
+#define DM36X_GPIO_SET23             0x40
+#define DM36X_GPIO_CLR23             0x44
+#define DM36X_GPIO_IN23              0x48
+#define DM36X_GPIO_DIR45             0x60
+#define DM36X_GPIO_OUT45             0x64
+#define DM36X_GPIO_SET45             0x68
+#define DM36X_GPIO_CLR45             0x6C
+#define DM36X_GPIO_IN45              0x70
+#define DM36X_GPIO_DIR6              0x88
+#define DM36X_GPIO_OUT6              0x8C
+#define DM36X_GPIO_SET6              0x90
+#define DM36X_GPIO_CLR6              0x94
+#define DM36X_GPIO_IN6               0x98
+#define DM36X_GPIO_SET_RIS_TRIG6     0x9C
+#define DM36X_GPIO_CLR_RIS_TRIG6     0xA0
+#define DM36X_GPIO_SET_FAL_TRIG6     0xA4
+#define DM36X_GPIO_CLR_FAL_TRIG6     0xA8
+#define DM36X_GPIO_INTSTAT6          0xAC
 
 
 /** VPFE/VPBE registers */
@@ -539,6 +567,26 @@
 #define DM36X_SD_SDIOIEN    0X6C
 #define DM36X_SD_SDIOIST    0X70
 #define DM36X_SD_MMCFIFOCTL 0x74
+
+
+/** McBSP registers */
+#define DM36X_MCBSP_BASE    0x01D02000 /* McBSP */
+#define DM36X_MCBSP_DRR     0x00
+#define DM36X_MCBSP_DXR     0x04
+#define DM36X_MCBSP_SPCR    0x08
+#define DM36X_MCBSP_RCR     0x0C
+#define DM36X_MCBSP_XCR     0x10
+#define DM36X_MCBSP_SRGR    0x14
+#define DM36X_MCBSP_MCR     0x18
+#define DM36X_MCBSP_RCERE0  0x1C
+#define DM36X_MCBSP_XCERE0  0x20
+#define DM36X_MCBSP_PCR     0x24
+#define DM36X_MCBSP_RCERE1  0x28
+#define DM36X_MCBSP_XCERE1  0x2C
+#define DM36X_MCBSP_RCERE2  0x30
+#define DM36X_MCBSP_XCERE2  0x34
+#define DM36X_MCBSP_RCERE3  0x38
+#define DM36X_MCBSP_XCERE3  0x3C
 
 
 /* Function prototypes */

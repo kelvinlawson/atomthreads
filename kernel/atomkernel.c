@@ -404,6 +404,7 @@ uint8_t atomThreadCreate (ATOM_TCB *tcb_ptr, uint8_t priority, void (*entry_poin
 
         /* Set up the TCB initial values */
         tcb_ptr->suspended = FALSE;
+        tcb_ptr->terminated = FALSE;
         tcb_ptr->priority = priority;
         tcb_ptr->prev_tcb = NULL;
         tcb_ptr->next_tcb = NULL;

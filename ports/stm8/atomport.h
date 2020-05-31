@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2010, Kelvin Lawson. All rights reserved.
+ * Copyright (c) 2016, Dr. Philipp Klaus Krause.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -45,20 +46,23 @@
 /* Required number of system ticks per second (normally 100 for 10ms tick) */
 #define SYSTEM_TICKS_PER_SEC            100
 
-/* Size of each stack entry / stack alignment size (8 bits on STM8) */
-#define STACK_ALIGN_SIZE                sizeof(u8)
-
 /**
  * Architecture-specific types.
  */
+#if defined(__CSMC__) || defined (__RCSTM8__) /* Cosmic and Raisonance do not have the C99 stdint.h header*/
 #define int8_t   s8
 #define int16_t  s16
 #define int32_t  s32
 #define uint8_t  u8
 #define uint16_t u16
 #define uint32_t u32
+#else
+#include <stdint.h>
+#endif
 #define POINTER  void *
 
+/* Size of each stack entry / stack alignment size (8 bits on STM8) */
+#define STACK_ALIGN_SIZE                sizeof(uint8_t)
 
 /**
  * Critical region protection: this should disable interrupts
@@ -84,6 +88,14 @@
 #define CRITICAL_STORE      unsigned char ccr
 #define CRITICAL_START()    ccr = _getCC_(); _sim_()
 #define CRITICAL_END()      _setCC_(ccr)
+
+/* SDCC: Use custom function */
+#elif defined(__SDCC_stm8)
+uint8_t get_cc(void);
+void set_cc(uint8_t);
+#define CRITICAL_STORE      uint8_t ccr
+#define CRITICAL_START()    ccr = get_cc(); __asm__("sim")
+#define CRITICAL_END()      set_cc(ccr)
 #endif
 
 /* Uncomment to enable stack-checking */
