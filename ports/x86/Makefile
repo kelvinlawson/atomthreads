@@ -119,5 +119,5 @@ $(PORT_UTIL_OBJECTS): %.o: $(PORT_UTIL_DIR)/%.c
 
 # Clean
 clean:
-	$(RMDIR) build/*.o build/*.bin build/run/iso/boot/*.bin all_tests_multiboot.iso
+	$(RMDIR) build/*
 

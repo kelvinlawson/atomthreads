@@ -5,17 +5,17 @@ set -e
 cd ../ports/x86
 
 BIN_DIR=build/run/iso/boot
-GRUB_CFG=$BIN_DIR/grub/grub.cfg
+GRUB_DIR=$BIN_DIR/grub
+GRUB_CFG=$GRUB_DIR/grub.cfg
 ISO=all_tests_multiboot.iso
 
-if [ $GRUB_CFG]; then 
-	rm $GRUB_CFG
-fi
-
 make clean
+
+mkdir -p $GRUB_DIR
+
 make 
 
-cp build/*.bin build/run/iso/boot/
+cp build/*.bin $BIN_DIR
 
 for fn in $BIN_DIR/*.bin; do
 	echo "menuentry \"$(basename $fn)\" { multiboot /boot/$(basename $fn) }" >>  $GRUB_CFG
