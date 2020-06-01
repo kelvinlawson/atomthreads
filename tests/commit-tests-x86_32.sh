@@ -23,6 +23,6 @@ done
 
 if [ $(ls $BIN_DIR/*.bin | wc -l) -gt 0   ];then 
 	grub-mkrescue -o  $ISO build/run/iso
-	qemu-system-i386 -cdrom $ISO  -monitor stdio -enable-kvm
+	qemu-system-i386 -cdrom $ISO  -monitor stdio
 fi
 
