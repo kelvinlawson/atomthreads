@@ -1,0 +1,545 @@
+;	STMicroelectronics Project file
+
+[Version]
+Keyword=ST7Project
+Number=1.3
+
+[Project]
+Name=atomthreads-raisonance
+Toolset=Raisonance
+
+[Config]
+0=Config.0
+1=Config.1
+
+[Config.0]
+ConfigName=Debug
+Target=$(ProjectSFile).elf
+OutputFolder=Debug
+Debug=$(TargetFName)
+
+[Config.1]
+ConfigName=Release
+Target=$(ProjectSFile).elf
+OutputFolder=Release
+Debug=$(TargetFName)
+
+[Root]
+ElemType=Project
+PathName=atomthreads-raisonance
+Child=Root.Kernel
+Config.0=Root.Config.0
+Config.1=Root.Config.1
+
+[Root.Config.0]
+Settings.0.0=Root.Config.0.Settings.0
+Settings.0.1=Root.Config.0.Settings.1
+Settings.0.2=Root.Config.0.Settings.2
+Settings.0.3=Root.Config.0.Settings.3
+Settings.0.4=Root.Config.0.Settings.4
+Settings.0.5=Root.Config.0.Settings.5
+Settings.0.6=Root.Config.0.Settings.6
+Settings.0.7=Root.Config.0.Settings.7
+Settings.0.8=Root.Config.0.Settings.8
+
+[Root.Config.1]
+Settings.1.0=Root.Config.1.Settings.0
+Settings.1.1=Root.Config.1.Settings.1
+Settings.1.2=Root.Config.1.Settings.2
+Settings.1.3=Root.Config.1.Settings.3
+Settings.1.4=Root.Config.1.Settings.4
+Settings.1.5=Root.Config.1.Settings.5
+Settings.1.6=Root.Config.1.Settings.6
+Settings.1.7=Root.Config.1.Settings.7
+Settings.1.8=Root.Config.1.Settings.8
+
+[Root.Config.0.Settings.0]
+String.6.0=2010,2,10,16,13,19
+String.100.0=ST Assembler Linker
+String.100.1=ST7 Cosmic
+String.100.2=STM8 Cosmic
+String.100.3=ST7 Metrowerks V1.1
+String.100.4=Raisonance
+String.101.0=Raisonance
+String.102.0=C:\Program Files\Raisonance\Ride
+String.103.0=bin
+String.104.0=INC\ST7;INC
+String.105.0=LIB\ST7
+String.106.0=Debug
+String.107.0=$(ProjectSFile).elf
+Int.108=0
+
+[Root.Config.0.Settings.1]
+String.6.0=2010,2,10,16,13,19
+String.100.0=$(TargetFName)
+String.101.0=
+String.102.0=
+String.103.0=.\;..\..\kernel;stm8s-periphs;..\..\tests;
+
+[Root.Config.0.Settings.2]
+String.2.0=
+String.6.0=2010,2,10,16,13,19
+String.100.0=STM8S105C6
+
+[Root.Config.0.Settings.3]
+String.2.0=Compiling $(InputFile)...
+String.3.0=rcstm8 $(InputFile) OBJECT($(IntermPath)$(InputName).$(ObjectExt)) $(ToolsetIncOpts) WRV(0) STM8(SMALL) DEBUG DGC(data) AUTO -customSizeOpt -CustomOptimOT(7,SIZE) -CustomBasicLstPR($(IntermPath)$(InputName).lst) CD CO SB LAOB PIN(stm8s-periphs) PIN(../../kernel) PIN(../../tests) DF(STM8S105) DF(ATOM_STACK_CHECKING)
+String.4.0=$(IntermPath)$(InputName).$(ObjectExt)
+String.5.0=$(IntermPath)$(InputName).lst
+String.6.0=2010,2,11,13,56,23
+
+[Root.Config.0.Settings.4]
+String.2.0=Assembling $(InputFile)...
+String.3.0=mastm8 $(InputFile) OBJECT($(IntermPath)$(InputName).$(ObjectExt)) $(ToolsetIncOpts) QUIET ERRORPRINT DEBUG
+String.4.0=$(IntermPath)$(InputName).$(ObjectExt)
+String.5.0=$(IntermPath)$(InputName).lst
+String.6.0=2010,2,10,16,13,19
+
+[Root.Config.0.Settings.5]
+String.2.0=Running Pre-Link step
+String.6.0=2010,2,10,16,13,19
+String.8.0=
+
+[Root.Config.0.Settings.6]
+String.2.0=Running Linker
+String.3.0=rlstm8   $(ObjectFiles) TO($(OutputPath)$(TargetSName).aof) $(ToolsetLibOpts) -CustomOutFile[$(ProjectSFile).elf] -CustomRunHexConv DEBUGLINES DEBUGPUBLICS DEBUGSYMBOLS -customMapFile -customMapFile -customMapFilePR($(OutputPath)$(TargetSName).map) 
+String.3.1=omf2elf $(OutputPath)$(TargetSName).aof
+String.4.0=$(OutputPath)$(TargetFName)
+String.5.0=
+String.6.0=2010,2,10,16,13,19
+String.100.0=DATASTART(0x0) RAMSIZE(0x800) CODESTART(0x8000) CODESIZE(0x8000) STACKTOP(0x800) STACKSIZE(0x200) EEPROMSTART(0x4000) EEPROMSIZE(0x400)
+String.101.0=
+Int.0=0
+Int.1=0
+
+[Root.Config.0.Settings.7]
+String.2.0=Running Post-Build step
+String.3.0=omf2hex $(OutputPath)$(TargetSName).aof HEX
+String.6.0=2010,2,10,16,13,19
+
+[Root.Config.0.Settings.8]
+String.2.0=Performing Custom Build on $(InputFile)
+String.6.0=2010,2,10,16,13,19
+
+[Root.Config.1.Settings.0]
+String.6.0=2010,6,6,21,36,54
+String.100.0=ST Assembler Linker
+String.100.1=ST7 Cosmic
+String.100.2=STM8 Cosmic
+String.100.3=ST7 Metrowerks V1.1
+String.100.4=Raisonance
+String.101.0=Raisonance
+String.102.0=C:\Program Files\Raisonance\Ride
+String.103.0=bin
+String.104.0=INC\ST7;INC
+String.105.0=LIB\ST7
+String.106.0=Release
+String.107.0=$(ProjectSFile).elf
+Int.108=0
+
+[Root.Config.1.Settings.1]
+String.6.0=2010,6,6,21,35,47
+String.100.0=$(TargetFName)
+String.101.0=
+String.102.0=
+String.103.0=.\;..\..\kernel;stm8s-periphs;..\..\tests;
+
+[Root.Config.1.Settings.2]
+String.2.0=
+String.6.0=2010,6,6,21,35,47
+String.100.0=STM8S105C6
+
+[Root.Config.1.Settings.3]
+String.2.0=Compiling $(InputFile)...
+String.3.0=rcstm8 $(InputFile) OBJECT($(IntermPath)$(InputName).$(ObjectExt)) $(ToolsetIncOpts) WRV(0) STM8(SMALL) DGC(data) AUTO -customSizeOpt -CustomOptimOT(7,SIZE) -CustomBasicLstPR($(IntermPath)$(InputName).lst) CD CO SB LAOB -CustomAutoReloc @$(OutputPath)$(TargetSName).areloc PIN(stm8s-periphs) PIN(../../kernel) PIN(../../tests) DF(STM8S105)
+String.4.0=$(IntermPath)$(InputName).$(ObjectExt)
+String.5.0=$(IntermPath)$(InputName).lst
+String.6.0=2010,6,6,22,22,17
+
+[Root.Config.1.Settings.4]
+String.2.0=Assembling $(InputFile)...
+String.3.0=mastm8 $(InputFile) OBJECT($(IntermPath)$(InputName).$(ObjectExt)) $(ToolsetIncOpts) QUIET NOPR ERRORPRINT MODESTM8
+String.4.0=$(IntermPath)$(InputName).$(ObjectExt)
+String.5.0=$(IntermPath)$(InputName).lst
+String.6.0=2010,6,6,21,37,36
+
+[Root.Config.1.Settings.5]
+String.2.0=Running Pre-Link step
+String.6.0=2010,6,6,21,35,47
+
+[Root.Config.1.Settings.6]
+String.2.0=Running Linker
+String.3.0=rlstm8   $(ObjectFiles) TO($(OutputPath)$(TargetSName).aof) $(ToolsetLibOpts) -CustomOutFile[$(ProjectSFile).elf] -CustomRunHexConv NODEBUGLINES NODEBUGPUBLICS NODEBUGSYMBOLS -CustomCodeCompConv 
+String.3.1=ccompst7_7.exe $(OutputPath)$(TargetSName).aof -O($(OutputPath)$(TargetSName).aof) -AOF -NOHEX -C
+String.3.2=omf2elf $(OutputPath)$(TargetSName).aof
+String.4.0=$(OutputPath)$(TargetFName)
+String.5.0=
+String.6.0=2010,6,6,21,37,36
+String.100.0=DATASTART(0x0) RAMSIZE(0x800) CODESTART(0x8000) CODESIZE(0x8000) STACKTOP(0x800) STACKSIZE(0x200) EEPROMSTART(0x4000) EEPROMSIZE(0x400)
+String.101.0=
+Int.0=0
+Int.1=0
+
+[Root.Config.1.Settings.7]
+String.2.0=Running Post-Build step
+String.3.0=omf2hex $(OutputPath)$(TargetSName).aof HEX
+String.6.0=2010,6,6,21,35,47
+
+[Root.Config.1.Settings.8]
+String.2.0=Performing Custom Build on $(InputFile)
+String.6.0=2010,6,6,21,35,47
+
+[Root.Kernel]
+ElemType=Folder
+PathName=Kernel
+Child=Root.Kernel...\..\kernel\atom.h
+Next=Root.Peripherals
+Config.0=Root.Kernel.Config.0
+Config.1=Root.Kernel.Config.1
+
+[Root.Kernel.Config.0]
+Settings.0.0=Root.Kernel.Config.0.Settings.0
+Settings.0.1=Root.Kernel.Config.0.Settings.1
+Settings.0.2=Root.Kernel.Config.0.Settings.2
+Settings.0.3=Root.Kernel.Config.0.Settings.3
+
+[Root.Kernel.Config.1]
+Settings.1.0=Root.Kernel.Config.1.Settings.0
+Settings.1.1=Root.Kernel.Config.1.Settings.1
+Settings.1.2=Root.Kernel.Config.1.Settings.2
+Settings.1.3=Root.Kernel.Config.1.Settings.3
+
+[Root.Kernel.Config.0.Settings.0]
+String.6.0=2010,6,6,21,35,47
+String.8.0=Debug
+Int.0=0
+Int.1=0
+
+[Root.Kernel.Config.0.Settings.1]
+String.2.0=Compiling $(InputFile)...
+String.3.0=rcstm8 $(InputFile) OBJECT($(IntermPath)$(InputName).$(ObjectExt)) $(ToolsetIncOpts) WRV(0) STM8(SMALL) DEBUG DGC(data) AUTO -customDebugOpt -CustomOptimOT(0) -CustomBasicLstPR($(IntermPath)$(InputName).lst) CD CO SB LAOB PIN(stm8s-periphs) PIN(../../kernel) PIN(../../tests) DF(STM8S105) DF(ATOM_STACK_CHECKING)
+String.4.0=$(IntermPath)$(InputName).$(ObjectExt)
+String.5.0=$(IntermPath)$(InputName).lst
+String.6.0=2010,6,6,22,22,17
+
+[Root.Kernel.Config.0.Settings.2]
+String.2.0=Assembling $(InputFile)...
+String.3.0=mastm8 $(InputFile) OBJECT($(IntermPath)$(InputName).$(ObjectExt)) $(ToolsetIncOpts) QUIET ERRORPRINT DEBUG
+String.4.0=$(IntermPath)$(InputName).$(ObjectExt)
+String.5.0=$(IntermPath)$(InputName).lst
+String.6.0=2010,6,6,21,35,47
+
+[Root.Kernel.Config.0.Settings.3]
+String.2.0=Performing Custom Build on $(InputFile)
+String.6.0=2010,6,6,21,35,47
+
+[Root.Kernel.Config.1.Settings.0]
+String.6.0=2010,6,6,21,35,47
+String.8.0=Release
+Int.0=0
+Int.1=0
+
+[Root.Kernel.Config.1.Settings.1]
+String.2.0=Compiling $(InputFile)...
+String.3.0=rcstm8 $(InputFile) OBJECT($(IntermPath)$(InputName).$(ObjectExt)) $(ToolsetIncOpts) WRV(0) STM8(SMALL) DGC(data) AUTO -customSizeOpt -CustomOptimOT(7,SIZE) -CustomBasicLstPR($(IntermPath)$(InputName).lst) CD CO SB LAOB -CustomAutoReloc @$(OutputPath)$(TargetSName).areloc PIN(stm8s-periphs) PIN(../../kernel) PIN(../../tests) DF(STM8S105)
+String.4.0=$(IntermPath)$(InputName).$(ObjectExt)
+String.5.0=$(IntermPath)$(InputName).lst
+String.6.0=2010,6,6,22,22,17
+
+[Root.Kernel.Config.1.Settings.2]
+String.2.0=Assembling $(InputFile)...
+String.3.0=mastm8 $(InputFile) OBJECT($(IntermPath)$(InputName).$(ObjectExt)) $(ToolsetIncOpts) QUIET NOPR ERRORPRINT MODESTM8
+String.4.0=$(IntermPath)$(InputName).$(ObjectExt)
+String.5.0=$(IntermPath)$(InputName).lst
+String.6.0=2010,6,6,21,37,36
+
+[Root.Kernel.Config.1.Settings.3]
+String.2.0=Performing Custom Build on $(InputFile)
+String.6.0=2010,6,6,21,35,47
+
+[Root.Kernel...\..\kernel\atom.h]
+ElemType=File
+PathName=..\..\kernel\atom.h
+Next=Root.Kernel...\..\kernel\atomkernel.c
+
+[Root.Kernel...\..\kernel\atomkernel.c]
+ElemType=File
+PathName=..\..\kernel\atomkernel.c
+Next=Root.Kernel...\..\kernel\atommutex.c
+
+[Root.Kernel...\..\kernel\atommutex.c]
+ElemType=File
+PathName=..\..\kernel\atommutex.c
+Next=Root.Kernel...\..\kernel\atommutex.h
+
+[Root.Kernel...\..\kernel\atommutex.h]
+ElemType=File
+PathName=..\..\kernel\atommutex.h
+Next=Root.Kernel...\..\kernel\atomqueue.c
+
+[Root.Kernel...\..\kernel\atomqueue.c]
+ElemType=File
+PathName=..\..\kernel\atomqueue.c
+Next=Root.Kernel...\..\kernel\atomqueue.h
+
+[Root.Kernel...\..\kernel\atomqueue.h]
+ElemType=File
+PathName=..\..\kernel\atomqueue.h
+Next=Root.Kernel...\..\kernel\atomsem.c
+
+[Root.Kernel...\..\kernel\atomsem.c]
+ElemType=File
+PathName=..\..\kernel\atomsem.c
+Next=Root.Kernel...\..\kernel\atomsem.h
+
+[Root.Kernel...\..\kernel\atomsem.h]
+ElemType=File
+PathName=..\..\kernel\atomsem.h
+Next=Root.Kernel...\..\kernel\atomtimer.c
+
+[Root.Kernel...\..\kernel\atomtimer.c]
+ElemType=File
+PathName=..\..\kernel\atomtimer.c
+Next=Root.Kernel...\..\kernel\atomtimer.h
+
+[Root.Kernel...\..\kernel\atomtimer.h]
+ElemType=File
+PathName=..\..\kernel\atomtimer.h
+
+[Root.Peripherals]
+ElemType=Folder
+PathName=Peripherals
+Child=Root.Peripherals.stm8s-periphs\stm8s_clk.c
+Next=Root.Port
+Config.0=Root.Peripherals.Config.0
+Config.1=Root.Peripherals.Config.1
+
+[Root.Peripherals.Config.0]
+Settings.0.0=Root.Peripherals.Config.0.Settings.0
+Settings.0.1=Root.Peripherals.Config.0.Settings.1
+Settings.0.2=Root.Peripherals.Config.0.Settings.2
+Settings.0.3=Root.Peripherals.Config.0.Settings.3
+
+[Root.Peripherals.Config.1]
+Settings.1.0=Root.Peripherals.Config.1.Settings.0
+Settings.1.1=Root.Peripherals.Config.1.Settings.1
+Settings.1.2=Root.Peripherals.Config.1.Settings.2
+Settings.1.3=Root.Peripherals.Config.1.Settings.3
+
+[Root.Peripherals.Config.0.Settings.0]
+String.6.0=2010,6,6,21,35,47
+String.8.0=Debug
+Int.0=0
+Int.1=0
+
+[Root.Peripherals.Config.0.Settings.1]
+String.2.0=Compiling $(InputFile)...
+String.3.0=rcstm8 $(InputFile) OBJECT($(IntermPath)$(InputName).$(ObjectExt)) $(ToolsetIncOpts) WRV(0) STM8(SMALL) DEBUG DGC(data) AUTO -customDebugOpt -CustomOptimOT(0) -CustomBasicLstPR($(IntermPath)$(InputName).lst) CD CO SB LAOB PIN(stm8s-periphs) PIN(../../kernel) PIN(../../tests) DF(STM8S105) DF(ATOM_STACK_CHECKING)
+String.4.0=$(IntermPath)$(InputName).$(ObjectExt)
+String.5.0=$(IntermPath)$(InputName).lst
+String.6.0=2010,6,6,22,22,17
+
+[Root.Peripherals.Config.0.Settings.2]
+String.2.0=Assembling $(InputFile)...
+String.3.0=mastm8 $(InputFile) OBJECT($(IntermPath)$(InputName).$(ObjectExt)) $(ToolsetIncOpts) QUIET ERRORPRINT DEBUG
+String.4.0=$(IntermPath)$(InputName).$(ObjectExt)
+String.5.0=$(IntermPath)$(InputName).lst
+String.6.0=2010,6,6,21,35,47
+
+[Root.Peripherals.Config.0.Settings.3]
+String.2.0=Performing Custom Build on $(InputFile)
+String.6.0=2010,6,6,21,35,47
+
+[Root.Peripherals.Config.1.Settings.0]
+String.6.0=2010,6,6,21,35,47
+String.8.0=Release
+Int.0=0
+Int.1=0
+
+[Root.Peripherals.Config.1.Settings.1]
+String.2.0=Compiling $(InputFile)...
+String.3.0=rcstm8 $(InputFile) OBJECT($(IntermPath)$(InputName).$(ObjectExt)) $(ToolsetIncOpts) WRV(0) STM8(SMALL) DGC(data) AUTO -customSizeOpt -CustomOptimOT(7,SIZE) -CustomBasicLstPR($(IntermPath)$(InputName).lst) CD CO SB LAOB -CustomAutoReloc @$(OutputPath)$(TargetSName).areloc PIN(stm8s-periphs) PIN(../../kernel) PIN(../../tests) DF(STM8S105)
+String.4.0=$(IntermPath)$(InputName).$(ObjectExt)
+String.5.0=$(IntermPath)$(InputName).lst
+String.6.0=2010,6,6,22,22,17
+
+[Root.Peripherals.Config.1.Settings.2]
+String.2.0=Assembling $(InputFile)...
+String.3.0=mastm8 $(InputFile) OBJECT($(IntermPath)$(InputName).$(ObjectExt)) $(ToolsetIncOpts) QUIET NOPR ERRORPRINT MODESTM8
+String.4.0=$(IntermPath)$(InputName).$(ObjectExt)
+String.5.0=$(IntermPath)$(InputName).lst
+String.6.0=2010,6,6,21,37,36
+
+[Root.Peripherals.Config.1.Settings.3]
+String.2.0=Performing Custom Build on $(InputFile)
+String.6.0=2010,6,6,21,35,47
+
+[Root.Peripherals.stm8s-periphs\stm8s_clk.c]
+ElemType=File
+PathName=stm8s-periphs\stm8s_clk.c
+Next=Root.Peripherals.stm8s-periphs\stm8s_uart2.h
+
+[Root.Peripherals.stm8s-periphs\stm8s_uart2.h]
+ElemType=File
+PathName=stm8s-periphs\stm8s_uart2.h
+Next=Root.Peripherals.stm8s-periphs\stm8s_uart2.c
+
+[Root.Peripherals.stm8s-periphs\stm8s_uart2.c]
+ElemType=File
+PathName=stm8s-periphs\stm8s_uart2.c
+Next=Root.Peripherals.stm8s-periphs\stm8s_gpio.c
+
+[Root.Peripherals.stm8s-periphs\stm8s_gpio.c]
+ElemType=File
+PathName=stm8s-periphs\stm8s_gpio.c
+Next=Root.Peripherals.stm8s-periphs\stm8s_tim1.h
+
+[Root.Peripherals.stm8s-periphs\stm8s_tim1.h]
+ElemType=File
+PathName=stm8s-periphs\stm8s_tim1.h
+Next=Root.Peripherals.stm8s-periphs\stm8s_tim1.c
+
+[Root.Peripherals.stm8s-periphs\stm8s_tim1.c]
+ElemType=File
+PathName=stm8s-periphs\stm8s_tim1.c
+Next=Root.Peripherals.stm8s-periphs\stm8s_itc.h
+
+[Root.Peripherals.stm8s-periphs\stm8s_itc.h]
+ElemType=File
+PathName=stm8s-periphs\stm8s_itc.h
+Next=Root.Peripherals.stm8s-periphs\stm8s_gpio.h
+
+[Root.Peripherals.stm8s-periphs\stm8s_gpio.h]
+ElemType=File
+PathName=stm8s-periphs\stm8s_gpio.h
+Next=Root.Peripherals.stm8s-periphs\stm8s_clk.h
+
+[Root.Peripherals.stm8s-periphs\stm8s_clk.h]
+ElemType=File
+PathName=stm8s-periphs\stm8s_clk.h
+Next=Root.Peripherals.stm8s-periphs\stm8s.h
+
+[Root.Peripherals.stm8s-periphs\stm8s.h]
+ElemType=File
+PathName=stm8s-periphs\stm8s.h
+Next=Root.Peripherals.stm8s-periphs\stm8s_type.h
+
+[Root.Peripherals.stm8s-periphs\stm8s_type.h]
+ElemType=File
+PathName=stm8s-periphs\stm8s_type.h
+
+[Root.Port]
+ElemType=Folder
+PathName=Port
+Child=Root.Port.atomport-asm-raisonance.asm
+Config.0=Root.Port.Config.0
+Config.1=Root.Port.Config.1
+
+[Root.Port.Config.0]
+Settings.0.0=Root.Port.Config.0.Settings.0
+Settings.0.1=Root.Port.Config.0.Settings.1
+Settings.0.2=Root.Port.Config.0.Settings.2
+Settings.0.3=Root.Port.Config.0.Settings.3
+
+[Root.Port.Config.1]
+Settings.1.0=Root.Port.Config.1.Settings.0
+Settings.1.1=Root.Port.Config.1.Settings.1
+Settings.1.2=Root.Port.Config.1.Settings.2
+Settings.1.3=Root.Port.Config.1.Settings.3
+
+[Root.Port.Config.0.Settings.0]
+String.6.0=2010,6,6,21,35,47
+String.8.0=Debug
+Int.0=0
+Int.1=0
+
+[Root.Port.Config.0.Settings.1]
+String.2.0=Compiling $(InputFile)...
+String.3.0=rcstm8 $(InputFile) OBJECT($(IntermPath)$(InputName).$(ObjectExt)) $(ToolsetIncOpts) WRV(0) STM8(SMALL) DEBUG DGC(data) AUTO -customDebugOpt -CustomOptimOT(0) -CustomBasicLstPR($(IntermPath)$(InputName).lst) CD CO SB LAOB PIN(stm8s-periphs) PIN(../../kernel) PIN(../../tests) DF(STM8S105) DF(ATOM_STACK_CHECKING)
+String.4.0=$(IntermPath)$(InputName).$(ObjectExt)
+String.5.0=$(IntermPath)$(InputName).lst
+String.6.0=2010,6,6,22,22,17
+
+[Root.Port.Config.0.Settings.2]
+String.2.0=Assembling $(InputFile)...
+String.3.0=mastm8 $(InputFile) OBJECT($(IntermPath)$(InputName).$(ObjectExt)) $(ToolsetIncOpts) QUIET ERRORPRINT DEBUG
+String.4.0=$(IntermPath)$(InputName).$(ObjectExt)
+String.5.0=$(IntermPath)$(InputName).lst
+String.6.0=2010,6,6,21,35,47
+
+[Root.Port.Config.0.Settings.3]
+String.2.0=Performing Custom Build on $(InputFile)
+String.6.0=2010,6,6,21,35,47
+
+[Root.Port.Config.1.Settings.0]
+String.6.0=2010,6,6,21,35,47
+String.8.0=Release
+Int.0=0
+Int.1=0
+
+[Root.Port.Config.1.Settings.1]
+String.2.0=Compiling $(InputFile)...
+String.3.0=rcstm8 $(InputFile) OBJECT($(IntermPath)$(InputName).$(ObjectExt)) $(ToolsetIncOpts) WRV(0) STM8(SMALL) DGC(data) AUTO -customSizeOpt -CustomOptimOT(7,SIZE) -CustomBasicLstPR($(IntermPath)$(InputName).lst) CD CO SB LAOB -CustomAutoReloc @$(OutputPath)$(TargetSName).areloc PIN(stm8s-periphs) PIN(../../kernel) PIN(../../tests) DF(STM8S105)
+String.4.0=$(IntermPath)$(InputName).$(ObjectExt)
+String.5.0=$(IntermPath)$(InputName).lst
+String.6.0=2010,6,6,22,22,17
+
+[Root.Port.Config.1.Settings.2]
+String.2.0=Assembling $(InputFile)...
+String.3.0=mastm8 $(InputFile) OBJECT($(IntermPath)$(InputName).$(ObjectExt)) $(ToolsetIncOpts) QUIET NOPR ERRORPRINT MODESTM8
+String.4.0=$(IntermPath)$(InputName).$(ObjectExt)
+String.5.0=$(IntermPath)$(InputName).lst
+String.6.0=2010,6,6,21,37,36
+
+[Root.Port.Config.1.Settings.3]
+String.2.0=Performing Custom Build on $(InputFile)
+String.6.0=2010,6,6,21,35,47
+
+[Root.Port.atomport-asm-raisonance.asm]
+ElemType=File
+PathName=atomport-asm-raisonance.asm
+Next=Root.Port...\..\tests\sem1.c
+
+[Root.Port...\..\tests\sem1.c]
+ElemType=File
+PathName=..\..\tests\sem1.c
+Next=Root.Port.uart.h
+
+[Root.Port.uart.h]
+ElemType=File
+PathName=uart.h
+Next=Root.Port.uart.c
+
+[Root.Port.uart.c]
+ElemType=File
+PathName=uart.c
+Next=Root.Port.atomport-tests.h
+
+[Root.Port.atomport-tests.h]
+ElemType=File
+PathName=atomport-tests.h
+Next=Root.Port.tests-main.c
+
+[Root.Port.tests-main.c]
+ElemType=File
+PathName=tests-main.c
+Next=Root.Port.atomport-private.h
+
+[Root.Port.atomport-private.h]
+ElemType=File
+PathName=atomport-private.h
+Next=Root.Port.atomport.h
+
+[Root.Port.atomport.h]
+ElemType=File
+PathName=atomport.h
+Next=Root.Port.stm8s_conf.h
+
+[Root.Port.stm8s_conf.h]
+ElemType=File
+PathName=stm8s_conf.h
+Next=Root.Port.atomport.c
+
+[Root.Port.atomport.c]
+ElemType=File
+PathName=atomport.c

@@ -1,0 +1,12 @@
+;	STMicroelectronics Workspace file
+
+[Version]
+Keyword=ST7Workspace-V0.7
+
+[Project0]
+Filename=atomthreads-sample-cosmic.stp
+Dependencies=
+[Options]
+ActiveProject=atomthreads-cosmic
+ActiveConfig=Debug
+AddSortedElements=0
