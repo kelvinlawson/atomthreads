@@ -74,7 +74,7 @@ String.6.0=2010,2,9,1,12,48
 String.100.0=$(TargetFName)
 String.101.0=
 String.102.0=
-String.103.0=.\;..\..\kernel;stm8s-periphs;..\..\tests;stm8-include;
+String.103.0=.\;..\..\kernel;stm8s-periphs;stm8-include;..\..\tests;
 
 [Root.Config.0.Settings.2]
 String.2.0=
@@ -157,7 +157,7 @@ String.6.0=2010,2,9,1,12,48
 String.100.0=$(TargetFName)
 String.101.0=
 String.102.0=
-String.103.0=.\;..\..\kernel;stm8s-periphs;..\..\tests;stm8-include;
+String.103.0=.\;..\..\kernel;stm8s-periphs;stm8-include;..\..\tests;
 
 [Root.Config.1.Settings.2]
 String.2.0=
@@ -432,7 +432,7 @@ PathName=stm8-include\config.h
 [Root.Port]
 ElemType=Folder
 PathName=Port
-Child=Root.Port...\..\tests\sem1.c
+Child=Root.Port...\..\tests\sem4.c
 Config.0=Root.Port.Config.0
 Config.1=Root.Port.Config.1
 
@@ -502,9 +502,9 @@ String.4.0=
 String.5.0=
 String.6.0=2010,2,9,1,12,48
 
-[Root.Port...\..\tests\sem1.c]
+[Root.Port...\..\tests\sem4.c]
 ElemType=File
-PathName=..\..\tests\sem1.c
+PathName=..\..\tests\sem4.c
 Next=Root.Port.uart.h
 
 [Root.Port.uart.h]

@@ -32,15 +32,16 @@ build-cosmic\atomqueue.o
 build-cosmic\atomsem.o
 build-cosmic\atomtimer.o
 build-cosmic\stm8s_clk.o
+build-cosmic\stm8s_uart2.o
 build-cosmic\stm8s_gpio.o
 build-cosmic\stm8s_tim1.o
-build-cosmic\stm8s_uart2.o
+# Caller passes in test application object name as param1
+# MUST BE PLACED HERE
+@1
+build-cosmic\uart.o
 build-cosmic\tests-main.o
 build-cosmic\atomport.o
-build-cosmic\uart.o
 build-cosmic\atomport-asm-cosmic.o
-# Caller passes in test application object name as param1
-@1
 #<END OBJECT_FILES>
 
 

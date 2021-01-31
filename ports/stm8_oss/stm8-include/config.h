@@ -15,8 +15,8 @@
 /*----------------------------------------------------------
     SELECT BOARD
 ----------------------------------------------------------*/
-//#define STM8S_DISCOVERY
-#define SDUINO
+#define STM8S_DISCOVERY
+//#define SDUINO
 //#define MUBOARD
 
 

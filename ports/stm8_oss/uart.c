@@ -41,6 +41,7 @@ int uart_init(uint32_t baudrate)
     sfr_UART2.CR2.TEN  = 1;  // enable sender
     //sfr_UART2.CR2.TIEN = 1;  // enable transmit interrupt
     //sfr_UART2.CR2.RIEN = 1;  // enable receive interrupt
+        
 
     /* Create a mutex for single-threaded putchar() access */
     if (atomMutexCreate (&uart_mutex) != ATOM_OK)
@@ -79,7 +80,7 @@ char uart_putchar (char c)
         sfr_UART2.DR.byte = c;
 
         /* Loop until the end of transmission */
-        while (!(sfr_UART2.SR.TC))
+        while (!(sfr_UART2.SR.TXE))
             ;
 
         /* Return mutex access */

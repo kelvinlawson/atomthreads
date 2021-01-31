@@ -1,3 +1,5 @@
+[WorkState_v1-Edit.Breakpoints]
+Break0=TypeFile, ..\..\tests\sem4.c, 151, 0, 0, 1,
 
 [WorkState_v1_2]
 ptn_Child1=DockState
@@ -479,7 +481,7 @@ ptn_Child1=ToolBarInfoEx
 
 [WorkState_v1_2.DockState.Bar-11.ToolBarInfoEx]
 Title=View
-Buttons=IFGBAAAAAAJFGBAAAAAAAAAAAAAAAAFEGBAAAAAAIEGBAAAAAAEEGBAAAAAAMEGBAAAAAAAAAAAAAAAAOEGBAAAAAAKEGBAAAAAALEGBAAAAAAPEGBAAAAAA
+Buttons=IFGBAAAAAAJFGBAAAAAAAAAAAAAAAAFEGBAAAAAAIEGBAAAAAAMBJIAAAAAAMEGBAAAAAAAAAAAAAAAAOEGBAAAAAAKEGBAAAAAALEGBAAAAAAPEGBAAAAAA
 
 [WorkState_v1_2.DockState.Bar-12]
 BarID=59398
@@ -610,7 +612,7 @@ Docking=True
 MRUDockID=59419
 MRUDockLeftPos=925
 MRUDockTopPos=58
-MRUDockRightPos=1019
+MRUDockRightPos=996
 MRUDockBottomPos=88
 MRUFloatStyle=8196
 MRUFloatXPos=-1
@@ -625,7 +627,7 @@ LastAlignedDocking=0
 PctWidth=158405
 MRUFloatCX=94
 MRUFloatCY=30
-MRUHorzDockCX=94
+MRUHorzDockCX=71
 MRUHorzDockCY=30
 MRUVertDockCX=31
 MRUVertDockCY=88
@@ -639,7 +641,7 @@ ptn_Child1=ToolBarInfoEx
 
 [WorkState_v1_2.DockState.Bar-15.ToolBarInfoEx]
 Title=Tools
-Buttons=AHHBAAAAAABHHBAAAAAAAAAAAAAAAAPFPBAAAAAA
+Buttons=AHHBAAAAAABHHBAAAAAAAAAAAAAAAA
 
 [WorkState_v1_2.DockState.Bar-16]
 BarID=59402
@@ -1243,78 +1245,30 @@ ptn_Child2=ChildFrames
 
 [WorkState_v1_2.Frames.MainFrame]
 WindowPlacement=MCAAAAAACAAAAAAADAAAAAAAPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPABAAAAAADAAAAAAMLEAAAAAPMCAAAAA
-Title=ST Visual Develop - atomthreads-sample-stvd.stw - [stm8_interrupt_vector.c]
+Title=ST Visual Develop - atomthreads-sample-stvd.stw - [sem4.c]
 
 [WorkState_v1_2.Frames.ChildFrames]
 ptn_Child1=Document-0
 ptn_Child2=Document-1
-ptn_Child3=Document-2
-ptn_Child4=Document-3
-ptn_Child5=Document-4
-ptn_Child6=Document-5
 
 [WorkState_v1_2.Frames.ChildFrames.Document-0]
 ptn_Child1=ViewFrame-0
 
 [WorkState_v1_2.Frames.ChildFrames.Document-0.ViewFrame-0]
-DocPathName=..\..\kernel\atomtimer.h
+DocPathName=..\..\tests\sem4.c
 DocumentString=
 DocTemplateIndex=0
-WindowPlacement=MCAAAAAAAAAAAAAABAAAAAAAPPPPPPPPPPPPPPPPIPPPPPPPCOPPPPPPAAAAAAAAAAAAAAAABKFAAAAAHKBAAAAA
-IsActiveChildFrame=False
+WindowPlacement=MCAAAAAACAAAAAAADAAAAAAAPPPPPPPPPPPPPPPPIPPPPPPPCOPPPPPPGJAAAAAAGJAAAAAAFHFAAAAANDCAAAAA
+IsActiveChildFrame=True
 IsFrameVisible=True
 
 [WorkState_v1_2.Frames.ChildFrames.Document-1]
 ptn_Child1=ViewFrame-0
 
 [WorkState_v1_2.Frames.ChildFrames.Document-1.ViewFrame-0]
-DocPathName=atomport-private.h
-DocumentString=
-DocTemplateIndex=0
-WindowPlacement=MCAAAAAAAAAAAAAABAAAAAAAPPPPPPPPPPPPPPPPIPPPPPPPCOPPPPPPJBAAAAAAJBAAAAAAFKFAAAAALKBAAAAA
-IsActiveChildFrame=False
-IsFrameVisible=True
-
-[WorkState_v1_2.Frames.ChildFrames.Document-2]
-ptn_Child1=ViewFrame-0
-
-[WorkState_v1_2.Frames.ChildFrames.Document-2.ViewFrame-0]
-DocPathName=atomport.h
-DocumentString=
-DocTemplateIndex=0
-WindowPlacement=MCAAAAAAAAAAAAAABAAAAAAAPPPPPPPPPPPPPPPPIPPPPPPPCOPPPPPPCDAAAAAACDAAAAAAOLFAAAAAEMBAAAAA
-IsActiveChildFrame=False
-IsFrameVisible=True
-
-[WorkState_v1_2.Frames.ChildFrames.Document-3]
-ptn_Child1=ViewFrame-0
-
-[WorkState_v1_2.Frames.ChildFrames.Document-3.ViewFrame-0]
-DocPathName=stm8-include\stm8s105c6.h
-DocumentString=
-DocTemplateIndex=0
-WindowPlacement=MCAAAAAAAAAAAAAABAAAAAAAPPPPPPPPPPPPPPPPIPPPPPPPCOPPPPPPLEAAAAAALEAAAAAAHNFAAAAANNBAAAAA
-IsActiveChildFrame=False
-IsFrameVisible=True
-
-[WorkState_v1_2.Frames.ChildFrames.Document-4]
-ptn_Child1=ViewFrame-0
-
-[WorkState_v1_2.Frames.ChildFrames.Document-4.ViewFrame-0]
 DocPathName=tests-main.c
 DocumentString=
 DocTemplateIndex=0
-WindowPlacement=MCAAAAAAAAAAAAAABAAAAAAAPPPPPPPPPPPPPPPPIPPPPPPPCOPPPPPPEGAAAAAAEGAAAAAAAPFAAAAAGPBAAAAA
+WindowPlacement=MCAAAAAAAAAAAAAABAAAAAAAPPPPPPPPPPPPPPPPIPPPPPPPCOPPPPPPJBAAAAAAJBAAAAAADOEAAAAALKBAAAAA
 IsActiveChildFrame=False
-IsFrameVisible=True
-
-[WorkState_v1_2.Frames.ChildFrames.Document-5]
-ptn_Child1=ViewFrame-0
-
-[WorkState_v1_2.Frames.ChildFrames.Document-5.ViewFrame-0]
-DocPathName=stm8_interrupt_vector.c
-DocumentString=
-DocTemplateIndex=0
-WindowPlacement=MCAAAAAACAAAAAAADAAAAAAAPPPPPPPPPPPPPPPPIPPPPPPPCOPPPPPPNHAAAAAANHAAAAAAJAGAAAAAPACAAAAA
-IsActiveChildFrame=True
 IsFrameVisible=True

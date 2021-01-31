@@ -3,7 +3,7 @@
 ############
 
 # Set up build environment (using GNU Make)
-#   set PATH=%PATH%;C:\Program Files\GNU_MAKE;C:\Program Files\COSMIC\CXSTM8_16K
+#   set PATH=%PATH%;C:\Program Files\GNU_MAKE;C:\Program Files\COSMIC\FSE_Compilers\CXSTM8
 #   set MAKE_MODE=DOS
 
 # Build all test applications:
@@ -14,7 +14,7 @@
 KERNEL_DIR=../../kernel
 TESTS_DIR=../../tests
 PERIPHS_DIR=stm8s-periphs
-LIBS_DIR="C:\Program Files\COSMIC\CXSTM8_16K\Lib"
+LIBS_DIR="C:\Program Files\COSMIC\FSE_Compilers\CXSTM8\Lib"
 CC=cxstm8
 ASM=castm8
 LINK=clnk

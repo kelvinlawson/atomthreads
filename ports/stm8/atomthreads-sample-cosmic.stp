@@ -61,7 +61,7 @@ String.100.2=STM8 Cosmic
 String.100.3=ST7 Metrowerks V1.1
 String.100.4=Raisonance
 String.101.0=STM8 Cosmic
-String.102.0=C:\Program Files\COSMIC\CXSTM8_16K
+String.102.0=C:\Program Files\COSMIC\FSE_Compilers
 String.103.0=
 String.104.0=Hstm8
 String.105.0=Lib
@@ -144,7 +144,7 @@ String.100.2=STM8 Cosmic
 String.100.3=ST7 Metrowerks V1.1
 String.100.4=Raisonance
 String.101.0=STM8 Cosmic
-String.102.0=C:\Program Files\COSMIC\CXSTM8_16K
+String.102.0=C:\Program Files\COSMIC\FSE_Compilers
 String.103.0=
 String.104.0=Hstm8
 String.105.0=Lib
@@ -467,7 +467,7 @@ PathName=stm8s-periphs\stm8s_type.h
 [Root.Port]
 ElemType=Folder
 PathName=Port
-Child=Root.Port...\..\tests\sem1.c
+Child=Root.Port...\..\tests\sem4.c
 Config.0=Root.Port.Config.0
 Config.1=Root.Port.Config.1
 
@@ -537,9 +537,9 @@ String.4.0=
 String.5.0=
 String.6.0=2010,2,9,1,12,48
 
-[Root.Port...\..\tests\sem1.c]
+[Root.Port...\..\tests\sem4.c]
 ElemType=File
-PathName=..\..\tests\sem1.c
+PathName=..\..\tests\sem4.c
 Next=Root.Port.uart.h
 
 [Root.Port.uart.h]

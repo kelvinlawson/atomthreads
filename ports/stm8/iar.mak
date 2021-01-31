@@ -3,7 +3,7 @@
 ############
 
 # Set up build environment (using GNU Make)
-#   set PATH=%PATH%;C:\Program Files\GNU_MAKE;C:\Program Files\IAR Systems\Embedded Workbench 6.0\stm8\bin
+#   set PATH=%PATH%;C:\Program Files\GNU_MAKE;C:\Program Files\IAR Systems\Embedded Workbench 8.3\stm8\bin
 #   set MAKE_MODE=DOS
 
 # Build all test applications:
@@ -11,7 +11,7 @@
 
 
 # Location of build tools and atomthreads sources
-EWSTM8_DIR=C:\Program Files\IAR Systems\Embedded Workbench 6.0\stm8
+EWSTM8_DIR=C:\Program Files\IAR Systems\Embedded Workbench 8.3\stm8
 KERNEL_DIR=../../kernel
 TESTS_DIR=../../tests
 PERIPHS_DIR=stm8s-periphs

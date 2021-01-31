@@ -12,5 +12,5 @@ Filename=atomthreads-sample-raisonance.stp
 Dependencies=
 [Options]
 ActiveProject=atomthreads-cosmic
-ActiveConfig=Debug
+ActiveConfig=Release
 AddSortedElements=0
