@@ -1,0 +1,8 @@
+;	STMicroelectronics dependencies file
+
+[Version]
+Keyword=ST7Project
+Number=1.3
+
+[Root.Kernel...\..\kernel\atomkernel.c.Config.0]
+ExternDep=..\..\kernel\atomkernel.c 
