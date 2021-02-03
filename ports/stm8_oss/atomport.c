@@ -239,13 +239,43 @@ void archInitSystemTickTimer ( void )
     // auto-reload value buffered
     sfr_TIM2.CR1.ARPE = 1;
 
-    // set clock to 16Mhz/2^4 = 1MHz -> 1us tick
-    sfr_TIM2.PSCR.PSC = 4;
+    // fMaster = 16MHz
+    #if (FSYS_FREQ == 16000000L)
 
-    // set autoreload value to 10ms
-    ARR = PERIOD_THREADS * 1000L;
-    sfr_TIM2.ARRH.byte  = (uint8_t) (ARR >> 8);
-    sfr_TIM2.ARRL.byte  = (uint8_t) (ARR);
+      // set clock to 16Mhz/2^6 = 250kHz -> 4us tick
+      sfr_TIM2.PSCR.PSC = 6;
+
+      // set autoreload value to specified period (1ms = 250*4us)
+      ARR = (uint16_t) PERIOD_THREADS * (uint16_t) 250;
+      sfr_TIM2.ARRH.byte  = (uint8_t) (ARR >> 8);
+      sfr_TIM2.ARRL.byte  = (uint8_t) (ARR);
+
+    // fMaster = 20MHz
+    #elif (FSYS_FREQ == 20000000L)
+
+      // set clock to 20Mhz/2^5 = 625kHz -> 1.6us tick
+      sfr_TIM4.PSCR.PSC = 5;
+
+      // set autoreload value to specified period (1ms = 625*1.6us)
+      ARR = (uint16_t) PERIOD_THREADS * (uint16_t) 625;
+      sfr_TIM2.ARRH.byte  = (uint8_t) (ARR >> 8);
+      sfr_TIM2.ARRL.byte  = (uint8_t) (ARR);
+
+    // fMaster = 24MHz
+    #elif (FSYS_FREQ == 24000000L)
+
+      // set clock to 24Mhz/2^5 = 750kHz -> 1.333us tick
+      sfr_TIM4.PSCR.PSC = 5;
+
+      // set autoreload value to specified period (1ms = 750*1.333us)
+      ARR = (uint16_t) PERIOD_THREADS * (uint16_t) 750;
+      sfr_TIM2.ARRH.byte  = (uint8_t) (ARR >> 8);
+      sfr_TIM2.ARRL.byte  = (uint8_t) (ARR);
+
+    // FSYS_FREQ not yet supported -> add manually
+    #else
+        #error FSYS_FREQ not yet supported -> add manually
+    #endif
 
     // clear counter
     sfr_TIM2.CNTRH.byte = 0x00;
