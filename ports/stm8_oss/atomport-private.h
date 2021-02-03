@@ -31,7 +31,7 @@
 #define __ATOM_PORT_PRIVATE_H
 
 
-// device selection and project settings 
+// device selection and project settings
 #include "config.h"
 
 // Cosmic compiler
@@ -86,10 +86,23 @@
 
 /* Function prototypes */
 void archInitSystemTickTimer (void);
+
 #if defined(__CSMC__)
-  @svlreg ISR_HANDLER(TIM4_SystemTickISR, _TIM4_OVR_UIF_VECTOR_);
+  #if (SYSTIMER==USE_TIM2)
+    @svlreg ISR_HANDLER(TIM2_SystemTickISR, _TIM2_OVR_UIF_VECTOR_);
+  #elif (SYSTIMER==USE_TIM4)
+    @svlreg ISR_HANDLER(TIM4_SystemTickISR, _TIM4_OVR_UIF_VECTOR_);
+  #else
+    #error select TIM2 or TIM4 in stm8-include/config.h
+  #endif
 #else
-  ISR_HANDLER(TIM4_SystemTickISR, _TIM4_OVR_UIF_VECTOR_);
+  #if (SYSTIMER==USE_TIM2)
+    ISR_HANDLER(TIM2_SystemTickISR, _TIM2_OVR_UIF_VECTOR_);
+  #elif (SYSTIMER==USE_TIM4)
+    ISR_HANDLER(TIM4_SystemTickISR, _TIM4_OVR_UIF_VECTOR_);
+  #else
+    #error select TIM2 or TIM4 in stm8-include/config.h
+  #endif
 #endif
 
 #endif /* __ATOM_PORT_PRIVATE_H */

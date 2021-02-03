@@ -47,6 +47,11 @@
 // system clock frequency [Hz]
 #define FSYS_FREQ       16000000L
 
+// base timer for systics (TIM2 (16bit) or TIM4 (8bit)).
+// TIM2 requires less tweaking, but may be used e.g. for PWM generation
+#define SYSTIMER        USE_TIM2
+//#define SYSTIMER        USE_TIM4
+
 // base timeslice for atomthreads [ms]
 #define PERIOD_THREADS  10
 

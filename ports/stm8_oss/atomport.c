@@ -222,12 +222,47 @@ void archThreadContextInit (ATOM_TCB *tcb_ptr, void *stack_top, void (*entry_poi
  * \b archInitSystemTickTimer
  *
  * Initialise the system tick timer for a 1ms overflow.
-   Uses TIM4, as this is "cheap" and available in most STM8's
+   Uses TIM2 (16-bit) or TIM4 (8-bit), selection is via stm8-include/config.h.
+   TIM4 is "cheap" and available in most STM8, but requires tweaking and increases ISR load.
  *
  * @return None
  */
 void archInitSystemTickTimer ( void )
 {
+  #if (SYSTIMER==USE_TIM2)
+
+    uint16_t    ARR;
+
+    // stop the timer
+    sfr_TIM2.CR1.CEN = 0;
+
+    // auto-reload value buffered
+    sfr_TIM2.CR1.ARPE = 1;
+
+    // set clock to 16Mhz/2^4 = 1MHz -> 1us tick
+    sfr_TIM2.PSCR.PSC = 4;
+
+    // set autoreload value to 10ms
+    ARR = PERIOD_THREADS * 1000L;
+    sfr_TIM2.ARRH.byte  = (uint8_t) (ARR >> 8);
+    sfr_TIM2.ARRL.byte  = (uint8_t) (ARR);
+
+    // clear counter
+    sfr_TIM2.CNTRH.byte = 0x00;
+    sfr_TIM2.CNTRL.byte = 0x00;
+
+    // clear pending events
+    sfr_TIM2.EGR.byte  = 0x00;
+
+    // enable timer 2 update interrupt
+    sfr_TIM2.IER.UIE = 1;
+
+    // start the timer
+    sfr_TIM2.CR1.CEN = 1;
+
+
+  #elif (SYSTIMER==USE_TIM4)
+
     // stop the timer
     sfr_TIM4.CR1.CEN = 0;
 
@@ -280,7 +315,11 @@ void archInitSystemTickTimer ( void )
     // start the timer
     sfr_TIM4.CR1.CEN = 1;
 
-}
+  #else
+    #error select TIM2 or TIM4 in stm8-include/config.h
+  #endif
+
+} // archInitSystemTickTimer
 
 
 /**
@@ -319,17 +358,44 @@ void archInitSystemTickTimer ( void )
  *
  * @return None
  */
-#if defined(__CSMC__)
-    @svlreg ISR_HANDLER(TIM4_SystemTickISR, _TIM4_OVR_UIF_VECTOR_)
-#else
-    ISR_HANDLER(TIM4_SystemTickISR, _TIM4_OVR_UIF_VECTOR_)
-#endif
+
+// 16-bit timer TIM2 ISR requires no tweaking for >1ms systic
+#if (SYSTIMER==USE_TIM2)
+  #if defined(__CSMC__)
+    @svlreg ISR_HANDLER(TIM2_SystemTickISR, _TIM2_OVR_UIF_VECTOR_)
+  #else
+    ISR_HANDLER(TIM2_SystemTickISR, _TIM2_OVR_UIF_VECTOR_)
+  #endif
 {
-    static uint8_t  count_period = 0;       // for thread timing
+  // clear timer 2 interrupt flag
+  sfr_TIM2.SR1.UIF = 0;
+
+  /* Call the interrupt entry routine */
+  atomIntEnter();
+
+  /* Call the OS system tick handler */
+  atomTimerTick();
+
+  /* Call the interrupt exit routine */
+  atomIntExit(TRUE);
+
+} // TIM2_SystemTickISR
+
+
+// 8-bit timer TIM4 has limited period of ~1ms and requires tweaking
+#elif (SYSTIMER==USE_TIM4)
+  #if defined(__CSMC__)
+    @svlreg ISR_HANDLER(TIM4_SystemTickISR, _TIM4_OVR_UIF_VECTOR_)
+  #else
+    ISR_HANDLER(TIM4_SystemTickISR, _TIM4_OVR_UIF_VECTOR_)
+  #endif
+{
+
+    static uint8_t  count_period = 0;       // for calling atomthreads scheduler every N ms
 #if (FSYS_FREQ != 16000000L)
     static uint8_t  count_fractional = 0;   // only required for fractional reload value
 #endif
-    
+
     // clear timer 4 interrupt flag
     sfr_TIM4.SR.UIF = 0;
 
@@ -379,4 +445,8 @@ void archInitSystemTickTimer ( void )
         atomIntExit(TRUE);
     }
 
-}
+} // TIM4_SystemTickISR
+
+#else
+  #error select TIM2 or TIM4 in stm8-include/config.h
+#endif
