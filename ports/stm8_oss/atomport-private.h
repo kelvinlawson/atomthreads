@@ -88,18 +88,18 @@
 void archInitSystemTickTimer (void);
 
 #if defined(__CSMC__)
-  #if (SYSTIMER==USE_TIM2)
-    @svlreg ISR_HANDLER(TIM2_SystemTickISR, _TIM2_OVR_UIF_VECTOR_);
-  #elif (SYSTIMER==USE_TIM4)
-    @svlreg ISR_HANDLER(TIM4_SystemTickISR, _TIM4_OVR_UIF_VECTOR_);
+  #if defined(USE_TIM2)
+    @svlreg ISR_HANDLER(TIM2_SystemTickISR, TIM2_ISR_VECTOR);
+  #elif defined(USE_TIM4)
+    @svlreg ISR_HANDLER(TIM4_SystemTickISR, TIM4_ISR_VECTOR);
   #else
     #error select TIM2 or TIM4 in stm8-include/config.h
   #endif
 #else
-  #if (SYSTIMER==USE_TIM2)
-    ISR_HANDLER(TIM2_SystemTickISR, _TIM2_OVR_UIF_VECTOR_);
-  #elif (SYSTIMER==USE_TIM4)
-    ISR_HANDLER(TIM4_SystemTickISR, _TIM4_OVR_UIF_VECTOR_);
+  #if defined(USE_TIM2)
+    ISR_HANDLER(TIM2_SystemTickISR, TIM2_ISR_VECTOR);
+  #elif defined(USE_TIM4)
+    ISR_HANDLER(TIM4_SystemTickISR, TIM4_ISR_VECTOR);
   #else
     #error select TIM2 or TIM4 in stm8-include/config.h
   #endif

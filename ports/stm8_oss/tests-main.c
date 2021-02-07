@@ -248,10 +248,10 @@ static void main_thread_func (uint32_t param)
     sleep_ticks = (test_status == 0) ? SYSTEM_TICKS_PER_SEC : (SYSTEM_TICKS_PER_SEC/8);
 
     /* Configure GPIO for flashing the board LED (select port&pin in config.h) */
-    LED_PORT.DDR.byte = LED_PIN;    // input(=0) or output(=1)
-    LED_PORT.CR1.byte = LED_PIN;    // input: 0=float, 1=pull-up; output: 0=open-drain, 1=push-pull
-    LED_PORT.CR2.byte = LED_PIN;    // input: 0=no exint, 1=exint; output: 0=2MHz slope, 1=10MHz slope
-
+    LED_PORT.DDR.byte |= LED_PIN;     // input(=0) or output(=1)
+    LED_PORT.CR1.byte |= LED_PIN;     // input: 0=float, 1=pull-up; output: 0=open-drain, 1=push-pull
+    LED_PORT.CR2.byte |= LED_PIN;     // input: 0=no exint, 1=exint; output: 0=2MHz slope, 1=10MHz slope
+    
     /* Test finished, flash slowly for pass, fast for fail */
     while (1)
     {

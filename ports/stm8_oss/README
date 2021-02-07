@@ -34,7 +34,8 @@ A few additional source files are also included here:
 
  * tests-main.c: Main application file (used for launching automated tests)
  * uart.c: UART wrapper to allow use of stdio/printf()
- * stm8s-include/*.h: OSS device headers from https://github.com/gicking/STM8_headers
+ * stm8-include/STM8*.h: OSS device headers from https://github.com/gicking/STM8_headers
+ * stm8-include/config.h: device selection and some project settings
 
 Atomthreads includes a suite of automated tests which prove the key OS
 functionality, and can be used with any architecture ports. This port
@@ -58,6 +59,9 @@ STM8S-DISCOVERY SPECIFICS
 
 There are very minimal board-specific aspects to the STM8 port so it is
 trivial to run Atomthreads on other STM8 platforms.
+
+Device selection and some project settings are in files in stm8-include.
+Currently several STM8S and STM8L devices have been tested. 
 
 The test applications make use of a LED to indicate test pass/fail status.
 This is currently configured to use a bit in GPIOD, which on the Discovery

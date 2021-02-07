@@ -33,7 +33,7 @@ The port works out-of-the-box with SDCC and GNU make for
 building.
 
  * SDCC 3.6.0 or later
- * Programming software (e.g. stm8flash)
+ * Programming software (e.g. stm8flash or stm8gal)
 
 
 ---------------------------------------------------------------------------
@@ -63,8 +63,10 @@ both the kernel and STM8 port documentation from this folder using:
 
 PROGRAMMING MAKEFILE-BUILT APPLICATIONS TO THE TARGET DEVICE
 
-Applications can be written onto the STM8S-Discovery board using:
+Applications can be written onto the STM8 board using:
 
- * stm8flash -c stlink -p stm8s105c6 -w <filename>
+ * SWIM: stm8flash -c stlink -p stm8s105c6 -w <filename>
+
+ * Bootloader: stm8gal -p <port> -V 1 -w <filename>
 
 ---------------------------------------------------------------------------

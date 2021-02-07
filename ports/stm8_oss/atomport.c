@@ -229,10 +229,18 @@ void archThreadContextInit (ATOM_TCB *tcb_ptr, void *stack_top, void (*entry_poi
  */
 void archInitSystemTickTimer ( void )
 {
-  #if (SYSTIMER==USE_TIM2)
+  #if defined(USE_TIM2)
 
     uint16_t    ARR;
 
+    // output during compile
+    #warning using TIM2
+
+    // for low-power device activate TIM2 clock
+    #if defined(FAMILY_STM8L)
+        sfr_CLK.PCKENR1.PCKEN10 = 1;
+    #endif
+   
     // stop the timer
     sfr_TIM2.CR1.CEN = 0;
 
@@ -291,8 +299,16 @@ void archInitSystemTickTimer ( void )
     sfr_TIM2.CR1.CEN = 1;
 
 
-  #elif (SYSTIMER==USE_TIM4)
+  #elif defined(USE_TIM4)
 
+    // output during compile
+    #warning using TIM4
+    
+    // for low-power device activate TIM4 clock
+    #if defined(FAMILY_STM8L)
+        sfr_CLK.PCKENR1.PCKEN12 = 1;
+    #endif
+   
     // stop the timer
     sfr_TIM4.CR1.CEN = 0;
 
@@ -390,15 +406,18 @@ void archInitSystemTickTimer ( void )
  */
 
 // 16-bit timer TIM2 ISR requires no tweaking for >1ms systic
-#if (SYSTIMER==USE_TIM2)
+#if defined(USE_TIM2)
   #if defined(__CSMC__)
-    @svlreg ISR_HANDLER(TIM2_SystemTickISR, _TIM2_OVR_UIF_VECTOR_)
+    @svlreg ISR_HANDLER(TIM2_SystemTickISR, TIM2_ISR_VECTOR)
   #else
-    ISR_HANDLER(TIM2_SystemTickISR, _TIM2_OVR_UIF_VECTOR_)
+    ISR_HANDLER(TIM2_SystemTickISR, TIM2_ISR_VECTOR)
   #endif
 {
   // clear timer 2 interrupt flag
-  sfr_TIM2.SR1.UIF = 0;
+  TIM2_ISR_UIF = 0;
+    
+  // debug
+  //LED_PORT.ODR.byte ^= LED_PIN;
 
   /* Call the interrupt entry routine */
   atomIntEnter();
@@ -413,21 +432,23 @@ void archInitSystemTickTimer ( void )
 
 
 // 8-bit timer TIM4 has limited period of ~1ms and requires tweaking
-#elif (SYSTIMER==USE_TIM4)
+#elif defined(USE_TIM4)
   #if defined(__CSMC__)
-    @svlreg ISR_HANDLER(TIM4_SystemTickISR, _TIM4_OVR_UIF_VECTOR_)
+    @svlreg ISR_HANDLER(TIM4_SystemTickISR, TIM4_ISR_VECTOR)
   #else
-    ISR_HANDLER(TIM4_SystemTickISR, _TIM4_OVR_UIF_VECTOR_)
+    ISR_HANDLER(TIM4_SystemTickISR, TIM4_ISR_VECTOR)
   #endif
 {
-
     static uint8_t  count_period = 0;       // for calling atomthreads scheduler every N ms
 #if (FSYS_FREQ != 16000000L)
     static uint8_t  count_fractional = 0;   // only required for fractional reload value
 #endif
 
     // clear timer 4 interrupt flag
-    sfr_TIM4.SR.UIF = 0;
+    TIM4_ISR_UIF = 0;
+    
+    // debug
+    //LED_PORT.ODR.byte ^= LED_PIN;
 
 // 16MHz -> reload=250 -> no correction required
 #if (FSYS_FREQ == 16000000L)

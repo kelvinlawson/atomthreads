@@ -41,8 +41,11 @@
 #ifndef STM8S207MB_H
 #define STM8S207MB_H
 
-// DEVICE DECLARATION
-#define DEVICE  STM8S207MB
+// DEVICE NAME
+#define DEVICE_STM8S207MB
+
+// DEVICE FAMILY
+#define FAMILY_STM8S
 
 // required for C++
 #ifdef __cplusplus
