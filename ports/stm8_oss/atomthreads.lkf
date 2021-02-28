@@ -31,14 +31,10 @@ build-cosmic\atommutex.o
 build-cosmic\atomqueue.o
 build-cosmic\atomsem.o
 build-cosmic\atomtimer.o
-build-cosmic\stm8s_clk.o
-build-cosmic\stm8s_uart2.o
-build-cosmic\stm8s_gpio.o
-build-cosmic\stm8s_tim1.o
-# Caller passes in test application object name as param1
-# MUST BE PLACED HERE
-@1
 build-cosmic\uart.o
+# Caller passes in test application object name as param1
+# must be before tests-main.o
+@1
 build-cosmic\tests-main.o
 build-cosmic\atomport.o
 build-cosmic\atomport-asm-cosmic.o
@@ -48,6 +44,7 @@ build-cosmic\atomport-asm-cosmic.o
 # Library list
 #<BEGIN LIBRARY_FILES>
 libis0.sm8
+#libisl0.sm8
 libm0.sm8
 #<END LIBRARY_FILES>
 
@@ -64,5 +61,6 @@ build-cosmic\stm8_interrupt_vector.o
 +def __memory=@.bss				# end of bss segment
 +def __startmem=@.bss
 +def __endmem=0x7bf
+#+def __endmem=0x5ff
 +def __stack=0x7ff
 #<END DEFINED_VARIABLES>

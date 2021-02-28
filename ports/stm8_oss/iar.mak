@@ -14,7 +14,7 @@
 EWSTM8_DIR=C:\Program Files\IAR Systems\Embedded Workbench 8.3\stm8
 KERNEL_DIR=../../kernel
 TESTS_DIR=../../tests
-PERIPHS_DIR=stm8s-periphs
+PERIPHS_DIR=stm8-include
 CC=iccstm8
 ASM=iasmstm8
 LINK=ilinkstm8
@@ -34,7 +34,7 @@ APP_OBJECTS = atomport.o tests-main.o uart.o
 APP_ASM_OBJECTS = atomport-asm-iar.o
 
 # STM8S Peripheral driver object files
-PERIPH_OBJECTS = stm8s_gpio.o stm8s_tim1.o stm8s_clk.o stm8s_uart2.o
+PERIPH_OBJECTS =
 
 # Kernel object files
 KERNEL_OBJECTS = atomkernel.o atomsem.o atommutex.o atomtimer.o atomqueue.o

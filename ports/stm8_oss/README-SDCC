@@ -1,0 +1,72 @@
+---------------------------------------------------------------------------
+
+Author: Dr. Philipp Klaus Krause
+
+Update: Georg Icking-Konert for OSS device headers & omit Raisonance
+
+---------------------------------------------------------------------------
+
+STM8 PORT - SMALL DEVICE C COMPILER
+
+This folder contains a port of the Atomthreads real time kernel for the
+STM8 processor architecture. These instructions cover usage of Atomthreads
+with the Small Device C Compiler (SDCC).
+
+This README covers usage of Atomthreads with SDCC.
+Instructions for users of the other compilers are available in README-COSMIC
+and README-IAR.
+
+---------------------------------------------------------------------------
+
+STM8 DEVICE HEADERS
+
+The folder stm8-include contains:
+  - config.h for device selection and some project settings
+  - (some) open-source device headers from https://github.com/gicking/STM8_headers
+    These replace the proprietary headers/drivers by STM from the original STM8 port
+
+---------------------------------------------------------------------------
+
+PREREQUISITES
+
+The port works out-of-the-box with SDCC and GNU make for
+building.
+
+ * SDCC 3.6.0 or later
+ * Programming software (e.g. stm8flash or stm8gal)
+
+
+---------------------------------------------------------------------------
+
+BUILD VIA MAKEFILE
+
+ * make -f sdcc.mak
+
+All objects are built into the 'build-sdcc' folder under ports/stm8.
+The build process builds separate target applications for each automated
+test, and appropriate .ihx files can be found in the build folder
+ready for downloading to and running on the target. Because of the limited
+resources on the STM8, and the large amount of automated tests, each test
+is built and run as a separate application.
+
+All built objects etc can be cleaned using:
+
+ * make -f sdcc.mak clean
+
+The Atomthreads sources are documented using Doxygen markup. You can build
+both the kernel and STM8 port documentation from this folder using:
+
+ * make -f sdcc.mak doxygen
+
+
+---------------------------------------------------------------------------
+
+PROGRAMMING MAKEFILE-BUILT APPLICATIONS TO THE TARGET DEVICE
+
+Applications can be written onto the STM8 board using:
+
+ * SWIM: stm8flash -c stlink -p stm8s105c6 -w <filename>
+
+ * Bootloader: stm8gal -p <port> -V 1 -w <filename>
+
+---------------------------------------------------------------------------

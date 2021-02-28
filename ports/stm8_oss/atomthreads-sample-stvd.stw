@@ -6,10 +6,6 @@ Keyword=ST7Workspace-V0.7
 [Project0]
 Filename=atomthreads-sample-cosmic.stp
 Dependencies=
-
-[Project1]
-Filename=atomthreads-sample-raisonance.stp
-Dependencies=
 [Options]
 ActiveProject=atomthreads-cosmic
 ActiveConfig=Release

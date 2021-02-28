@@ -1,0 +1,10 @@
+/ports/stm8/build-sdcc
+/ports/stm8/build-cosmic
+/ports/stm8/build-iar
+/ports/stm8/Debug
+/ports/stm8/Release
+/ports/stm8_oss/build-sdcc
+/ports/stm8_oss/build-cosmic
+/ports/stm8_oss/build-iar
+/ports/stm8_oss/Debug
+/ports/stm8_oss/Release

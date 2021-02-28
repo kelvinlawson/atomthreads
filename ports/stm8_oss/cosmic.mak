@@ -13,7 +13,7 @@
 # Location of build tools and atomthreads sources
 KERNEL_DIR=../../kernel
 TESTS_DIR=../../tests
-PERIPHS_DIR=stm8s-periphs
+PERIPHS_DIR=stm8-include
 LIBS_DIR="C:\Program Files\COSMIC\FSE_Compilers\CXSTM8\Lib"
 CC=cxstm8
 ASM=castm8
@@ -34,7 +34,7 @@ APP_OBJECTS = atomport.o tests-main.o stm8_interrupt_vector.o uart.o
 APP_ASM_OBJECTS = atomport-asm-cosmic.o
 
 # STM8S Peripheral driver object files
-PERIPH_OBJECTS = stm8s_gpio.o stm8s_tim1.o stm8s_clk.o stm8s_uart2.o
+PERIPH_OBJECTS =
 
 # Kernel object files
 KERNEL_OBJECTS = atomkernel.o atomsem.o atommutex.o atomtimer.o atomqueue.o
