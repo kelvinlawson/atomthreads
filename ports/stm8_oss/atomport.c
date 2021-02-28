@@ -240,7 +240,7 @@ void archInitSystemTickTimer ( void )
     #if defined(FAMILY_STM8L)
         sfr_CLK.PCKENR1.PCKEN10 = 1;
     #endif
-   
+
     // stop the timer
     sfr_TIM2.CR1.CEN = 0;
 
@@ -262,7 +262,7 @@ void archInitSystemTickTimer ( void )
     #elif (FSYS_FREQ == 20000000L)
 
       // set clock to 20Mhz/2^5 = 625kHz -> 1.6us tick
-      sfr_TIM4.PSCR.PSC = 5;
+      sfr_TIM2.PSCR.PSC = 5;
 
       // set autoreload value to specified period (1ms = 625*1.6us)
       ARR = (uint16_t) PERIOD_THREADS * (uint16_t) 625;
@@ -273,7 +273,7 @@ void archInitSystemTickTimer ( void )
     #elif (FSYS_FREQ == 24000000L)
 
       // set clock to 24Mhz/2^5 = 750kHz -> 1.333us tick
-      sfr_TIM4.PSCR.PSC = 5;
+      sfr_TIM2.PSCR.PSC = 5;
 
       // set autoreload value to specified period (1ms = 750*1.333us)
       ARR = (uint16_t) PERIOD_THREADS * (uint16_t) 750;
@@ -303,12 +303,12 @@ void archInitSystemTickTimer ( void )
 
     // output during compile
     #warning using TIM4
-    
+
     // for low-power device activate TIM4 clock
     #if defined(FAMILY_STM8L)
         sfr_CLK.PCKENR1.PCKEN12 = 1;
     #endif
-   
+
     // stop the timer
     sfr_TIM4.CR1.CEN = 0;
 
@@ -415,7 +415,7 @@ void archInitSystemTickTimer ( void )
 {
   // clear timer 2 interrupt flag
   TIM2_ISR_UIF = 0;
-    
+
   // debug
   //LED_PORT.ODR.byte ^= LED_PIN;
 
@@ -446,7 +446,7 @@ void archInitSystemTickTimer ( void )
 
     // clear timer 4 interrupt flag
     TIM4_ISR_UIF = 0;
-    
+
     // debug
     //LED_PORT.ODR.byte ^= LED_PIN;
 

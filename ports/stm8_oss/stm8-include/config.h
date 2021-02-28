@@ -55,7 +55,7 @@
   #define TIM4_ISR_UIF      sfr_TIM4.SR.UIF
   #define USE_UART2
 #elif defined(MUBOARD)
-  #include "STM8S207MB.h"
+  #include "STM8AF52AA.h"
   #define LED_PORT   sfr_PORTH
   #define LED_PIN    PIN2
   #define USE_TIM2
